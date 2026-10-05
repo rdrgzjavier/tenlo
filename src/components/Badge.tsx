@@ -1,4 +1,4 @@
-import { CheckCircle2, Clock3, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Clock3, Database, ShieldCheck, UserRoundCheck } from "lucide-react";
 import type { ModerationStatus, TrustLevel } from "@/lib/types";
 
 export function VerifiedBadge({ verified }: { verified?: boolean }) {
@@ -11,14 +11,18 @@ export function VerifiedBadge({ verified }: { verified?: boolean }) {
 }
 
 export function TrustBadge({ level, variant = "soft" }: { level: TrustLevel; variant?: "soft" | "solid" }) {
-  if (level === "collected") return null;
-
-  const Icon = level === "official" ? ShieldCheck : CheckCircle2;
+  const config = {
+    collected: { label: "Pública", title: "Información recopilada de fuentes públicas; el proveedor todavía no gestiona esta ficha.", Icon: Database },
+    managed: { label: "Gestionada", title: "El proveedor ha reclamado la ficha y puede mantener su información actualizada.", Icon: UserRoundCheck },
+    verified: { label: "Verificada", title: "Tenlo ha comprobado la identidad y los datos esenciales del proveedor.", Icon: CheckCircle2 },
+    official: { label: "Oficial", title: "La información ha sido confirmada directamente por el proveedor.", Icon: ShieldCheck }
+  }[level];
+  const Icon = config.Icon;
   const className = variant === "solid" ? "bg-white text-black ring-line shadow-sm" : "bg-sage/10 text-black ring-sage/20";
 
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold ring-1 ${className}`}>
-      <Icon className="text-black" size={14} aria-hidden /> Verificado
+    <span title={config.title} className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold ring-1 ${className}`}>
+      <Icon className="text-black" size={14} aria-hidden /> {config.label}
     </span>
   );
 }

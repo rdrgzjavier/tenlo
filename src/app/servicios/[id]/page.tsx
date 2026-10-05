@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CalendarDays, Clock3, Euro, ExternalLink, Mail, MessageCircle, Phone, ShieldCheck, Sparkles } from "lucide-react";
+import { CalendarDays, Clock3, Euro, ExternalLink, Mail, MessageCircle, Phone, Sparkles } from "lucide-react";
+import AnalyticsViewEvent from "@/components/AnalyticsViewEvent";
+import { TrustBadge } from "@/components/Badge";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import JsonLd from "@/components/JsonLd";
@@ -75,7 +77,6 @@ export default function ServiceDetailPage({ params }: { params: { id: string } }
   const listing = listings.find((item) => item.userId === provider.userId && item.publicationType === "proveedor");
   const providerUrl = provider.website?.startsWith("http") ? provider.website : undefined;
   const providerEmail = provider.email.includes("@") ? provider.email : undefined;
-  const isVerified = provider.trustLevel === "verified" || provider.trustLevel === "official";
   const categoryLabel = providerCategoryLabel(provider);
   const visibleTags = uniqueDisplayTags(provider.tags, [categoryLabel, provider.category, provider.municipality, provider.serviceArea, "Canguros", "Referencias"]).slice(0, 6);
   const relatedServices = providers
@@ -84,6 +85,7 @@ export default function ServiceDetailPage({ params }: { params: { id: string } }
 
   return (
     <div className="section-shell">
+      <AnalyticsViewEvent event="provider_profile_viewed" params={{ provider_id: provider.id, category: provider.category, municipality: provider.municipality, trust_level: provider.trustLevel }} />
       <Breadcrumbs items={[{ label: "Servicios", href: "/servicios" }, { label: provider.businessName }]} />
       <JsonLd data={{
         "@context": "https://schema.org",
@@ -102,13 +104,13 @@ export default function ServiceDetailPage({ params }: { params: { id: string } }
           <div className="mt-6 flex items-center gap-4">
             <ProfileAvatar name={provider.businessName} role="provider" image={provider.image} />
             <div className="flex min-w-0 items-start gap-3">
-              {isVerified ? <ShieldCheck className="mt-2 shrink-0 text-emerald-700" size={28} aria-label="Ficha verificada" /> : null}
               <h1 className="page-title m-0">{provider.businessName}</h1>
             </div>
           </div>
           <p className="lead">{provider.description}</p>
 
           <div className="mt-5 flex flex-wrap gap-2">
+            <TrustBadge level={provider.trustLevel} />
             <span className="chip">{categoryLabel}</span>
             {visibleTags.map((tag) => <span key={tag} className="chip">{tag}</span>)}
           </div>
@@ -179,7 +181,7 @@ export default function ServiceDetailPage({ params }: { params: { id: string } }
               <Phone size={16} /> Llamar
             </a>
           ) : null}
-          <Link href={`/validar-ficha?tipo=servicio&id=${provider.id}`} className="btn-secondary mt-3 w-full" {...trackingAttrs("claim_profile_click", { item: provider.id, type: "provider" })}>Validar ficha</Link>
+          <Link href={`/validar-ficha?tipo=servicio&id=${provider.id}`} className="btn-secondary mt-3 w-full" {...trackingAttrs("claim_profile_click", { item: provider.id, type: "provider" })}>¿Es tu negocio?</Link>
         </aside>
       </div>
     </div>

@@ -100,7 +100,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] Definir un SLA inicial de respuesta: `[24/48/72 horas]`.
 - [ ] Definir qué constituye una solicitud relevante y quién puede marcarla como irrelevante.
 - [ ] Definir qué resultado se puede medir durante el piloto: respuesta, conversación, propuesta, reserva o contratación.
-- [ ] Mantener separados `Verified` y `Pro`.
+- [x] Mantener separados el nivel de confianza y el plan comercial.
   - `Verified`: confianza comprobable.
   - `Pro`: plan comercial con herramientas o beneficios adicionales.
 - [x] Decidir si la reclamación de ficha requiere cuenta desde el principio.
@@ -133,7 +133,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] Revisar el mensaje `100% moderado y seguro`; sustituirlo por una afirmación demostrable.
 - [ ] Revisar cada ficha mock antes de hacerla pública como ficha real.
 - [ ] No considerar una web oficial como verificación suficiente por sí sola.
-- [ ] Definir los criterios y evidencias de cada nivel: `collected`, `verified`, `official`.
+- [x] Definir los niveles visibles de confianza: `Pública`, `Gestionada`, `Verificada` y `Oficial`, independientes del plan comercial.
 - [ ] Mostrar en cada ficha la fuente, fecha de última revisión y estado de control por el proveedor cuando corresponda.
 - [x] Utilizar etiquetas breves y comprensibles para el estado de confianza: `Pública`, `Gestionada`, `Verificada`, `Oficial`.
 - [ ] Crear un mecanismo sencillo para solicitar corrección, retirada o actualización.
@@ -156,17 +156,17 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   - [ ] plantilla genérica para otros servicios familiares.
 - [ ] Mostrar todos los campos de la plantilla correspondiente aunque no estén informados, usando estados como `Pendiente de verificar` o `No informado` y sin inventar valores.
 - [ ] Añadir a proveedor/ficha:
-  - [ ] estado de reclamación;
+  - [x] preparar en el esquema estado de reclamación;
   - [ ] estado de publicación;
-  - [ ] nivel de confianza;
-  - [ ] plan comercial independiente;
+  - [x] preparar en el esquema nivel de confianza;
+  - [x] preparar en el esquema plan comercial independiente;
   - [ ] fecha de última revisión;
   - [ ] fuente y URL de la fuente;
-  - [ ] porcentaje de ficha completa;
-  - [ ] disponibilidad para recibir solicitudes;
+  - [x] preparar en el esquema porcentaje de ficha completa;
+  - [x] preparar en el esquema disponibilidad para recibir solicitudes;
   - [ ] categorías y zonas aceptadas;
-  - [ ] preferencias de contacto;
-  - [ ] motivo de inactividad o rechazo.
+  - [x] preparar en el esquema preferencias de contacto;
+  - [x] preparar en el esquema motivo de inactividad o rechazo.
 - [ ] Añadir historial de cambios y responsable de cada modificación.
 - [ ] Definir reglas RLS y permisos para proveedor, familia, moderación y administración.
 - [ ] Crear copias de seguridad y procedimiento de recuperación.
@@ -225,7 +225,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] Medir por separado el inicio y resultado observable de cada vía; una llamada o salida externa no equivale automáticamente a una conexión útil.
 - [ ] Recoger solo la información necesaria para que el proveedor decida si puede ayudar.
 - [ ] Evitar datos identificativos o sensibles de menores.
-- [ ] Crear entidad `request` con ID, familia, proveedor, categoría, zona, estado y marcas de tiempo.
+- [x] Preparar entidad `connection_requests` con ID, familia, proveedor, categoría, zona, estado y marcas de tiempo.
 - [ ] Confirmar a la familia que la solicitud ha sido enviada y cuándo puede esperar respuesta.
 - [ ] Notificar al proveedor con un enlace seguro para responder.
 - [ ] Permitir responder, rechazar, indicar falta de disponibilidad o pedir aclaración.
@@ -292,7 +292,7 @@ Tenlo debe poder explicar qué buscan las familias y qué rendimiento obtiene ca
 
 ### Qué se busca en Tenlo
 
-- [ ] Registrar cada búsqueda con un `search_id` anónimo y persistir una versión normalizada de la consulta.
+- [x] Preparar entidad `search_events` con ID anónimo, consulta normalizada, filtros y número de resultados.
 - [ ] Registrar término o intención, categoría, municipio, filtros, número de resultados y momento de la búsqueda.
 - [ ] Clasificar las búsquedas en verticales: colegios, guarderías, servicios, actividades, centros y las que se incorporen después.
 - [ ] Registrar reformulaciones: qué cambia la persona cuando la primera búsqueda no le sirve.

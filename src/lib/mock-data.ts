@@ -245,7 +245,7 @@ const childcareDescriptions: Record<string, string> = {
 export const providers: Provider[] = providerSeeds.map(([id, businessName, category, rawTags, image, categoryId, municipality, phone, email, website, description]) => {
   const hasOfficialWebsite = Boolean(website?.startsWith("http"));
   const protectedContact = phone.includes("Contacto protegido") || email.includes("tenlo.es");
-  const verificationStatus = hasOfficialWebsite ? "Verificado" : "";
+  const verificationStatus = hasOfficialWebsite ? "Información pública localizada" : "Pendiente de revisión";
 
   return {
     id,
@@ -263,8 +263,8 @@ export const providers: Provider[] = providerSeeds.map(([id, businessName, categ
     lastReviewed: "Mayo de 2026",
     verificationStatus,
     isPublicInformation: hasOfficialWebsite,
-    verified: hasOfficialWebsite,
-    trustLevel: hasOfficialWebsite ? "verified" : "collected",
+    verified: false,
+    trustLevel: "collected",
     plan: "gratuito",
     tags: normalizeTags(rawTags.split(", ")),
     image

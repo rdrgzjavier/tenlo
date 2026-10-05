@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import AnalyticsViewEvent from "@/components/AnalyticsViewEvent";
 import Filters from "@/components/Filters";
 import ListingCard from "@/components/ListingCard";
 import LoadMoreGrid from "@/components/LoadMoreGrid";
@@ -98,6 +99,14 @@ export default function SearchPage({ searchParams }: { searchParams: SearchParam
 
   return (
     <div className="section-shell">
+      <AnalyticsViewEvent event="search_results_viewed" params={{
+        category: selected.categoria,
+        municipality: selected.municipio,
+        center_id: selected.centro,
+        has_keyword: Boolean(selected.tag),
+        result_count: filtered.length,
+        zero_results: filtered.length === 0
+      }} />
       <p className="label">Marketplace local moderado</p>
       <h1 className="page-title">{selected.region === "madrid" ? "Oferta para familias en Madrid" : "Buscar recursos"}</h1>
       <p className="lead">Encuentra publicaciones y servicios alrededor del centro, filtrados por zona y necesidades familiares no identificativas.</p>

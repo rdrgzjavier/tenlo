@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ShieldCheck } from "lucide-react";
+import AnalyticsViewEvent from "@/components/AnalyticsViewEvent";
+import { TrustBadge } from "@/components/Badge";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import JsonLd from "@/components/JsonLd";
@@ -30,7 +31,6 @@ export default function CenterDetailPage({ params }: { params: { slug: string } 
 
   const centerUrl = center.website?.startsWith("http") ? center.website : undefined;
   const centerEmail = center.email.includes("@") ? center.email : undefined;
-  const isVerified = center.trustLevel === "verified" || center.trustLevel === "official";
   const quickLinks = ["Uniformes", "Puertas abiertas", "Becas", "Extraescolares", "Admisiones"];
   const typeLabel = centerTypeLabel(center.type);
   const religiousLabel = religiousCharacterLabel(center.religiousCharacter);
@@ -38,6 +38,7 @@ export default function CenterDetailPage({ params }: { params: { slug: string } 
 
   return (
     <div className="page py-10">
+      <AnalyticsViewEvent event="center_profile_viewed" params={{ center_id: center.id, municipality: center.municipality, trust_level: center.trustLevel }} />
       <Breadcrumbs items={[{ label: "Centros", href: "/centros" }, { label: center.name }]} />
       <JsonLd data={{
         "@context": "https://schema.org",
@@ -54,12 +55,12 @@ export default function CenterDetailPage({ params }: { params: { slug: string } 
       <ImageWithFallback src={center.image} fallbackSrc={centerFallbackImage} alt={`Imagen de ${center.name}`} className="mb-6 aspect-[16/7] w-full rounded-2xl border border-line object-cover" />
 
       <div className="mt-4 flex items-start gap-3">
-        {isVerified ? <ShieldCheck className="mt-2 shrink-0 text-emerald-700" size={30} aria-label="Ficha verificada" /> : null}
         <h1 className="text-4xl font-bold text-ink">{center.name}</h1>
       </div>
       <p className="mt-3 max-w-3xl text-lg leading-8 text-slatecopy">{center.description}</p>
 
       <div className="mt-5 flex flex-wrap gap-2">
+        <TrustBadge level={center.trustLevel} />
         <span className="rounded-full bg-soft px-3 py-1 text-xs font-semibold text-slatecopy">{typeLabel}</span>
         {religiousLabel ? <span className="rounded-full bg-soft px-3 py-1 text-xs font-semibold text-slatecopy">{religiousLabel}</span> : null}
         {visibleTags.map((tag) => <span key={tag} className="rounded-full bg-soft px-3 py-1 text-xs font-semibold text-slatecopy">{tag}</span>)}
@@ -93,9 +94,9 @@ export default function CenterDetailPage({ params }: { params: { slug: string } 
         </section>
 
         <aside className="card h-fit p-6">
-          <h2 className="text-xl font-semibold text-ink">Validar esta ficha</h2>
+          <h2 className="text-xl font-semibold text-ink">¿Representas este centro?</h2>
           <p className="mt-2 text-sm leading-6 text-muted">Si representas este centro, puedes corregir datos, aportar una imagen oficial o solicitar que el equipo de Tenlo valide la ficha.</p>
-          <Link href={`/validar-ficha?tipo=centro&id=${center.slug}`} className="btn-primary mt-5 w-full" {...trackingAttrs("claim_profile_click", { item: center.id, type: "center" })}>Validar ficha</Link>
+          <Link href={`/validar-ficha?tipo=centro&id=${center.slug}`} className="btn-primary mt-5 w-full" {...trackingAttrs("claim_profile_click", { item: center.id, type: "center" })}>Gestionar esta ficha</Link>
         </aside>
       </div>
     </div>

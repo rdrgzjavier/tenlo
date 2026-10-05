@@ -30,7 +30,7 @@ export type ModerationStatus =
   | "rejected"
   | "archived";
 
-export type TrustLevel = "collected" | "verified" | "official";
+export type TrustLevel = "collected" | "managed" | "verified" | "official";
 
 type ProfileRow = {
   id: string;

@@ -2,7 +2,7 @@ export type Role = "family" | "provider" | "center" | "admin";
 export type ModerationStatus = "draft" | "pending_review" | "published" | "rejected" | "archived";
 export type CenterType = "publico" | "concertado" | "privado";
 export type ProviderPlan = "gratuito" | "destacado" | "premium";
-export type TrustLevel = "collected" | "verified" | "official";
+export type TrustLevel = "collected" | "managed" | "verified" | "official";
 
 export type Municipality = { id: string; name: string; slug: string; description: string; };
 export type Category = { id: string; name: string; slug: string; description: string; seoTitle: string; seoDescription: string; };
