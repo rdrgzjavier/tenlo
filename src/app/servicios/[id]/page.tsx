@@ -8,6 +8,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import JsonLd from "@/components/JsonLd";
 import ProfileAvatar from "@/components/ProfileAvatar";
+import ProviderProfileSections from "@/components/ProviderProfileSections";
 import { trackingAttrs } from "@/lib/analytics";
 import { uniqueDisplayTags } from "@/lib/display-labels";
 import { ageLabel, findProvider, listings, providers } from "@/lib/mock-data";
@@ -119,24 +120,7 @@ export default function ServiceDetailPage({ params }: { params: { id: string } }
             {childcareProvider && listing ? (
               <ChildcareProfile provider={provider} listing={listing} />
             ) : (
-              <>
-            <InfoBlock title="Ubicación y modalidad" items={[
-              ["Zona de cobertura", provider.serviceArea],
-              ["Municipio", provider.municipality],
-              ["Modalidad", listing?.details.Modalidad ?? "Consultar"],
-              ["Edad recomendada", listing ? ageLabel(listing) : "Consultar edad recomendada"]
-            ]} />
-            <InfoBlock title="Contacto" items={[
-              ["Web oficial", providerUrl ? provider.website : "No indicado"],
-              ["Email", providerEmail ? provider.email : "No indicado"],
-              ["Teléfono", cleanValue(provider.phone)]
-            ]} />
-            <InfoBlock title="Disponibilidad y condiciones" items={[
-              ["Precio", listing?.priceLabel ?? "Consultar"],
-              ["Disponibilidad", listing?.availability ?? "Consultar disponibilidad"],
-              ["Condiciones", listing?.details.Horario ?? "Confirmar directamente con el proveedor"]
-            ]} />
-              </>
+              <ProviderProfileSections provider={provider} listing={listing} />
             )}
             <Link href={`/sugerencias?context=servicio&item=${provider.id}`} className="inline-flex text-sm font-semibold text-ink underline">¿Hay algún dato incorrecto? Avísanos</Link>
           </section>

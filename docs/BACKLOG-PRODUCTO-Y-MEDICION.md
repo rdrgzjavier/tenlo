@@ -116,7 +116,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] Actualizar Next.js y dependencias a versiones soportadas sin avisos críticos conocidos.
 - [ ] Repetir `npm audit`, `typecheck`, `lint` y `build` tras la actualización.
 - [x] Evitar que las páginas privadas conectadas a Supabase se ejecuten durante el prerender del build.
-- [ ] Hacer que las rutas privadas muestren un mensaje operativo claro cuando falten variables de Supabase en tiempo de ejecución.
+- [ ] Hacer que las rutas privadas muestren un mensaje operativo claro cuando falten variables de Supabase en tiempo de ejecución. El directorio y cabecera públicos ya degradan sin bloquearse.
 - [ ] Crear `.env.example` sin secretos con todas las variables requeridas y su finalidad.
 - [ ] Documentar variables por entorno: local, preview y production.
 - [ ] Confirmar en Vercel la presencia de Supabase, Resend, Cookiebot, URL pública y correo administrativo en los tres entornos.
@@ -146,15 +146,15 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] Eliminar la dependencia del directorio de `mock-data.ts` mediante una capa de acceso a datos.
 - [ ] Crear una migración/importación controlada para las fichas iniciales.
 - [ ] Normalizar proveedores, servicios, categorías, municipios y zonas de cobertura.
-- [ ] Definir plantillas por vertical manteniendo una estructura estable dentro de cada tipo:
-  - [ ] actividades y extraescolares;
-  - [ ] deporte;
-  - [ ] clases particulares y apoyo escolar;
-  - [ ] campamentos y días sin cole;
-  - [ ] salud mental y bienestar familiar;
-  - [ ] clínicas dentales y servicios sanitarios;
-  - [ ] plantilla genérica para otros servicios familiares.
-- [ ] Mostrar todos los campos de la plantilla correspondiente aunque no estén informados, usando estados como `Pendiente de verificar` o `No informado` y sin inventar valores.
+- [x] Definir plantillas iniciales por vertical manteniendo una estructura estable dentro de cada tipo:
+  - [x] actividades y extraescolares;
+  - [x] deporte;
+  - [x] clases particulares y apoyo escolar;
+  - [x] campamentos y días sin cole;
+  - [x] salud mental y bienestar familiar;
+  - [x] clínicas dentales y servicios sanitarios;
+  - [x] plantilla genérica para otros servicios familiares.
+- [x] Mostrar todos los campos de la plantilla correspondiente aunque no estén informados, usando `Pendiente de verificar` y sin inventar valores.
 - [ ] Añadir a proveedor/ficha:
   - [x] preparar en el esquema estado de reclamación;
   - [ ] estado de publicación;
@@ -173,8 +173,8 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 
 ## P0. Flujo para reclamar y enriquecer una ficha
 
-- [ ] Crear una landing específica para proveedores que explique valor antes de pedir esfuerzo.
-- [ ] Cambiar el CTA principal de `Validar ficha` a una opción más clara según el estado: `Revisar esta ficha`, `¿Es tu negocio?` o `Actualizar información`.
+- [x] Crear una landing específica para proveedores que explique valor antes de pedir esfuerzo.
+- [x] Cambiar el CTA principal de `Validar ficha` a una opción más clara según el estado: `¿Es tu negocio?` o `Gestionar esta ficha`.
 - [ ] Permitir localizar la ficha desde la landing del proveedor.
 - [ ] Diseñar onboarding progresivo:
   1. confirmar relación con el negocio;

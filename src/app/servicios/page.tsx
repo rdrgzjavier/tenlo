@@ -41,12 +41,6 @@ function providerCategoryLabel(provider: (typeof providers)[number]) {
   return isChildcareProvider(provider) ? "Canguro" : provider.category;
 }
 
-const plans = [
-  ["Gratuito", "Perfil básico, aparición en búsqueda, datos de contacto, categoría y zona."],
-  ["Destacado", "Mejor posición, sello destacado, más fotos, CTA directo y métricas básicas."],
-  ["Premium", "Visibilidad por zona/categoría, campañas estacionales y landing propia dentro de Tenlo."]
-];
-
 const situations = [
   { text: "Busco apoyo escolar cerca del cole", href: "/buscar?tag=clases-particulares" },
   { text: "Necesito campamento en días sin cole", href: "/buscar?tag=campamentos" },
@@ -165,20 +159,12 @@ export default function ServicesPage() {
         ))}
       </LoadMoreGrid>
 
-      {/* Plans Section moved to bottom/signup flow context */}
       <section className="mt-20 rounded-3xl bg-lavender/30 p-8 md:p-12">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="section-title text-center">Haz crecer tu negocio en Tenlo</h2>
-          <p className="mt-4 text-slatecopy">Llega a familias adultas que buscan activamente recursos locales de calidad.</p>
-        </div>
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {plans.map(([name, text]) => (
-            <article key={name} className="flex flex-col rounded-2xl bg-panel p-6 shadow-sm ring-1 ring-lavender">
-              <h3 className="text-xl font-bold text-ink">Plan {name}</h3>
-              <p className="mt-3 flex-1 text-sm leading-6 text-muted">{text}</p>
-              <Link href="/contacto" className="btn-secondary mt-6 w-full">Consultar plan</Link>
-            </article>
-          ))}
+          <p className="label">Piloto para proveedores</p>
+          <h2 className="section-title mt-2 text-center">Gestiona tu ficha sin coste durante el piloto</h2>
+          <p className="mt-4 leading-7 text-slatecopy">Revisa tus datos, completa la información relevante de tu servicio y ayúdanos a medir qué visibilidad y solicitudes resultan realmente útiles antes de definir planes de pago.</p>
+          <Link href="/proveedores" className="btn-primary mt-7">Conocer el programa fundador</Link>
         </div>
       </section>
     </div>

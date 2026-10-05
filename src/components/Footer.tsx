@@ -15,9 +15,9 @@ const columns = [
   {
     title: "Profesionales",
     links: [
+      ["Programa para proveedores", "/proveedores"],
+      ["Buscar mi ficha", "/servicios"],
       ["Publicar oferta", "/publicar"],
-      ["Validar ficha", "/validar-ficha"],
-      ["Servicios", "/servicios"],
       ["Contacto", "/contacto"]
     ]
   },
