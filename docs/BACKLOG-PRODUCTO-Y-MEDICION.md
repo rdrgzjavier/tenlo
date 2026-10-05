@@ -246,6 +246,122 @@ Arquitectura inicial recomendada:
 - [ ] Preparar un procedimiento de QA con GTM Preview, GA4 DebugView y validación en Supabase.
 - [ ] Definir retención, acceso, borrado y anonimización de datos.
 
+## P0. Informes de búsquedas, fichas y verticales
+
+Tenlo debe poder explicar qué buscan las familias y qué rendimiento obtiene cada ficha o vertical. No basta con medir páginas vistas agregadas.
+
+### Qué se busca en Tenlo
+
+- [ ] Registrar cada búsqueda con un `search_id` anónimo y persistir una versión normalizada de la consulta.
+- [ ] Registrar término o intención, categoría, municipio, filtros, número de resultados y momento de la búsqueda.
+- [ ] Clasificar las búsquedas en verticales: colegios, guarderías, servicios, actividades, centros y las que se incorporen después.
+- [ ] Registrar reformulaciones: qué cambia la persona cuando la primera búsqueda no le sirve.
+- [ ] Registrar búsquedas sin resultados, con pocos resultados o sin proveedores disponibles.
+- [ ] Registrar qué resultados se mostraron y en qué posición.
+- [ ] Relacionar búsqueda con ficha vista, guardado, contacto, respuesta y conexión útil.
+- [ ] Sanear o clasificar el texto libre antes de enviarlo a herramientas analíticas; una búsqueda puede contener datos personales o información sensible.
+- [ ] Crear un informe de demanda con:
+  - [ ] términos e intenciones más buscados;
+  - [ ] categorías y verticales con más demanda;
+  - [ ] demanda por municipio y periodo;
+  - [ ] búsquedas emergentes;
+  - [ ] búsquedas sin oferta suficiente;
+  - [ ] búsquedas que terminan en contacto, respuesta y conexión útil;
+  - [ ] términos con tráfico pero poca utilidad;
+  - [ ] oportunidades para captar nuevos proveedores o crear nuevas fichas.
+
+### Tráfico y rendimiento de cada ficha
+
+- [ ] Medir impresiones de la ficha en listados y resultados.
+- [ ] Medir posición en la que apareció, tipo de listado y búsqueda que originó la impresión.
+- [ ] Medir visitas únicas y sesiones de la ficha, evitando inflarlas con recargas.
+- [ ] Medir fuente/medio/campaña, entrada SEO, navegación interna y tráfico directo.
+- [ ] Medir scroll o consumo de secciones relevantes solo si ayuda a tomar una decisión de producto.
+- [ ] Medir guardados, compartidos, clics externos, inicios de contacto y solicitudes completadas.
+- [ ] Relacionar solicitudes con respuesta, tiempo de respuesta, utilidad y resultado.
+- [ ] Calcular por ficha:
+  - [ ] impresiones;
+  - [ ] visitas únicas;
+  - [ ] CTR desde resultados;
+  - [ ] tasa de visita a contacto;
+  - [ ] tasa de contacto completado;
+  - [ ] tasa de respuesta dentro del SLA;
+  - [ ] conexiones útiles;
+  - [ ] datos de calidad y frescura de la ficha.
+- [ ] No mostrar tasas o rankings cuando la muestra sea demasiado pequeña.
+
+### Rendimiento por vertical
+
+- [ ] Aplicar a cada ficha una dimensión estable `vertical_id` además de categoría y tipo de proveedor.
+- [ ] Crear informes comparables para colegios, guarderías, servicios, actividades y futuras verticales.
+- [ ] Comparar volumen de demanda, cobertura de oferta, engagement, contacto, respuesta y resultado por vertical.
+- [ ] Poder desglosar por municipio, categoría, estado de reclamación, confianza, plan y periodo.
+- [ ] No comparar verticales como si tuvieran la misma frecuencia natural o intención de uso.
+- [ ] Utilizar GA4 para análisis agregado y la base de datos para el histórico por ficha; un `provider_id` de alta cardinalidad no debe depender exclusivamente de dimensiones personalizadas de GA4.
+
+## P0. Base de usuarios, consentimiento y futura activación de marketing
+
+Supabase, ya integrado en el proyecto, debe ser la fuente de verdad para autenticación y perfiles. GA4 y Looker Studio no son una base de datos de usuarios ni deben contener información personal identificable.
+
+Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen del piloto, pero antes de abrir el registro hay que comprobar límites, copias de seguridad, región, retención y costes de crecimiento del plan vigente.
+
+### Datos de cuenta y perfil
+
+- [ ] Definir un modelo de perfil separado de `auth.users` y unido mediante un UUID interno.
+- [ ] Revisar y completar los campos del registro:
+  - [ ] nombre de usuario o nombre público;
+  - [ ] email verificado;
+  - [ ] tipo de usuario: familia, proveedor, centro u otro;
+  - [ ] municipio o zona general;
+  - [ ] centro o centros relacionados, siempre opcionales;
+  - [ ] categorías o necesidades de interés, opcionales;
+  - [ ] idioma y preferencias de comunicación;
+  - [ ] fecha y canal de registro;
+  - [ ] fuente, medio, campaña y landing de adquisición;
+  - [ ] estado de onboarding;
+  - [ ] fecha de última actividad significativa;
+  - [ ] estado de cuenta, baja y solicitud de eliminación.
+- [ ] Permitir que la persona consulte, corrija y elimine sus datos.
+- [ ] Evitar recoger nombres de menores, clase, horarios, fecha de nacimiento, colegio asociado a un menor concreto u otros datos sensibles salvo necesidad real y revisión específica.
+- [ ] No hacer público el centro, email, municipio o intereses de una familia por defecto.
+- [ ] No duplicar contraseñas, tokens o datos gestionados por Supabase Auth en tablas propias.
+
+### Consentimientos
+
+- [ ] Separar aceptación de condiciones, privacidad, comunicaciones operativas y marketing.
+- [ ] Añadir consentimiento de marketing explícito, opcional y no premarcado.
+- [ ] Guardar para cada consentimiento: finalidad, versión del texto, fecha, origen y estado actual.
+- [ ] Permitir retirar el consentimiento con facilidad y conservar prueba de la retirada.
+- [ ] No enviar campañas comerciales a personas que solo aceptaron comunicaciones necesarias para prestar el servicio.
+- [ ] Definir finalidades concretas antes de añadir nuevos campos al registro.
+
+### Seguridad y gobierno del dato
+
+- [ ] Mantener los datos personales en tablas protegidas con RLS y acceso mínimo por rol.
+- [ ] No exponer claves de servicio de Supabase en el cliente.
+- [ ] Separar PII de tablas de eventos y utilizar IDs internos seudónimos para análisis.
+- [ ] Restringir exportaciones y accesos administrativos; registrar quién puede ver o descargar datos.
+- [ ] Definir política de retención para cuentas inactivas, solicitudes, búsquedas y consentimientos.
+- [ ] Definir procedimientos de acceso, rectificación, portabilidad y eliminación.
+- [ ] Preparar copias de seguridad y restauración antes de almacenar información real.
+- [ ] Revisar privacidad y seguridad antes de incorporar un CRM, plataforma de emailing o nuevo conector.
+
+### CRM y campañas futuras
+
+- [ ] Decidir si el primer CRM será una vista operativa sobre Supabase o una herramienta externa.
+- [ ] Mantener Supabase como fuente maestra y sincronizar al CRM solo los campos necesarios.
+- [ ] Sincronizar únicamente contactos con base válida para la finalidad correspondiente.
+- [ ] Crear segmentos útiles, no sensibles:
+  - [ ] familias por municipio e intereses declarados;
+  - [ ] usuarios con búsquedas guardadas;
+  - [ ] proveedores por vertical, zona y estado de activación;
+  - [ ] proveedores con ficha incompleta o desactualizada;
+  - [ ] proveedores que han recibido valor antes de presentar Pro;
+  - [ ] usuarios con consentimiento de marketing activo.
+- [ ] Registrar campañas con UTMs y relacionarlas con registro, activación y conexión útil.
+- [ ] Medir entrega, apertura y clic en la plataforma de envío, pero utilizar resultados de producto para valorar la campaña.
+- [ ] Diseñar exclusiones: bajas, rebotes, quejas, cuentas eliminadas y usuarios sin consentimiento.
+
 ## Taxonomía mínima de eventos
 
 ### Descubrimiento y búsqueda
@@ -386,6 +502,9 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 - [ ] **Ficha del proveedor:** visibilidad, impresiones, aperturas, guardados, solicitudes, respuesta y resultados, sin confundir tráfico con clientes.
 - [ ] **Calidad y confianza:** frescura, verificación, incidencias, relevancia y privacidad.
 - [ ] **Monetización:** pricing, activación del plan, ingresos y churn cuando exista producto de pago.
+- [ ] **Demanda y buscador:** términos, intenciones, verticales, municipios, cero resultados, reformulaciones y conversión hasta conexión útil.
+- [ ] **Rendimiento de fichas y verticales:** impresiones, visitas, CTR, contactos, respuestas y conexiones útiles por proveedor, categoría y vertical.
+- [ ] **Usuarios y consentimiento:** registros, activación, perfiles completos, centros/intereses declarados, origen de adquisición y base activable para marketing.
 
 ## Reglas para Looker Studio u otra herramienta
 
@@ -530,6 +649,8 @@ No iniciar contacto sistemático con proveedores hasta poder marcar:
 - [ ] Política de privacidad y condiciones alineadas con los datos recogidos.
 - [ ] Taxonomía de eventos P0 implantada y validada.
 - [ ] Dashboard mínimo o consulta operativa para ver reclamaciones y estados.
+- [ ] Informe de búsquedas y rendimiento por ficha validado con datos de prueba.
+- [ ] Base de perfiles con RLS, consentimiento de marketing y proceso de baja probados.
 - [ ] Proceso de corrección, retirada y soporte definido.
 - [ ] Responsable del piloto y tiempos de respuesta definidos.
 
