@@ -119,7 +119,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Evitar que las páginas privadas conectadas a Supabase se ejecuten durante el prerender del build.
 - [ ] Hacer que las rutas privadas muestren un mensaje operativo claro cuando falten variables de Supabase en tiempo de ejecución. El directorio y cabecera públicos ya degradan sin bloquearse.
 - [x] Crear `.env.example` sin secretos con todas las variables requeridas y su finalidad.
-- [ ] Documentar variables por entorno: local, preview y production.
+- [x] Documentar variables por entorno: local, preview y production, incluyendo exposición, comportamiento cuando faltan y comprobaciones previas al despliegue.
 - [x] Auditar en Vercel la presencia de Supabase, Resend, Cookiebot, URL pública y correo administrativo por entorno.
 - [ ] Añadir las variables ausentes detectadas en la auditoría y volver a desplegar.
 - [ ] Completar la conexión de `tenlo.es` y `www.tenlo.es` a Vercel; ambos ya están añadidos y esperan la activación DNS.

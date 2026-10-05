@@ -8,13 +8,11 @@ function publishedCount(categoryId?: string) {
 }
 
 export function getSiteStats() {
-  const registeredFamilies = Number(process.env.TENLO_REGISTERED_FAMILIES ?? 100);
   const publishedLocalResources = publishedCount();
 
   return {
     centers: centers.length || publishedCount("centros"),
-    localResources: providers.length || publishedLocalResources,
-    families: Number.isFinite(registeredFamilies) ? registeredFamilies : 100
+    localResources: providers.length || publishedLocalResources
   };
 }
 
