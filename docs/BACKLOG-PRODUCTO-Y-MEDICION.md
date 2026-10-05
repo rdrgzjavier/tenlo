@@ -23,6 +23,20 @@ La secuencia que el MVP debe ser capaz de demostrar es:
 
 La prioridad no es completar todas las funcionalidades de un marketplace. Es demostrar esta secuencia en una categoría y una zona concretas, aprender y después ampliar.
 
+## Decisiones cerradas para el piloto
+
+- Ámbito geográfico: Madrid noroeste, inicialmente Las Rozas, Majadahonda, Pozuelo de Alarcón y Boadilla del Monte.
+- Oferta inicial: actividades extraescolares, academias, deporte, clases particulares, apoyo escolar, tecnología, arte, música, idiomas, campamentos y días sin cole.
+- Oferta complementaria relevante para familias: centros de salud mental infantil/familiar, clínicas dentales y otros servicios familiares verificables.
+- Se priorizan empresas, centros, asociaciones y profesionales autónomos con presencia profesional verificable.
+- Las fichas iniciales pueden crearse con información pública, indicando fuente, fecha y que todavía no están gestionadas por el proveedor.
+- Cada tipo de servicio tendrá una plantilla propia, pero todas las fichas del mismo tipo mostrarán los mismos campos y estados pendientes cuando falte información.
+- Las familias podrán solicitar información desde Tenlo, visitar la web oficial y llamar desde móvil cuando exista teléfono público.
+- La solicitud se dirige primero al proveedor elegido; si no puede atenderla o no responde, la familia puede pedir alternativas a Tenlo.
+- Una conexión útil inicial es una solicitud relevante respondida en un máximo de 48 horas con disponibilidad, alternativa o siguiente paso.
+- La participación de proveedores será gratuita durante el piloto y la suscripción se planteará después de demostrar valor recurrente.
+- Objetivo operativo inicial: identificar 40-60 proveedores, contactar 20-30 y conseguir 10-15 fichas reclamadas, completas y activas.
+
 ---
 
 ## Estado auditado
@@ -38,6 +52,9 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - Existen cinco migraciones de Supabase para perfiles, publicaciones, eventos de contacto, solicitudes de reclamación y feedback.
 - Hay autenticación y algunas páginas conectadas a Supabase, pero no una fuente de datos real unificada para el directorio.
 - La reclamación de ficha se guarda en Supabase y envía emails, pero exige iniciar sesión antes de enviar la solicitud.
+- El formulario de registro ya solicita tipo de usuario, nombre público, email, teléfono, contraseña, municipio y centro opcional. Para proveedores también muestra tipología, web, descripción, zona, modalidad, edades, disponibilidad, credenciales y otros campos.
+- En el estado actual solo se persisten en `profiles` nombre, email, teléfono, municipio, rol y estado. El centro opcional y los campos ampliados del proveedor no están conectados al guardado, y todavía no existe consentimiento específico de marketing.
+- No existe aún una bandeja administrativa operativa: hay una ruta de revisión de borradores y avisos por email, pero no un centro de solicitudes, alternativas y notificaciones.
 - Los CTAs de contacto no siguen un único flujo: algunos abren web, email o teléfono y el de canguros no crea aún una solicitud operativa.
 - Favoritos mezcla una señal local de sesión con datos de Supabase y todavía no representa un flujo completo.
 - GTM está cargado y existen eventos básicos en `dataLayer`, pero actualmente miden sobre todo clics y envíos, no el resultado completo de la conexión.
@@ -61,9 +78,8 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 
 ## Segmento inicial y propuesta de valor
 
-- [ ] Elegir una única combinación inicial de municipio y categoría.
-  - Criterio: existe una razón clara para empezar ahí y una lista alcanzable de proveedores.
-  - Decidir: `[municipio] + [categoría] + [tipo de familia/necesidad]`.
+- [x] Elegir el ámbito inicial: actividades y servicios familiares verificables en Las Rozas, Majadahonda, Pozuelo y Boadilla.
+- [ ] Ordenar las subcategorías para que el piloto no intente activar todas al mismo tiempo.
 - [ ] Definir la necesidad concreta que Tenlo ayuda a resolver en ese segmento.
 - [ ] Definir qué significa una opción adecuada para esa necesidad.
 - [ ] Definir la propuesta de valor para la familia en una frase.
@@ -113,6 +129,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] No considerar una web oficial como verificación suficiente por sí sola.
 - [ ] Definir los criterios y evidencias de cada nivel: `collected`, `verified`, `official`.
 - [ ] Mostrar en cada ficha la fuente, fecha de última revisión y estado de control por el proveedor cuando corresponda.
+- [ ] Utilizar etiquetas breves y comprensibles para el estado de confianza. Propuesta pendiente de aprobar: `Pública`, `Gestionada`, `Verificada`, `Oficial`.
 - [ ] Crear un mecanismo sencillo para solicitar corrección, retirada o actualización.
 - [ ] Revisar derechos de uso de imágenes remotas y evitar presentar imágenes genéricas como si fueran del proveedor.
 - [ ] Revisar textos sobre reserva: Tenlo no debe afirmar que permite reservar hasta que exista ese flujo.
@@ -123,6 +140,15 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] Eliminar la dependencia del directorio de `mock-data.ts` mediante una capa de acceso a datos.
 - [ ] Crear una migración/importación controlada para las fichas iniciales.
 - [ ] Normalizar proveedores, servicios, categorías, municipios y zonas de cobertura.
+- [ ] Definir plantillas por vertical manteniendo una estructura estable dentro de cada tipo:
+  - [ ] actividades y extraescolares;
+  - [ ] deporte;
+  - [ ] clases particulares y apoyo escolar;
+  - [ ] campamentos y días sin cole;
+  - [ ] salud mental y bienestar familiar;
+  - [ ] clínicas dentales y servicios sanitarios;
+  - [ ] plantilla genérica para otros servicios familiares.
+- [ ] Mostrar todos los campos de la plantilla correspondiente aunque no estén informados, usando estados como `Pendiente de verificar` o `No informado` y sin inventar valores.
 - [ ] Añadir a proveedor/ficha:
   - [ ] estado de reclamación;
   - [ ] estado de publicación;
@@ -186,6 +212,11 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 ## P1. Solicitud de contacto
 
 - [ ] Diseñar un único flujo de solicitud dentro de Tenlo para el piloto.
+- [ ] Mantener en la ficha tres vías diferenciadas cuando estén disponibles:
+  - [ ] `Solicitar información` dentro de Tenlo;
+  - [ ] `Llamar`, con icono y enlace `tel:` mobile first;
+  - [ ] `Visitar web oficial`.
+- [ ] Medir por separado el inicio y resultado observable de cada vía; una llamada o salida externa no equivale automáticamente a una conexión útil.
 - [ ] Recoger solo la información necesaria para que el proveedor decida si puede ayudar.
 - [ ] Evitar datos identificativos o sensibles de menores.
 - [ ] Crear entidad `request` con ID, familia, proveedor, categoría, zona, estado y marcas de tiempo.
@@ -194,6 +225,9 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] Permitir responder, rechazar, indicar falta de disponibilidad o pedir aclaración.
 - [ ] Registrar tiempo de primera respuesta y motivo de rechazo.
 - [ ] Si no hay respuesta, recordar al proveedor y ofrecer alternativas a la familia.
+- [ ] Guardar la petición de alternativas en Supabase como estado o tarea operativa, no solo como email.
+- [ ] Crear una bandeja administrativa con avisos de solicitudes sin respuesta, alternativas pendientes y conversaciones que requieren intervención.
+- [ ] Enviar además una notificación al correo operativo configurable mediante `ADMIN_EMAIL`. Dirección propuesta cuando el dominio esté activo: `solicitudes@tenlo.es`.
 - [ ] Preguntar a ambas partes si la conexión fue útil.
 - [ ] Preguntar posteriormente si avanzó a conversación, propuesta, reserva o contratación.
 - [ ] Evitar que email, teléfono y web externos sean la única fuente de contacto si se necesita medir resultados.
@@ -565,6 +599,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 - [ ] Probar invitación de proveedores por otros proveedores sin crear incentivos al spam.
 - [ ] Evaluar contenido local/SEO derivado de necesidades reales y datos verificados.
 - [ ] Integrar comunidad solo si mejora una necesidad central y no dispersa el marketplace.
+- [ ] Preparar más adelante superficies legibles por LLMs: datos estructurados, Schema.org, Markdown/`llms.txt`, APIs y posibles herramientas MCP, sin exponer datos privados ni saltarse permisos.
 
 ---
 
@@ -673,14 +708,16 @@ No iniciar contacto sistemático con proveedores hasta poder marcar:
 
 | Decisión | Estado | Elección | Fecha |
 |---|---|---|---|
-| Segmento inicial | Pendiente |  |  |
-| Definición de conexión útil | Pendiente |  |  |
-| SLA de respuesta | Pendiente |  |  |
+| Segmento inicial | Decidido | Actividades y servicios familiares en Madrid noroeste | 2026-10-05 |
+| Definición de conexión útil | Decidido | Solicitud relevante con respuesta útil o siguiente paso | 2026-10-05 |
+| SLA de respuesta | Decidido | 48 horas | 2026-10-05 |
 | Reclamación con o sin cuenta | Pendiente |  |  |
-| Contacto individual, múltiple o asistido | Pendiente |  |  |
-| Criterios de verificación | Pendiente |  |  |
+| Contacto individual, múltiple o asistido | Decidido | Individual; alternativas asistidas cuando no haya respuesta o disponibilidad | 2026-10-05 |
+| Criterios de verificación | Parcial | Pública, gestionada, verificada y oficial; etiquetas por confirmar | 2026-10-05 |
 | Dominio canónico | Pendiente |  |  |
-| Fuente de verdad de producto | Pendiente |  |  |
-| Primera hipótesis de monetización | Pendiente |  |  |
+| Fuente de verdad de producto | Decidido | Supabase | 2026-10-05 |
+| Primera hipótesis de monetización | Parcial | Gratuito durante piloto; suscripción tras demostrar valor recurrente | 2026-10-05 |
 | Herramienta inicial de dashboard | Pendiente |  |  |
+| Correo operativo de solicitudes | Pendiente | Propuesta: solicitudes@tenlo.es |  |
+| Etiquetas definitivas de confianza | Pendiente | Propuesta: Pública, Gestionada, Verificada, Oficial |  |
 
