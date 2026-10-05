@@ -73,7 +73,7 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - El código todavía utiliza `https://kiryco.vercel.app` como dominio actual.
 - `tenlo.es` y `www.tenlo.es` están añadidos en Vercel: la raíz será producción y `www` redirigirá permanentemente (`308`) a `tenlo.es`. Permanecen en configuración inválida hasta cambiar los nameservers del registrador.
 - La matriz de Vercel fue auditada el 5 de octubre de 2026: Supabase está configurado para producción y preview; `ADMIN_EMAIL` y `NEXT_PUBLIC_COOKIEBOT_ID` están en producción y preview. Faltan `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_GTM_ID`, `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY` y `MAIL_FROM`.
-- La zona gratuita `tenlo.es` está preparada en Cloudflare con la raíz `A 216.198.79.1` y `www CNAME 4b8f150f986f3ce8.vercel-dns-017.com`, ambos en modo Solo DNS. Falta sustituir en DonDominio `ns1/ns2.dondominio.com` por `david.ns.cloudflare.com` y `norah.ns.cloudflare.com`.
+- La zona gratuita `tenlo.es` está preparada en Cloudflare con la raíz `A 216.198.79.1` y `www CNAME 4b8f150f986f3ce8.vercel-dns-017.com`, ambos en modo Solo DNS. El 05/10/2026 se sustituyeron en DonDominio `ns1/ns2.dondominio.com` por `david.ns.cloudflare.com` y `norah.ns.cloudflare.com`; Cloudflare está esperando la propagación del registrador.
 - DonDominio no tiene creada aún ninguna cuenta ni alias de correo para `tenlo.es`.
 
 ---
@@ -124,7 +124,8 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] Añadir las variables ausentes detectadas en la auditoría y volver a desplegar.
 - [ ] Completar la conexión de `tenlo.es` y `www.tenlo.es` a Vercel; ambos ya están añadidos y esperan la activación DNS.
 - [x] Definir dominio canónico y redirección única: raíz `tenlo.es`; `www` redirige con `308` a la raíz.
-- [ ] Cambiar los nameservers en DonDominio a los asignados por Cloudflare y verificar la propagación antes de retirar registros heredados.
+- [x] Cambiar los nameservers en DonDominio a los asignados por Cloudflare.
+- [ ] Verificar que Cloudflare marque la zona como activa y que la resolución pública use `david.ns.cloudflare.com` y `norah.ns.cloudflare.com` antes de retirar registros heredados.
 - [ ] Sustituir `kiryco.vercel.app` en configuración, metadata, emails, sitemap y enlaces absolutos.
 - [ ] Verificar SSL, sitemap, robots, canonical y Open Graph en el dominio definitivo.
 - [ ] Añadir una comprobación automática en GitHub para `typecheck`, `lint` y `build` en cada cambio.
