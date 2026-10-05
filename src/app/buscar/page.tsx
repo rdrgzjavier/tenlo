@@ -6,6 +6,7 @@ import ListingCard from "@/components/ListingCard";
 import LoadMoreGrid from "@/components/LoadMoreGrid";
 import ResponsiveFilterPanel from "@/components/ResponsiveFilterPanel";
 import { listings, municipalities } from "@/lib/mock-data";
+import { trackingAttrs } from "@/lib/analytics";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -127,9 +128,20 @@ export default function SearchPage({ searchParams }: { searchParams: SearchParam
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm font-semibold text-slatecopy">{filtered.length} resultado{filtered.length === 1 ? "" : "s"}</p>
           </div>
-          <LoadMoreGrid className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {filtered.map((listing) => <ListingCard key={listing.id} listing={listing} />)}
-          </LoadMoreGrid>
+          {filtered.length > 0 ? (
+            <LoadMoreGrid className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {filtered.map((listing) => <ListingCard key={listing.id} listing={listing} />)}
+            </LoadMoreGrid>
+          ) : (
+            <div className="card p-6 md:p-8">
+              <h2 className="text-2xl font-semibold text-ink">Todavía no tenemos una opción que encaje</h2>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">Prueba a quitar algún filtro o cuéntanos qué necesitas. Las búsquedas sin resultados nos ayudan a decidir qué proveedores debemos incorporar.</p>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                <Link href="/buscar" className="btn-primary">Limpiar filtros</Link>
+                <Link href="/contacto" className="btn-secondary" {...trackingAttrs("zero_results", { category: selected.categoria, municipality: selected.municipio })}>Pedir ayuda a Tenlo</Link>
+              </div>
+            </div>
+          )}
         </section>
       </div>
     </div>

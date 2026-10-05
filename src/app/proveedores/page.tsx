@@ -46,7 +46,7 @@ export default function ProvidersPage() {
               <div key={level} className="flex items-start gap-3 rounded-2xl border border-line bg-soft p-4">
                 <TrustBadge level={level} />
                 <p className="text-sm leading-6 text-muted">{{
-                  collected: "Tenlo ha localizado información en fuentes públicas.",
+                  collected: "Tenlo ha localizado información pública, pero aún no ha sido confirmada por la entidad.",
                   managed: "La entidad ha reclamado la ficha y puede actualizarla.",
                   verified: "Tenlo ha comprobado identidad y datos esenciales.",
                   official: "La información ha sido confirmada directamente por la entidad."

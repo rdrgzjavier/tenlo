@@ -35,7 +35,7 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - La solicitud se dirige primero al proveedor elegido; si no puede atenderla o no responde, la familia puede pedir alternativas a Tenlo.
 - Una conexión útil inicial es una solicitud relevante respondida en un máximo de 48 horas con disponibilidad, alternativa o siguiente paso.
 - La participación de proveedores será gratuita durante el piloto y la suscripción se planteará después de demostrar valor recurrente.
-- Etiquetas de confianza aprobadas: `Pública`, `Gestionada`, `Verificada` y `Oficial`.
+- Etiquetas de confianza: `No verificada`, `Gestionada`, `Verificada` y `Oficial`. Se evita `Pública` para no confundir el estado de confianza con la titularidad pública, concertada o privada de un centro.
 - La reclamación puede iniciarse sin cuenta; Tenlo verificará el email y la relación con la ficha antes de aprobar cambios.
 - Fuente de verdad analítica: GA4 para adquisición/comportamiento y Supabase para operaciones/resultados; visualización inicial en Looker Studio.
 - Dominio canónico aprobado: `https://tenlo.es`, con DNS gestionado entre DonDominio y Cloudflare y despliegue en Vercel.
@@ -133,9 +133,9 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] Revisar el mensaje `100% moderado y seguro`; sustituirlo por una afirmación demostrable.
 - [ ] Revisar cada ficha mock antes de hacerla pública como ficha real.
 - [ ] No considerar una web oficial como verificación suficiente por sí sola.
-- [x] Definir los niveles visibles de confianza: `Pública`, `Gestionada`, `Verificada` y `Oficial`, independientes del plan comercial.
+- [x] Definir los niveles visibles de confianza: `No verificada`, `Gestionada`, `Verificada` y `Oficial`, independientes del plan comercial y de la titularidad del centro.
 - [ ] Mostrar en cada ficha la fuente, fecha de última revisión y estado de control por el proveedor cuando corresponda.
-- [x] Utilizar etiquetas breves y comprensibles para el estado de confianza: `Pública`, `Gestionada`, `Verificada`, `Oficial`.
+- [x] Utilizar etiquetas breves y comprensibles para el estado de confianza: `No verificada`, `Gestionada`, `Verificada`, `Oficial`.
 - [ ] Crear un mecanismo sencillo para solicitar corrección, retirada o actualización.
 - [ ] Revisar derechos de uso de imágenes remotas y evitar presentar imágenes genéricas como si fueran del proveedor.
 - [ ] Revisar textos sobre reserva: Tenlo no debe afirmar que permite reservar hasta que exista ese flujo.
@@ -209,7 +209,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 
 - [ ] Sustituir filtros genéricos por los atributos que realmente permiten decidir en el segmento inicial.
 - [ ] Mostrar el número de resultados sin sugerir que más siempre es mejor.
-- [ ] Registrar búsquedas sin resultados y crear una salida útil.
+- [x] Registrar visualmente búsquedas sin resultados y crear una salida útil para limpiar filtros o pedir ayuda a Tenlo.
 - [ ] Permitir comparar un número pequeño de opciones con campos homogéneos.
 - [ ] Hacer visibles cobertura, disponibilidad, actualización y confianza.
 - [ ] Revisar el orden de resultados y definir criterios transparentes de ranking.
@@ -271,7 +271,7 @@ Arquitectura inicial recomendada:
 - [ ] Eliminar el ID de GTM hardcodeado y moverlo a configuración por entorno.
 - [ ] Implementar Consent Mode y verificar que analítica no se activa antes del consentimiento cuando sea necesario.
 - [ ] Prohibir el envío a GA4 de nombre, email, teléfono, texto libre, direcciones precisas o información de menores.
-- [ ] Crear un diccionario de datos y una taxonomía versionada de eventos.
+- [x] Crear el diccionario inicial y la taxonomía `1.0` de eventos; mantenerla versionada conforme se implementen los flujos.
 - [ ] Definir identificadores estables no personales:
   - `provider_id`;
   - `profile_id`;
@@ -719,11 +719,11 @@ No iniciar contacto sistemático con proveedores hasta poder marcar:
 | SLA de respuesta | Decidido | 48 horas | 2026-10-05 |
 | Reclamación con o sin cuenta | Decidido | Inicio sin cuenta; verificación posterior por email | 2026-10-05 |
 | Contacto individual, múltiple o asistido | Decidido | Individual; alternativas asistidas cuando no haya respuesta o disponibilidad | 2026-10-05 |
-| Criterios de verificación | Decidido | Pública, Gestionada, Verificada y Oficial | 2026-10-05 |
+| Criterios de verificación | Decidido | No verificada, Gestionada, Verificada y Oficial | 2026-10-05 |
 | Dominio canónico | Decidido | https://tenlo.es; Cloudflare + DonDominio + Vercel | 2026-10-05 |
 | Fuente de verdad de producto | Decidido | Supabase | 2026-10-05 |
 | Primera hipótesis de monetización | Parcial | Gratuito durante piloto; suscripción tras demostrar valor recurrente | 2026-10-05 |
 | Herramienta inicial de dashboard | Decidido | Looker Studio; GA4 + Supabase como fuentes | 2026-10-05 |
 | Correo operativo de solicitudes | Decidido | solicitudes@tenlo.es reenviado a tenlocerca@gmail.com | 2026-10-05 |
-| Etiquetas definitivas de confianza | Decidido | Pública, Gestionada, Verificada, Oficial | 2026-10-05 |
+| Etiquetas definitivas de confianza | Decidido | No verificada, Gestionada, Verificada, Oficial | 2026-10-05 |
 

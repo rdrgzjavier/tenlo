@@ -46,6 +46,9 @@ npm run build
 ## Plan de producto
 
 - [Backlog de producto, proveedores y medición](docs/BACKLOG-PRODUCTO-Y-MEDICION.md)
+- [Criterios de confianza de las fichas](docs/CRITERIOS-DE-CONFIANZA.md)
+- [Diccionario inicial de eventos](docs/DICCIONARIO-DE-EVENTOS.md)
+- [Correo operativo](docs/CORREO-OPERATIVO.md)
 
 ## Rutas principales
 

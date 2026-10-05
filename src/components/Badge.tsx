@@ -4,7 +4,7 @@ import type { ModerationStatus, TrustLevel } from "@/lib/types";
 export function VerifiedBadge({ verified }: { verified?: boolean }) {
   if (!verified) return null;
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-sage/10 px-3 py-1 text-sm font-semibold text-black">
+    <span className="inline-flex items-center gap-1 rounded-full bg-sage/10 px-3 py-1 text-xs font-semibold text-black">
       <CheckCircle2 className="text-black" size={14} aria-hidden /> Verificado
     </span>
   );
@@ -12,7 +12,7 @@ export function VerifiedBadge({ verified }: { verified?: boolean }) {
 
 export function TrustBadge({ level, variant = "soft" }: { level: TrustLevel; variant?: "soft" | "solid" }) {
   const config = {
-    collected: { label: "Pública", title: "Información recopilada de fuentes públicas; el proveedor todavía no gestiona esta ficha.", Icon: Database },
+    collected: { label: "No verificada", title: "Información recopilada de fuentes públicas que todavía no ha sido confirmada por el centro o proveedor.", Icon: Database },
     managed: { label: "Gestionada", title: "El proveedor ha reclamado la ficha y puede mantener su información actualizada.", Icon: UserRoundCheck },
     verified: { label: "Verificada", title: "Tenlo ha comprobado la identidad y los datos esenciales del proveedor.", Icon: CheckCircle2 },
     official: { label: "Oficial", title: "La información ha sido confirmada directamente por el proveedor.", Icon: ShieldCheck }
@@ -21,7 +21,7 @@ export function TrustBadge({ level, variant = "soft" }: { level: TrustLevel; var
   const className = variant === "solid" ? "bg-white text-black ring-line shadow-sm" : "bg-sage/10 text-black ring-sage/20";
 
   return (
-    <span title={config.title} className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold ring-1 ${className}`}>
+    <span title={config.title} className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold ring-1 ${className}`}>
       <Icon className="text-black" size={14} aria-hidden /> {config.label}
     </span>
   );
