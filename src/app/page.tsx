@@ -43,7 +43,7 @@ export const metadata: Metadata = {
 };
 
 const benefits = [
-  { title: "Servicios verificados", text: "Calidad y confianza", Icon: ShieldCheck, color: "text-petrol" },
+  { title: "Confianza visible", text: "Estado claro de cada ficha", Icon: ShieldCheck, color: "text-petrol" },
   { title: "Información revisada", text: "Fuentes y datos claros", Icon: CheckCircle2, color: "text-sage" },
   { title: "Todo en un lugar", text: "Ahorra tiempo", Icon: Heart, color: "text-coral" }
 ];
@@ -155,7 +155,7 @@ export default function Home() {
     { value: `+${formatStat(stats.centers)}`, label: "Centros educativos", Icon: GraduationCap },
     { value: `+${formatStat(Math.max(stats.localResources, totalPublished))}`, label: "Recursos locales", Icon: MapPinned },
     { value: "+4", label: "Zonas cubiertas", Icon: MapPin },
-    { value: "100%", label: "Moderado y seguro", Icon: ShieldCheck }
+    { value: "Revisión", label: "Antes de publicar", Icon: ShieldCheck }
   ];
   const featuredCenters = centers.slice(0, 3);
 
@@ -167,7 +167,7 @@ export default function Home() {
             <div className="mb-6 h-40 overflow-hidden rounded-[28px] bg-soft md:hidden">
               <ImageWithFallback src={heroImageMobile} fallbackSrc="https://images.pexels.com/photos/7880624/pexels-photo-7880624.jpeg?auto=compress&cs=tinysrgb&w=640&q=78" alt="Persona adulta caminando de la mano con una menor, sin datos identificativos" className="h-full w-full object-cover object-center" loading="eager" fetchPriority="high" />
             </div>
-            <h1 className="page-title max-w-3xl">Encuentra, compara y reserva servicios para tu familia</h1>
+            <h1 className="page-title max-w-3xl">Encuentra, compara y contacta con servicios para tu familia</h1>
             <p className="lead">Actividades, apoyo escolar, salud, tecnología, transporte y mucho más. Información organizada por zona, sin datos identificativos de menores.</p>
             <ValidatedSearchForm className="mt-8 grid gap-3 rounded-[24px] bg-panel p-3 shadow-soft sm:grid-cols-[1fr_0.72fr_auto]" message="Indica qué quieres encontrar o dónde quieres buscar.">
               <label className="flex min-h-14 items-center gap-3 rounded-2xl bg-white px-4 ring-1 ring-line">

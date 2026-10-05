@@ -4,7 +4,7 @@ Tenlo es una plataforma local para familias adultas que organiza centros educati
 
 Este archivo orienta a agentes de IA que puedan consultar recursos públicos del sitio. No se publica como promesa de posicionamiento ni como requisito para Google Search; la web debe interpretarse principalmente por su HTML público, sitemap, robots.txt y contenido visible.
 
-Dominio actual: https://kiryco.vercel.app
+Dominio canónico: https://tenlo.es
 Dominio futuro previsto: https://tenlo.es
 
 ## Cobertura inicial

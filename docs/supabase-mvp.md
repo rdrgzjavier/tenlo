@@ -70,7 +70,7 @@ En Supabase:
 En Google Cloud:
 
 1. Crear credenciales OAuth para aplicacion web.
-2. Anadir como origen autorizado `https://kiryco.vercel.app`.
+2. Añadir como origen autorizado `https://tenlo.es` y conservar temporalmente la URL de preview que se utilice para pruebas.
 3. Anadir como redirect autorizado la URL que muestra Supabase para Google.
 
 ## Pendiente de fase 2

@@ -70,7 +70,7 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 
 - El despliegue de producción de Vercel correspondiente al commit `89f0e78` está en estado `Ready`.
 - El alias público `https://kiryco.vercel.app` responde correctamente.
-- El código todavía utiliza `https://kiryco.vercel.app` como dominio actual.
+- El código utiliza `https://tenlo.es` como dominio canónico por defecto y permite configurarlo por entorno mediante `NEXT_PUBLIC_SITE_URL`.
 - `tenlo.es` y `www.tenlo.es` están añadidos en Vercel: la raíz será producción y `www` redirigirá permanentemente (`308`) a `tenlo.es`. Permanecen en configuración inválida hasta cambiar los nameservers del registrador.
 - La matriz de Vercel fue auditada el 5 de octubre de 2026: Supabase está configurado para producción y preview; `ADMIN_EMAIL` y `NEXT_PUBLIC_COOKIEBOT_ID` están en producción y preview. Faltan `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_GTM_ID`, `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY` y `MAIL_FROM`.
 - La zona gratuita `tenlo.es` está preparada en Cloudflare con la raíz `A 216.198.79.1` y `www CNAME 4b8f150f986f3ce8.vercel-dns-017.com`, ambos en modo Solo DNS. El 05/10/2026 se sustituyeron en DonDominio `ns1/ns2.dondominio.com` por `david.ns.cloudflare.com` y `norah.ns.cloudflare.com`; Cloudflare está esperando la propagación del registrador.
@@ -126,15 +126,15 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Definir dominio canónico y redirección única: raíz `tenlo.es`; `www` redirige con `308` a la raíz.
 - [x] Cambiar los nameservers en DonDominio a los asignados por Cloudflare.
 - [ ] Verificar que Cloudflare marque la zona como activa y que la resolución pública use `david.ns.cloudflare.com` y `norah.ns.cloudflare.com` antes de retirar registros heredados.
-- [ ] Sustituir `kiryco.vercel.app` en configuración, metadata, emails, sitemap y enlaces absolutos.
+- [x] Sustituir `kiryco.vercel.app` en configuración, metadata, emails, sitemap y enlaces absolutos.
 - [ ] Verificar SSL, sitemap, robots, canonical y Open Graph en el dominio definitivo.
-- [ ] Añadir una comprobación automática en GitHub para `typecheck`, `lint` y `build` en cada cambio.
+- [x] Añadir una comprobación automática en GitHub para `typecheck`, `lint` y `build` en cada cambio.
 - [ ] Decidir si los previews deben permanecer protegidos y mantener producción pública.
 
 ## P0. Veracidad y confianza del contenido actual
 
-- [ ] Eliminar cifras por defecto que puedan parecer reales, como las `100` familias registradas.
-- [ ] Revisar el mensaje `100% moderado y seguro`; sustituirlo por una afirmación demostrable.
+- [x] Eliminar cifras por defecto que puedan parecer reales, como las `100` familias registradas.
+- [x] Revisar el mensaje `100% moderado y seguro`; sustituirlo por una afirmación demostrable.
 - [ ] Revisar cada ficha mock antes de hacerla pública como ficha real.
 - [ ] No considerar una web oficial como verificación suficiente por sí sola.
 - [x] Definir los niveles visibles de confianza: `No verificada`, `Gestionada`, `Verificada` y `Oficial`, independientes del plan comercial y de la titularidad del centro.
@@ -142,7 +142,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Utilizar etiquetas breves y comprensibles para el estado de confianza: `No verificada`, `Gestionada`, `Verificada`, `Oficial`.
 - [ ] Crear un mecanismo sencillo para solicitar corrección, retirada o actualización.
 - [ ] Revisar derechos de uso de imágenes remotas y evitar presentar imágenes genéricas como si fueran del proveedor.
-- [ ] Revisar textos sobre reserva: Tenlo no debe afirmar que permite reservar hasta que exista ese flujo.
+- [x] Revisar la promesa principal de reserva: la portada comunica ahora búsqueda, comparación y contacto. Las menciones restantes describen condiciones o información publicada por terceros, no una reserva dentro de Tenlo.
 
 ## P0. Modelo de datos real
 
