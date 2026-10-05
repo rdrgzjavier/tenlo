@@ -203,7 +203,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] Utilizar demanda real únicamente; no afirmar que hay familias esperando si no se ha observado.
 - [x] Preparar guion de entrevista de 20 minutos para proveedores.
 - [x] Preparar checklist manual de verificación y publicación.
-- [ ] Definir responsable y tiempo máximo de moderación.
+- [x] Definir responsable y tiempo máximo de moderación: Javier será el responsable operativo inicial; reclamaciones, correcciones y retiradas tendrán un plazo máximo de 4 días laborables.
 - [x] Registrar motivos de no participación para mejorar la propuesta.
 
 ---
@@ -733,4 +733,6 @@ No iniciar contacto sistemático con proveedores hasta poder marcar:
 | Herramienta inicial de dashboard | Decidido | Looker Studio; GA4 + Supabase como fuentes | 2026-10-05 |
 | Correo operativo de solicitudes | Decidido | solicitudes@tenlo.es reenviado a tenlocerca@gmail.com | 2026-10-05 |
 | Etiquetas definitivas de confianza | Decidido | No verificada, Gestionada, Verificada, Oficial | 2026-10-05 |
+| Responsable operativo inicial | Decidido | Javier | 2026-10-05 |
+| Plazo de moderación operativa | Decidido | Máximo de 4 días laborables para reclamaciones, correcciones y retiradas | 2026-10-05 |
 

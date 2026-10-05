@@ -199,11 +199,11 @@ No convertir el silencio en una objeción inventada. Si no hay respuesta, regist
 - Revisar cada ficha antes del primer email.
 - Enviar un único recordatorio a los 5-7 días.
 - Cerrar la secuencia si no hay respuesta.
-- Revisar reclamaciones en un máximo propuesto de 2 días laborables.
-- Revisar solicitudes de corrección o retirada con prioridad el mismo día laborable.
+- Revisar reclamaciones en un máximo de 4 días laborables.
+- Revisar solicitudes de corrección o retirada en un máximo de 4 días laborables.
 - Realizar una revisión semanal de métricas y aprendizajes del lote.
 
-El responsable operativo y los plazos definitivos deben confirmarse antes del primer envío.
+Javier será el responsable operativo inicial de revisar y aprobar fichas, reclamaciones, correcciones y retiradas. Si aumenta el volumen, se revisarán el reparto de responsabilidades y el cumplimiento del plazo antes de ampliar el piloto.
 
 ## 9. Métricas del piloto de proveedores
 
