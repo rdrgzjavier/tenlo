@@ -43,6 +43,10 @@ npm run lint
 npm run build
 ```
 
+## Plan de producto
+
+- [Backlog de producto, proveedores y medición](docs/BACKLOG-PRODUCTO-Y-MEDICION.md)
+
 ## Rutas principales
 
 - `/`
