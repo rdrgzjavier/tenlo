@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import PublishForm from "@/components/PublishForm";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
+export const dynamic = "force-dynamic";
+
 export default async function PublishPage() {
   const supabase = createSupabaseServerClient();
   const { data } = await supabase.auth.getUser();

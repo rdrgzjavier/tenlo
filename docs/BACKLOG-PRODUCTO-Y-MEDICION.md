@@ -35,6 +35,11 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - La solicitud se dirige primero al proveedor elegido; si no puede atenderla o no responde, la familia puede pedir alternativas a Tenlo.
 - Una conexión útil inicial es una solicitud relevante respondida en un máximo de 48 horas con disponibilidad, alternativa o siguiente paso.
 - La participación de proveedores será gratuita durante el piloto y la suscripción se planteará después de demostrar valor recurrente.
+- Etiquetas de confianza aprobadas: `Pública`, `Gestionada`, `Verificada` y `Oficial`.
+- La reclamación puede iniciarse sin cuenta; Tenlo verificará el email y la relación con la ficha antes de aprobar cambios.
+- Fuente de verdad analítica: GA4 para adquisición/comportamiento y Supabase para operaciones/resultados; visualización inicial en Looker Studio.
+- Dominio canónico aprobado: `https://tenlo.es`, con DNS gestionado entre DonDominio y Cloudflare y despliegue en Vercel.
+- Correo operativo aprobado: `solicitudes@tenlo.es`, reenviado inicialmente a `tenlocerca@gmail.com` y respaldado por la bandeja administrativa.
 - Objetivo operativo inicial: identificar 40-60 proveedores, contactar 20-30 y conseguir 10-15 fichas reclamadas, completas y activas.
 
 ---
@@ -98,7 +103,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] Mantener separados `Verified` y `Pro`.
   - `Verified`: confianza comprobable.
   - `Pro`: plan comercial con herramientas o beneficios adicionales.
-- [ ] Decidir si la reclamación de ficha requiere cuenta desde el principio.
+- [x] Decidir si la reclamación de ficha requiere cuenta desde el principio.
   - Recomendación para el piloto: permitir una solicitud inicial sin registro y verificar la identidad después, para reducir fricción.
 - [ ] Decidir si la familia contacta a un proveedor, a varios o pide a Tenlo una selección asistida.
 
@@ -110,7 +115,8 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 
 - [ ] Actualizar Next.js y dependencias a versiones soportadas sin avisos críticos conocidos.
 - [ ] Repetir `npm audit`, `typecheck`, `lint` y `build` tras la actualización.
-- [ ] Hacer que el build falle con un mensaje claro o degrade de forma segura cuando falten variables de Supabase; evitar fallos durante el prerender.
+- [x] Evitar que las páginas privadas conectadas a Supabase se ejecuten durante el prerender del build.
+- [ ] Hacer que las rutas privadas muestren un mensaje operativo claro cuando falten variables de Supabase en tiempo de ejecución.
 - [ ] Crear `.env.example` sin secretos con todas las variables requeridas y su finalidad.
 - [ ] Documentar variables por entorno: local, preview y production.
 - [ ] Confirmar en Vercel la presencia de Supabase, Resend, Cookiebot, URL pública y correo administrativo en los tres entornos.
@@ -129,7 +135,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] No considerar una web oficial como verificación suficiente por sí sola.
 - [ ] Definir los criterios y evidencias de cada nivel: `collected`, `verified`, `official`.
 - [ ] Mostrar en cada ficha la fuente, fecha de última revisión y estado de control por el proveedor cuando corresponda.
-- [ ] Utilizar etiquetas breves y comprensibles para el estado de confianza. Propuesta pendiente de aprobar: `Pública`, `Gestionada`, `Verificada`, `Oficial`.
+- [x] Utilizar etiquetas breves y comprensibles para el estado de confianza: `Pública`, `Gestionada`, `Verificada`, `Oficial`.
 - [ ] Crear un mecanismo sencillo para solicitar corrección, retirada o actualización.
 - [ ] Revisar derechos de uso de imágenes remotas y evitar presentar imágenes genéricas como si fueran del proveedor.
 - [ ] Revisar textos sobre reserva: Tenlo no debe afirmar que permite reservar hasta que exista ese flujo.
@@ -711,13 +717,13 @@ No iniciar contacto sistemático con proveedores hasta poder marcar:
 | Segmento inicial | Decidido | Actividades y servicios familiares en Madrid noroeste | 2026-10-05 |
 | Definición de conexión útil | Decidido | Solicitud relevante con respuesta útil o siguiente paso | 2026-10-05 |
 | SLA de respuesta | Decidido | 48 horas | 2026-10-05 |
-| Reclamación con o sin cuenta | Pendiente |  |  |
+| Reclamación con o sin cuenta | Decidido | Inicio sin cuenta; verificación posterior por email | 2026-10-05 |
 | Contacto individual, múltiple o asistido | Decidido | Individual; alternativas asistidas cuando no haya respuesta o disponibilidad | 2026-10-05 |
-| Criterios de verificación | Parcial | Pública, gestionada, verificada y oficial; etiquetas por confirmar | 2026-10-05 |
-| Dominio canónico | Pendiente |  |  |
+| Criterios de verificación | Decidido | Pública, Gestionada, Verificada y Oficial | 2026-10-05 |
+| Dominio canónico | Decidido | https://tenlo.es; Cloudflare + DonDominio + Vercel | 2026-10-05 |
 | Fuente de verdad de producto | Decidido | Supabase | 2026-10-05 |
 | Primera hipótesis de monetización | Parcial | Gratuito durante piloto; suscripción tras demostrar valor recurrente | 2026-10-05 |
-| Herramienta inicial de dashboard | Pendiente |  |  |
-| Correo operativo de solicitudes | Pendiente | Propuesta: solicitudes@tenlo.es |  |
-| Etiquetas definitivas de confianza | Pendiente | Propuesta: Pública, Gestionada, Verificada, Oficial |  |
+| Herramienta inicial de dashboard | Decidido | Looker Studio; GA4 + Supabase como fuentes | 2026-10-05 |
+| Correo operativo de solicitudes | Decidido | solicitudes@tenlo.es reenviado a tenlocerca@gmail.com | 2026-10-05 |
+| Etiquetas definitivas de confianza | Decidido | Pública, Gestionada, Verificada, Oficial | 2026-10-05 |
 

@@ -47,13 +47,17 @@ export default function ClaimProfileForm({ entityType, entityId, entityName }: C
     return (
       <div className="card p-6">
         <h2 className="text-2xl font-semibold text-ink">Solicitud recibida</h2>
-        <p className="mt-3 text-sm leading-6 text-muted">Gracias. Revisaremos los datos antes de actualizar la ficha pública.</p>
+        <p className="mt-3 text-sm leading-6 text-muted">Gracias. Revisaremos los datos y verificaremos por email tu relación con la ficha antes de actualizarla.</p>
       </div>
     );
   }
 
   return (
     <form className="card mt-8 grid gap-5 p-5 md:p-8" onSubmit={handleSubmit} {...trackingAttrs("claim_profile_submit", { item: entityId, type: entityType })}>
+      <label className="hidden" aria-hidden="true">
+        Empresa
+        <input name="company" tabIndex={-1} autoComplete="off" />
+      </label>
       <div className="grid gap-4 md:grid-cols-2">
         <label className="field-label">
           Nombre y apellidos
@@ -96,7 +100,7 @@ export default function ClaimProfileForm({ entityType, entityId, entityName }: C
         Confirmo que actúo como adulto responsable o representante autorizado, y que la información no incluye datos personales, fotos ni horarios identificativos de menores.
       </label>
       {error ? <p className="rounded-xl border border-coral/30 bg-coral/10 p-3 text-sm font-semibold text-coral">{error}</p> : null}
-      <button className="btn-primary w-full md:w-fit" type="submit" disabled={loading || !accepted}>{loading ? "Enviando..." : "Enviar validación"}</button>
+      <button className="btn-primary w-full md:w-fit" type="submit" disabled={loading || !accepted}>{loading ? "Enviando..." : "Solicitar gestión de la ficha"}</button>
     </form>
   );
 }

@@ -1,7 +1,6 @@
 export const siteConfig = {
   name: "Tenlo",
-  currentDomain: "https://kiryco.vercel.app",
-  futureDomain: "https://tenlo.es",
+  currentDomain: process.env.NEXT_PUBLIC_SITE_URL || "https://tenlo.es",
   tagline: "Todo lo que necesitas alrededor del colegio, filtrado por tu zona y tu centro",
   shortDescription: "Servicios, centros y recursos familiares cerca del colegio",
   description:

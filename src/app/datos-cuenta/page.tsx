@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import AccountSettings from "@/components/AccountSettings";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Datos de cuenta | Tenlo",
   description: "Consulta datos de cuenta, cambia contraseña o solicita la baja en Tenlo."

@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { ClipboardList } from "lucide-react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Mis publicaciones | Tenlo",
   description: "Ofertas, recursos y fichas enviadas a revisión desde tu cuenta de Tenlo."

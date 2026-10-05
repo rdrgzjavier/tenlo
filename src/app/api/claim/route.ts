@@ -4,16 +4,17 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
   const data = await request.json();
+
+  if (data.company) {
+    return NextResponse.json({ ok: true });
+  }
+
   const supabase = createSupabaseServerClient();
   const { data: authData } = await supabase.auth.getUser();
   const user = authData.user;
 
-  if (!user) {
-    return NextResponse.json({ ok: false, error: "Debes iniciar sesión para validar una ficha." }, { status: 401 });
-  }
-
   const payload = {
-    user_id: user.id,
+    user_id: user?.id ?? null,
     entity_type: String(data.entityType || "provider"),
     entity_id: String(data.entityId || ""),
     entity_name: String(data.entityName || ""),
@@ -25,6 +26,18 @@ export async function POST(request: Request) {
     official_website: String(data.officialWebsite || ""),
     image_url: String(data.imageUrl || "")
   };
+
+  if (!payload.entity_id || !payload.entity_name || !payload.requester_name || !payload.requester_email || !payload.role_description) {
+    return NextResponse.json({ ok: false, error: "Completa los campos obligatorios." }, { status: 400 });
+  }
+
+  if (!/^\S+@\S+\.\S+$/.test(payload.requester_email) || payload.requester_email.length > 254) {
+    return NextResponse.json({ ok: false, error: "Indica un email profesional válido." }, { status: 400 });
+  }
+
+  if (payload.entity_name.length > 200 || payload.requester_name.length > 120 || payload.corrections.length > 5000) {
+    return NextResponse.json({ ok: false, error: "Alguno de los campos supera la longitud permitida." }, { status: 400 });
+  }
 
   const { error } = await supabase.from("claim_requests").insert(payload);
   if (error) {
@@ -46,7 +59,7 @@ export async function POST(request: Request) {
 
   const userHtml = tenloEmailShell("Hemos recibido tu solicitud", `
     <p style="margin:0 0 14px;line-height:1.6">Gracias. Hemos recibido tu solicitud para validar la ficha de <strong>${payload.entity_name}</strong>.</p>
-    <p style="margin:0;line-height:1.6">El equipo de Tenlo revisará la información antes de publicar cambios visibles. Si necesitamos confirmar algún dato, contactaremos contigo por email o teléfono.</p>
+    <p style="margin:0;line-height:1.6">El equipo de Tenlo revisará la información y verificará tu relación con la ficha antes de publicar cambios visibles. No necesitas crear una cuenta para iniciar la solicitud; te indicaremos por email el siguiente paso.</p>
   `);
 
   try {

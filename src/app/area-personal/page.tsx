@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { Bookmark, ClipboardList, FilePlus2, Settings, ShieldCheck } from "lucide-react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Área personal | Tenlo",
   description: "Gestiona favoritos, publicaciones, datos de cuenta y solicitudes dentro de Tenlo."

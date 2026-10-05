@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { Heart } from "lucide-react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Favoritos | Tenlo",
   description: "Servicios, centros y recursos guardados en tu cuenta de Tenlo."
