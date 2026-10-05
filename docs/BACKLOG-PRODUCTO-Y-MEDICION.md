@@ -180,7 +180,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 
 - [x] Crear una landing específica para proveedores que explique valor antes de pedir esfuerzo.
 - [x] Cambiar el CTA principal de `Validar ficha` a una opción más clara según el estado: `¿Es tu negocio?` o `Gestionar esta ficha`.
-- [ ] Permitir localizar la ficha desde la landing del proveedor.
+- [x] Permitir localizar la ficha desde la landing del proveedor mediante el CTA `Buscar mi ficha` hacia el directorio de servicios.
 - [ ] Diseñar onboarding progresivo:
   1. confirmar relación con el negocio;
   2. corregir datos esenciales;
@@ -198,13 +198,13 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 ## P0. Operación manual del piloto
 
 - [ ] Preparar una hoja/CRM inicial de proveedores contactables, con base jurídica y origen del dato.
-- [ ] Definir estados de outreach: identificado, preparado, contactado, abierto, interesado, reclamado, publicado, activo, descartado.
-- [ ] Preparar email inicial, recordatorio y cierre sin urgencia artificial.
+- [x] Definir estados de outreach: identificado, preparado, contactado, abierto, interesado, reclamado, publicado, activo, descartado.
+- [x] Preparar email inicial, recordatorio y cierre sin urgencia artificial.
 - [ ] Utilizar demanda real únicamente; no afirmar que hay familias esperando si no se ha observado.
-- [ ] Preparar guion de entrevista de 20 minutos para proveedores.
-- [ ] Preparar checklist manual de verificación y publicación.
+- [x] Preparar guion de entrevista de 20 minutos para proveedores.
+- [x] Preparar checklist manual de verificación y publicación.
 - [ ] Definir responsable y tiempo máximo de moderación.
-- [ ] Registrar motivos de no participación para mejorar la propuesta.
+- [x] Registrar motivos de no participación para mejorar la propuesta.
 
 ---
 
