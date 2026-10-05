@@ -50,30 +50,31 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 
 - Repositorio: `rdrgzjavier/tenlo`.
 - Rama de producción: `main`.
-- Último commit revisado: `c2d12c9` (`Mejora perfiles de canguros`).
+- Último commit revisado: `89f0e78` (`Aclara confianza y mejora busquedas sin resultados`).
 - Aplicación en Next.js 14, React 18, TypeScript y Tailwind.
 - `typecheck` y `lint` pasan correctamente.
 - El contenido público continúa dependiendo de `src/lib/mock-data.ts`.
-- Existen cinco migraciones de Supabase para perfiles, publicaciones, eventos de contacto, solicitudes de reclamación y feedback.
+- Existen siete migraciones de Supabase. Las migraciones `0006` y `0007` se aplicaron en producción el 5 de octubre de 2026 y se verificaron mediante consulta: `search_events` y `connection_requests` existen, tienen RLS activa y los permisos de inserción previstos.
 - Hay autenticación y algunas páginas conectadas a Supabase, pero no una fuente de datos real unificada para el directorio.
-- La reclamación de ficha se guarda en Supabase y envía emails, pero exige iniciar sesión antes de enviar la solicitud.
+- La reclamación de ficha ya puede iniciarse sin cuenta; la aprobación y los cambios siguen sujetos a verificación posterior.
 - El formulario de registro ya solicita tipo de usuario, nombre público, email, teléfono, contraseña, municipio y centro opcional. Para proveedores también muestra tipología, web, descripción, zona, modalidad, edades, disponibilidad, credenciales y otros campos.
-- En el estado actual solo se persisten en `profiles` nombre, email, teléfono, municipio, rol y estado. El centro opcional y los campos ampliados del proveedor no están conectados al guardado, y todavía no existe consentimiento específico de marketing.
+- El esquema ya incluye centro relacionado, intereses y consentimiento específico de marketing, pero el formulario de registro aún debe conectarlos al guardado y conservar la evidencia del consentimiento.
 - No existe aún una bandeja administrativa operativa: hay una ruta de revisión de borradores y avisos por email, pero no un centro de solicitudes, alternativas y notificaciones.
 - Los CTAs de contacto no siguen un único flujo: algunos abren web, email o teléfono y el de canguros no crea aún una solicitud operativa.
 - Favoritos mezcla una señal local de sesión con datos de Supabase y todavía no representa un flujo completo.
-- GTM está cargado y existen eventos básicos en `dataLayer`, pero actualmente miden sobre todo clics y envíos, no el resultado completo de la conexión.
-- El build local compila código, pero falla en el prerender de `/publicar`, `/area-personal`, `/datos-cuenta`, `/favoritos` y `/mis-publicaciones` si faltan variables de Supabase.
+- GTM está cargado y existe una taxonomía inicial de eventos, pero falta configurar el contenedor real, validar GA4 y completar la medición persistente del resultado de cada conexión.
+- `typecheck`, `lint` y `build` pasan en local; las rutas privadas ya no bloquean el prerender cuando faltan variables de Supabase.
 - La auditoría de dependencias detecta avisos de seguridad altos/críticos en la rama actual de Next.js y dependencias transitivas. Debe actualizarse y volver a auditarse antes de captar usuarios reales.
 
 ### Vercel y dominio
 
-- GitHub registra como correcto el último despliegue de producción de Vercel.
-- El despliegue concreto está protegido por autenticación de Vercel.
+- El despliegue de producción de Vercel correspondiente al commit `89f0e78` está en estado `Ready`.
 - El alias público `https://kiryco.vercel.app` responde correctamente.
 - El código todavía utiliza `https://kiryco.vercel.app` como dominio actual.
-- `tenlo.es` y `www.tenlo.es` siguen apuntando al parking de DonDominio, no a Vercel.
-- No se ha podido auditar desde este entorno la matriz completa de variables de Vercel. Debe comprobarse manualmente en producción, preview y desarrollo.
+- `tenlo.es` y `www.tenlo.es` están añadidos en Vercel: la raíz será producción y `www` redirigirá permanentemente (`308`) a `tenlo.es`. Permanecen en configuración inválida hasta cambiar los nameservers del registrador.
+- La matriz de Vercel fue auditada el 5 de octubre de 2026: Supabase está configurado para producción y preview; `ADMIN_EMAIL` y `NEXT_PUBLIC_COOKIEBOT_ID` están en producción y preview. Faltan `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_GTM_ID`, `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY` y `MAIL_FROM`.
+- La zona gratuita `tenlo.es` está preparada en Cloudflare con la raíz `A 216.198.79.1` y `www CNAME 4b8f150f986f3ce8.vercel-dns-017.com`, ambos en modo Solo DNS. Falta sustituir en DonDominio `ns1/ns2.dondominio.com` por `david.ns.cloudflare.com` y `norah.ns.cloudflare.com`.
+- DonDominio no tiene creada aún ninguna cuenta ni alias de correo para `tenlo.es`.
 
 ---
 
@@ -117,11 +118,13 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] Repetir `npm audit`, `typecheck`, `lint` y `build` tras la actualización.
 - [x] Evitar que las páginas privadas conectadas a Supabase se ejecuten durante el prerender del build.
 - [ ] Hacer que las rutas privadas muestren un mensaje operativo claro cuando falten variables de Supabase en tiempo de ejecución. El directorio y cabecera públicos ya degradan sin bloquearse.
-- [ ] Crear `.env.example` sin secretos con todas las variables requeridas y su finalidad.
+- [x] Crear `.env.example` sin secretos con todas las variables requeridas y su finalidad.
 - [ ] Documentar variables por entorno: local, preview y production.
-- [ ] Confirmar en Vercel la presencia de Supabase, Resend, Cookiebot, URL pública y correo administrativo en los tres entornos.
-- [ ] Conectar `tenlo.es` y `www.tenlo.es` a Vercel.
-- [ ] Definir dominio canónico y redirección única entre `www` y raíz.
+- [x] Auditar en Vercel la presencia de Supabase, Resend, Cookiebot, URL pública y correo administrativo por entorno.
+- [ ] Añadir las variables ausentes detectadas en la auditoría y volver a desplegar.
+- [ ] Completar la conexión de `tenlo.es` y `www.tenlo.es` a Vercel; ambos ya están añadidos y esperan la activación DNS.
+- [x] Definir dominio canónico y redirección única: raíz `tenlo.es`; `www` redirige con `308` a la raíz.
+- [ ] Cambiar los nameservers en DonDominio a los asignados por Cloudflare y verificar la propagación antes de retirar registros heredados.
 - [ ] Sustituir `kiryco.vercel.app` en configuración, metadata, emails, sitemap y enlaces absolutos.
 - [ ] Verificar SSL, sitemap, robots, canonical y Open Graph en el dominio definitivo.
 - [ ] Añadir una comprobación automática en GitHub para `typecheck`, `lint` y `build` en cada cambio.
@@ -142,7 +145,8 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 
 ## P0. Modelo de datos real
 
-- [ ] Elegir Supabase como fuente de verdad definitiva o documentar otra alternativa.
+- [x] Elegir Supabase como fuente de verdad definitiva para autenticación, perfiles y operación del marketplace.
+- [x] Aplicar y verificar las migraciones de reclamación anónima, perfiles ampliados, búsquedas y solicitudes de conexión.
 - [ ] Eliminar la dependencia del directorio de `mock-data.ts` mediante una capa de acceso a datos.
 - [ ] Crear una migración/importación controlada para las fichas iniciales.
 - [ ] Normalizar proveedores, servicios, categorías, municipios y zonas de cobertura.
@@ -378,6 +382,8 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 ### Seguridad y gobierno del dato
 
 - [ ] Mantener los datos personales en tablas protegidas con RLS y acceso mínimo por rol.
+- [ ] Resolver las advertencias del Security Advisor: fijar `search_path` de `set_updated_at`, retirar la ejecución pública de `rls_auto_enable()` y documentar las políticas públicas deliberadas de newsletter y feedback.
+- [ ] Activar la protección de contraseñas filtradas en Supabase Auth antes de abrir el registro real.
 - [ ] No exponer claves de servicio de Supabase en el cliente.
 - [ ] Separar PII de tablas de eventos y utilizar IDs internos seudónimos para análisis.
 - [ ] Restringir exportaciones y accesos administrativos; registrar quién puede ver o descargar datos.
