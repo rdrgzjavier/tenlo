@@ -47,17 +47,17 @@ export default function LocationCard({ name, municipality, address, privateLocat
           <p className="mt-1 text-xs leading-5 text-muted">
             {hasAddress ? municipality : "Consulta el resultado en el mapa y confirma la dirección antes de desplazarte."}
           </p>
-          <a
-            href={mapsUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="btn-secondary mt-4 w-full sm:w-fit"
-            {...trackingAttrs("map_directions_clicked", { item: itemId, type: itemType, municipality })}
-          >
-            <Navigation size={17} aria-hidden /> Ver mapa y cómo llegar
-          </a>
         </div>
       </div>
+      <a
+        href={mapsUrl}
+        target="_blank"
+        rel="noreferrer"
+        className="btn-secondary mt-4 w-full"
+        {...trackingAttrs("map_directions_clicked", { item: itemId, type: itemType, municipality })}
+      >
+        <Navigation size={17} aria-hidden /> Ver mapa y cómo llegar
+      </a>
     </section>
   );
 }
