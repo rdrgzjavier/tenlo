@@ -307,7 +307,7 @@ Tenlo debe poder explicar qué buscan las familias y qué rendimiento obtiene ca
 ### Qué se busca en Tenlo
 
 - [x] Preparar entidad `search_events` con ID anónimo, consulta normalizada, filtros y número de resultados.
-- [ ] Registrar término o intención, categoría, municipio, filtros, número de resultados y momento de la búsqueda.
+- [x] Registrar en Supabase término saneado, categoría, municipio, filtros, número de resultados y momento de la búsqueda, tanto para personas anónimas como autenticadas.
 - [ ] Clasificar las búsquedas en verticales: colegios, guarderías, servicios, actividades, centros y las que se incorporen después.
 - [ ] Registrar reformulaciones: qué cambia la persona cuando la primera búsqueda no le sirve.
 - [ ] Registrar búsquedas sin resultados, con pocos resultados o sin proveedores disponibles.

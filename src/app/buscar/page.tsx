@@ -5,6 +5,7 @@ import Filters from "@/components/Filters";
 import ListingCard from "@/components/ListingCard";
 import LoadMoreGrid from "@/components/LoadMoreGrid";
 import ResponsiveFilterPanel from "@/components/ResponsiveFilterPanel";
+import SearchEventRecorder from "@/components/SearchEventRecorder";
 import ValidatedSearchForm from "@/components/ValidatedSearchForm";
 import { categories, listings, municipalities } from "@/lib/mock-data";
 import { trackingAttrs } from "@/lib/analytics";
@@ -109,6 +110,13 @@ export default function SearchPage({ searchParams }: { searchParams: SearchParam
         result_count: filtered.length,
         zero_results: filtered.length === 0
       }} />
+      <SearchEventRecorder
+        query={selected.tag}
+        category={selected.categoria}
+        municipality={selected.municipio}
+        filters={selected}
+        resultsCount={filtered.length}
+      />
       <p className="label">Marketplace local moderado</p>
       <h1 className="page-title">{selected.region === "madrid" ? "Oferta para familias en Madrid" : "Buscar recursos"}</h1>
       <p className="lead">Encuentra publicaciones y servicios alrededor del centro, filtrados por zona y necesidades familiares no identificativas.</p>
