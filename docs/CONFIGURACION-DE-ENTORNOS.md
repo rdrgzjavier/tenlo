@@ -59,7 +59,7 @@ Referencia para mantener separados el desarrollo local, las previews de Vercel y
 | Supabase URL y clave pública | Presente | Presente | Mantener y probar flujos reales con cuentas de prueba. |
 | `ADMIN_EMAIL` | Presente | Presente | Cambiar a `solicitudes@tenlo.es` cuando el correo esté operativo. |
 | `NEXT_PUBLIC_COOKIEBOT_ID` | Presente | Presente | Validar consentimiento en el dominio definitivo. |
-| `NEXT_PUBLIC_SITE_URL` | Ausente | Ausente | Añadir tras activarse `tenlo.es`; decidir estrategia de preview. |
+| `NEXT_PUBLIC_SITE_URL` | Presente (`https://tenlo.es`) | Ausente | Producción configurada el 06/10/2026; decidir estrategia de preview. |
 | `NEXT_PUBLIC_GTM_ID` | Ausente | Ausente | Crear/configurar GTM antes de activar analítica. |
 | `SUPABASE_SERVICE_ROLE_KEY` | Ausente | Ausente | No añadir hasta que una función administrativa la necesite. |
 | `RESEND_API_KEY` | Ausente | Ausente | Configurar cuando el dominio remitente esté verificado. |

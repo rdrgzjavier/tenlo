@@ -2,7 +2,7 @@
 
 > Documento vivo para decidir, construir y comprobar el MVP de Tenlo.
 >
-> Última revisión: 5 de octubre de 2026.
+> Última revisión: 6 de octubre de 2026.
 
 ## Cómo utilizar este documento
 
@@ -68,12 +68,12 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 
 ### Vercel y dominio
 
-- El despliegue de producción de Vercel correspondiente al commit `89f0e78` está en estado `Ready`.
-- El alias público `https://kiryco.vercel.app` responde correctamente.
+- El despliegue de producción de Vercel correspondiente al commit `3e78a23` está en estado `Ready` y fue redesplegado el 6 de octubre de 2026 con la configuración actualizada.
+- El alias heredado `https://kiryco.vercel.app` continúa respondiendo, pero el dominio canónico público es `https://tenlo.es`.
 - El código utiliza `https://tenlo.es` como dominio canónico por defecto y permite configurarlo por entorno mediante `NEXT_PUBLIC_SITE_URL`.
-- `tenlo.es` y `www.tenlo.es` están añadidos en Vercel: la raíz será producción y `www` redirigirá permanentemente (`308`) a `tenlo.es`. Permanecen en configuración inválida hasta cambiar los nameservers del registrador.
-- La matriz de Vercel fue auditada el 5 de octubre de 2026: Supabase está configurado para producción y preview; `ADMIN_EMAIL` y `NEXT_PUBLIC_COOKIEBOT_ID` están en producción y preview. Faltan `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_GTM_ID`, `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY` y `MAIL_FROM`.
-- La zona gratuita `tenlo.es` está preparada en Cloudflare con la raíz `A 216.198.79.1` y `www CNAME 4b8f150f986f3ce8.vercel-dns-017.com`, ambos en modo Solo DNS. El 05/10/2026 se sustituyeron en DonDominio `ns1/ns2.dondominio.com` por `david.ns.cloudflare.com` y `norah.ns.cloudflare.com`; Cloudflare está esperando la propagación del registrador.
+- `tenlo.es` y `www.tenlo.es` están conectados a Vercel: la raíz responde en producción y `www` redirige permanentemente (`308`) a `tenlo.es`.
+- La matriz de Vercel fue auditada el 6 de octubre de 2026: Supabase está configurado para producción y preview; `ADMIN_EMAIL` y `NEXT_PUBLIC_COOKIEBOT_ID` están en producción y preview; `NEXT_PUBLIC_SITE_URL=https://tenlo.es` está configurada en producción. Siguen pendientes `NEXT_PUBLIC_GTM_ID`, `RESEND_API_KEY` y `MAIL_FROM`; `SUPABASE_SERVICE_ROLE_KEY` no se añadirá hasta que una función administrativa la necesite.
+- La zona gratuita `tenlo.es` está activa en Cloudflare con la raíz `A 216.198.79.1` y `www CNAME 4b8f150f986f3ce8.vercel-dns-017.com`, ambos en modo Solo DNS. La resolución pública utiliza `david.ns.cloudflare.com` y `norah.ns.cloudflare.com` desde el 06/10/2026.
 - DonDominio no tiene creada aún ninguna cuenta ni alias de correo para `tenlo.es`.
 
 ---
@@ -121,13 +121,13 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Crear `.env.example` sin secretos con todas las variables requeridas y su finalidad.
 - [x] Documentar variables por entorno: local, preview y production, incluyendo exposición, comportamiento cuando faltan y comprobaciones previas al despliegue.
 - [x] Auditar en Vercel la presencia de Supabase, Resend, Cookiebot, URL pública y correo administrativo por entorno.
-- [ ] Añadir las variables ausentes detectadas en la auditoría y volver a desplegar.
-- [ ] Completar la conexión de `tenlo.es` y `www.tenlo.es` a Vercel; ambos ya están añadidos y esperan la activación DNS.
+- [ ] Añadir las variables ausentes detectadas en la auditoría y volver a desplegar. `NEXT_PUBLIC_SITE_URL` ya está añadida en producción y el redespliegue se verificó el 06/10/2026; GTM y correo transaccional siguen pendientes de configurar.
+- [x] Completar la conexión de `tenlo.es` y `www.tenlo.es` a Vercel: raíz en producción y redirección `308` de `www` verificadas.
 - [x] Definir dominio canónico y redirección única: raíz `tenlo.es`; `www` redirige con `308` a la raíz.
 - [x] Cambiar los nameservers en DonDominio a los asignados por Cloudflare.
-- [ ] Verificar que Cloudflare marque la zona como activa y que la resolución pública use `david.ns.cloudflare.com` y `norah.ns.cloudflare.com` antes de retirar registros heredados.
+- [x] Verificar que Cloudflare marque la zona como activa y que la resolución pública use `david.ns.cloudflare.com` y `norah.ns.cloudflare.com`.
 - [x] Sustituir `kiryco.vercel.app` en configuración, metadata, emails, sitemap y enlaces absolutos.
-- [ ] Verificar SSL, sitemap, robots, canonical y Open Graph en el dominio definitivo.
+- [x] Verificar SSL, sitemap, robots, canonical y Open Graph en el dominio definitivo: HTTPS y HSTS activos, rutas públicas con respuesta `200` y metadata generada desde `https://tenlo.es`.
 - [ ] Añadir una comprobación automática en GitHub para `typecheck`, `lint` y `build` en cada cambio. El workflow está preparado localmente, pero la credencial actual de GitHub no dispone del permiso `workflow` para publicarlo.
 - [ ] Decidir si los previews deben permanecer protegidos y mantener producción pública.
 
