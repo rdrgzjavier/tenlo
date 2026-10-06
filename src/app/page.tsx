@@ -166,7 +166,7 @@ export default function Home() {
             <div className="mb-6 h-40 overflow-hidden rounded-[28px] bg-soft md:hidden">
               <ImageWithFallback src={heroImageMobile} fallbackSrc="https://images.pexels.com/photos/7880624/pexels-photo-7880624.jpeg?auto=compress&cs=tinysrgb&w=640&q=78" alt="Persona adulta caminando de la mano con una menor, sin datos identificativos" className="h-full w-full object-cover object-center" loading="eager" fetchPriority="high" />
             </div>
-            <h1 className="page-title max-w-3xl">Encuentra, compara y contacta con servicios para tu familia</h1>
+            <h1 className="mt-2 max-w-3xl text-[32px] font-extrabold leading-[1.08] text-slatecopy sm:text-5xl sm:leading-tight lg:text-[56px]">Encuentra, compara y contacta con servicios para tu familia</h1>
             <p className="lead">Actividades, apoyo escolar, salud, tecnología, transporte y mucho más. Información organizada por zona, sin datos identificativos de menores.</p>
             <ValidatedSearchForm className="mt-8 grid gap-3 rounded-[24px] bg-panel p-3 shadow-soft sm:grid-cols-[1fr_0.72fr_auto]" message="Indica qué quieres encontrar o dónde quieres buscar.">
               <label className="flex min-h-14 items-center gap-3 rounded-2xl bg-white px-4 ring-1 ring-line">
