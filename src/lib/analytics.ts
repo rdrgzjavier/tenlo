@@ -10,6 +10,8 @@ export type TrackingAction =
   | "publish"
   | "claim_profile_click"
   | "claim_profile_submit"
+  | "provider_suggestion_started"
+  | "provider_suggestion_submitted"
   | "zero_results";
 
 export function trackingAttrs(action: TrackingAction, params: Record<string, string | number | undefined>) {

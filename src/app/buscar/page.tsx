@@ -5,7 +5,8 @@ import Filters from "@/components/Filters";
 import ListingCard from "@/components/ListingCard";
 import LoadMoreGrid from "@/components/LoadMoreGrid";
 import ResponsiveFilterPanel from "@/components/ResponsiveFilterPanel";
-import { listings, municipalities } from "@/lib/mock-data";
+import ValidatedSearchForm from "@/components/ValidatedSearchForm";
+import { categories, listings, municipalities } from "@/lib/mock-data";
 import { trackingAttrs } from "@/lib/analytics";
 
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -111,6 +112,12 @@ export default function SearchPage({ searchParams }: { searchParams: SearchParam
       <p className="label">Marketplace local moderado</p>
       <h1 className="page-title">{selected.region === "madrid" ? "Oferta para familias en Madrid" : "Buscar recursos"}</h1>
       <p className="lead">Encuentra publicaciones y servicios alrededor del centro, filtrados por zona y necesidades familiares no identificativas.</p>
+      <ValidatedSearchForm className="card mt-8 grid gap-3 p-4 md:grid-cols-[1fr_0.72fr_0.72fr_auto]" message="Escribe qué buscas o selecciona una zona o categoría.">
+        <label className="field-label">Qué buscas<input name="tag" defaultValue={selected.tag ?? ""} className="field font-normal placeholder:text-muted" placeholder="Actividad, servicio o nombre" /></label>
+        <label className="field-label">Zona<select name="municipio" defaultValue={selected.municipio ?? ""} className="field font-normal"><option value="">Todas las zonas</option>{municipalities.map((municipality) => <option key={municipality.id} value={municipality.name}>{municipality.name}</option>)}</select></label>
+        <label className="field-label">Categoría<select name="categoria" defaultValue={selected.categoria ?? ""} className="field font-normal"><option value="">Todas las categorías</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
+        <button className="btn-primary self-end" type="submit" {...trackingAttrs("search", { placement: "search_page" })}>Buscar</button>
+      </ValidatedSearchForm>
       {selected.region === "madrid" ? (
         <div className="mt-6 flex flex-wrap gap-3">
           {municipalities.map((municipality) => (
@@ -139,6 +146,7 @@ export default function SearchPage({ searchParams }: { searchParams: SearchParam
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <Link href="/buscar" className="btn-primary">Limpiar filtros</Link>
                 <Link href="/contacto" className="btn-secondary" {...trackingAttrs("zero_results", { category: selected.categoria, municipality: selected.municipio })}>Pedir ayuda a Tenlo</Link>
+                <Link href={`/sugerencias?context=provider_suggestion&location=${encodeURIComponent(selected.municipio ?? "")}&service=${encodeURIComponent(selected.tag ?? selected.categoria ?? "")}`} className="btn-secondary" {...trackingAttrs("provider_suggestion_started", { category: selected.categoria, municipality: selected.municipio })}>Proponer proveedor</Link>
               </div>
             </div>
           )}

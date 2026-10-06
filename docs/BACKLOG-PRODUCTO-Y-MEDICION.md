@@ -212,9 +212,12 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 
 ## P1. Búsqueda y comparación
 
+- [x] Incorporar en `/buscar` un módulo visible de búsqueda por palabra, zona y categoría, también en móvil.
 - [ ] Sustituir filtros genéricos por los atributos que realmente permiten decidir en el segmento inicial.
 - [ ] Mostrar el número de resultados sin sugerir que más siempre es mejor.
 - [x] Registrar visualmente búsquedas sin resultados y crear una salida útil para limpiar filtros o pedir ayuda a Tenlo.
+- [x] Permitir proponer desde una búsqueda sin resultados un proveedor con nombre, web, ubicación y servicio; conservarlo pendiente de revisión antes de crear una ficha `No verificada`.
+- [ ] Crear el flujo administrativo que convierta una propuesta revisada en ficha `No verificada`, evitando la publicación automática de datos aportados por usuarios.
 - [ ] Permitir comparar un número pequeño de opciones con campos homogéneos.
 - [ ] Hacer visibles cobertura, disponibilidad, actualización y confianza.
 - [ ] Revisar el orden de resultados y definir criterios transparentes de ranking.
@@ -222,6 +225,9 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 
 ## P1. Solicitud de contacto
 
+- [x] Activar los CTAs visibles de contacto y reporte de las fichas mediante formularios internos contextuales como solución operativa provisional.
+- [x] Activar `Guardar favorito` para dirigir a registro/inicio de sesión o al área de favoritos según el estado local de sesión.
+- [ ] Persistir el guardado real de favoritos por usuario en Supabase y permitir añadir/quitar una ficha desde el propio CTA.
 - [ ] Diseñar un único flujo de solicitud dentro de Tenlo para el piloto.
 - [ ] Mantener en la ficha tres vías diferenciadas cuando estén disponibles:
   - [ ] `Solicitar información` dentro de Tenlo;
@@ -423,6 +429,8 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 - [ ] `provider_compared`
 - [ ] `provider_saved`
 - [ ] `provider_shared`
+- [ ] `provider_suggestion_started`
+- [ ] `provider_suggestion_submitted`
 
 Propiedades recomendadas: `search_id`, categoría, municipio, zona, número de resultados, filtros, posición del proveedor, fuente/medio/campaña y tipo de dispositivo.
 

@@ -149,9 +149,9 @@ export default function ServiceDetailPage({ params }: { params: { id: string } }
               : "Consulta la web o los datos públicos del proveedor antes de reservar o contratar."}
           </p>
           {childcareProvider ? (
-            <button className="btn-primary mt-5 w-full" {...trackingAttrs("contact_email", { item: provider.id, type: "provider" })}>
+            <Link href={`/sugerencias?context=contact_request&item=${provider.id}`} className="btn-primary mt-5 w-full" {...trackingAttrs("contact_email", { item: provider.id, type: "provider" })}>
               <MessageCircle size={16} /> Solicitar contacto
-            </button>
+            </Link>
           ) : providerUrl ? (
             <a href={providerUrl} target="_blank" rel="noreferrer" className="btn-primary mt-5 w-full" {...trackingAttrs("external_web", { item: provider.id, type: "provider" })}>
               Web oficial<ExternalLink size={16} />

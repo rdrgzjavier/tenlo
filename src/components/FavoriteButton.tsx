@@ -8,6 +8,7 @@ import { createPortal } from "react-dom";
 type FavoriteButtonProps = {
   className?: string;
   label?: string;
+  showLabel?: boolean;
 };
 
 function hasLocalSession() {
@@ -15,7 +16,7 @@ function hasLocalSession() {
   return window.localStorage.getItem("tenlo-session") === "true";
 }
 
-export default function FavoriteButton({ className = "icon-button", label = "Favoritos" }: FavoriteButtonProps) {
+export default function FavoriteButton({ className = "icon-button", label = "Favoritos", showLabel = false }: FavoriteButtonProps) {
   const [open, setOpen] = useState(false);
   const canUsePortal = typeof document !== "undefined";
 
@@ -32,6 +33,7 @@ export default function FavoriteButton({ className = "icon-button", label = "Fav
     <>
       <button type="button" className={className} aria-label={label} onClick={handleClick}>
         <Heart size={19} aria-hidden />
+        {showLabel ? <span>{label}</span> : null}
       </button>
       {open && canUsePortal ? createPortal(
         <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/55 px-5 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="favorite-dialog-title">

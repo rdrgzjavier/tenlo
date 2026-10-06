@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Bookmark, MapPin, MessageCircle } from "lucide-react";
+import { MapPin, MessageCircle } from "lucide-react";
 import ImageWithFallback from "@/components/ImageWithFallback";
+import FavoriteButton from "@/components/FavoriteButton";
 import { trackingAttrs } from "@/lib/analytics";
 import { uniqueDisplayTags } from "@/lib/display-labels";
 import { ageLabel, categories, centers, providers } from "@/lib/mock-data";
@@ -110,8 +111,8 @@ export default function ListingCard({ listing }: { listing: Listing }) {
         </dl>
         <div className="mt-auto flex flex-wrap gap-2 pt-5">
           <Link href={detailHref} aria-label={`Saber más sobre ${listing.title}`} className="btn-primary flex-1 text-center" {...trackingAttrs("view_detail", { item: listing.id, category: listing.categoryId, municipality: listing.municipality })}>Saber más</Link>
-          <button className="icon-button" aria-label={isChildcareListing(listing) ? "Solicitar contacto" : "Contactar"} {...trackingAttrs("contact_email", { item: listing.id, category: listing.categoryId })}><MessageCircle size={18} /></button>
-          <button className="icon-button" aria-label="Guardar" {...trackingAttrs("save_favorite", { item: listing.id, category: listing.categoryId })}><Bookmark size={18} /></button>
+          <Link href={`/sugerencias?context=contact_request&item=${listing.slug}`} className="icon-button" aria-label={isChildcareListing(listing) ? "Solicitar contacto" : "Contactar"} {...trackingAttrs("contact_email", { item: listing.id, category: listing.categoryId })}><MessageCircle size={18} /></Link>
+          <FavoriteButton label={`Guardar ${listing.title}`} />
         </div>
       </div>
     </article>

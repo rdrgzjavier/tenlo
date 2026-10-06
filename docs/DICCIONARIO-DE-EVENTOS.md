@@ -22,8 +22,12 @@ Versión: `1.0`
 | `search_refined` | Se modifican filtros o intención | `search_id`, filtro cambiado, número de intento | GA4 + Supabase |
 | `result_impression` | Una ficha entra en el listado visible | `search_id`, `provider_id`, posición, categoría | GA4 |
 | `result_opened` | Se abre una ficha desde resultados | `search_id`, `provider_id`, posición, categoría | GA4 |
+| `provider_suggestion_started` | Desde cero resultados se abre el formulario para proponer una opción | categoría normalizada, municipio, origen | GA4 |
+| `provider_suggestion_submitted` | La propuesta queda guardada para revisión | identificador interno de propuesta, categoría normalizada, municipio | GA4 + Supabase |
 
 El término escrito solo se almacena en Supabase tras sanear emails, teléfonos y posibles datos sensibles. GA4 recibe una intención o categoría normalizada, no el texto libre.
+
+El nombre, la web, la ubicación exacta, las notas y los datos de contacto aportados al proponer un proveedor permanecen en Supabase y no se envían a GA4. La propuesta requiere revisión humana antes de generar una ficha `No verificada`.
 
 ## Fichas y contacto
 
