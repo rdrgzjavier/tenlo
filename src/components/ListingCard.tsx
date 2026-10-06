@@ -112,7 +112,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
         <div className="mt-auto flex flex-wrap gap-2 pt-5">
           <Link href={detailHref} aria-label={`Saber más sobre ${listing.title}`} className="btn-primary flex-1 text-center" {...trackingAttrs("view_detail", { item: listing.id, category: listing.categoryId, municipality: listing.municipality })}>Saber más</Link>
           <Link href={`/sugerencias?context=contact_request&item=${listing.slug}`} className="icon-button" aria-label={isChildcareListing(listing) ? "Solicitar contacto" : "Contactar"} {...trackingAttrs("contact_email", { item: listing.id, category: listing.categoryId })}><MessageCircle size={18} /></Link>
-          <FavoriteButton label={`Guardar ${listing.title}`} />
+          <FavoriteButton label={`Guardar ${listing.title}`} targetId={listing.id} />
         </div>
       </div>
     </article>

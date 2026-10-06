@@ -230,7 +230,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 
 - [x] Activar los CTAs visibles de contacto y reporte de las fichas mediante formularios internos contextuales como solución operativa provisional.
 - [x] Activar `Guardar favorito` para dirigir a registro/inicio de sesión o al área de favoritos según el estado local de sesión.
-- [ ] Persistir el guardado real de favoritos por usuario en Supabase y permitir añadir/quitar una ficha desde el propio CTA.
+- [x] Persistir el guardado real de favoritos por usuario en Supabase y permitir añadir/quitar una ficha desde el propio CTA y desde `/favoritos`.
 - [ ] Diseñar un único flujo de solicitud dentro de Tenlo para el piloto.
 - [ ] Mantener en la ficha tres vías diferenciadas cuando estén disponibles:
   - [ ] `Solicitar información` dentro de Tenlo;
@@ -430,7 +430,8 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 - [ ] `provider_impression`
 - [ ] `provider_profile_viewed`
 - [ ] `provider_compared`
-- [ ] `provider_saved`
+- [x] `provider_saved`
+- [x] `provider_unsaved`
 - [ ] `provider_shared`
 - [ ] `provider_suggestion_started`
 - [ ] `provider_suggestion_submitted`

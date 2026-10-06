@@ -18,7 +18,6 @@ import {
   Sparkles,
   UsersRound
 } from "lucide-react";
-import FavoriteButton from "@/components/FavoriteButton";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import { TrustBadge } from "@/components/Badge";
 import ValidatedSearchForm from "@/components/ValidatedSearchForm";
@@ -274,7 +273,6 @@ export default function Home() {
               <div className="p-5">
                 <div className="flex items-center justify-between gap-3">
                   <span className="chip">{service.category}</span>
-                  <FavoriteButton className="icon-button h-9 w-9 rounded-xl" label={`Guardar ${service.title}`} />
                 </div>
                 <h3 className="mt-4 text-lg font-bold text-slatecopy"><Link href={service.href}>{service.title}</Link></h3>
                 <p className="mt-1 text-sm text-muted">{service.provider}</p>

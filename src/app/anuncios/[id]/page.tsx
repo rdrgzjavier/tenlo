@@ -133,7 +133,7 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
             <h2 className="text-xl font-semibold text-ink">{childcareListing ? "Solicitud protegida" : "Contacto protegido"}</h2>
             <p className="mt-2 text-sm leading-6 text-muted">El contacto se inicia desde la plataforma. No compartas datos personales de menores, horarios personales ni información sensible.</p>
             <Link href={`/sugerencias?context=contact_request&item=${listing.slug}`} className="btn-primary mt-5 w-full" {...trackingAttrs("contact_email", { item: listing.id, category: listing.categoryId })}><MessageCircle size={16} /> {childcareListing ? "Solicitar contacto" : "Contactar"}</Link>
-            <FavoriteButton className="btn-secondary mt-3 w-full" label="Guardar favorito" showLabel />
+            <FavoriteButton className="btn-secondary mt-3 w-full" label="Guardar favorito" targetId={listing.id} showLabel />
             <Link href={`/sugerencias?context=report_listing&item=${listing.slug}`} className="btn-secondary mt-3 w-full"><Flag size={16} /> Reportar publicación</Link>
           </div>
           <div className="rounded-2xl border border-coral/30 bg-coral/5 p-5">

@@ -36,6 +36,8 @@ El nombre, la web, la ubicación exacta, las notas y los datos de contacto aport
 | `provider_profile_viewed` | Se abre una ficha de proveedor | `provider_id`, categoría, municipio, nivel de confianza | GA4 |
 | `center_profile_viewed` | Se abre una ficha de centro | `center_id`, municipio, nivel de confianza | GA4 |
 | `map_directions_clicked` | Se abre el mapa externo para ubicar un centro o negocio | identificador de ficha, tipo de entidad, municipio, origen | GA4 |
+| `provider_saved` | Una persona autenticada guarda una ficha | identificador de ficha, tipo de entidad, categoría, origen | GA4 + Supabase |
+| `provider_unsaved` | Una persona autenticada elimina una ficha de favoritos | identificador de ficha, tipo de entidad, categoría, origen | GA4 + Supabase |
 | `contact_started` | Se inicia el formulario interno | `provider_id`, categoría, origen | GA4 + Supabase |
 | `contact_phone_clicked` | Se pulsa llamar | `provider_id`, categoría, origen | GA4 |
 | `contact_web_clicked` | Se abre la web oficial | `provider_id`, categoría, origen | GA4 |

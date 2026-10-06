@@ -5,7 +5,8 @@ export type TrackingAction =
   | "contact_phone"
   | "external_web"
   | "share"
-  | "save_favorite"
+  | "provider_saved"
+  | "provider_unsaved"
   | "search"
   | "publish"
   | "claim_profile_click"
@@ -36,4 +37,11 @@ export function toDataLayerEvent(element: HTMLElement) {
         return [name, value];
       })
   );
+}
+
+export function pushTrackingEvent(action: TrackingAction, params: Record<string, string | number | undefined>) {
+  if (typeof window === "undefined") return;
+  const browserWindow = window as Window & { dataLayer?: Record<string, unknown>[] };
+  browserWindow.dataLayer = browserWindow.dataLayer || [];
+  browserWindow.dataLayer.push({ event: action, ...params });
 }
