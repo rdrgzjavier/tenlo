@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CalendarDays, Clock3, Euro, Flag, MessageCircle, ShieldAlert, ShieldCheck, Sparkles } from "lucide-react";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import AnalyticsViewEvent from "@/components/AnalyticsViewEvent";
 import FavoriteButton from "@/components/FavoriteButton";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import LocationCard from "@/components/LocationCard";
@@ -76,6 +77,7 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
 
   return (
     <div className="page py-10">
+      <AnalyticsViewEvent event="provider_profile_viewed" params={{ provider_id: listing.id, category: listing.categoryId, municipality: listing.municipality, trust_level: listing.trustLevel }} />
       <Breadcrumbs items={[{ label: category?.name ?? "Recursos", href: category ? `/categoria/${category.slug}` : "/buscar" }, { label: listing.title }]} />
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
         <article>

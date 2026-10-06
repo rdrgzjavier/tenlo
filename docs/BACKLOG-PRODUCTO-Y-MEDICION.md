@@ -428,7 +428,7 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 - [ ] `search_zero_results`
 - [ ] `filter_applied`
 - [ ] `provider_impression`
-- [ ] `provider_profile_viewed`
+- [x] `provider_profile_viewed`
 - [ ] `provider_compared`
 - [x] `provider_saved`
 - [x] `provider_unsaved`
