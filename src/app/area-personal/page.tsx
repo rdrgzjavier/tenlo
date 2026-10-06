@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Bookmark, ClipboardList, FilePlus2, Settings, ShieldCheck } from "lucide-react";
+import { Bookmark, ClipboardCheck, ClipboardList, FilePlus2, Settings, ShieldCheck } from "lucide-react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -17,6 +17,12 @@ const accountActions = [
     text: "Guarda servicios, centros y recursos para compararlos más tarde.",
     href: "/favoritos",
     Icon: Bookmark
+  },
+  {
+    title: "Mis solicitudes",
+    text: "Consulta las peticiones de contacto que has enviado desde Tenlo.",
+    href: "/solicitudes",
+    Icon: ClipboardCheck
   },
   {
     title: "Mis publicaciones",

@@ -231,16 +231,16 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Activar los CTAs visibles de contacto y reporte de las fichas mediante formularios internos contextuales como solución operativa provisional.
 - [x] Activar `Guardar favorito` para dirigir a registro/inicio de sesión o al área de favoritos según el estado local de sesión.
 - [x] Persistir el guardado real de favoritos por usuario en Supabase y permitir añadir/quitar una ficha desde el propio CTA y desde `/favoritos`.
-- [ ] Diseñar un único flujo de solicitud dentro de Tenlo para el piloto.
+- [x] Diseñar un único flujo de solicitud dentro de Tenlo para el piloto, con formulario asociado a la ficha y consulta posterior en `Mis solicitudes`.
 - [ ] Mantener en la ficha tres vías diferenciadas cuando estén disponibles:
-  - [ ] `Solicitar información` dentro de Tenlo;
+  - [x] `Solicitar información` dentro de Tenlo;
   - [x] `Llamar`, con icono y enlace `tel:` mobile first en fichas canónicas con teléfono público;
   - [x] `Visitar web oficial` en fichas canónicas con URL pública;
 - [ ] Medir por separado el inicio y resultado observable de cada vía; una llamada o salida externa no equivale automáticamente a una conexión útil.
-- [ ] Recoger solo la información necesaria para que el proveedor decida si puede ayudar.
-- [ ] Evitar datos identificativos o sensibles de menores.
+- [x] Recoger solo la información necesaria para que el proveedor decida si puede ayudar.
+- [x] Evitar datos identificativos o sensibles de menores mediante instrucciones explícitas y confirmación de persona adulta.
 - [x] Preparar entidad `connection_requests` con ID, familia, proveedor, categoría, zona, estado y marcas de tiempo.
-- [ ] Confirmar a la familia que la solicitud ha sido enviada y cuándo puede esperar respuesta.
+- [x] Confirmar a la familia que la solicitud ha sido enviada y comunicar el objetivo operativo de respuesta o alternativa en un máximo de 48 horas.
 - [ ] Notificar al proveedor con un enlace seguro para responder.
 - [ ] Permitir responder, rechazar, indicar falta de disponibilidad o pedir aclaración.
 - [ ] Registrar tiempo de primera respuesta y motivo de rechazo.
@@ -441,10 +441,10 @@ Propiedades recomendadas: `search_id`, categoría, municipio, zona, número de r
 
 ### Contacto y resultado familiar
 
-- [ ] `contact_started`
-- [ ] `contact_form_completed`
-- [ ] `request_created`
-- [ ] `request_failed`
+- [x] `contact_started`
+- [x] `contact_form_completed`
+- [x] `request_created`
+- [x] `request_failed`
 - [ ] `provider_notified`
 - [ ] `provider_response_received`
 - [ ] `family_viewed_response`

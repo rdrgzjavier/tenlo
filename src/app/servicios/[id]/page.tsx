@@ -158,7 +158,7 @@ export default function ServiceDetailPage({ params }: { params: { id: string } }
               : "Consulta la web o los datos públicos del proveedor antes de reservar o contratar."}
           </p>
           {childcareProvider ? (
-            <Link href={`/sugerencias?context=contact_request&item=${provider.id}`} className="btn-primary mt-5 w-full" {...trackingAttrs("contact_email", { item: provider.id, type: "provider" })}>
+            <Link href={`/solicitar?item=${provider.id}`} className="btn-primary mt-5 w-full" {...trackingAttrs("contact_started", { item: provider.id, type: "provider" })}>
               <MessageCircle size={16} /> Solicitar contacto
             </Link>
           ) : providerUrl ? (

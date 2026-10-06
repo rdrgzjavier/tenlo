@@ -39,10 +39,12 @@ El nombre, la web, la ubicación exacta, las notas y los datos de contacto aport
 | `provider_saved` | Una persona autenticada guarda una ficha | identificador de ficha, tipo de entidad, categoría, origen | GA4 + Supabase |
 | `provider_unsaved` | Una persona autenticada elimina una ficha de favoritos | identificador de ficha, tipo de entidad, categoría, origen | GA4 + Supabase |
 | `contact_started` | Se inicia el formulario interno | `provider_id`, categoría, origen | GA4 + Supabase |
+| `contact_form_completed` | Se completa y envía el formulario interno | identificador de ficha, categoría, municipio | GA4 |
 | `contact_phone_clicked` | Se pulsa llamar | `provider_id`, categoría, origen | GA4 |
 | `contact_web_clicked` | Se abre la web oficial | `provider_id`, categoría, origen | GA4 |
 | `contact_email_clicked` | Se abre el correo externo | `provider_id`, categoría, origen | GA4 |
-| `request_submitted` | Supabase confirma una solicitud | `request_id`, `provider_id`, categoría, municipio | GA4 + Supabase |
+| `request_created` | Supabase confirma una solicitud | `request_id`, identificador de ficha, categoría, municipio | GA4 + Supabase |
+| `request_failed` | La creación de la solicitud falla | identificador de ficha, categoría | GA4 |
 | `alternative_requested` | La familia pide alternativas | `request_id`, categoría, municipio, motivo normalizado | GA4 + Supabase |
 
 ## Respuesta y conexión útil
@@ -69,7 +71,7 @@ El nombre, la web, la ubicación exacta, las notas y los datos de contacto aport
 
 ## Conversiones iniciales en GA4
 
-- `request_submitted`
+- `request_created`
 - `claim_submitted`
 - `provider_responded`, solo si se envía desde servidor sin datos personales.
 - `usefulness_reported`, únicamente como evento agregado.
