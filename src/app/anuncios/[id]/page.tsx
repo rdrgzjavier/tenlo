@@ -5,9 +5,10 @@ import { CalendarDays, Clock3, Euro, Flag, MessageCircle, ShieldAlert, ShieldChe
 import Breadcrumbs from "@/components/Breadcrumbs";
 import FavoriteButton from "@/components/FavoriteButton";
 import ImageWithFallback from "@/components/ImageWithFallback";
+import LocationCard from "@/components/LocationCard";
 import { trackingAttrs } from "@/lib/analytics";
 import { uniqueDisplayTags } from "@/lib/display-labels";
-import { ageLabel, categories, centers, findListing, listings } from "@/lib/mock-data";
+import { ageLabel, categories, centers, findListing, listings, providers } from "@/lib/mock-data";
 import type { Listing } from "@/lib/types";
 
 export function generateStaticParams() {
@@ -67,6 +68,7 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
   if (!listing) notFound();
   const category = categories.find((item) => item.id === listing.categoryId);
   const center = centers.find((item) => item.id === listing.centerId);
+  const provider = providers.find((item) => item.userId === listing.userId);
   const isVerified = listing.trustLevel === "verified" || listing.trustLevel === "official";
   const childcareListing = isChildcareListing(listing.categoryId);
   const categoryLabel = categoryDisplayName(listing.categoryId, category?.name);
@@ -94,6 +96,15 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
               ["Centro relacionado", center?.name ?? "No indicado"],
               [childcareListing ? "Edades orientativas" : "Edad recomendada", ageLabel(listing)]
             ]} />
+            <LocationCard
+              name={center?.name ?? provider?.businessName ?? listing.title}
+              municipality={listing.municipality}
+              address={center?.address}
+              privateLocation={childcareListing || Boolean(provider?.phone.includes("Contacto protegido"))}
+              serviceArea={provider?.serviceArea ?? listing.area}
+              itemId={listing.id}
+              itemType="listing"
+            />
             {!childcareListing ? <InfoBlock title="Condiciones" items={[
               ["Precio", listing.priceLabel ?? (listing.price ? `${listing.price} €` : "Consultar")],
               ["Disponibilidad", listing.availability ?? "Consultar"],

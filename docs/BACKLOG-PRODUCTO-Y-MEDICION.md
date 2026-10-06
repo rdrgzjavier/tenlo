@@ -213,8 +213,11 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 ## P1. Búsqueda y comparación
 
 - [x] Incorporar en `/buscar` un módulo visible de búsqueda por palabra, zona y categoría, también en móvil.
+- [x] Añadir `Ver mapa y cómo llegar` para centros y negocios mediante una búsqueda externa sin coste de API, sin mostrar ubicaciones exactas de profesionales particulares.
+- [ ] Incorporar dirección profesional pública y coordenadas verificadas al modelo de datos; permitir al proveedor confirmarlas o corregirlas al reclamar su ficha.
+- [ ] Sustituir la búsqueda aproximada por un mapa embebido solo cuando existan coordenadas verificadas, consentimiento/cookies y una estimación de coste aceptada.
 - [ ] Sustituir filtros genéricos por los atributos que realmente permiten decidir en el segmento inicial.
-- [ ] Mostrar el número de resultados sin sugerir que más siempre es mejor.
+- [x] Mostrar el número de resultados sin sugerir que más siempre es mejor.
 - [x] Registrar visualmente búsquedas sin resultados y crear una salida útil para limpiar filtros o pedir ayuda a Tenlo.
 - [x] Permitir proponer desde una búsqueda sin resultados un proveedor con nombre, web, ubicación y servicio; conservarlo pendiente de revisión antes de crear una ficha `No verificada`.
 - [ ] Crear el flujo administrativo que convierta una propuesta revisada en ficha `No verificada`, evitando la publicación automática de datos aportados por usuarios.
@@ -231,8 +234,8 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] Diseñar un único flujo de solicitud dentro de Tenlo para el piloto.
 - [ ] Mantener en la ficha tres vías diferenciadas cuando estén disponibles:
   - [ ] `Solicitar información` dentro de Tenlo;
-  - [ ] `Llamar`, con icono y enlace `tel:` mobile first;
-  - [ ] `Visitar web oficial`.
+  - [x] `Llamar`, con icono y enlace `tel:` mobile first en fichas canónicas con teléfono público;
+  - [x] `Visitar web oficial` en fichas canónicas con URL pública;
 - [ ] Medir por separado el inicio y resultado observable de cada vía; una llamada o salida externa no equivale automáticamente a una conexión útil.
 - [ ] Recoger solo la información necesaria para que el proveedor decida si puede ayudar.
 - [ ] Evitar datos identificativos o sensibles de menores.
@@ -431,6 +434,7 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 - [ ] `provider_shared`
 - [ ] `provider_suggestion_started`
 - [ ] `provider_suggestion_submitted`
+- [ ] `map_directions_clicked`
 
 Propiedades recomendadas: `search_id`, categoría, municipio, zona, número de resultados, filtros, posición del proveedor, fuente/medio/campaña y tipo de dispositivo.
 

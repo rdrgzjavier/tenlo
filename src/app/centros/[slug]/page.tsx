@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ExternalLink, Mail, Phone } from "lucide-react";
 import AnalyticsViewEvent from "@/components/AnalyticsViewEvent";
 import { TrustBadge } from "@/components/Badge";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import JsonLd from "@/components/JsonLd";
+import LocationCard from "@/components/LocationCard";
 import { trackingAttrs } from "@/lib/analytics";
 import { centerTypeLabel, religiousCharacterLabel, uniqueDisplayTags } from "@/lib/display-labels";
 import { centers, findCenter } from "@/lib/mock-data";
@@ -76,10 +78,7 @@ export default function CenterDetailPage({ params }: { params: { slug: string } 
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_360px]">
         <section className="grid gap-5">
-          <InfoBlock title="Ubicación" items={[
-            ["Municipio", center.municipality],
-            ["Dirección", cleanValue(center.address)]
-          ]} />
+          <LocationCard name={center.name} municipality={center.municipality} address={center.address} itemId={center.id} itemType="center" />
           <InfoBlock title="Contacto" items={[
             ["Web oficial", centerUrl ? center.website : "No indicado"],
             ["Email", centerEmail ? center.email : "No indicado"],
@@ -94,6 +93,18 @@ export default function CenterDetailPage({ params }: { params: { slug: string } 
         </section>
 
         <aside className="card h-fit p-6">
+          <h2 className="text-xl font-semibold text-ink">Contactar con el centro</h2>
+          <p className="mt-2 text-sm leading-6 text-muted">Utiliza los datos públicos del centro y evita compartir información sensible de menores.</p>
+          {cleanValue(center.phone) !== "No indicado" ? (
+            <a href={`tel:${center.phone.replace(/\s/g, "")}`} className="btn-primary mt-5 w-full" {...trackingAttrs("contact_phone", { item: center.id, type: "center" })}><Phone size={16} /> Llamar</a>
+          ) : null}
+          {centerUrl ? (
+            <a href={centerUrl} target="_blank" rel="noreferrer" className="btn-secondary mt-3 w-full" {...trackingAttrs("external_web", { item: center.id, type: "center" })}><ExternalLink size={16} /> Web oficial</a>
+          ) : null}
+          {centerEmail ? (
+            <a href={`mailto:${centerEmail}`} className="btn-secondary mt-3 w-full" {...trackingAttrs("contact_email", { item: center.id, type: "center" })}><Mail size={16} /> Email</a>
+          ) : null}
+          <div className="my-5 border-t border-line" />
           <h2 className="text-xl font-semibold text-ink">¿Representas este centro?</h2>
           <p className="mt-2 text-sm leading-6 text-muted">Si representas este centro, puedes corregir datos, aportar una imagen oficial o solicitar que el equipo de Tenlo valide la ficha.</p>
           <Link href={`/validar-ficha?tipo=centro&id=${center.slug}`} className="btn-primary mt-5 w-full" {...trackingAttrs("claim_profile_click", { item: center.id, type: "center" })}>Gestionar esta ficha</Link>

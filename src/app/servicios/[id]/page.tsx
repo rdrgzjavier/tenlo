@@ -7,6 +7,7 @@ import { TrustBadge } from "@/components/Badge";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import JsonLd from "@/components/JsonLd";
+import LocationCard from "@/components/LocationCard";
 import ProfileAvatar from "@/components/ProfileAvatar";
 import ProviderProfileSections from "@/components/ProviderProfileSections";
 import { trackingAttrs } from "@/lib/analytics";
@@ -17,8 +18,8 @@ import type { Listing, Provider } from "@/lib/types";
 const serviceFallbackImage = "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1600";
 
 function isPersonalProvider(provider: NonNullable<ReturnType<typeof findProvider>>) {
-  const value = [provider.id, provider.category, provider.businessName, ...provider.tags].join(" ").toLowerCase();
-  return value.includes("canguro") || value.includes("profesor") || value.includes("particular");
+  const protectedContact = provider.phone.includes("Contacto protegido") || provider.email.endsWith("@tenlo.es");
+  return protectedContact || provider.id.startsWith("canguro-") || provider.id.startsWith("profesor-");
 }
 
 function isChildcareProvider(provider: NonNullable<ReturnType<typeof findProvider>>) {
@@ -117,6 +118,14 @@ export default function ServiceDetailPage({ params }: { params: { id: string } }
           </div>
 
           <section className="mt-8 grid gap-5">
+            <LocationCard
+              name={provider.businessName}
+              municipality={provider.municipality}
+              privateLocation={personalProvider || provider.phone.includes("Contacto protegido")}
+              serviceArea={provider.serviceArea}
+              itemId={provider.id}
+              itemType="provider"
+            />
             {childcareProvider && listing ? (
               <ChildcareProfile provider={provider} listing={listing} />
             ) : (
