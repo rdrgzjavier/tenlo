@@ -149,7 +149,7 @@ export default function ServiceDetailPage({ params }: { params: { id: string } }
         </article>
 
         <aside className="card h-fit p-6">
-          <h2 className="text-xl font-semibold text-ink">{childcareProvider ? "Solicitud protegida" : personalProvider ? "Contacto entre adultos" : "Contacto del servicio"}</h2>
+          <h2 className="subsection-title text-ink">{childcareProvider ? "Solicitud protegida" : personalProvider ? "Contacto entre adultos" : "Contacto del servicio"}</h2>
           <p className="mt-2 text-sm leading-6 text-muted">
             {childcareProvider
               ? "Primero envía una solicitud protegida desde Tenlo. Si ambas partes encajan, podréis acordar el canal de confirmación sin publicar datos de menores."
@@ -193,7 +193,7 @@ function ChildcareProfile({ provider, listing }: { provider: Provider; listing: 
   return (
     <>
       <section className="card p-5 md:p-6">
-        <h2 className="text-2xl font-semibold text-ink">Datos clave para reservar</h2>
+        <h2 className="subsection-title text-ink">Datos clave para reservar</h2>
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
           {summary.map(({ label, value, Icon }) => (
             <div key={label} className="rounded-2xl border border-line bg-soft p-4">
@@ -206,7 +206,7 @@ function ChildcareProfile({ provider, listing }: { provider: Provider; listing: 
       </section>
 
       <section className="card p-5 md:p-6">
-        <h2 className="text-2xl font-semibold text-ink">Calendario orientativo del mes</h2>
+        <h2 className="subsection-title text-ink">Calendario orientativo del mes</h2>
         <div className="mt-5 space-y-3">
           {monthAvailability(details["Disponibilidad semanal"]).map((week) => (
             <div key={week.label} className="grid gap-2 lg:grid-cols-[82px_1fr] lg:items-center">
@@ -250,7 +250,7 @@ function ChildcareProfile({ provider, listing }: { provider: Provider; listing: 
 function InfoBlock({ title, items }: { title: string; items: string[][] }) {
   return (
     <section className="card p-6">
-      <h2 className="text-2xl font-semibold text-ink">{title}</h2>
+      <h2 className="subsection-title text-ink">{title}</h2>
       <dl className="mt-5 grid gap-4 sm:grid-cols-2">
         {items.map(([label, value]) => (
           <div key={label} className="rounded-xl border border-line bg-soft p-4">

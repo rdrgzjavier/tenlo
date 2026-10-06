@@ -136,8 +136,8 @@ export default function ServicesPage() {
 
                 return (
                   <>
-              <h3 className="text-lg font-semibold leading-7 text-ink"><Link href={`/servicios/${provider.id}`}>{provider.businessName}</Link></h3>
-              <p className="mt-2 line-clamp-3 text-sm leading-6 text-muted">{provider.description}</p>
+              <h3 className="card-title text-ink"><Link href={`/servicios/${provider.id}`}>{provider.businessName}</Link></h3>
+              <p className="supporting-copy mt-2 line-clamp-3">{provider.description}</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <span className="chip">{categoryLabel}</span>
                 {visibleTags.map((tag) => <span key={tag} className="chip">{tag}</span>)}

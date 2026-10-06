@@ -60,7 +60,7 @@ export default async function FavoritesPage() {
           <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-lavender text-ink">
             <Heart size={24} aria-hidden />
           </span>
-          <h1 className="mt-5 text-3xl font-bold text-slatecopy">Tus favoritos</h1>
+          <h1 className="detail-title mt-5">Tus favoritos</h1>
           <p className="mt-3 text-sm leading-6 text-muted">
             Aquí aparecerán los centros, servicios y recursos que guardes.
           </p>

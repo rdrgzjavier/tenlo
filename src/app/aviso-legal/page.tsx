@@ -11,7 +11,7 @@ export default function LegalNoticePage() {
       <h1 className="page-title">Aviso Legal</h1>
       <p className="lead mt-4">Bienvenido a Tenlo. En cumplimiento de la Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la Información y de Comercio Electrónico (LSSI-CE), se informa a los usuarios de los siguientes datos identificativos.</p>
 
-      <div className="mt-10 space-y-10 text-sm leading-7 text-slatecopy">
+      <div className="mt-10 space-y-10 text-base leading-8 text-slatecopy">
         <section>
           <h2 className="text-xl font-bold text-ink">1. Datos Identificativos</h2>
           <p className="mt-4">

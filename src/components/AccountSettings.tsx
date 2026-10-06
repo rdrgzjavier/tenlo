@@ -259,7 +259,7 @@ export default function AccountSettings({ email, displayName, role, status, muni
           </button>
         </div>
         <form className="mt-6 rounded-2xl border border-coral/20 bg-coral/5 p-4" onSubmit={handleDeleteRequest}>
-          <h3 className="text-base font-bold text-slatecopy">Solicitar borrado de cuenta</h3>
+          <h3 className="minor-title">Solicitar borrado de cuenta</h3>
           <p className="mt-2 text-sm leading-6 text-muted">
             Para proteger la trazabilidad de publicaciones y revisiones, el equipo de Tenlo revisa la baja antes de eliminar o anonimizar datos asociados.
           </p>

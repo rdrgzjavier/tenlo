@@ -11,7 +11,7 @@ export default function PrivacyPolicyPage() {
       <h1 className="page-title">Política de Privacidad</h1>
       <p className="lead mt-4">En Tenlo, la privacidad es nuestro pilar fundamental. Esta política explica cómo recogemos, usamos y protegemos la información de las familias y profesionales que utilizan nuestra plataforma.</p>
 
-      <div className="mt-10 space-y-10 text-sm leading-7 text-slatecopy">
+      <div className="mt-10 space-y-10 text-base leading-8 text-slatecopy">
         <section>
           <h2 className="text-xl font-bold text-ink">1. Responsable del Tratamiento</h2>
           <p className="mt-4">

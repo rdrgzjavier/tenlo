@@ -84,7 +84,7 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
           <ImageWithFallback src={listing.image} fallbackSrc={fallbackImage(listing.categoryId)} alt={`Imagen de ${listing.title}`} className="mb-6 aspect-[16/7] w-full rounded-2xl border border-line object-cover" />
           <div className="flex items-start gap-3">
             {isVerified ? <ShieldCheck className="mt-1 shrink-0 text-emerald-700" size={28} aria-label="Ficha verificada" /> : null}
-            <h1 className="text-4xl font-bold leading-tight text-ink">{listing.title}</h1>
+            <h1 className="detail-title text-ink">{listing.title}</h1>
           </div>
           <p className="mt-5 text-lg leading-8 text-slatecopy">{listing.description}</p>
           <div className="mt-5 flex flex-wrap gap-2">
@@ -115,7 +115,7 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
             {childcareListing ? <ChildcareListingProfile listing={listing} /> : null}
             {!childcareListing && Object.keys(listing.details).length > 0 ? (
               <section className="card p-6">
-                <h2 className="text-2xl font-semibold text-ink">Información específica</h2>
+                <h2 className="subsection-title text-ink">Información específica</h2>
                 <dl className="mt-4 grid gap-3">
                   {Object.entries(listing.details).map(([key, value]) => (
                     <div key={key} className="flex justify-between gap-4 border-b border-line pb-3 text-sm">
@@ -132,7 +132,7 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
 
         <aside className="space-y-4">
           <div className="card p-5">
-            <h2 className="text-xl font-semibold text-ink">{childcareListing ? "Solicitud protegida" : "Contacto protegido"}</h2>
+            <h2 className="subsection-title text-ink">{childcareListing ? "Solicitud protegida" : "Contacto protegido"}</h2>
             <p className="mt-2 text-sm leading-6 text-muted">El contacto se inicia desde la plataforma. No compartas datos personales de menores, horarios personales ni información sensible.</p>
             <Link href={`/solicitar?item=${listing.slug}`} className="btn-primary mt-5 w-full" {...trackingAttrs("contact_started", { item: listing.id, category: listing.categoryId })}><MessageCircle size={16} /> {childcareListing ? "Solicitar contacto" : "Contactar"}</Link>
             <FavoriteButton className="btn-secondary mt-3 w-full" label="Guardar favorito" targetId={listing.id} showLabel />
@@ -161,7 +161,7 @@ function ChildcareListingProfile({ listing }: { listing: Listing }) {
   return (
     <>
       <section className="card p-5 md:p-6">
-        <h2 className="text-2xl font-semibold text-ink">Datos clave para reservar</h2>
+        <h2 className="subsection-title text-ink">Datos clave para reservar</h2>
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
           {summary.map(({ label, value, Icon }) => (
             <div key={label} className="rounded-2xl border border-line bg-soft p-4">
@@ -174,7 +174,7 @@ function ChildcareListingProfile({ listing }: { listing: Listing }) {
       </section>
 
       <section className="card p-5 md:p-6">
-        <h2 className="text-2xl font-semibold text-ink">Calendario orientativo del mes</h2>
+        <h2 className="subsection-title text-ink">Calendario orientativo del mes</h2>
         <div className="mt-5 space-y-3">
           {monthAvailability(details["Disponibilidad semanal"]).map((week) => (
             <div key={week.label} className="grid gap-2 lg:grid-cols-[82px_1fr] lg:items-center">
@@ -218,7 +218,7 @@ function ChildcareListingProfile({ listing }: { listing: Listing }) {
 function InfoBlock({ title, items }: { title: string; items: string[][] }) {
   return (
     <section className="card p-6">
-      <h2 className="text-2xl font-semibold text-ink">{title}</h2>
+      <h2 className="subsection-title text-ink">{title}</h2>
       <dl className="mt-5 grid gap-4 sm:grid-cols-2">
         {items.map(([label, value]) => (
           <div key={label} className="rounded-xl border border-line bg-soft p-4">

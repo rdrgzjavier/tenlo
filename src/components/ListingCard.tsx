@@ -93,8 +93,8 @@ export default function ListingCard({ listing }: { listing: Listing }) {
         <span className="absolute right-3 top-3"><TrustBadge level={listing.trustLevel} variant="solid" /></span>
       </Link>
       <div className="flex flex-1 flex-col p-5">
-        <h3 className="text-lg font-semibold leading-7 text-ink"><Link href={detailHref}>{listing.title}</Link></h3>
-        <p className="mt-2 line-clamp-3 text-sm leading-6 text-muted">{listing.description}</p>
+        <h3 className="card-title text-ink"><Link href={detailHref}>{listing.title}</Link></h3>
+        <p className="supporting-copy mt-2 line-clamp-3">{listing.description}</p>
         <div className="mt-4 flex flex-wrap gap-2">
           {primaryCategory ? <span className="chip">{primaryCategory}</span> : null}
           {listing.status !== "published" ? <StatusBadge status={listing.status} /> : null}

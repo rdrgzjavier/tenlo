@@ -69,7 +69,7 @@ export default async function MyPublicationsPage() {
           <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-lavender text-ink">
             <ClipboardList size={24} aria-hidden />
           </span>
-          <h1 className="mt-5 text-3xl font-bold text-slatecopy">Mis publicaciones</h1>
+          <h1 className="detail-title mt-5">Mis publicaciones</h1>
           <p className="mt-3 text-sm leading-6 text-muted">
             Aquí aparecerán las ofertas, recursos o fichas que envíes a Tenlo para revisión.
           </p>

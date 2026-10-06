@@ -76,21 +76,21 @@ export default function Header() {
           </Link>
           {isLoggedIn ? (
             <>
-              <Link href="/area-personal" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-line bg-panel px-4 text-sm font-bold text-slatecopy transition-colors hover:border-ink hover:text-ink">
+              <Link href="/area-personal" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-line bg-panel px-4 text-base font-bold text-slatecopy transition-colors hover:border-ink hover:text-ink">
                 <UserRound size={16} aria-hidden />
                 Área personal
               </Link>
-              <Link href="/publicar" className="inline-flex min-h-10 items-center justify-center rounded-xl bg-ink px-4 text-sm font-bold text-white shadow-lift transition-colors hover:bg-ink/90">Publicar oferta</Link>
+              <Link href="/publicar" className="inline-flex min-h-12 items-center justify-center rounded-xl bg-ink px-4 text-base font-bold text-white shadow-lift transition-colors hover:bg-ink/90">Publicar oferta</Link>
             </>
           ) : (
-            <Link href="/login" className="inline-flex min-h-10 items-center justify-center rounded-xl bg-ink px-4 text-sm font-bold text-white shadow-lift transition-colors hover:bg-ink/90">Iniciar sesión</Link>
+            <Link href="/login" className="inline-flex min-h-12 items-center justify-center rounded-xl bg-ink px-4 text-base font-bold text-white shadow-lift transition-colors hover:bg-ink/90">Iniciar sesión</Link>
           )}
         </div>
         <div className="flex items-center gap-2 md:hidden">
-          <Link href={isLoggedIn ? "/area-personal" : "/login"} className="icon-button h-10 w-10 rounded-xl" aria-label={isLoggedIn ? "Área personal" : "Iniciar sesión"}>
+          <Link href={isLoggedIn ? "/area-personal" : "/login"} className="icon-button rounded-xl" aria-label={isLoggedIn ? "Área personal" : "Iniciar sesión"}>
             <UserRound size={20} />
           </Link>
-          <button className="icon-button h-10 w-10 rounded-xl" onClick={() => setOpen((value) => !value)} aria-label="Abrir menú">
+          <button className="icon-button rounded-xl" onClick={() => setOpen((value) => !value)} aria-label="Abrir menú">
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>

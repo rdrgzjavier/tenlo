@@ -387,7 +387,7 @@ export default function LoginRegistration() {
     <div className="page py-10">
       <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1fr_380px]">
         <div className="rounded-2xl border border-line bg-panel p-5 md:p-8">
-          <h1 className="text-3xl font-bold text-ink">Entrar o registrarse</h1>
+          <h1 className="detail-title text-ink">Entrar o registrarse</h1>
           <p className="mt-3 text-sm leading-6 text-muted">
             El perfil representa a una persona adulta, una entidad o un centro. No se solicitan fotos, horarios personales, clases ni datos identificativos de menores.
           </p>

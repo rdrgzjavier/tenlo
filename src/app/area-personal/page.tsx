@@ -149,7 +149,7 @@ export default async function PersonalAreaPage() {
           <ShieldCheck size={20} aria-hidden />
         </span>
         <div>
-          <h2 className="text-sm font-bold text-slatecopy">{reviewStatus}</h2>
+          <p className="text-sm font-bold text-slatecopy">{reviewStatus}</p>
           <p className="text-sm leading-6 text-muted">Sesión iniciada como <strong>{displayName}</strong>.</p>
         </div>
       </div>

@@ -166,7 +166,7 @@ export default function Home() {
             <div className="mb-6 h-40 overflow-hidden rounded-[28px] bg-soft md:hidden">
               <ImageWithFallback src={heroImageMobile} fallbackSrc="https://images.pexels.com/photos/7880624/pexels-photo-7880624.jpeg?auto=compress&cs=tinysrgb&w=640&q=78" alt="Persona adulta caminando de la mano con una menor, sin datos identificativos" className="h-full w-full object-cover object-center" loading="eager" fetchPriority="high" />
             </div>
-            <h1 className="mt-2 max-w-3xl text-[32px] font-extrabold leading-[1.08] text-slatecopy sm:text-5xl sm:leading-tight lg:text-[56px]">Encuentra, compara y contacta con servicios para tu familia</h1>
+            <h1 className="page-title max-w-3xl">Encuentra, compara y contacta con servicios para tu familia</h1>
             <p className="lead">Actividades, apoyo escolar, salud, tecnología, transporte y mucho más. Información organizada por zona, sin datos identificativos de menores.</p>
             <ValidatedSearchForm className="mt-8 grid gap-3 rounded-[24px] bg-panel p-3 shadow-soft sm:grid-cols-[1fr_0.72fr_auto]" message="Indica qué quieres encontrar o dónde quieres buscar.">
               <label className="flex min-h-14 items-center gap-3 rounded-2xl bg-white px-4 ring-1 ring-line">
@@ -205,7 +205,7 @@ export default function Home() {
       <section className="page relative z-10 py-14 lg:py-16">
         <div className="mb-5 text-left md:text-center">
           <h2 className="section-title">Encuentra antes el tipo de ayuda que necesitas</h2>
-          <p className="mx-auto mt-3 max-w-4xl text-sm leading-6 text-muted lg:whitespace-nowrap">Categorías útiles para comparar servicios, centros y recursos locales.</p>
+          <p className="supporting-copy mx-auto mt-3 max-w-4xl lg:whitespace-nowrap">Categorías útiles para comparar servicios, centros y recursos locales.</p>
         </div>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-7">
           {homeCategories.map(({ name, href, Icon, color }) => (
@@ -223,7 +223,7 @@ export default function Home() {
       <section className="page py-14 lg:py-16">
         <div className="mx-auto mb-7 max-w-3xl text-left md:text-center">
           <h2 className="section-title lg:whitespace-nowrap">Oferta local para decidir con confianza</h2>
-          <p className="mt-3 text-sm leading-6 text-muted">Datos vivos del directorio Tenlo: centros educativos, recursos disponibles, zonas cubiertas y revisión del contenido.</p>
+          <p className="supporting-copy mt-3">Datos vivos del directorio Tenlo: centros educativos, recursos disponibles, zonas cubiertas y revisión del contenido.</p>
         </div>
         <div className="grid grid-cols-2 overflow-hidden rounded-[24px] border border-line bg-white shadow-soft lg:grid-cols-4">
           {statCards.map(({ value, label, Icon }) => (
@@ -243,7 +243,7 @@ export default function Home() {
             <article key={title} className="card p-7">
               <Icon size={32} className="text-slatecopy" aria-hidden />
               <h3 className="mt-5 text-lg font-bold text-slatecopy">{title}</h3>
-              <p className="mt-3 text-sm leading-6 text-muted">{text}</p>
+              <p className="supporting-copy mt-3">{text}</p>
               <Link href={href} className="btn-secondary mt-5">{cta}</Link>
             </article>
           ))}
@@ -253,7 +253,7 @@ export default function Home() {
       <section className="page py-14 lg:py-16">
         <div className="mb-8 rounded-[24px] border border-line bg-white p-6 shadow-soft">
           <p className="label">Situaciones reales</p>
-          <h2 className="mt-2 text-2xl font-bold text-slatecopy">Tenlo ayuda cuando necesitas resolver algo concreto</h2>
+          <h2 className="subsection-title mt-2">Tenlo ayuda cuando necesitas resolver algo concreto</h2>
           <div className="mt-5 flex flex-wrap gap-2">
             {realSituations.map((situation) => (
               <Link key={situation.text} href={situation.href} className="chip hover:text-ink">{situation.text}</Link>
@@ -291,7 +291,7 @@ export default function Home() {
         <div className="mb-7 text-left md:text-center">
           <div>
             <h2 className="section-title">Centros educativos destacados</h2>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-muted md:mx-auto">Fichas públicas organizadas para entender etapas, servicios y recursos relacionados sin perderte entre páginas sueltas.</p>
+            <p className="supporting-copy mt-3 max-w-2xl md:mx-auto">Fichas públicas organizadas para entender etapas, servicios y recursos relacionados sin perderte entre páginas sueltas.</p>
           </div>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
@@ -299,7 +299,7 @@ export default function Home() {
             <Link key={center.id} href={`/centros/${center.slug}`} className="card p-5 hover:border-ink">
               <span className="chip">{centerTypeLabel(center.type)}</span>
               <h3 className="mt-4 text-lg font-bold text-slatecopy">{center.name}</h3>
-              <p className="mt-2 text-sm leading-6 text-muted">{center.description}</p>
+              <p className="supporting-copy mt-2">{center.description}</p>
               <p className="mt-4 text-sm font-semibold text-ink">{center.municipality}</p>
             </Link>
           ))}
@@ -311,8 +311,8 @@ export default function Home() {
         <div className="grid gap-8 rounded-[24px] bg-soft p-6 shadow-soft md:p-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
           <div>
             <MapPinned size={34} className="text-petrol" aria-hidden />
-            <h2 className="mt-5 text-2xl font-bold text-slatecopy">Empezamos por el Noroeste de Madrid</h2>
-            <p className="mt-4 text-sm leading-7 text-muted">Cobertura inicial en cuatro municipios para comparar oferta local cerca de casa.</p>
+            <h2 className="subsection-title mt-5">Empezamos por el Noroeste de Madrid</h2>
+            <p className="supporting-copy mt-4">Cobertura inicial en cuatro municipios para comparar oferta local cerca de casa.</p>
             <Link href="/buscar?region=madrid" className="btn-primary mt-6 w-fit">Ver todas las zonas</Link>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -329,8 +329,8 @@ export default function Home() {
           <div className="flex flex-col gap-5 md:flex-row md:items-center">
             <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-white/70"><BriefcaseBusiness size={34} className="text-slatecopy" /></span>
             <div>
-              <h2 className="text-2xl font-bold text-slatecopy">¿Quieres formar parte de Tenlo?</h2>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">Únete como profesional o centro y forma parte del directorio de confianza para familias.</p>
+              <h2 className="subsection-title">¿Quieres formar parte de Tenlo?</h2>
+              <p className="supporting-copy mt-2 max-w-2xl">Únete como profesional o centro y forma parte del directorio de confianza para familias.</p>
             </div>
           </div>
           <Link href="/publicar" className="btn-primary w-full justify-center sm:w-auto" {...trackingAttrs("publish", { placement: "home_join" })}>Publicar oferta</Link>
@@ -340,7 +340,7 @@ export default function Home() {
       <section className="page py-14 lg:py-16">
         <div className="mx-auto max-w-3xl text-left md:text-center">
           <h2 className="section-title">Cómo funciona Tenlo</h2>
-          <p className="mt-3 text-sm leading-6 text-muted">De la necesidad familiar a una decisión local clara.</p>
+          <p className="supporting-copy mt-3">De la necesidad familiar a una decisión local clara.</p>
         </div>
         <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {steps.map(([title, text], index) => (
@@ -349,7 +349,7 @@ export default function Home() {
                 <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-lavender text-sm font-extrabold text-ink">{index + 1}</span>
               </div>
               <h3 className="mt-6 text-lg font-bold text-slatecopy">{title}</h3>
-              <p className="mt-3 text-sm leading-6 text-muted">{text}</p>
+              <p className="supporting-copy mt-3">{text}</p>
             </article>
           ))}
         </div>
@@ -363,15 +363,15 @@ export default function Home() {
           <div className="flex flex-col gap-4 md:flex-row">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-petrol shadow-sm"><ShieldCheck size={24} aria-hidden /></span>
             <div>
-              <h2 className="text-2xl font-bold text-slatecopy">Privacidad desde el inicio</h2>
-              <p className="mt-3 text-sm leading-7 text-muted">La privacidad y seguridad de las familias es nuestra prioridad. No publicamos fotos, perfiles, horarios personales ni datos sensibles de menores.</p>
+              <h2 className="subsection-title">Privacidad desde el inicio</h2>
+              <p className="supporting-copy mt-3">La privacidad y seguridad de las familias es nuestra prioridad. No publicamos fotos, perfiles, horarios personales ni datos sensibles de menores.</p>
             </div>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
             {privacyBullets.map(([title, text]) => (
               <article key={title} className="rounded-[20px] bg-white/80 p-5 text-center shadow-sm ring-1 ring-line">
                 <CheckCircle2 size={24} className="mx-auto text-petrol" aria-hidden />
-                <h3 className="mt-4 text-sm font-bold text-slatecopy">{title}</h3>
+                <h3 className="minor-title mt-4">{title}</h3>
                 <p className="mt-2 text-sm leading-6 text-muted">{text}</p>
               </article>
             ))}
@@ -384,7 +384,7 @@ export default function Home() {
           <div>
             <p className="label">Guía local para familias</p>
             <h2 className="section-title">Todo lo que necesitas alrededor del cole</h2>
-            <p className="mt-4 text-sm leading-7 text-muted">Tenlo agrupa servicios educativos, logística familiar, centros, actividades y recursos próximos en Las Rozas, Majadahonda, Pozuelo y Boadilla. La arquitectura está preparada para crecer por zona, categoría y centro educativo.</p>
+            <p className="supporting-copy mt-4">Tenlo agrupa servicios educativos, logística familiar, centros, actividades y recursos próximos en Las Rozas, Majadahonda, Pozuelo y Boadilla. La arquitectura está preparada para crecer por zona, categoría y centro educativo.</p>
           </div>
           <div className="grid gap-3">
             {faqs.map(([question, answer]) => (
@@ -401,8 +401,8 @@ export default function Home() {
           <div className="flex flex-col gap-5 md:flex-row md:items-center">
             <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-white/70"><Mail size={34} className="text-slatecopy" /></span>
             <div>
-              <h2 className="text-2xl font-bold text-slatecopy">¿Quieres estar al día?</h2>
-              <p className="mt-2 text-sm leading-6 text-muted">Recibe novedades, recursos y recomendaciones pensadas para familias como la tuya.</p>
+              <h2 className="subsection-title">¿Quieres estar al día?</h2>
+              <p className="supporting-copy mt-2">Recibe novedades, recursos y recomendaciones pensadas para familias como la tuya.</p>
             </div>
           </div>
           <form action="/contacto" className="grid min-w-[min(100%,460px)] gap-3 xl:grid-cols-[1fr_auto]">

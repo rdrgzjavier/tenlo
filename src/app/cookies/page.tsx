@@ -11,7 +11,7 @@ export default function CookiesPolicyPage() {
       <h1 className="page-title">Política de Cookies</h1>
       <p className="lead mt-4">Tenlo utiliza cookies técnicas para que la plataforma funcione correctamente. Las cookies de analítica solo se activarán cuando exista consentimiento.</p>
 
-      <div className="mt-10 space-y-10 text-sm leading-7 text-slatecopy">
+      <div className="mt-10 space-y-10 text-base leading-8 text-slatecopy">
         <section>
           <h2 className="text-xl font-bold text-ink">¿Qué son las cookies?</h2>
           <p className="mt-4">

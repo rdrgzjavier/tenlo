@@ -57,7 +57,7 @@ export default function CenterDetailPage({ params }: { params: { slug: string } 
       <ImageWithFallback src={center.image} fallbackSrc={centerFallbackImage} alt={`Imagen de ${center.name}`} className="mb-6 aspect-[16/7] w-full rounded-2xl border border-line object-cover" />
 
       <div className="mt-4 flex items-start gap-3">
-        <h1 className="text-4xl font-bold text-ink">{center.name}</h1>
+        <h1 className="detail-title text-ink">{center.name}</h1>
       </div>
       <p className="mt-3 max-w-3xl text-lg leading-8 text-slatecopy">{center.description}</p>
 
@@ -93,7 +93,7 @@ export default function CenterDetailPage({ params }: { params: { slug: string } 
         </section>
 
         <aside className="card h-fit p-6">
-          <h2 className="text-xl font-semibold text-ink">Contactar con el centro</h2>
+          <h2 className="subsection-title text-ink">Contactar con el centro</h2>
           <p className="mt-2 text-sm leading-6 text-muted">Utiliza los datos públicos del centro y evita compartir información sensible de menores.</p>
           {cleanValue(center.phone) !== "No indicado" ? (
             <a href={`tel:${center.phone.replace(/\s/g, "")}`} className="btn-primary mt-5 w-full" {...trackingAttrs("contact_phone", { item: center.id, type: "center" })}><Phone size={16} /> Llamar</a>
@@ -105,7 +105,7 @@ export default function CenterDetailPage({ params }: { params: { slug: string } 
             <a href={`mailto:${centerEmail}`} className="btn-secondary mt-3 w-full" {...trackingAttrs("contact_email", { item: center.id, type: "center" })}><Mail size={16} /> Email</a>
           ) : null}
           <div className="my-5 border-t border-line" />
-          <h2 className="text-xl font-semibold text-ink">¿Representas este centro?</h2>
+          <h2 className="subsection-title text-ink">¿Representas este centro?</h2>
           <p className="mt-2 text-sm leading-6 text-muted">Si representas este centro, puedes corregir datos, aportar una imagen oficial o solicitar que el equipo de Tenlo valide la ficha.</p>
           <Link href={`/validar-ficha?tipo=centro&id=${center.slug}`} className="btn-primary mt-5 w-full" {...trackingAttrs("claim_profile_click", { item: center.id, type: "center" })}>Gestionar esta ficha</Link>
         </aside>
@@ -117,7 +117,7 @@ export default function CenterDetailPage({ params }: { params: { slug: string } 
 function InfoBlock({ title, items }: { title: string; items: string[][] }) {
   return (
     <section className="card p-6">
-      <h2 className="text-2xl font-semibold text-ink">{title}</h2>
+      <h2 className="subsection-title text-ink">{title}</h2>
       <dl className="mt-5 grid gap-4 sm:grid-cols-2">
         {items.map(([label, value]) => (
           <div key={label} className="rounded-xl border border-line bg-soft p-4">

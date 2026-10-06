@@ -80,8 +80,8 @@ export default function CommunityPage() {
                 <img src={initiative.image} alt={`Imagen de ${initiative.name}`} className="h-44 w-full object-cover" loading="lazy" />
               </Link>
               <div className="flex flex-1 flex-col p-5">
-                <h3 className="text-lg font-semibold leading-7 text-ink"><Link href={`/comunidad/${initiative.id}`}>{initiative.name}</Link></h3>
-                <p className="mt-2 line-clamp-3 text-sm leading-6 text-muted">{initiative.summary}</p>
+                <h3 className="card-title text-ink"><Link href={`/comunidad/${initiative.id}`}>{initiative.name}</Link></h3>
+                <p className="supporting-copy mt-2 line-clamp-3">{initiative.summary}</p>
                 <div className="mt-4 flex flex-wrap gap-2">{initiative.tags.slice(0, 2).map((tag) => <span key={tag} className="chip">{tag}</span>)}</div>
                 <div className="mt-4 grid gap-2 pb-5 text-sm">
                   <p className="font-semibold text-slatecopy">{initiative.municipality}</p>

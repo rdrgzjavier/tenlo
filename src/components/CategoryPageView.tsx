@@ -11,7 +11,7 @@ export default function CategoryPageView({ category }: { category: Category }) {
   return (
     <div className="page py-10">
       <p className="label">Categoría</p>
-      <h1 className="mt-2 text-4xl font-bold text-ink">{category.name}</h1>
+      <h1 className="page-title text-ink">{category.name}</h1>
       <p className="mt-3 max-w-3xl text-slatecopy">{category.description}</p>
       <div className="mt-5 flex flex-wrap gap-3">
         <Link className="btn-primary" href="/publicar">Publicar en esta categoría</Link>

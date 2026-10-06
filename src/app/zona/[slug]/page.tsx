@@ -31,7 +31,7 @@ export default function ZonePage({ params }: { params: { slug: string } }) {
   return (
     <div className="page py-10">
       <p className="label">Zona</p>
-      <h1 className="mt-2 text-4xl font-bold text-ink">Servicios para familias en {municipality.name}</h1>
+      <h1 className="page-title text-ink">Servicios para familias en {municipality.name}</h1>
       <p className="mt-3 max-w-3xl text-slatecopy">{municipality.description}</p>
       <section className="mt-8">
         <h2 className="section-title">Publicaciones</h2>

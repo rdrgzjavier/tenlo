@@ -10,7 +10,7 @@ export default function CentersForSchoolsPage() {
   return (
     <div className="page py-10">
       <p className="label">Para colegios, escuelas infantiles e institutos</p>
-      <h1 className="mt-2 text-4xl font-bold text-ink">Centros educativos</h1>
+      <h1 className="page-title text-ink">Centros educativos</h1>
       <p className="mt-3 max-w-3xl text-slatecopy">La plataforma ayuda a las familias a encontrar recursos alrededor del centro y permite a cada centro validar su ficha o proponer correcciones.</p>
       <div className="mt-8 grid gap-4 md:grid-cols-3">
         {["Ficha pública clara", "Recursos útiles para familias", "Canal de revisión controlado"].map((item) => (

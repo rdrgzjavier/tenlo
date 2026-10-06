@@ -28,8 +28,8 @@ export default function CenterCard({ center }: { center: Center }) {
         <span className="absolute right-3 top-3"><TrustBadge level={center.trustLevel} variant="solid" /></span>
       </Link>
       <div className="flex flex-1 flex-col p-5">
-        <h3 className="text-lg font-semibold leading-7 text-ink"><Link href={detailHref}>{center.name}</Link></h3>
-        <p className="mt-2 line-clamp-3 text-sm leading-6 text-muted">{center.description}</p>
+        <h3 className="card-title text-ink"><Link href={detailHref}>{center.name}</Link></h3>
+        <p className="supporting-copy mt-2 line-clamp-3">{center.description}</p>
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <span className="chip">{typeLabel}</span>
           {religiousLabel ? <span className="chip">{religiousLabel}</span> : null}

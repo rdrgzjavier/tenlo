@@ -31,7 +31,7 @@ export default function ContactPage() {
               <MessageSquare className="text-ink" size={20} />
             </div>
             <div>
-              <h3 className="font-semibold text-ink">Sugerencias</h3>
+              <h3 className="minor-title text-ink">Sugerencias</h3>
               <p className="mt-1 text-sm text-muted text-slatecopy">Tenlo es una plataforma en constante evolución. Tu feedback es vital para nosotros.</p>
             </div>
           </div>

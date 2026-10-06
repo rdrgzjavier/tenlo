@@ -20,8 +20,8 @@ export default function CategoryCard({ category }: { category: Category }) {
           <span className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-soft text-ink ring-1 ring-line">
             <Icon size={22} aria-hidden />
           </span>
-          <h3 className="text-xl font-semibold text-ink">{category.name}</h3>
-          <p className="mt-2 text-sm leading-6 text-muted">{category.description}</p>
+          <h3 className="card-title text-ink">{category.name}</h3>
+          <p className="supporting-copy mt-2">{category.description}</p>
         </div>
         <span className="icon-button shrink-0 group-hover:border-ink">
           <ArrowRight size={18} aria-hidden />
