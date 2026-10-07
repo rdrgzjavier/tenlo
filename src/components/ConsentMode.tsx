@@ -9,6 +9,7 @@ declare global {
       renew?: () => void;
     };
     gtag?: (...args: unknown[]) => void;
+    google_tag_manager?: Record<string, unknown>;
   }
 }
 
@@ -16,17 +17,31 @@ export default function ConsentMode({ gtmId }: { gtmId?: string }) {
   useEffect(() => {
     const loadGtm = () => {
       if (!gtmId) return;
-      const existingScript = document.getElementById("gtm-script") as HTMLScriptElement | null;
-      if (existingScript) return;
-      const script = document.createElement("script");
-      script.id = "gtm-script";
-      script.async = true;
-      script.src = `https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(gtmId)}`;
-      script.addEventListener("load", () => {
-        script.dataset.analyticsReady = "true";
-        window.dispatchEvent(new Event("tenlo:analytics-ready"));
-      });
-      document.head.appendChild(script);
+      let script = document.getElementById("gtm-script") as HTMLScriptElement | null;
+      if (!script) {
+        script = document.createElement("script");
+        script.id = "gtm-script";
+        script.async = true;
+        script.src = `https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(gtmId)}`;
+        document.head.appendChild(script);
+      }
+      if (script.dataset.analyticsReady === "true" || script.dataset.analyticsWaiting === "true") return;
+      script.dataset.analyticsWaiting = "true";
+      const startedAt = Date.now();
+      const readyTimer = window.setInterval(() => {
+        if (window.google_tag_manager?.[gtmId]) {
+          window.clearInterval(readyTimer);
+          if (!script) return;
+          delete script.dataset.analyticsWaiting;
+          script.dataset.analyticsReady = "true";
+          window.dispatchEvent(new Event("tenlo:analytics-ready"));
+          return;
+        }
+        if (Date.now() - startedAt >= 10_000) {
+          window.clearInterval(readyTimer);
+          if (script) delete script.dataset.analyticsWaiting;
+        }
+      }, 50);
     };
 
     const updateConsent = () => {
