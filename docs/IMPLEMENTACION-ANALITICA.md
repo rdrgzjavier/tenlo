@@ -1,6 +1,6 @@
 # Implementación analítica de Tenlo
 
-Estado: Cookiebot, GA4 y GTM de Tenlo creados y conectados en producción; rechazo verificado sin carga de Google. Pendientes la prueba positiva en DebugView, las dimensiones personalizadas y los primeros informes.
+Estado: Cookiebot, GA4 y GTM de Tenlo creados y conectados en producción; rechazo verificado sin carga de Google. El informe base de Looker Studio está creado y conectado a la propiedad GA4 de Tenlo. Pendientes la prueba positiva en DebugView, las dimensiones personalizadas y construir las vistas cuando haya datos.
 
 Definiciones, fórmulas y estructura de informes: [Catálogo de KPIs y reporting](./CATALOGO-DE-KPIS-Y-REPORTING.md).
 
@@ -25,7 +25,8 @@ Definiciones, fórmulas y estructura de informes: [Catálogo de KPIs y reporting
 7. Validar rechazo, aceptación y cambio de preferencias con Cookiebot, GTM Preview, DevTools y GA4 DebugView. El 07/10/2026 se verificó que el rechazo no descarga GTM ni scripts de Google y que, al permitir solo estadísticas, se cargan el contenedor y la etiqueta de Google correctos. Falta confirmar eventos en DebugView.
 8. Aplicar `0009_analytics_foundations.sql` y comprobar la escritura de búsquedas sin PII. Aplicada y verificada el 07/10/2026; la vista interna no concede `SELECT` a `anon` ni `authenticated`.
 9. Marcar como eventos clave iniciales `request_created` y `claim_submitted` después de descartar duplicados.
-10. Construir Looker Studio sobre GA4 para adquisición y sobre vistas agregadas/exportaciones controladas de Supabase para operación y valor.
+10. [x] Crear el informe base de Looker Studio y conectarlo exclusivamente a la propiedad GA4 de Tenlo.
+11. Construir sus vistas de adquisición y comportamiento cuando GA4 reciba datos, y añadir después vistas agregadas/exportaciones controladas de Supabase para operación y valor.
 
 ## Informes mínimos antes de ofrecer reporting a proveedores
 
@@ -56,3 +57,5 @@ El informe de proveedor debe separar claramente visibilidad, interés, contactos
 - GTM publicado con la etiqueta base y `send_page_view=false`; la aplicación envía `page_view` y los eventos de producto con sus parámetros tras el consentimiento.
 - El evento genérico creado durante la configuración quedó pausado para evitar duplicar los eventos enviados por la aplicación.
 - Identificadores públicos almacenados como variables de tipo configuración en Vercel, no como secretos.
+- Informe `Tenlo - adquisición, búsqueda y conexiones` creado en Looker Studio y conectado a la propiedad GA4 `Tenlo` (`558009522`). No se añaden todavía gráficos que puedan aparentar datos hasta confirmar la recepción de eventos.
+- La prueba consentida cargó GTM y la etiqueta de Google, pero el informe en tiempo real de GA4 seguía en cero el 07/10/2026. Se mantiene abierta la comprobación de recepción antes de declarar operativa la medición.

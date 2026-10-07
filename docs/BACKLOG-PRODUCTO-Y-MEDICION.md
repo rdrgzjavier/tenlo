@@ -62,7 +62,7 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - No existe aún una bandeja administrativa operativa: hay una ruta de revisión de borradores y avisos por email, pero no un centro de solicitudes, alternativas y notificaciones.
 - Los CTAs de contacto no siguen un único flujo: algunos abren web, email o teléfono y el de canguros no crea aún una solicitud operativa.
 - Favoritos mezcla una señal local de sesión con datos de Supabase y todavía no representa un flujo completo.
-- La aplicación ya prepara GTM por entorno, Consent Mode con estado inicial denegado, sincronización con Cookiebot y una taxonomía versionada de eventos. La migración analítica `0009` se aplicó y verificó el 07/10/2026; la vista agregada no es legible por `anon` ni `authenticated`. El código ignora identificadores de Cookiebot de ejemplo para no simular un consentimiento activo. Falta crear/configurar Cookiebot y el contenedor real de GTM, enlazar GA4, validar el consentimiento en producción y completar la medición persistente del resultado de cada conexión.
+- La aplicación carga Cookiebot y Consent Mode con analítica denegada por defecto, y solo descarga GTM tras consentimiento estadístico. Cookiebot, la propiedad GA4 y el contenedor GTM de Tenlo ya están configurados y publicados. La migración analítica `0009` se aplicó y verificó el 07/10/2026; la vista agregada no es legible por `anon` ni `authenticated`. Queda validar la recepción de eventos y parámetros en GA4 y completar la medición persistente del resultado de cada conexión.
 - `typecheck`, `lint` y `build` pasan en local; las rutas privadas ya no bloquean el prerender cuando faltan variables de Supabase.
 - La auditoría de dependencias detecta avisos de seguridad altos/críticos en la rama actual de Next.js y dependencias transitivas. Debe actualizarse y volver a auditarse antes de captar usuarios reales.
 
@@ -72,7 +72,7 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - El alias heredado `https://kiryco.vercel.app` continúa respondiendo, pero el dominio canónico público es `https://tenlo.es`.
 - El código utiliza `https://tenlo.es` como dominio canónico por defecto y permite configurarlo por entorno mediante `NEXT_PUBLIC_SITE_URL`.
 - `tenlo.es` y `www.tenlo.es` están conectados a Vercel: la raíz responde en producción y `www` redirige permanentemente (`308`) a `tenlo.es`.
-- La matriz de Vercel fue revisada de nuevo el 7 de octubre de 2026: Supabase está configurado para producción y preview; `ADMIN_EMAIL` y `NEXT_PUBLIC_SITE_URL=https://tenlo.es` están configuradas. `NEXT_PUBLIC_COOKIEBOT_ID` contiene todavía el valor de ejemplo `tu-id-de-cookiebot`, que el código ya bloquea, y debe sustituirse por un ID real. Siguen pendientes `NEXT_PUBLIC_GTM_ID`, `RESEND_API_KEY` y `MAIL_FROM`; `SUPABASE_SERVICE_ROLE_KEY` no se añadirá hasta que una función administrativa la necesite.
+- La matriz de Vercel fue revisada de nuevo el 7 de octubre de 2026: Supabase está configurado para producción y preview; `ADMIN_EMAIL` y `NEXT_PUBLIC_SITE_URL=https://tenlo.es` están configuradas. `NEXT_PUBLIC_COOKIEBOT_ID` usa el grupo real de Tenlo y `NEXT_PUBLIC_GTM_ID=GTM-KT8CKRPK` está configurada solo en producción. Siguen pendientes `RESEND_API_KEY` y `MAIL_FROM`; `SUPABASE_SERVICE_ROLE_KEY` no se añadirá hasta que una función administrativa la necesite.
 - La zona gratuita `tenlo.es` está activa en Cloudflare con la raíz `A 216.198.79.1` y `www CNAME 4b8f150f986f3ce8.vercel-dns-017.com`, ambos en modo Solo DNS. La resolución pública utiliza `david.ns.cloudflare.com` y `norah.ns.cloudflare.com` desde el 06/10/2026.
 - DonDominio no tiene creada aún ninguna cuenta ni alias de correo para `tenlo.es`.
 
@@ -121,7 +121,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Crear `.env.example` sin secretos con todas las variables requeridas y su finalidad.
 - [x] Documentar variables por entorno: local, preview y production, incluyendo exposición, comportamiento cuando faltan y comprobaciones previas al despliegue.
 - [x] Auditar en Vercel la presencia de Supabase, Resend, Cookiebot, URL pública y correo administrativo por entorno.
-- [ ] Añadir las variables ausentes detectadas en la auditoría y volver a desplegar. `NEXT_PUBLIC_SITE_URL` ya está añadida en producción y el redespliegue se verificó el 06/10/2026; GTM y correo transaccional siguen pendientes de configurar.
+- [ ] Añadir las variables ausentes detectadas en la auditoría y volver a desplegar. `NEXT_PUBLIC_SITE_URL`, Cookiebot y GTM ya están configurados y desplegados; quedan el proveedor de correo transaccional, `RESEND_API_KEY` y `MAIL_FROM`.
 - [x] Completar la conexión de `tenlo.es` y `www.tenlo.es` a Vercel: raíz en producción y redirección `308` de `www` verificadas.
 - [x] Definir dominio canónico y redirección única: raíz `tenlo.es`; `www` redirige con `308` a la raíz.
 - [x] Cambiar los nameservers en DonDominio a los asignados por Cloudflare.
@@ -285,6 +285,8 @@ Arquitectura inicial recomendada:
 - [x] Eliminar el ID de GTM hardcodeado y moverlo a configuración por entorno.
 - [x] Implementar en código Consent Mode con almacenamiento analítico/publicitario denegado por defecto y sincronización con las decisiones de Cookiebot.
 - [ ] Completar la verificación de consentimiento: rechazo y carga posterior a la aceptación estadística comprobados en producción; falta validar los eventos y sus parámetros en GTM Preview y GA4 DebugView.
+- [x] Crear el informe base `Tenlo - adquisición, búsqueda y conexiones` en Looker Studio y conectarlo a la propiedad GA4 de Tenlo.
+- [ ] Construir las páginas y gráficos de Looker Studio cuando GA4 confirme recepción de datos; no presentar ceros iniciales como rendimiento real.
 - [ ] Revisar Cookiebot antes de que venza la prueba Premium de 14 días y confirmar el plan gratuito aplicable, sin activar una suscripción de pago.
 - [ ] Prohibir el envío a GA4 de nombre, email, teléfono, texto libre, direcciones precisas o información de menores.
 - [x] Crear el diccionario inicial y la taxonomía `1.0` de eventos; mantenerla versionada conforme se implementen los flujos.
