@@ -62,7 +62,7 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - No existe aún una bandeja administrativa operativa: hay una ruta de revisión de borradores y avisos por email, pero no un centro de solicitudes, alternativas y notificaciones.
 - Los CTAs de contacto no siguen un único flujo: algunos abren web, email o teléfono y el de canguros no crea aún una solicitud operativa.
 - Favoritos mezcla una señal local de sesión con datos de Supabase y todavía no representa un flujo completo.
-- La aplicación ya prepara GTM por entorno, Consent Mode con estado inicial denegado, sincronización con Cookiebot y una taxonomía versionada de eventos. La migración analítica `0009` se aplicó y verificó el 07/10/2026; la vista agregada no es legible por `anon` ni `authenticated`. Falta crear/configurar el contenedor real, enlazar GA4, validar el consentimiento en producción y completar la medición persistente del resultado de cada conexión.
+- La aplicación ya prepara GTM por entorno, Consent Mode con estado inicial denegado, sincronización con Cookiebot y una taxonomía versionada de eventos. La migración analítica `0009` se aplicó y verificó el 07/10/2026; la vista agregada no es legible por `anon` ni `authenticated`. El código ignora identificadores de Cookiebot de ejemplo para no simular un consentimiento activo. Falta crear/configurar Cookiebot y el contenedor real de GTM, enlazar GA4, validar el consentimiento en producción y completar la medición persistente del resultado de cada conexión.
 - `typecheck`, `lint` y `build` pasan en local; las rutas privadas ya no bloquean el prerender cuando faltan variables de Supabase.
 - La auditoría de dependencias detecta avisos de seguridad altos/críticos en la rama actual de Next.js y dependencias transitivas. Debe actualizarse y volver a auditarse antes de captar usuarios reales.
 
@@ -72,7 +72,7 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - El alias heredado `https://kiryco.vercel.app` continúa respondiendo, pero el dominio canónico público es `https://tenlo.es`.
 - El código utiliza `https://tenlo.es` como dominio canónico por defecto y permite configurarlo por entorno mediante `NEXT_PUBLIC_SITE_URL`.
 - `tenlo.es` y `www.tenlo.es` están conectados a Vercel: la raíz responde en producción y `www` redirige permanentemente (`308`) a `tenlo.es`.
-- La matriz de Vercel fue auditada el 6 de octubre de 2026: Supabase está configurado para producción y preview; `ADMIN_EMAIL` y `NEXT_PUBLIC_COOKIEBOT_ID` están en producción y preview; `NEXT_PUBLIC_SITE_URL=https://tenlo.es` está configurada en producción. Siguen pendientes `NEXT_PUBLIC_GTM_ID`, `RESEND_API_KEY` y `MAIL_FROM`; `SUPABASE_SERVICE_ROLE_KEY` no se añadirá hasta que una función administrativa la necesite.
+- La matriz de Vercel fue revisada de nuevo el 7 de octubre de 2026: Supabase está configurado para producción y preview; `ADMIN_EMAIL` y `NEXT_PUBLIC_SITE_URL=https://tenlo.es` están configuradas. `NEXT_PUBLIC_COOKIEBOT_ID` contiene todavía el valor de ejemplo `tu-id-de-cookiebot`, que el código ya bloquea, y debe sustituirse por un ID real. Siguen pendientes `NEXT_PUBLIC_GTM_ID`, `RESEND_API_KEY` y `MAIL_FROM`; `SUPABASE_SERVICE_ROLE_KEY` no se añadirá hasta que una función administrativa la necesite.
 - La zona gratuita `tenlo.es` está activa en Cloudflare con la raíz `A 216.198.79.1` y `www CNAME 4b8f150f986f3ce8.vercel-dns-017.com`, ambos en modo Solo DNS. La resolución pública utiliza `david.ns.cloudflare.com` y `norah.ns.cloudflare.com` desde el 06/10/2026.
 - DonDominio no tiene creada aún ninguna cuenta ni alias de correo para `tenlo.es`.
 
@@ -751,4 +751,3 @@ No iniciar contacto sistemático con proveedores hasta poder marcar:
 | Etiquetas definitivas de confianza | Decidido | No verificada, Gestionada, Verificada, Oficial | 2026-10-05 |
 | Responsable operativo inicial | Decidido | Javier | 2026-10-05 |
 | Plazo de moderación operativa | Decidido | Máximo de 4 días laborables para reclamaciones, correcciones y retiradas | 2026-10-05 |
-

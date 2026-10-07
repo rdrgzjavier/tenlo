@@ -7,6 +7,11 @@ export const metadata: Metadata = {
 };
 
 export default function CookiesPolicyPage() {
+  const cookiebotId = process.env.NEXT_PUBLIC_COOKIEBOT_ID;
+  const hasValidCookiebotId = Boolean(
+    cookiebotId && !/^(tu-id|your-|example|placeholder)/i.test(cookiebotId)
+  );
+
   return (
     <div className="section-shell max-w-4xl">
       <h1 className="page-title">Política de Cookies</h1>
@@ -33,13 +38,15 @@ export default function CookiesPolicyPage() {
           <p className="mt-4">
             Puedes aceptar, rechazar o cambiar las cookies no técnicas desde el gestor de consentimiento, además de restringirlas o borrarlas desde tu navegador.
           </p>
-          <CookieSettingsButton />
+          {hasValidCookiebotId ? <CookieSettingsButton /> : null}
         </section>
 
         <section>
           <h2 className="text-xl font-bold text-ink">Gestor de consentimiento</h2>
           <p className="mt-4">
-            Tenlo utiliza Cookiebot para recoger y conservar las preferencias. Google Tag Manager y GA4 parten con el almacenamiento analítico y publicitario denegado y solo actualizan su estado según la elección comunicada por el gestor.
+            {hasValidCookiebotId
+              ? "Tenlo utiliza Cookiebot para recoger y conservar las preferencias. Google Tag Manager y GA4 parten con el almacenamiento analítico y publicitario denegado y solo actualizan su estado según la elección comunicada por el gestor."
+              : "Tenlo tiene preparada la integración con un gestor de consentimiento. Hasta que se active y valide en producción, no se cargarán etiquetas de analítica que requieran consentimiento."}
           </p>
         </section>
       </div>

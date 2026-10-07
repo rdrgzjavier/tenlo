@@ -54,6 +54,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const gtmId = process.env.NEXT_PUBLIC_GTM_ID;
+  const cookiebotId = process.env.NEXT_PUBLIC_COOKIEBOT_ID;
+  const hasValidCookiebotId = Boolean(
+    cookiebotId && !/^(tu-id|your-|example|placeholder)/i.test(cookiebotId)
+  );
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -99,11 +103,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <link rel="preconnect" href="https://images.pexels.com" />
         <link rel="dns-prefetch" href="https://images.pexels.com" />
-        {process.env.NEXT_PUBLIC_COOKIEBOT_ID ? (
+        {hasValidCookiebotId ? (
           <Script
             id="Cookiebot"
             src="https://consent.cookiebot.com/uc.js"
-            data-cbid={process.env.NEXT_PUBLIC_COOKIEBOT_ID}
+            data-cbid={cookiebotId}
             data-blockingmode="auto"
             strategy="beforeInteractive"
           />
