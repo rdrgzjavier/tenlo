@@ -53,7 +53,7 @@ export default function ClaimProfileForm({ entityType, entityId, entityName }: C
   }
 
   return (
-    <form className="card mt-8 grid gap-5 p-5 md:p-8" onSubmit={handleSubmit} {...trackingAttrs("claim_profile_submit", { item: entityId, type: entityType })}>
+    <form className="card mt-8 grid gap-5 p-5 md:p-8" onSubmit={handleSubmit} {...trackingAttrs("claim_submitted", { item: entityId, type: entityType })}>
       <label className="hidden" aria-hidden="true">
         Empresa
         <input name="company" tabIndex={-1} autoComplete="off" />

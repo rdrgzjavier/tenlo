@@ -33,7 +33,7 @@ export default function ProvidersPage() {
           <h1 className="page-title">Haz que las familias entiendan mejor lo que ofreces</h1>
           <p className="lead">Revisa tu ficha, completa la información que realmente ayuda a decidir y participa sin coste en el piloto de Tenlo en Madrid noroeste.</p>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <Link href="/servicios" className="btn-primary" {...trackingAttrs("claim_profile_click", { placement: "provider_landing" })}><Search size={18} /> Buscar mi ficha</Link>
+            <Link href="/servicios" className="btn-primary" {...trackingAttrs("claim_started", { placement: "provider_landing" })}><Search size={18} /> Buscar mi ficha</Link>
             <Link href="/contacto" className="btn-secondary">Hablar con Tenlo</Link>
           </div>
           <p className="mt-4 text-sm leading-6 text-muted">Participación gratuita durante el piloto. No prometemos contactos ni posiciones; primero queremos demostrar valor real.</p>

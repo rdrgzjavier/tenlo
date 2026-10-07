@@ -2,7 +2,7 @@
 
 > Documento vivo para decidir, construir y comprobar el MVP de Tenlo.
 >
-> Última revisión: 6 de octubre de 2026.
+> Última revisión: 7 de octubre de 2026.
 
 ## Cómo utilizar este documento
 
@@ -62,7 +62,7 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - No existe aún una bandeja administrativa operativa: hay una ruta de revisión de borradores y avisos por email, pero no un centro de solicitudes, alternativas y notificaciones.
 - Los CTAs de contacto no siguen un único flujo: algunos abren web, email o teléfono y el de canguros no crea aún una solicitud operativa.
 - Favoritos mezcla una señal local de sesión con datos de Supabase y todavía no representa un flujo completo.
-- GTM está cargado y existe una taxonomía inicial de eventos, pero falta configurar el contenedor real, validar GA4 y completar la medición persistente del resultado de cada conexión.
+- La aplicación ya prepara GTM por entorno, Consent Mode con estado inicial denegado, sincronización con Cookiebot y una taxonomía versionada de eventos. La migración analítica `0009` se aplicó y verificó el 07/10/2026; la vista agregada no es legible por `anon` ni `authenticated`. Falta crear/configurar el contenedor real, enlazar GA4, validar el consentimiento en producción y completar la medición persistente del resultado de cada conexión.
 - `typecheck`, `lint` y `build` pasan en local; las rutas privadas ya no bloquean el prerender cuando faltan variables de Supabase.
 - La auditoría de dependencias detecta avisos de seguridad altos/críticos en la rama actual de Next.js y dependencias transitivas. Debe actualizarse y volver a auditarse antes de captar usuarios reales.
 
@@ -282,8 +282,9 @@ Arquitectura inicial recomendada:
 
 - [ ] Crear propiedad GA4 de Tenlo y flujos separados para producción y pruebas.
 - [ ] Confirmar que GTM pertenece a Tenlo y documentar propietarios y accesos.
-- [ ] Eliminar el ID de GTM hardcodeado y moverlo a configuración por entorno.
-- [ ] Implementar Consent Mode y verificar que analítica no se activa antes del consentimiento cuando sea necesario.
+- [x] Eliminar el ID de GTM hardcodeado y moverlo a configuración por entorno.
+- [x] Implementar en código Consent Mode con almacenamiento analítico/publicitario denegado por defecto y sincronización con las decisiones de Cookiebot.
+- [ ] Verificar en producción, con Cookiebot y GTM Preview, que ninguna etiqueta analítica escribe cookies antes del consentimiento y que aceptar/rechazar actualiza el estado esperado.
 - [ ] Prohibir el envío a GA4 de nombre, email, teléfono, texto libre, direcciones precisas o información de menores.
 - [x] Crear el diccionario inicial y la taxonomía `1.0` de eventos; mantenerla versionada conforme se implementen los flujos.
 - [ ] Definir identificadores estables no personales:
@@ -295,7 +296,8 @@ Arquitectura inicial recomendada:
   - `search_id`;
   - `experiment_id` y `variant_id` cuando corresponda.
 - [ ] Definir qué eventos se envían desde cliente, cuáles desde servidor y cuáles desde ambos con deduplicación.
-- [ ] Añadir `event_id`, timestamp de servidor y versión del esquema a los eventos críticos.
+- [x] Añadir en el cliente `event_id`, timestamp ISO y versión del esquema a los eventos enviados al `dataLayer`.
+- [ ] Añadir timestamp de servidor, versión de esquema y deduplicación a los eventos críticos persistidos o emitidos desde backend.
 - [ ] Crear entornos de prueba y reglas para excluir tráfico interno.
 - [ ] Preparar un procedimiento de QA con GTM Preview, GA4 DebugView y validación en Supabase.
 - [ ] Definir retención, acceso, borrado y anonimización de datos.
@@ -568,7 +570,8 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 
 ## Reglas para Looker Studio u otra herramienta
 
-- [ ] Crear una capa de datos con nombres de campo estables y no depender de nombres visuales de GA4.
+- [x] Crear una primera capa de datos estable: taxonomía `dataLayer` versionada y migración `0009` con dimensiones de búsqueda y vista agregada diaria sin PII.
+- [x] Aplicar y verificar la migración `0009_analytics_foundations.sql` en Supabase antes de desplegar el código que escribe sus nuevas columnas.
 - [ ] Documentar para cada KPI: definición, fórmula, fuente, frecuencia, propietario y limitaciones.
 - [ ] Mostrar intervalos comparables y filtros por categoría, municipio, estado de ficha, plan y canal.
 - [ ] No comparar poblaciones distintas sin explicar la unidad.

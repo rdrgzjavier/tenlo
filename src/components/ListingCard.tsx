@@ -110,7 +110,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           <div className="flex justify-between gap-3"><dt>Precio</dt><dd className="font-medium text-ink">{listing.priceLabel ?? (listing.price ? `${listing.price} €` : "Consultar")}</dd></div>
         </dl>
         <div className="mt-auto flex flex-wrap gap-2 pt-5">
-          <Link href={detailHref} aria-label={`Saber más sobre ${listing.title}`} className="btn-primary flex-1 text-center" {...trackingAttrs("view_detail", { item: listing.id, category: listing.categoryId, municipality: listing.municipality })}>Saber más</Link>
+          <Link href={detailHref} aria-label={`Saber más sobre ${listing.title}`} className="btn-primary flex-1 text-center" {...trackingAttrs("result_opened", { item: listing.id, category: listing.categoryId, municipality: listing.municipality })}>Saber más</Link>
           <Link href={`/solicitar?item=${listing.slug}`} className="icon-button" aria-label={isChildcareListing(listing) ? "Solicitar contacto" : "Contactar"} {...trackingAttrs("contact_started", { item: listing.id, category: listing.categoryId })}><MessageCircle size={18} /></Link>
           <FavoriteButton label={`Guardar ${listing.title}`} targetId={listing.id} />
         </div>

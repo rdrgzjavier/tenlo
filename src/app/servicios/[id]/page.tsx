@@ -162,19 +162,19 @@ export default function ServiceDetailPage({ params }: { params: { id: string } }
               <MessageCircle size={16} /> Solicitar contacto
             </Link>
           ) : providerUrl ? (
-            <a href={providerUrl} target="_blank" rel="noreferrer" className="btn-primary mt-5 w-full" {...trackingAttrs("external_web", { item: provider.id, type: "provider" })}>
+            <a href={providerUrl} target="_blank" rel="noreferrer" className="btn-primary mt-5 w-full" {...trackingAttrs("contact_web_clicked", { item: provider.id, type: "provider" })}>
               Web oficial<ExternalLink size={16} />
             </a>
           ) : providerEmail ? (
-            <a href={`mailto:${provider.email}`} className="btn-primary mt-5 w-full" {...trackingAttrs("contact_email", { item: provider.id, type: "provider" })}>
+            <a href={`mailto:${provider.email}`} className="btn-primary mt-5 w-full" {...trackingAttrs("contact_email_clicked", { item: provider.id, type: "provider" })}>
               <Mail size={16} /> Contactar
             </a>
           ) : cleanValue(provider.phone) !== "No indicado" ? (
-            <a href={`tel:${provider.phone.replace(/\s/g, "")}`} className="btn-primary mt-5 w-full" {...trackingAttrs("contact_phone", { item: provider.id, type: "provider" })}>
+            <a href={`tel:${provider.phone.replace(/\s/g, "")}`} className="btn-primary mt-5 w-full" {...trackingAttrs("contact_phone_clicked", { item: provider.id, type: "provider" })}>
               <Phone size={16} /> Llamar
             </a>
           ) : null}
-          <Link href={`/validar-ficha?tipo=servicio&id=${provider.id}`} className="btn-secondary mt-3 w-full" {...trackingAttrs("claim_profile_click", { item: provider.id, type: "provider" })}>¿Es tu negocio?</Link>
+          <Link href={`/validar-ficha?tipo=servicio&id=${provider.id}`} className="btn-secondary mt-3 w-full" {...trackingAttrs("claim_started", { item: provider.id, type: "provider" })}>¿Es tu negocio?</Link>
         </aside>
       </div>
     </div>

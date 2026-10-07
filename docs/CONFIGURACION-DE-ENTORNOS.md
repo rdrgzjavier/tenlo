@@ -57,7 +57,7 @@ Referencia para mantener separados el desarrollo local, las previews de Vercel y
 | Variable | Producción | Preview | Acción pendiente |
 | --- | --- | --- | --- |
 | Supabase URL y clave pública | Presente | Presente | Mantener y probar flujos reales con cuentas de prueba. |
-| `ADMIN_EMAIL` | Presente | Presente | Cambiar a `solicitudes@tenlo.es` cuando el correo esté operativo. |
+| `ADMIN_EMAIL` | Presente | Presente | Usar `solicitudes@tenlo.es`; el reenvío a `tenlocerca@gmail.com` quedó verificado el 06/10/2026. |
 | `NEXT_PUBLIC_COOKIEBOT_ID` | Presente | Presente | Validar consentimiento en el dominio definitivo. |
 | `NEXT_PUBLIC_SITE_URL` | Presente (`https://tenlo.es`) | Ausente | Producción configurada el 06/10/2026; decidir estrategia de preview. |
 | `NEXT_PUBLIC_GTM_ID` | Ausente | Ausente | Crear/configurar GTM antes de activar analítica. |

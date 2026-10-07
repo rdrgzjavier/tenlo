@@ -48,6 +48,7 @@ npm run build
 - [Backlog de producto, proveedores y medición](docs/BACKLOG-PRODUCTO-Y-MEDICION.md)
 - [Criterios de confianza de las fichas](docs/CRITERIOS-DE-CONFIANZA.md)
 - [Diccionario inicial de eventos](docs/DICCIONARIO-DE-EVENTOS.md)
+- [Implementación de analítica, consentimiento y dashboards](docs/IMPLEMENTACION-ANALITICA.md)
 - [Correo operativo](docs/CORREO-OPERATIVO.md)
 - [Configuración de entornos](docs/CONFIGURACION-DE-ENTORNOS.md)
 - [Playbook del piloto de proveedores](docs/PLAYBOOK-PILOTO-PROVEEDORES.md)

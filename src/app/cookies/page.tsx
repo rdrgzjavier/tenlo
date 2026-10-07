@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import CookieSettingsButton from "@/components/CookieSettingsButton";
 
 export const metadata: Metadata = {
   title: "Política de Cookies | Tenlo",
@@ -30,14 +31,15 @@ export default function CookiesPolicyPage() {
         <section>
           <h2 className="text-xl font-bold text-ink">Cómo gestionar las cookies</h2>
           <p className="mt-4">
-            Puedes restringir, bloquear o borrar las cookies desde tu navegador. Cuando activemos el gestor de consentimiento, Tenlo mostrará un panel para aceptar, rechazar o modificar preferencias de cookies no técnicas.
+            Puedes aceptar, rechazar o cambiar las cookies no técnicas desde el gestor de consentimiento, además de restringirlas o borrarlas desde tu navegador.
           </p>
+          <CookieSettingsButton />
         </section>
 
         <section>
           <h2 className="text-xl font-bold text-ink">Gestor de consentimiento</h2>
           <p className="mt-4">
-            La arquitectura está preparada para usar Cookiebot como gestor de consentimiento. Si se configura, las etiquetas de analítica deberán respetar el consentimiento declarado por el usuario.
+            Tenlo utiliza Cookiebot para recoger y conservar las preferencias. Google Tag Manager y GA4 parten con el almacenamiento analítico y publicitario denegado y solo actualizan su estado según la elección comunicada por el gestor.
           </p>
         </section>
       </div>

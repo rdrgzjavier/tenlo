@@ -151,8 +151,8 @@ export default function ServicesPage() {
                 ))}
               </div>
               <div className="mt-auto flex gap-2 pt-5">
-                <Link href={`/servicios/${provider.id}`} aria-label={`Saber más sobre ${provider.businessName}`} className="btn-primary flex-1 justify-center" {...trackingAttrs("view_detail", { item: provider.id, type: "provider" })}>Saber más</Link>
-                {provider.website.startsWith("http") ? <a href={provider.website} target="_blank" rel="noreferrer" className="icon-button" aria-label="Web oficial" {...trackingAttrs("external_web", { item: provider.id, type: "provider" })}><ExternalLink size={18} /></a> : null}
+                <Link href={`/servicios/${provider.id}`} aria-label={`Saber más sobre ${provider.businessName}`} className="btn-primary flex-1 justify-center" {...trackingAttrs("result_opened", { item: provider.id, type: "provider" })}>Saber más</Link>
+                {provider.website.startsWith("http") ? <a href={provider.website} target="_blank" rel="noreferrer" className="icon-button" aria-label="Web oficial" {...trackingAttrs("contact_web_clicked", { item: provider.id, type: "provider" })}><ExternalLink size={18} /></a> : null}
               </div>
             </div>
           </article>

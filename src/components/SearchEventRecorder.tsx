@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { createSupabaseBrowserClient, hasSupabaseBrowserConfig } from "@/lib/supabase/client";
+import { pushTrackingEvent } from "@/lib/analytics";
 
 type SearchEventRecorderProps = {
   query?: string;
@@ -21,32 +22,53 @@ function privacySafeQuery(value?: string) {
 }
 
 function anonymousSessionId() {
-  const existing = window.localStorage.getItem(sessionStorageKey);
+  const existing = window.sessionStorage.getItem(sessionStorageKey);
   if (existing) return existing;
   const created = window.crypto.randomUUID();
-  window.localStorage.setItem(sessionStorageKey, created);
+  window.sessionStorage.setItem(sessionStorageKey, created);
   return created;
 }
 
 export default function SearchEventRecorder({ query, category, municipality, filters, resultsCount }: SearchEventRecorderProps) {
-  const recorded = useRef(false);
+  const lastRecordedSignature = useRef("");
   const serializedFilters = JSON.stringify(filters);
 
   useEffect(() => {
-    if (recorded.current || !hasSupabaseBrowserConfig()) return;
-    recorded.current = true;
+    const signature = JSON.stringify({ query, category, municipality, serializedFilters, resultsCount });
+    if (lastRecordedSignature.current === signature) return;
+    lastRecordedSignature.current = signature;
+    const searchId = window.crypto.randomUUID();
+    const safeQuery = privacySafeQuery(query);
+    const parsedFilters = JSON.parse(serializedFilters) as Record<string, string | undefined>;
+    const safeFilters = { ...parsedFilters };
+    delete safeFilters.tag;
+    const eventParams = {
+      search_id: searchId,
+      category: category,
+      municipality,
+      has_keyword: Boolean(safeQuery),
+      result_count: resultsCount,
+      zero_results: resultsCount === 0
+    };
+    pushTrackingEvent("search_results_viewed", eventParams);
+    if (resultsCount === 0) pushTrackingEvent("search_zero_results", eventParams);
+
+    if (!hasSupabaseBrowserConfig()) return;
 
     const record = async () => {
       const supabase = createSupabaseBrowserClient();
       const { data: authData } = await supabase.auth.getUser();
       await supabase.from("search_events").insert({
+        search_id: searchId,
         anonymous_session_id: anonymousSessionId(),
         user_id: authData.user?.id ?? null,
-        normalized_query: privacySafeQuery(query),
+        normalized_query: safeQuery,
         category_id: category || null,
         municipality: municipality || null,
-        filters: JSON.parse(serializedFilters),
-        results_count: resultsCount
+        filters: { ...safeFilters, has_keyword: Boolean(safeQuery) },
+        results_count: resultsCount,
+        zero_results: resultsCount === 0,
+        schema_version: "1.0"
       });
     };
 

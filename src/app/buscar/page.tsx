@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import AnalyticsViewEvent from "@/components/AnalyticsViewEvent";
 import Filters from "@/components/Filters";
 import ListingCard from "@/components/ListingCard";
 import LoadMoreGrid from "@/components/LoadMoreGrid";
@@ -102,14 +101,6 @@ export default function SearchPage({ searchParams }: { searchParams: SearchParam
 
   return (
     <div className="section-shell">
-      <AnalyticsViewEvent event="search_results_viewed" params={{
-        category: selected.categoria,
-        municipality: selected.municipio,
-        center_id: selected.centro,
-        has_keyword: Boolean(selected.tag),
-        result_count: filtered.length,
-        zero_results: filtered.length === 0
-      }} />
       <SearchEventRecorder
         query={selected.tag}
         category={selected.categoria}
@@ -124,7 +115,7 @@ export default function SearchPage({ searchParams }: { searchParams: SearchParam
         <label className="field-label">Qué buscas<input name="tag" defaultValue={selected.tag ?? ""} className="field font-normal placeholder:text-muted" placeholder="Actividad, servicio o nombre" /></label>
         <label className="field-label">Zona<select name="municipio" defaultValue={selected.municipio ?? ""} className="field font-normal"><option value="">Todas las zonas</option>{municipalities.map((municipality) => <option key={municipality.id} value={municipality.name}>{municipality.name}</option>)}</select></label>
         <label className="field-label">Categoría<select name="categoria" defaultValue={selected.categoria ?? ""} className="field font-normal"><option value="">Todas las categorías</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
-        <button className="btn-primary self-end" type="submit" {...trackingAttrs("search", { placement: "search_page" })}>Buscar</button>
+        <button className="btn-primary self-end" type="submit" {...trackingAttrs("search_submitted", { placement: "search_page" })}>Buscar</button>
       </ValidatedSearchForm>
       {selected.region === "madrid" ? (
         <div className="mt-6 flex flex-wrap gap-3">
@@ -153,7 +144,7 @@ export default function SearchPage({ searchParams }: { searchParams: SearchParam
               <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">Prueba a quitar algún filtro o cuéntanos qué necesitas. Las búsquedas sin resultados nos ayudan a decidir qué proveedores debemos incorporar.</p>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <Link href="/buscar" className="btn-primary">Limpiar filtros</Link>
-                <Link href="/contacto" className="btn-secondary" {...trackingAttrs("zero_results", { category: selected.categoria, municipality: selected.municipio })}>Pedir ayuda a Tenlo</Link>
+                <Link href="/contacto" className="btn-secondary" {...trackingAttrs("search_zero_results", { category: selected.categoria, municipality: selected.municipio, placement: "help_cta" })}>Pedir ayuda a Tenlo</Link>
                 <Link href={`/sugerencias?context=provider_suggestion&location=${encodeURIComponent(selected.municipio ?? "")}&service=${encodeURIComponent(selected.tag ?? selected.categoria ?? "")}`} className="btn-secondary" {...trackingAttrs("provider_suggestion_started", { category: selected.categoria, municipality: selected.municipio })}>Proponer proveedor</Link>
               </div>
             </div>

@@ -5,6 +5,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import AnalyticsEvents from "@/components/AnalyticsEvents";
+import ConsentMode from "@/components/ConsentMode";
+import PageViewTracker from "@/components/PageViewTracker";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 import "./globals.css";
 
@@ -120,7 +122,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={`${inter.variable} ${poppins.variable} font-sans`}>
         {gtmId ? <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`} height="0" width="0" style={{ display: "none", visibility: "hidden" }} /></noscript> : null}
         <Header />
+        <ConsentMode />
         <AnalyticsEvents />
+        <PageViewTracker />
         <JsonLd data={organizationSchema} />
         <JsonLd data={websiteSchema} />
         <main>{children}</main>
