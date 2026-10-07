@@ -284,7 +284,8 @@ Arquitectura inicial recomendada:
 - [x] Crear un contenedor GTM separado para Tenlo bajo la cuenta gestionada por Javier y publicar su primera versión.
 - [x] Eliminar el ID de GTM hardcodeado y moverlo a configuración por entorno.
 - [x] Implementar en código Consent Mode con almacenamiento analítico/publicitario denegado por defecto y sincronización con las decisiones de Cookiebot.
-- [ ] Completar la verificación de consentimiento: el rechazo ya se comprobó en producción sin descarga de GTM ni scripts de Google; falta aceptar estadísticas y validar los eventos en GTM Preview y GA4 DebugView.
+- [ ] Completar la verificación de consentimiento: rechazo y carga posterior a la aceptación estadística comprobados en producción; falta validar los eventos y sus parámetros en GTM Preview y GA4 DebugView.
+- [ ] Revisar Cookiebot antes de que venza la prueba Premium de 14 días y confirmar el plan gratuito aplicable, sin activar una suscripción de pago.
 - [ ] Prohibir el envío a GA4 de nombre, email, teléfono, texto libre, direcciones precisas o información de menores.
 - [x] Crear el diccionario inicial y la taxonomía `1.0` de eventos; mantenerla versionada conforme se implementen los flujos.
 - [ ] Definir identificadores estables no personales:

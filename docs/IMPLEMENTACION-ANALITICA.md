@@ -22,7 +22,7 @@ Definiciones, fórmulas y estructura de informes: [Catálogo de KPIs y reporting
 4. Crear variables de capa de datos para `schema_version`, `event_id`, `page_type`, `provider_id`/`item`, `category`, `municipality`, `search_id`, `result_count` y `zero_results`.
 5. Crear triggers de evento personalizado siguiendo `DICCIONARIO-DE-EVENTOS.md`; no usar selectores CSS como fuente principal.
 6. [x] Configurar `NEXT_PUBLIC_GTM_ID` solo en producción. Cookiebot está disponible también en preview, pero GTM no mide ese entorno.
-7. Validar rechazo, aceptación y cambio de preferencias con Cookiebot, GTM Preview, DevTools y GA4 DebugView. Rechazo verificado el 07/10/2026: no se descarga GTM ni aparece ningún script de Google antes del consentimiento.
+7. Validar rechazo, aceptación y cambio de preferencias con Cookiebot, GTM Preview, DevTools y GA4 DebugView. El 07/10/2026 se verificó que el rechazo no descarga GTM ni scripts de Google y que, al permitir solo estadísticas, se cargan el contenedor y la etiqueta de Google correctos. Falta confirmar eventos en DebugView.
 8. Aplicar `0009_analytics_foundations.sql` y comprobar la escritura de búsquedas sin PII. Aplicada y verificada el 07/10/2026; la vista interna no concede `SELECT` a `anon` ni `authenticated`.
 9. Marcar como eventos clave iniciales `request_created` y `claim_submitted` después de descartar duplicados.
 10. Construir Looker Studio sobre GA4 para adquisición y sobre vistas agregadas/exportaciones controladas de Supabase para operación y valor.
@@ -51,6 +51,7 @@ El informe de proveedor debe separar claramente visibilidad, interés, contactos
 
 - Cookiebot separado en la cuenta de Tenlo y dominio `tenlo.es` verificado como activo.
 - Banner en español con una explicación ajustada al uso actual: cookies necesarias y estadísticas opcionales, sin publicidad.
+- La cuenta muestra una prueba Premium de 14 días; antes de que termine hay que revisar el plan resultante y confirmar que no se activa ningún coste.
 - GA4 con medición mejorada desactivada para evitar duplicados con los eventos explícitos de producto.
 - GTM publicado con la etiqueta base y `send_page_view=false`; la aplicación envía `page_view` y los eventos de producto con sus parámetros tras el consentimiento.
 - El evento genérico creado durante la configuración quedó pausado para evitar duplicar los eventos enviados por la aplicación.
