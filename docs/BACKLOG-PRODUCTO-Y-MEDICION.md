@@ -280,11 +280,11 @@ Arquitectura inicial recomendada:
 
 ## P0. Fundamentos de medición
 
-- [ ] Crear propiedad GA4 de Tenlo y flujos separados para producción y pruebas.
-- [ ] Confirmar que GTM pertenece a Tenlo y documentar propietarios y accesos.
+- [x] Crear la cuenta y propiedad GA4 de Tenlo y el flujo web de producción para `tenlo.es`. El entorno de pruebas queda pendiente hasta que el volumen lo justifique.
+- [x] Crear un contenedor GTM separado para Tenlo bajo la cuenta gestionada por Javier y publicar su primera versión.
 - [x] Eliminar el ID de GTM hardcodeado y moverlo a configuración por entorno.
 - [x] Implementar en código Consent Mode con almacenamiento analítico/publicitario denegado por defecto y sincronización con las decisiones de Cookiebot.
-- [ ] Verificar en producción, con Cookiebot y GTM Preview, que ninguna etiqueta analítica escribe cookies antes del consentimiento y que aceptar/rechazar actualiza el estado esperado.
+- [ ] Completar la verificación de consentimiento: el rechazo ya se comprobó en producción sin descarga de GTM ni scripts de Google; falta aceptar estadísticas y validar los eventos en GTM Preview y GA4 DebugView.
 - [ ] Prohibir el envío a GA4 de nombre, email, teléfono, texto libre, direcciones precisas o información de menores.
 - [x] Crear el diccionario inicial y la taxonomía `1.0` de eventos; mantenerla versionada conforme se implementen los flujos.
 - [ ] Definir identificadores estables no personales:
