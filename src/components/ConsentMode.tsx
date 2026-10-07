@@ -12,8 +12,19 @@ declare global {
   }
 }
 
-export default function ConsentMode() {
+export default function ConsentMode({ gtmId }: { gtmId?: string }) {
   useEffect(() => {
+    let hadStatisticsConsent = false;
+
+    const loadGtm = () => {
+      if (!gtmId || document.getElementById("gtm-script")) return;
+      const script = document.createElement("script");
+      script.id = "gtm-script";
+      script.async = true;
+      script.src = `https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(gtmId)}`;
+      document.head.appendChild(script);
+    };
+
     const updateConsent = () => {
       const consent = window.Cookiebot?.consent;
       if (!consent || !window.gtag) return;
@@ -25,6 +36,11 @@ export default function ConsentMode() {
         functionality_storage: consent.preferences ? "granted" : "denied",
         security_storage: "granted"
       });
+      if (consent.statistics) {
+        loadGtm();
+        if (!hadStatisticsConsent) window.dispatchEvent(new Event("tenlo:analytics-consent-granted"));
+      }
+      hadStatisticsConsent = consent.statistics === true;
     };
 
     window.addEventListener("CookiebotOnConsentReady", updateConsent);
@@ -36,7 +52,7 @@ export default function ConsentMode() {
       window.removeEventListener("CookiebotOnAccept", updateConsent);
       window.removeEventListener("CookiebotOnDecline", updateConsent);
     };
-  }, []);
+  }, [gtmId]);
 
   return null;
 }

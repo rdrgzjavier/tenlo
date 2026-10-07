@@ -16,10 +16,16 @@ export default function PageViewTracker() {
   const pathname = usePathname();
 
   useEffect(() => {
-    pushTrackingEvent("page_view", {
-      page_path: pathname,
-      page_type: pageType(pathname)
-    });
+    const trackPageView = () => {
+      pushTrackingEvent("page_view", {
+        page_path: pathname,
+        page_type: pageType(pathname)
+      });
+    };
+
+    trackPageView();
+    window.addEventListener("tenlo:analytics-consent-granted", trackPageView);
+    return () => window.removeEventListener("tenlo:analytics-consent-granted", trackPageView);
   }, [pathname]);
 
   return null;

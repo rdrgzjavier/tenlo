@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { toDataLayerEvent } from "@/lib/analytics";
+import { hasAnalyticsConsent, sendTrackingPayload, toDataLayerEvent } from "@/lib/analytics";
 
 declare global {
   interface Window {
@@ -12,14 +12,14 @@ declare global {
 export default function AnalyticsEvents() {
   useEffect(() => {
     function pushTrackedEvent(event: Event) {
+      if (!hasAnalyticsConsent()) return;
       const target = event.target;
       if (!(target instanceof Element)) return;
       const tracked = target.closest<HTMLElement>("[data-track-action]");
       if (!tracked) return;
       const payload = toDataLayerEvent(tracked);
       if (!payload) return;
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push(payload);
+      sendTrackingPayload(payload);
     }
 
     document.addEventListener("click", pushTrackedEvent);

@@ -27,6 +27,11 @@ export const analyticsSchemaVersion = "1.0";
 
 type TrackingValue = string | number | boolean | undefined;
 
+export function hasAnalyticsConsent() {
+  if (typeof window === "undefined") return false;
+  return window.Cookiebot?.consent?.statistics === true;
+}
+
 function eventEnvelope() {
   return {
     event_id: globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`,
@@ -61,9 +66,14 @@ export function toDataLayerEvent(element: HTMLElement) {
   };
 }
 
+export function sendTrackingPayload(payload: Record<string, unknown>) {
+  if (!hasAnalyticsConsent() || !window.gtag) return;
+  const { event, ...params } = payload;
+  if (typeof event !== "string") return;
+  window.gtag("event", event, params);
+}
+
 export function pushTrackingEvent(action: TrackingAction, params: Record<string, TrackingValue>) {
-  if (typeof window === "undefined") return;
-  const browserWindow = window as Window & { dataLayer?: Record<string, unknown>[] };
-  browserWindow.dataLayer = browserWindow.dataLayer || [];
-  browserWindow.dataLayer.push({ event: action, ...eventEnvelope(), ...params });
+  if (typeof window === "undefined" || !hasAnalyticsConsent()) return;
+  sendTrackingPayload({ event: action, ...eventEnvelope(), ...params });
 }
