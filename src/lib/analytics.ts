@@ -67,10 +67,9 @@ export function toDataLayerEvent(element: HTMLElement) {
 }
 
 export function sendTrackingPayload(payload: Record<string, unknown>) {
-  if (!hasAnalyticsConsent() || !window.gtag) return;
-  const { event, ...params } = payload;
-  if (typeof event !== "string") return;
-  window.gtag("event", event, params);
+  if (!hasAnalyticsConsent() || !window.dataLayer) return;
+  if (typeof payload.event !== "string") return;
+  window.dataLayer.push(payload);
 }
 
 export function pushTrackingEvent(action: TrackingAction, params: Record<string, TrackingValue>) {
