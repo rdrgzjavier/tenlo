@@ -1,6 +1,6 @@
 # Implementación analítica de Tenlo
 
-Estado: Cookiebot, GA4 y GTM de Tenlo creados y conectados en producción; rechazo verificado sin carga de Google. El informe base de Looker Studio está creado y conectado a la propiedad GA4 de Tenlo. Pendientes la prueba positiva en DebugView, las dimensiones personalizadas y construir las vistas cuando haya datos.
+Estado: Cookiebot, GA4 y GTM de Tenlo creados y conectados en producción; rechazo verificado sin carga de Google. Tag Assistant confirma que `provider_profile_viewed` entra en `dataLayer` y activa correctamente la etiqueta genérica de GA4 con consentimiento estadístico concedido. El informe base de Looker Studio está creado y conectado a la propiedad GA4 de Tenlo. Pendientes la confirmación del evento en GA4, las dimensiones personalizadas y construir las vistas cuando haya datos.
 
 Definiciones, fórmulas y estructura de informes: [Catálogo de KPIs y reporting](./CATALOGO-DE-KPIS-Y-REPORTING.md).
 
@@ -22,7 +22,7 @@ Definiciones, fórmulas y estructura de informes: [Catálogo de KPIs y reporting
 4. Crear variables de capa de datos para `schema_version`, `event_id`, `page_type`, `provider_id`/`item`, `category`, `municipality`, `search_id`, `result_count` y `zero_results`.
 5. Crear triggers de evento personalizado siguiendo `DICCIONARIO-DE-EVENTOS.md`; no usar selectores CSS como fuente principal.
 6. [x] Configurar `NEXT_PUBLIC_GTM_ID` solo en producción. Cookiebot está disponible también en preview, pero GTM no mide ese entorno.
-7. Validar rechazo, aceptación y cambio de preferencias con Cookiebot, GTM Preview, DevTools y GA4 DebugView. El 07/10/2026 se verificó que el rechazo no descarga GTM ni scripts de Google y que, al permitir solo estadísticas, se cargan el contenedor y la etiqueta de Google correctos. Falta confirmar eventos en DebugView.
+7. Validar rechazo, aceptación y cambio de preferencias con Cookiebot, GTM Preview, DevTools y GA4 DebugView. El 07/10/2026 se verificó que el rechazo no descarga GTM ni scripts de Google y que, al permitir solo estadísticas, se cargan el contenedor y la etiqueta de Google correctos. El 08/10/2026 Tag Assistant confirmó `provider_profile_viewed` en `dataLayer`, consentimiento `analytics_storage=granted` y la etiqueta `GA4 - Eventos Tenlo` completada. Falta confirmar su recepción en GA4.
 8. Aplicar `0009_analytics_foundations.sql` y comprobar la escritura de búsquedas sin PII. Aplicada y verificada el 07/10/2026; la vista interna no concede `SELECT` a `anon` ni `authenticated`.
 9. Marcar como eventos clave iniciales `request_created` y `claim_submitted` después de descartar duplicados.
 10. [x] Crear el informe base de Looker Studio y conectarlo exclusivamente a la propiedad GA4 de Tenlo.
@@ -55,7 +55,7 @@ El informe de proveedor debe separar claramente visibilidad, interés, contactos
 - La cuenta muestra una prueba Premium de 14 días; antes de que termine hay que revisar el plan resultante y confirmar que no se activa ningún coste.
 - GA4 con medición mejorada desactivada para evitar duplicados con los eventos explícitos de producto.
 - GTM publicado con la etiqueta base y `send_page_view=false`; la aplicación envía `page_view` y los eventos de producto con sus parámetros tras el consentimiento.
-- El evento genérico creado durante la configuración quedó pausado para evitar duplicar los eventos enviados por la aplicación.
+- La etiqueta genérica `GA4 - Eventos Tenlo` está activa en la versión 3 del contenedor y transforma los eventos consentidos de `dataLayer` en eventos de GA4.
 - Identificadores públicos almacenados como variables de tipo configuración en Vercel, no como secretos.
 - Informe `Tenlo - adquisición, búsqueda y conexiones` creado en Looker Studio y conectado a la propiedad GA4 `Tenlo` (`558009522`). No se añaden todavía gráficos que puedan aparentar datos hasta confirmar la recepción de eventos.
-- La prueba consentida cargó GTM y la etiqueta de Google, pero el informe en tiempo real de GA4 seguía en cero el 07/10/2026. Se mantiene abierta la comprobación de recepción antes de declarar operativa la medición.
+- La prueba consentida carga GTM y la etiqueta de Google. El 08/10/2026 Tag Assistant registró varias ejecuciones de `provider_profile_viewed`; la última quedó completada con consentimiento estadístico concedido. El informe en tiempo real de GA4 seguía en cero, por lo que se mantiene abierta la comprobación de recepción antes de declarar operativa la medición.

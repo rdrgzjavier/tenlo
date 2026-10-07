@@ -16,17 +16,28 @@ export default function PageViewTracker() {
   const pathname = usePathname();
 
   useEffect(() => {
+    let tracked = false;
+
     const trackPageView = () => {
+      if (tracked) return;
+      const gtmScript = document.getElementById("gtm-script") as HTMLScriptElement | null;
+      if (gtmScript?.dataset.analyticsReady !== "true") return;
+      tracked = true;
       pushTrackingEvent("page_view", {
         page_path: pathname,
         page_type: pageType(pathname)
       });
     };
 
-    const gtmScript = document.getElementById("gtm-script") as HTMLScriptElement | null;
-    if (gtmScript?.dataset.analyticsReady === "true") trackPageView();
+    const readyTimer = window.setInterval(trackPageView, 50);
+    const stopTimer = window.setTimeout(() => window.clearInterval(readyTimer), 10_000);
+    trackPageView();
     window.addEventListener("tenlo:analytics-ready", trackPageView);
-    return () => window.removeEventListener("tenlo:analytics-ready", trackPageView);
+    return () => {
+      window.clearInterval(readyTimer);
+      window.clearTimeout(stopTimer);
+      window.removeEventListener("tenlo:analytics-ready", trackPageView);
+    };
   }, [pathname]);
 
   return null;
