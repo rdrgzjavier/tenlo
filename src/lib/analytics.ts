@@ -29,7 +29,7 @@ type TrackingValue = string | number | boolean | undefined;
 
 export function hasAnalyticsConsent() {
   if (typeof window === "undefined") return false;
-  return window.Cookiebot?.consent?.statistics === true;
+  return window.__tenloAnalyticsConsent === true;
 }
 
 function eventEnvelope() {

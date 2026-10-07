@@ -10,6 +10,7 @@ declare global {
     };
     gtag?: (...args: unknown[]) => void;
     google_tag_manager?: Record<string, unknown>;
+    __tenloAnalyticsConsent?: boolean;
   }
 }
 
@@ -47,6 +48,7 @@ export default function ConsentMode({ gtmId }: { gtmId?: string }) {
     const updateConsent = () => {
       const consent = window.Cookiebot?.consent;
       if (!consent || !window.gtag) return;
+      window.__tenloAnalyticsConsent = consent.statistics === true;
       window.gtag("consent", "update", {
         analytics_storage: consent.statistics ? "granted" : "denied",
         ad_storage: consent.marketing ? "granted" : "denied",
