@@ -14,14 +14,18 @@ declare global {
 
 export default function ConsentMode({ gtmId }: { gtmId?: string }) {
   useEffect(() => {
-    let hadStatisticsConsent = false;
-
     const loadGtm = () => {
-      if (!gtmId || document.getElementById("gtm-script")) return;
+      if (!gtmId) return;
+      const existingScript = document.getElementById("gtm-script") as HTMLScriptElement | null;
+      if (existingScript) return;
       const script = document.createElement("script");
       script.id = "gtm-script";
       script.async = true;
       script.src = `https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(gtmId)}`;
+      script.addEventListener("load", () => {
+        script.dataset.analyticsReady = "true";
+        window.dispatchEvent(new Event("tenlo:analytics-ready"));
+      });
       document.head.appendChild(script);
     };
 
@@ -38,9 +42,7 @@ export default function ConsentMode({ gtmId }: { gtmId?: string }) {
       });
       if (consent.statistics) {
         loadGtm();
-        if (!hadStatisticsConsent) window.dispatchEvent(new Event("tenlo:analytics-consent-granted"));
       }
-      hadStatisticsConsent = consent.statistics === true;
     };
 
     window.addEventListener("CookiebotOnConsentReady", updateConsent);

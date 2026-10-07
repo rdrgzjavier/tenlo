@@ -23,9 +23,10 @@ export default function PageViewTracker() {
       });
     };
 
-    trackPageView();
-    window.addEventListener("tenlo:analytics-consent-granted", trackPageView);
-    return () => window.removeEventListener("tenlo:analytics-consent-granted", trackPageView);
+    const gtmScript = document.getElementById("gtm-script") as HTMLScriptElement | null;
+    if (gtmScript?.dataset.analyticsReady === "true") trackPageView();
+    window.addEventListener("tenlo:analytics-ready", trackPageView);
+    return () => window.removeEventListener("tenlo:analytics-ready", trackPageView);
   }, [pathname]);
 
   return null;
