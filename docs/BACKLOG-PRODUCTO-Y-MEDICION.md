@@ -572,7 +572,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 
 - [x] Crear una primera capa de datos estable: taxonomía `dataLayer` versionada y migración `0009` con dimensiones de búsqueda y vista agregada diaria sin PII.
 - [x] Aplicar y verificar la migración `0009_analytics_foundations.sql` en Supabase antes de desplegar el código que escribe sus nuevas columnas.
-- [ ] Documentar para cada KPI: definición, fórmula, fuente, frecuencia, propietario y limitaciones.
+- [x] Documentar para cada KPI: definición, fórmula, fuente, frecuencia, propietario y limitaciones en `CATALOGO-DE-KPIS-Y-REPORTING.md`.
 - [ ] Mostrar intervalos comparables y filtros por categoría, municipio, estado de ficha, plan y canal.
 - [ ] No comparar poblaciones distintas sin explicar la unidad.
 - [ ] Diferenciar `0`, `sin dato` y `no aplicable`.

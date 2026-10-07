@@ -49,6 +49,7 @@ npm run build
 - [Criterios de confianza de las fichas](docs/CRITERIOS-DE-CONFIANZA.md)
 - [Diccionario inicial de eventos](docs/DICCIONARIO-DE-EVENTOS.md)
 - [Implementación de analítica, consentimiento y dashboards](docs/IMPLEMENTACION-ANALITICA.md)
+- [Catálogo de KPIs y reporting para proveedores](docs/CATALOGO-DE-KPIS-Y-REPORTING.md)
 - [Correo operativo](docs/CORREO-OPERATIVO.md)
 - [Configuración de entornos](docs/CONFIGURACION-DE-ENTORNOS.md)
 - [Playbook del piloto de proveedores](docs/PLAYBOOK-PILOTO-PROVEEDORES.md)

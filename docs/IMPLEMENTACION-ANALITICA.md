@@ -2,6 +2,8 @@
 
 Estado: base técnica y migración de búsqueda desplegadas; cuentas de GA4/GTM y validación de etiquetas pendientes.
 
+Definiciones, fórmulas y estructura de informes: [Catálogo de KPIs y reporting](./CATALOGO-DE-KPIS-Y-REPORTING.md).
+
 ## Arquitectura y responsabilidades
 
 | Capa | Responsabilidad | No debe hacer |
