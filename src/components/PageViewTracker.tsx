@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { pushTrackingEvent } from "@/lib/analytics";
+import { hasAnalyticsConsent, pushTrackingEvent } from "@/lib/analytics";
 
 function pageType(pathname: string) {
   if (pathname === "/") return "home";
@@ -21,7 +21,7 @@ export default function PageViewTracker() {
     const trackPageView = () => {
       if (tracked) return;
       const gtmScript = document.getElementById("gtm-script") as HTMLScriptElement | null;
-      if (gtmScript?.dataset.analyticsReady !== "true") return;
+      if (gtmScript?.dataset.analyticsReady !== "true" || !hasAnalyticsConsent()) return;
       tracked = true;
       pushTrackingEvent("page_view", {
         page_path: pathname,
