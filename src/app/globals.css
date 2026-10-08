@@ -21,6 +21,11 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Cookie preferences remain available from /cookies without a floating widget. */
+#CookiebotWidget {
+  display: none !important;
+}
+
 h1,
 h2,
 h3,
