@@ -35,7 +35,8 @@ export default function ConsentMode({ gtmId }: { gtmId?: string }) {
           if (!script) return;
           delete script.dataset.analyticsWaiting;
           script.dataset.analyticsReady = "true";
-          window.dispatchEvent(new Event("tenlo:analytics-ready"));
+          window.dataLayer?.push({ event: "analytics_consent_granted" });
+          window.setTimeout(() => window.dispatchEvent(new Event("tenlo:analytics-ready")), 0);
           return;
         }
         if (Date.now() - startedAt >= 10_000) {
