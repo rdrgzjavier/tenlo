@@ -161,9 +161,9 @@ export default function Home() {
   return (
     <>
       <section className="overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#F7F5F2_100%)]">
-        <div className="page grid gap-8 py-10 lg:grid-cols-[1.22fr_0.78fr] lg:py-14">
+        <div className="page grid gap-8 py-5 sm:py-10 lg:grid-cols-[1.22fr_0.78fr] lg:py-14">
           <div className="flex flex-col justify-center">
-            <div className="mb-6 h-40 overflow-hidden rounded-[28px] bg-soft md:hidden">
+            <div className="mb-4 h-40 overflow-hidden rounded-[28px] bg-soft sm:mb-6 md:hidden">
               <ImageWithFallback src={heroImageMobile} fallbackSrc="https://images.pexels.com/photos/7880624/pexels-photo-7880624.jpeg?auto=compress&cs=tinysrgb&w=640&q=78" alt="Persona adulta caminando de la mano con una menor, sin datos identificativos" className="h-full w-full object-cover object-center" loading="eager" fetchPriority="high" />
             </div>
             <h1 className="page-title max-w-3xl">Encuentra, compara y contacta con servicios para tu familia</h1>
