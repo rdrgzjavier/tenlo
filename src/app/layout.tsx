@@ -103,6 +103,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <link rel="preconnect" href="https://images.pexels.com" />
         <link rel="dns-prefetch" href="https://images.pexels.com" />
+        {gtmId ? (
+          <Script id="gtm-consent-default" strategy="beforeInteractive">
+            {`window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){window.dataLayer.push(arguments);};window.gtag('consent','default',{'ad_storage':'denied','ad_user_data':'denied','ad_personalization':'denied','analytics_storage':'denied','functionality_storage':'granted','security_storage':'granted'});`}
+          </Script>
+        ) : null}
         {hasValidCookiebotId ? (
           <Script
             id="Cookiebot"
@@ -111,13 +116,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             data-blockingmode="auto"
             strategy="beforeInteractive"
           />
-        ) : null}
-        {gtmId ? (
-          <>
-            <Script id="gtm-consent-default" strategy="beforeInteractive">
-              {`window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){window.dataLayer.push(arguments);};window.gtag('consent','default',{'ad_storage':'denied','ad_user_data':'denied','ad_personalization':'denied','analytics_storage':'denied','functionality_storage':'granted','security_storage':'granted'});`}
-            </Script>
-          </>
         ) : null}
       </head>
       <body className={`${inter.variable} ${poppins.variable} font-sans`}>
