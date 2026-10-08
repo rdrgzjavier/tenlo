@@ -284,7 +284,7 @@ Arquitectura inicial recomendada:
 - [x] Crear un contenedor GTM separado para Tenlo bajo la cuenta gestionada por Javier y publicar su primera versión.
 - [x] Eliminar el ID de GTM hardcodeado y moverlo a configuración por entorno.
 - [x] Implementar en código Consent Mode con almacenamiento analítico/publicitario denegado por defecto y sincronización con las decisiones de Cookiebot.
-- [ ] Completar la verificación de consentimiento: rechazo y carga posterior a la aceptación estadística comprobados en producción. El 08/10/2026 Tag Assistant confirmó `provider_profile_viewed`, `analytics_storage=granted` y la etiqueta genérica de GA4 completada; falta confirmar la recepción en GA4 y revisar los parámetros finales.
+- [ ] Completar la verificación de consentimiento: rechazo y carga posterior a la aceptación estadística comprobados en producción. El 08/10/2026 se corrigió el orden de arranque para fijar el consentimiento denegado antes de Cookiebot; Tag Assistant confirmó el nuevo orden, `provider_profile_viewed`, `analytics_storage=granted` y la etiqueta genérica de GA4 completada. Falta confirmar la recepción en GA4 desde un navegador externo y revisar los parámetros finales.
 - [x] Crear el informe base `Tenlo - adquisición, búsqueda y conexiones` en Looker Studio y conectarlo a la propiedad GA4 de Tenlo.
 - [ ] Construir las páginas y gráficos de Looker Studio cuando GA4 confirme recepción de datos; no presentar ceros iniciales como rendimiento real.
 - [ ] Revisar Cookiebot antes de que venza la prueba Premium de 14 días y confirmar el plan gratuito aplicable, sin activar una suscripción de pago.
