@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CalendarDays, Clock3, Euro, Flag, MessageCircle, ShieldAlert, ShieldCheck, Sparkles } from "lucide-react";
+import { CalendarDays, Clock3, Euro, Flag, MessageCircle, Phone, ShieldAlert, ShieldCheck, Sparkles } from "lucide-react";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AnalyticsViewEvent from "@/components/AnalyticsViewEvent";
 import FavoriteButton from "@/components/FavoriteButton";
@@ -64,6 +64,13 @@ function monthAvailability(value?: string) {
   }));
 }
 
+function callablePhone(key: string, value: string) {
+  if (!/^(contacto|tel[eé]fono)$/i.test(key.trim())) return null;
+  if (/no indicado|contacto protegido/i.test(value)) return null;
+  const phone = value.replace(/[^\d+]/g, "");
+  return phone.length >= 9 ? phone : null;
+}
+
 export default function ListingDetailPage({ params }: { params: { id: string } }) {
   const listing = findListing(params.id);
   if (!listing) notFound();
@@ -117,12 +124,27 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
               <section className="card p-6">
                 <h2 className="subsection-title text-ink">Información específica</h2>
                 <dl className="mt-4 grid gap-3">
-                  {Object.entries(listing.details).map(([key, value]) => (
-                    <div key={key} className="flex justify-between gap-4 border-b border-line pb-3 text-sm">
-                      <dt className="font-semibold capitalize text-slatecopy">{key.replace(/([A-Z])/g, " $1")}</dt>
-                      <dd className="text-right text-ink">{value}</dd>
-                    </div>
-                  ))}
+                  {Object.entries(listing.details).map(([key, value]) => {
+                    const phone = callablePhone(key, value);
+                    return (
+                      <div key={key} className="flex justify-between gap-4 border-b border-line pb-3 text-sm">
+                        <dt className="font-semibold capitalize text-slatecopy">{key.replace(/([A-Z])/g, " $1")}</dt>
+                        <dd className="text-right text-ink">
+                          {phone ? (
+                            <a
+                              href={`tel:${phone}`}
+                              className="inline-flex min-h-11 items-center justify-end gap-2 font-semibold text-ink underline decoration-ink/35 underline-offset-4"
+                              aria-label={`Llamar al ${value}`}
+                              {...trackingAttrs("contact_phone_clicked", { item: listing.id, type: "listing" })}
+                            >
+                              <Phone size={16} aria-hidden />
+                              {value}
+                            </a>
+                          ) : value}
+                        </dd>
+                      </div>
+                    );
+                  })}
                 </dl>
               </section>
             ) : null}
