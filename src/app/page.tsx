@@ -154,7 +154,7 @@ export default function Home() {
     { value: `+${formatStat(stats.centers)}`, label: "Centros educativos", Icon: GraduationCap },
     { value: `+${formatStat(Math.max(stats.localResources, totalPublished))}`, label: "Recursos locales", Icon: MapPinned },
     { value: "+4", label: "Zonas cubiertas", Icon: MapPin },
-    { value: "Revisión", label: "Antes de publicar", Icon: ShieldCheck }
+    { value: "Contenido", label: "Supervisado", Icon: ShieldCheck }
   ];
   const featuredCenters = centers.slice(0, 3);
 
@@ -223,7 +223,7 @@ export default function Home() {
       <section className="page py-14 lg:py-16">
         <div className="mx-auto mb-7 max-w-3xl text-left md:text-center">
           <h2 className="section-title lg:whitespace-nowrap">Oferta local para decidir con confianza</h2>
-          <p className="supporting-copy mt-3">Datos vivos del directorio Tenlo: centros educativos, recursos disponibles, zonas cubiertas y revisión del contenido.</p>
+          <p className="supporting-copy mt-3">Datos vivos del directorio Tenlo: centros educativos, recursos disponibles, zonas cubiertas y contenido supervisado.</p>
         </div>
         <div className="grid grid-cols-2 overflow-hidden rounded-[24px] border border-line bg-white shadow-soft lg:grid-cols-4">
           {statCards.map(({ value, label, Icon }) => (
