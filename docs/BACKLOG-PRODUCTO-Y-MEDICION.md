@@ -2,7 +2,7 @@
 
 > Documento vivo para decidir, construir y comprobar el MVP de Tenlo.
 >
-> Última revisión: 7 de octubre de 2026.
+> Última revisión: 10 de octubre de 2026.
 
 ## Cómo utilizar este documento
 
@@ -51,7 +51,7 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - Repositorio: `rdrgzjavier/tenlo`.
 - Rama de producción: `main`.
 - Último commit revisado: `89f0e78` (`Aclara confianza y mejora busquedas sin resultados`).
-- Aplicación en Next.js 14, React 18, TypeScript y Tailwind.
+- Aplicación en Next.js 15, React 18, TypeScript y Tailwind 3.
 - `typecheck` y `lint` pasan correctamente.
 - El contenido público continúa dependiendo de `src/lib/mock-data.ts`.
 - Existen siete migraciones de Supabase. Las migraciones `0006` y `0007` se aplicaron en producción el 5 de octubre de 2026 y se verificaron mediante consulta: `search_events` y `connection_requests` existen, tienen RLS activa y los permisos de inserción previstos.
@@ -64,7 +64,7 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - Favoritos mezcla una señal local de sesión con datos de Supabase y todavía no representa un flujo completo.
 - La aplicación carga Cookiebot y Consent Mode con analítica denegada por defecto, y solo descarga GTM tras consentimiento estadístico. Cookiebot, la propiedad GA4 y el contenedor GTM de Tenlo ya están configurados y publicados. La migración analítica `0009` se aplicó y verificó el 07/10/2026; la vista agregada no es legible por `anon` ni `authenticated`. Queda validar la recepción de eventos y parámetros en GA4 y completar la medición persistente del resultado de cada conexión.
 - `typecheck`, `lint` y `build` pasan en local; las rutas privadas ya no bloquean el prerender cuando faltan variables de Supabase.
-- La auditoría de dependencias detecta avisos de seguridad altos/críticos en la rama actual de Next.js y dependencias transitivas. Debe actualizarse y volver a auditarse antes de captar usuarios reales.
+- La actualización a Next.js 15 eliminó los avisos críticos conocidos. La auditoría del 10/10/2026 devuelve 0 críticos, 8 altos y 3 moderados; los avisos restantes proceden de dependencias transitivas de Next.js, ESLint y Tailwind y requieren migraciones mayores a Next.js 16 y Tailwind 4. Deben abordarse con pruebas visuales y funcionales antes de captar usuarios reales.
 
 ### Vercel y dominio
 
@@ -114,8 +114,9 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 
 ## P0. Infraestructura, seguridad y despliegue
 
-- [ ] Actualizar Next.js y dependencias a versiones soportadas sin avisos críticos conocidos.
-- [ ] Repetir `npm audit`, `typecheck`, `lint` y `build` tras la actualización.
+- [x] Actualizar Next.js y dependencias a versiones soportadas sin avisos críticos conocidos.
+- [x] Repetir `npm audit`, `typecheck`, `lint` y `build` tras la actualización. Resultado del 10/10/2026: 0 críticos, 8 altos y 3 moderados; tipado, lint y build correctos.
+- [ ] Planificar y validar la migración a Next.js 16 y Tailwind CSS 4 para eliminar los avisos restantes sin regresiones visuales ni funcionales.
 - [x] Evitar que las páginas privadas conectadas a Supabase se ejecuten durante el prerender del build.
 - [ ] Hacer que las rutas privadas muestren un mensaje operativo claro cuando falten variables de Supabase en tiempo de ejecución. El directorio y cabecera públicos ya degradan sin bloquearse.
 - [x] Crear `.env.example` sin secretos con todas las variables requeridas y su finalidad.

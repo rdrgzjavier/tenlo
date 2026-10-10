@@ -61,7 +61,7 @@ function normalizePublicName(value: string) {
 }
 
 async function ensureProfile() {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data: authData } = await supabase.auth.getUser();
   const user = authData.user;
 

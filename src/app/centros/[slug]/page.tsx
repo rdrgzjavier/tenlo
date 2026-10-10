@@ -18,8 +18,9 @@ export function generateStaticParams() {
   return centers.map((center) => ({ slug: center.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const center = findCenter(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const center = findCenter(slug);
   if (!center) return { title: "Centro educativo | Tenlo" };
   return {
     title: `${center.name} en ${center.municipality} | Tenlo`,
@@ -27,8 +28,9 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   };
 }
 
-export default function CenterDetailPage({ params }: { params: { slug: string } }) {
-  const center = findCenter(params.slug);
+export default async function CenterDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const center = findCenter(slug);
   if (!center) notFound();
 
   const centerUrl = center.website?.startsWith("http") ? center.website : undefined;

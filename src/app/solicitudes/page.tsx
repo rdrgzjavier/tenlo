@@ -24,7 +24,7 @@ const statusLabels: Record<string, string> = {
 };
 
 export default async function RequestsPage() {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data: authData } = await supabase.auth.getUser();
   if (!authData.user) redirect("/login?next=/solicitudes");
 

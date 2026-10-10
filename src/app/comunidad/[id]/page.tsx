@@ -11,14 +11,16 @@ export function generateStaticParams() {
   return communityInitiatives.map((initiative) => ({ id: initiative.id }));
 }
 
-export function generateMetadata({ params }: { params: { id: string } }): Metadata {
-  const initiative = findCommunityInitiative(params.id);
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const initiative = findCommunityInitiative(id);
   if (!initiative) return { title: "Iniciativa no encontrada | Tenlo" };
   return { title: `${initiative.name} | Comunidad | Tenlo`, description: initiative.summary };
 }
 
-export default function CommunityInitiativePage({ params }: { params: { id: string } }) {
-  const initiative = findCommunityInitiative(params.id);
+export default async function CommunityInitiativePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const initiative = findCommunityInitiative(id);
   if (!initiative) notFound();
   const officialUrl = initiative.url.startsWith("http") ? initiative.url : undefined;
 

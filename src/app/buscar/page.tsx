@@ -40,10 +40,11 @@ function queryTokenGroups(query: string) {
     .map((token) => (keywordAliases[token] ?? [token]).map(normalize));
 }
 
-export function generateMetadata({ searchParams }: { searchParams: SearchParams }): Metadata {
-  const cat = value(searchParams, "categoria");
-  const mun = value(searchParams, "municipio");
-  const tag = value(searchParams, "tag");
+export async function generateMetadata({ searchParams }: { searchParams: Promise<SearchParams> }): Promise<Metadata> {
+  const resolvedSearchParams = await searchParams;
+  const cat = value(resolvedSearchParams, "categoria");
+  const mun = value(resolvedSearchParams, "municipio");
+  const tag = value(resolvedSearchParams, "tag");
 
   let title = "Buscar recursos para familias en Madrid noroeste | Tenlo";
   if (cat && mun) title = `${cat} en ${mun} | Tenlo`;
@@ -63,18 +64,19 @@ export function generateMetadata({ searchParams }: { searchParams: SearchParams 
   };
 }
 
-export default function SearchPage({ searchParams }: { searchParams: SearchParams }) {
+export default async function SearchPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  const resolvedSearchParams = await searchParams;
   const selected = {
-    categoria: value(searchParams, "categoria"),
-    municipio: value(searchParams, "municipio"),
-    centro: value(searchParams, "centro"),
-    edad: value(searchParams, "edad"),
-    precio: value(searchParams, "precio"),
-    tipo: value(searchParams, "tipo"),
-    verificado: value(searchParams, "verificado"),
-    disponibilidad: value(searchParams, "disponibilidad"),
-    tag: value(searchParams, "tag"),
-    region: value(searchParams, "region")
+    categoria: value(resolvedSearchParams, "categoria"),
+    municipio: value(resolvedSearchParams, "municipio"),
+    centro: value(resolvedSearchParams, "centro"),
+    edad: value(resolvedSearchParams, "edad"),
+    precio: value(resolvedSearchParams, "precio"),
+    tipo: value(resolvedSearchParams, "tipo"),
+    verificado: value(resolvedSearchParams, "verificado"),
+    disponibilidad: value(resolvedSearchParams, "disponibilidad"),
+    tag: value(resolvedSearchParams, "tag"),
+    region: value(resolvedSearchParams, "region")
   };
 
   const [ageMin, ageMax] = selected.edad?.split("-").map(Number) ?? [];

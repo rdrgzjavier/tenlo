@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function FavoritesPage() {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data: authData } = await supabase.auth.getUser();
   const user = authData.user;
 

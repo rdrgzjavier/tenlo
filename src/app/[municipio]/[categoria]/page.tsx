@@ -14,9 +14,10 @@ export function generateStaticParams() {
   })));
 }
 
-export function generateMetadata({ params }: { params: Params }): Metadata {
-  const municipality = municipalities.find((item) => item.slug === params.municipio);
-  const category = categories.find((item) => item.slug === params.categoria);
+export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
+  const resolvedParams = await params;
+  const municipality = municipalities.find((item) => item.slug === resolvedParams.municipio);
+  const category = categories.find((item) => item.slug === resolvedParams.categoria);
   if (!municipality || !category) return { title: "Tenlo" };
 
   return {
@@ -30,9 +31,10 @@ export function generateMetadata({ params }: { params: Params }): Metadata {
   };
 }
 
-export default function LocalCategoryPage({ params }: { params: Params }) {
-  const municipality = municipalities.find((item) => item.slug === params.municipio);
-  const category = categories.find((item) => item.slug === params.categoria);
+export default async function LocalCategoryPage({ params }: { params: Promise<Params> }) {
+  const resolvedParams = await params;
+  const municipality = municipalities.find((item) => item.slug === resolvedParams.municipio);
+  const category = categories.find((item) => item.slug === resolvedParams.categoria);
   if (!municipality || !category) notFound();
 
   const results = listings.filter((listing) => listing.municipality === municipality.name && listing.categoryId === category.id);

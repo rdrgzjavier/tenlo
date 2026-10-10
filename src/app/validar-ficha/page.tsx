@@ -8,9 +8,10 @@ export const metadata: Metadata = {
   description: "Solicita la gestión, validación o corrección de una ficha de centro, servicio o recurso local en Tenlo."
 };
 
-export default function ClaimProfilePage({ searchParams }: { searchParams: { tipo?: string; id?: string } }) {
-  const type = searchParams.tipo === "centro" ? "center" : "provider";
-  const entity = type === "center" ? findCenter(searchParams.id || "") : findProvider(searchParams.id || "");
+export default async function ClaimProfilePage({ searchParams }: { searchParams: Promise<{ tipo?: string; id?: string }> }) {
+  const resolvedSearchParams = await searchParams;
+  const type = resolvedSearchParams.tipo === "centro" ? "center" : "provider";
+  const entity = type === "center" ? findCenter(resolvedSearchParams.id || "") : findProvider(resolvedSearchParams.id || "");
 
   if (!entity) {
     return (

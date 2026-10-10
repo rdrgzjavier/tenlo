@@ -16,8 +16,9 @@ export function generateStaticParams() {
   return listings.map((listing) => ({ id: listing.slug }));
 }
 
-export function generateMetadata({ params }: { params: { id: string } }): Metadata {
-  const listing = findListing(params.id);
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const listing = findListing(id);
   return {
     title: listing ? `${listing.title} | Tenlo` : "Recurso | Tenlo",
     description: listing?.description
@@ -71,8 +72,9 @@ function callablePhone(key: string, value: string) {
   return phone.length >= 9 ? phone : null;
 }
 
-export default function ListingDetailPage({ params }: { params: { id: string } }) {
-  const listing = findListing(params.id);
+export default async function ListingDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const listing = findListing(id);
   if (!listing) notFound();
   const category = categories.find((item) => item.id === listing.categoryId);
   const center = centers.find((item) => item.id === listing.centerId);

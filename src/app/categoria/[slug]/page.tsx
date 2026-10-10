@@ -7,16 +7,18 @@ export function generateStaticParams() {
   return categories.map((category) => ({ slug: category.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const category = findCategory(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const category = findCategory(slug);
   return {
     title: category?.seoTitle ?? "Categoría | Tenlo",
     description: category?.seoDescription
   };
 }
 
-export default function CategoryPage({ params }: { params: { slug: string } }) {
-  const category = findCategory(params.slug);
+export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const category = findCategory(slug);
   if (!category) notFound();
   return <CategoryPageView category={category} />;
 }

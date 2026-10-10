@@ -64,14 +64,16 @@ export function generateStaticParams() {
   return providers.map((provider) => ({ id: provider.id }));
 }
 
-export function generateMetadata({ params }: { params: { id: string } }): Metadata {
-  const provider = findProvider(params.id);
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const provider = findProvider(id);
   if (!provider) return { title: "Servicio no encontrado | Tenlo" };
   return { title: `${provider.businessName} | Servicios para familias | Tenlo`, description: provider.description };
 }
 
-export default function ServiceDetailPage({ params }: { params: { id: string } }) {
-  const provider = findProvider(params.id);
+export default async function ServiceDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const provider = findProvider(id);
   if (!provider) notFound();
 
   const personalProvider = isPersonalProvider(provider);

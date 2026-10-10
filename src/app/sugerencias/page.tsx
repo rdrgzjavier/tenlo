@@ -7,10 +7,11 @@ export const metadata: Metadata = {
   description: "Propón mejoras, recursos locales, centros o servicios que echas en falta en Tenlo."
 };
 
-export default function SuggestionsPage({ searchParams }: { searchParams: { context?: string; item?: string; location?: string; service?: string } }) {
-  const isProviderSuggestion = searchParams.context === "provider_suggestion";
-  const isContactRequest = searchParams.context === "contact_request";
-  const isReport = searchParams.context === "report_listing";
+export default async function SuggestionsPage({ searchParams }: { searchParams: Promise<{ context?: string; item?: string; location?: string; service?: string }> }) {
+  const resolvedSearchParams = await searchParams;
+  const isProviderSuggestion = resolvedSearchParams.context === "provider_suggestion";
+  const isContactRequest = resolvedSearchParams.context === "contact_request";
+  const isReport = resolvedSearchParams.context === "report_listing";
   const title = isProviderSuggestion
     ? "Propón un proveedor o actividad"
     : isContactRequest
@@ -50,9 +51,9 @@ export default function SuggestionsPage({ searchParams }: { searchParams: { cont
         </p>
         <div className="mt-6">
           {isProviderSuggestion ? (
-            <ProviderSuggestionForm initialLocation={searchParams.location} initialService={searchParams.service ?? searchParams.item} />
+            <ProviderSuggestionForm initialLocation={resolvedSearchParams.location} initialService={resolvedSearchParams.service ?? resolvedSearchParams.item} />
           ) : (
-            <FeedbackForm context={searchParams.context} itemId={searchParams.item} />
+            <FeedbackForm context={resolvedSearchParams.context} itemId={resolvedSearchParams.item} />
           )}
         </div>
       </section>

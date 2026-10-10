@@ -9,8 +9,9 @@ export const metadata: Metadata = {
   description: "Envía una solicitud protegida a través de Tenlo."
 };
 
-export default function ContactRequestPage({ searchParams }: { searchParams: { item?: string } }) {
-  const listing = searchParams.item ? findListing(searchParams.item) : undefined;
+export default async function ContactRequestPage({ searchParams }: { searchParams: Promise<{ item?: string }> }) {
+  const resolvedSearchParams = await searchParams;
+  const listing = resolvedSearchParams.item ? findListing(resolvedSearchParams.item) : undefined;
   if (!listing) notFound();
 
   return (

@@ -8,22 +8,24 @@ export function generateStaticParams() {
   return municipalities.map((municipality) => ({ slug: municipality.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const municipality = municipalities.find((item) => item.slug === params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const municipality = municipalities.find((item) => item.slug === slug);
   return {
     title: `Servicios para familias en ${municipality?.name ?? "tu zona"} | Tenlo`,
     description: municipality?.description,
-    alternates: { canonical: `/zonas/${params.slug}` },
+    alternates: { canonical: `/zonas/${slug}` },
     openGraph: {
       title: `Servicios para familias en ${municipality?.name ?? "Madrid noroeste"} | Tenlo`,
       description: municipality?.description,
-      url: `/zonas/${params.slug}`
+      url: `/zonas/${slug}`
     }
   };
 }
 
-export default function ZonePage({ params }: { params: { slug: string } }) {
-  const municipality = municipalities.find((item) => item.slug === params.slug);
+export default async function ZonePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const municipality = municipalities.find((item) => item.slug === slug);
   if (!municipality) notFound();
   const zoneListings = listings.filter((listing) => listing.municipality === municipality.name);
   const zoneCenters = centers.filter((center) => center.municipality === municipality.name);
