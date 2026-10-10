@@ -61,7 +61,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-[100] border-b border-line bg-panel/90 backdrop-blur-xl">
       <div className="page flex min-h-16 items-center justify-between gap-3">
-        <Link href="/" aria-label="Tenlo" className="shrink-0"><AnimatedLogo /></Link>
+        <Link href="/" aria-label="Tenlo cerca" className="shrink-0"><AnimatedLogo /></Link>
         <nav className="hidden min-w-0 items-center gap-5 lg:flex" aria-label="Principal">
           {nav.map(([label, href]) => (
             <Link key={href} href={href} className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-xl px-1 py-2 text-sm font-semibold text-slatecopy transition-colors hover:text-ink">

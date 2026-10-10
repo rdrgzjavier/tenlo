@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -27,8 +28,7 @@ import { centers, listings, municipalities } from "@/lib/mock-data";
 import { formatStat, getSiteStats } from "@/lib/site-stats";
 import { siteConfig } from "@/lib/site";
 
-const heroImageMobile = "https://images.pexels.com/photos/33593549/pexels-photo-33593549.jpeg?auto=compress&cs=tinysrgb&w=640&q=78";
-const heroImage = "https://images.pexels.com/photos/33593549/pexels-photo-33593549.jpeg?auto=compress&cs=tinysrgb&w=900&q=82";
+const heroImage = "/images/tenlo-home-hero.webp";
 
 export const metadata: Metadata = {
   title: "Tenlo | Servicios, centros y recursos para familias en Madrid noroeste",
@@ -163,8 +163,8 @@ export default function Home() {
       <section className="overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#F7F5F2_100%)]">
         <div className="page grid gap-8 py-5 sm:py-10 lg:grid-cols-[1.22fr_0.78fr] lg:py-14">
           <div className="flex flex-col justify-center">
-            <div className="mb-4 h-40 overflow-hidden rounded-[28px] bg-soft sm:mb-6 md:hidden">
-              <ImageWithFallback src={heroImageMobile} fallbackSrc="https://images.pexels.com/photos/7880624/pexels-photo-7880624.jpeg?auto=compress&cs=tinysrgb&w=640&q=78" alt="Persona adulta caminando de la mano con una menor, sin datos identificativos" className="h-full w-full object-cover object-center" loading="eager" fetchPriority="high" />
+            <div className="relative mb-4 h-40 overflow-hidden rounded-[28px] bg-soft sm:mb-6 md:hidden">
+              <Image src={heroImage} alt="Persona adulta caminando de la mano con una menor, sin datos identificativos" fill sizes="(max-width: 767px) calc(100vw - 40px), 0px" className="object-cover object-center" priority quality={78} />
             </div>
             <h1 className="page-title max-w-3xl">Encuentra, compara y contacta con servicios para tu familia</h1>
             <p className="lead">Actividades, apoyo escolar, salud, tecnología, transporte y mucho más. Información organizada por zona, sin datos identificativos de menores.</p>
@@ -196,7 +196,7 @@ export default function Home() {
           </div>
           <div className="relative hidden min-h-[370px] lg:block">
             <div className="absolute inset-x-4 bottom-0 top-6 overflow-hidden rounded-[44px] bg-white xl:inset-x-8">
-              <ImageWithFallback src={heroImage} fallbackSrc="https://images.pexels.com/photos/7880624/pexels-photo-7880624.jpeg?auto=compress&cs=tinysrgb&w=900&q=82" alt="Persona adulta caminando de la mano con una menor, sin datos identificativos" className="h-full w-full object-cover object-center" loading="lazy" />
+              <Image src={heroImage} alt="Persona adulta caminando de la mano con una menor, sin datos identificativos" fill sizes="(min-width: 1024px) 36vw, 0px" className="object-cover object-center" quality={78} />
             </div>
           </div>
         </div>
@@ -266,7 +266,7 @@ export default function Home() {
         <div className="flex gap-5 overflow-x-auto pb-3 lg:grid lg:grid-cols-4 lg:overflow-visible">
           {popularServices.map((service) => (
             <article key={service.title} className="card min-w-[270px] overflow-hidden lg:min-w-0">
-              <Link href={service.href} aria-label={`Ver ${service.title}`} className="relative block">
+              <Link href={service.href} aria-label={`Ver ${service.title}${service.signal === "Verificado" ? ", verificada" : ""}`} className="relative block">
                 <ImageWithFallback src={service.image} fallbackSrc={heroImage} alt={`Imagen de ${service.title}`} className="h-36 w-full object-cover" />
                 {service.signal === "Verificado" ? <span className="absolute right-3 top-3"><TrustBadge level="verified" variant="solid" /></span> : null}
               </Link>

@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import { Inter, Poppins } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -101,20 +100,20 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="es">
       <head>
-        <link rel="preconnect" href="https://images.pexels.com" />
-        <link rel="dns-prefetch" href="https://images.pexels.com" />
         {gtmId ? (
-          <Script id="gtm-consent-default" strategy="beforeInteractive">
-            {`window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){window.dataLayer.push(arguments);};window.gtag('consent','default',{'ad_storage':'denied','ad_user_data':'denied','ad_personalization':'denied','analytics_storage':'denied','functionality_storage':'granted','security_storage':'granted'});`}
-          </Script>
+          <script
+            id="gtm-consent-default"
+            dangerouslySetInnerHTML={{
+              __html: "window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){window.dataLayer.push(arguments);};window.gtag('consent','default',{'ad_storage':'denied','ad_user_data':'denied','ad_personalization':'denied','analytics_storage':'denied','functionality_storage':'granted','security_storage':'granted'});"
+            }}
+          />
         ) : null}
         {hasValidCookiebotId ? (
-          <Script
+          <script
             id="Cookiebot"
             src="https://consent.cookiebot.com/uc.js"
             data-cbid={cookiebotId}
             data-blockingmode="auto"
-            strategy="beforeInteractive"
           />
         ) : null}
       </head>
