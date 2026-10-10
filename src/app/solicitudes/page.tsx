@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ClipboardCheck } from "lucide-react";
+import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import { listings } from "@/lib/mock-data";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +25,8 @@ const statusLabels: Record<string, string> = {
 };
 
 export default async function RequestsPage() {
+  if (!hasSupabaseServerConfig()) return <PrivateAreaUnavailable />;
+
   const supabase = await createSupabaseServerClient();
   const { data: authData } = await supabase.auth.getUser();
   if (!authData.user) redirect("/login?next=/solicitudes");

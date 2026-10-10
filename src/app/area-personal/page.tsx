@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Bookmark, ClipboardCheck, ClipboardList, FilePlus2, Settings, ShieldCheck } from "lucide-react";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
+import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
@@ -124,6 +125,8 @@ async function ensureProfile() {
 }
 
 export default async function PersonalAreaPage() {
+  if (!hasSupabaseServerConfig()) return <PrivateAreaUnavailable />;
+
   const { user, profile } = await ensureProfile();
   const reviewStatus = profile?.status === "approved" ? "Cuenta activa" : "Pendiente de revisión";
   const displayName = profile?.public_name ?? profile?.display_name ?? user.email?.split("@")[0] ?? "Tenlo";

@@ -118,7 +118,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Repetir `npm audit`, `typecheck`, `lint` y `build` tras la actualización. Resultado del 10/10/2026: 0 críticos, 8 altos y 3 moderados; tipado, lint y build correctos.
 - [ ] Planificar y validar la migración a Next.js 16 y Tailwind CSS 4 para eliminar los avisos restantes sin regresiones visuales ni funcionales.
 - [x] Evitar que las páginas privadas conectadas a Supabase se ejecuten durante el prerender del build.
-- [ ] Hacer que las rutas privadas muestren un mensaje operativo claro cuando falten variables de Supabase en tiempo de ejecución. El directorio y cabecera públicos ya degradan sin bloquearse.
+- [x] Hacer que las rutas privadas muestren un mensaje operativo claro cuando falten variables de Supabase en tiempo de ejecución. El área personal, datos de cuenta, favoritos, publicaciones, solicitudes y publicación degradan a un estado seguro sin exponer errores técnicos.
 - [x] Crear `.env.example` sin secretos con todas las variables requeridas y su finalidad.
 - [x] Documentar variables por entorno: local, preview y production, incluyendo exposición, comportamiento cuando faltan y comprobaciones previas al despliegue.
 - [x] Auditar en Vercel la presencia de Supabase, Resend, Cookiebot, URL pública y correo administrativo por entorno.

@@ -3,8 +3,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Heart } from "lucide-react";
 import FavoriteButton from "@/components/FavoriteButton";
+import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import { listings } from "@/lib/mock-data";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +15,8 @@ export const metadata: Metadata = {
 };
 
 export default async function FavoritesPage() {
+  if (!hasSupabaseServerConfig()) return <PrivateAreaUnavailable />;
+
   const supabase = await createSupabaseServerClient();
   const { data: authData } = await supabase.auth.getUser();
   const user = authData.user;
