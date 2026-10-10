@@ -164,7 +164,7 @@ export default function Home() {
         <div className="page grid gap-8 py-5 sm:py-10 lg:grid-cols-[1.22fr_0.78fr] lg:py-14">
           <div className="flex flex-col justify-center">
             <div className="relative mb-4 h-40 overflow-hidden rounded-[28px] bg-soft sm:mb-6 md:hidden">
-              <Image src={heroImage} alt="Persona adulta caminando de la mano con una menor, sin datos identificativos" fill sizes="(max-width: 767px) calc(100vw - 40px), 0px" className="object-cover object-center" priority quality={78} />
+              <Image src={heroImage} alt="Persona adulta caminando de la mano con una menor, sin datos identificativos" fill sizes="(max-width: 767px) calc(100vw - 40px), 0px" className="object-cover object-center" priority fetchPriority="high" unoptimized />
             </div>
             <h1 className="page-title max-w-3xl">Encuentra, compara y contacta con servicios para tu familia</h1>
             <p className="lead">Actividades, apoyo escolar, salud, tecnología, transporte y mucho más. Información organizada por zona, sin datos identificativos de menores.</p>
@@ -196,7 +196,7 @@ export default function Home() {
           </div>
           <div className="relative hidden min-h-[370px] lg:block">
             <div className="absolute inset-x-4 bottom-0 top-6 overflow-hidden rounded-[44px] bg-white xl:inset-x-8">
-              <Image src={heroImage} alt="Persona adulta caminando de la mano con una menor, sin datos identificativos" fill sizes="(min-width: 1024px) 36vw, 0px" className="object-cover object-center" quality={78} />
+              <Image src={heroImage} alt="Persona adulta caminando de la mano con una menor, sin datos identificativos" fill sizes="(min-width: 1024px) 36vw, 0px" className="object-cover object-center" unoptimized />
             </div>
           </div>
         </div>
