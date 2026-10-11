@@ -4,9 +4,22 @@ function hasPublicSource(sourceUrl?: string) {
   return Boolean(sourceUrl?.startsWith("https://") || sourceUrl?.startsWith("http://"));
 }
 
+// Solo entran fichas revisadas una a una. Tener URL no basta para ser importable.
+// Las salas 2 y 3 de Hanky Planet deben ser servicios del mismo proveedor, no proveedores duplicados.
+const auditedProviderIds = new Set([
+  "hanky-planet-las-rozas-sala-1",
+  "ilusiona-equinoccio-majadahonda",
+  "piccoli-majadahonda",
+  "centro-juvenil-principe-asturias",
+  "espacio-cultural-mira-pozuelo",
+  "hop-galaxy-boadilla",
+  "el-miniclub-boadilla",
+  "club-las-encinas-boadilla",
+]);
+
 const importableCenters = centers.filter((center) => hasPublicSource(center.sourceUrl));
 const importableProviders = providers.filter(
-  (provider) => hasPublicSource(provider.sourceUrl) && !["canguros", "clases particulares"].includes(provider.category.toLowerCase()),
+  (provider) => auditedProviderIds.has(provider.id) && hasPublicSource(provider.sourceUrl),
 );
 const importableProviderIds = new Set(importableProviders.map((provider) => provider.id));
 const importableListings = listings.filter(
@@ -21,7 +34,7 @@ if (process.argv.includes("--summary")) {
       providers: importableProviders.length,
       services: importableListings.length,
     },
-    excludedWithoutPublicSourceOrPersonalProfile: {
+    pendingSourceReviewOrNormalization: {
       centers: centers.length - importableCenters.length,
       providers: providers.length - importableProviders.length,
     },

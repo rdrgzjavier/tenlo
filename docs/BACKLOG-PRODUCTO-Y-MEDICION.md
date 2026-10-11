@@ -153,7 +153,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Crear una capa de acceso a datos para Supabase con retorno seguro a `mock-data.ts` mientras se valida la migración.
 - [ ] Activar la capa de Supabase en las páginas públicas y retirar la dependencia de `mock-data.ts` solo después de validar paridad y reversibilidad.
 - [x] Crear una migración y un generador de importación idempotente para fichas editoriales no reclamadas, sin inventar propietarios ni elevar su confianza por defecto.
-- [ ] Auditar e importar el primer lote real. El control actual detecta 12 proveedores/servicios con URL de fuente y excluye 24 centros y 15 proveedores por falta de fuente enlazada o por ser perfiles personales; una URL no sustituye la revisión humana.
+- [ ] Importar el primer lote real ya auditado. El control inicial detectó 12 candidatos con URL, pero la revisión dejó 8 proveedores/servicios preparables: tres registros de Hanky Planet eran un mismo proveedor y dos candidatos dependían de una fuente secundaria o demasiado genérica. Los 24 centros siguen fuera hasta disponer de fuentes específicas. Véase `docs/AUDITORIA-LOTE-PROVEEDORES.md`.
 - [ ] Normalizar proveedores, servicios, categorías, municipios y zonas de cobertura.
 - [x] Definir plantillas iniciales por vertical manteniendo una estructura estable dentro de cada tipo:
   - [x] actividades y extraescolares;
