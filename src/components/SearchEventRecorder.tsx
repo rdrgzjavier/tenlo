@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { createSupabaseBrowserClient, hasSupabaseBrowserConfig } from "@/lib/supabase/client";
-import { hasAnalyticsConsent, pushTrackingEvent } from "@/lib/analytics";
+import { hasAnalyticsConsent, pushTrackingEvent, setActiveSearchContext } from "@/lib/analytics";
 
 type SearchEventRecorderProps = {
   query?: string;
@@ -10,9 +10,11 @@ type SearchEventRecorderProps = {
   municipality?: string;
   filters: Record<string, string | undefined>;
   resultsCount: number;
+  results: Array<{ id: string; category: string; municipality: string }>;
 };
 
 const sessionStorageKey = "tenlo_analytics_session_id_v1";
+const recentSearchKey = "tenlo_recent_search_v1";
 
 function privacySafeQuery(value?: string) {
   if (!value) return null;
@@ -22,25 +24,54 @@ function privacySafeQuery(value?: string) {
 }
 
 function anonymousSessionId() {
-  const existing = window.sessionStorage.getItem(sessionStorageKey);
-  if (existing) return existing;
-  const created = window.crypto.randomUUID();
-  window.sessionStorage.setItem(sessionStorageKey, created);
-  return created;
+  try {
+    const existing = window.sessionStorage.getItem(sessionStorageKey);
+    if (existing) return existing;
+    const created = window.crypto.randomUUID();
+    window.sessionStorage.setItem(sessionStorageKey, created);
+    return created;
+  } catch {
+    return window.crypto.randomUUID();
+  }
 }
 
-export default function SearchEventRecorder({ query, category, municipality, filters, resultsCount }: SearchEventRecorderProps) {
+function wasRecentlyRecorded(signature: string) {
+  try {
+    const raw = window.sessionStorage.getItem(recentSearchKey);
+    if (!raw) return false;
+    const recent = JSON.parse(raw) as { signature?: string; recordedAt?: number };
+    return recent.signature === signature && Boolean(recent.recordedAt && Date.now() - recent.recordedAt < 5_000);
+  } catch {
+    return false;
+  }
+}
+
+function rememberRecording(signature: string) {
+  try {
+    window.sessionStorage.setItem(recentSearchKey, JSON.stringify({ signature, recordedAt: Date.now() }));
+  } catch {
+    // La medición no debe bloquear la experiencia si el almacenamiento está restringido.
+  }
+}
+
+export default function SearchEventRecorder({ query, category, municipality, filters, resultsCount, results }: SearchEventRecorderProps) {
   const lastRecordedSignature = useRef("");
   const serializedFilters = JSON.stringify(filters);
+  const serializedResults = JSON.stringify(results);
 
   useEffect(() => {
+    const parsedFilters = JSON.parse(serializedFilters) as Record<string, string | undefined>;
+    const hasSearchIntent = Boolean(query || category || municipality || Object.entries(parsedFilters).some(([key, value]) => key !== "region" && Boolean(value)));
+    if (!hasSearchIntent) return;
+
     const signature = JSON.stringify({ query, category, municipality, serializedFilters, resultsCount });
     const recordSearch = () => {
-      if (lastRecordedSignature.current === signature || !hasAnalyticsConsent()) return;
+      if (lastRecordedSignature.current === signature || wasRecentlyRecorded(signature) || !hasAnalyticsConsent()) return;
       lastRecordedSignature.current = signature;
+      rememberRecording(signature);
       const searchId = window.crypto.randomUUID();
+      setActiveSearchContext(searchId);
       const safeQuery = privacySafeQuery(query);
-      const parsedFilters = JSON.parse(serializedFilters) as Record<string, string | undefined>;
       const safeFilters = { ...parsedFilters };
       delete safeFilters.tag;
       const eventParams = {
@@ -53,6 +84,15 @@ export default function SearchEventRecorder({ query, category, municipality, fil
       };
       pushTrackingEvent("search_results_viewed", eventParams);
       if (resultsCount === 0) pushTrackingEvent("search_zero_results", eventParams);
+      (JSON.parse(serializedResults) as SearchEventRecorderProps["results"]).forEach((result, index) => {
+        pushTrackingEvent("provider_impression", {
+          search_id: searchId,
+          item: result.id,
+          category: result.category,
+          municipality: result.municipality,
+          position: index + 1
+        });
+      });
 
       if (!hasSupabaseBrowserConfig()) return;
 
@@ -85,7 +125,7 @@ export default function SearchEventRecorder({ query, category, municipality, fil
       window.clearTimeout(stopTimer);
       window.removeEventListener("tenlo:analytics-ready", recordSearch);
     };
-  }, [category, municipality, query, resultsCount, serializedFilters]);
+  }, [category, municipality, query, resultsCount, serializedFilters, serializedResults]);
 
   return null;
 }

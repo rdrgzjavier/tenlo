@@ -16,6 +16,7 @@ export type TrackingAction =
   | "search_submitted"
   | "search_results_viewed"
   | "search_zero_results"
+  | "provider_impression"
   | "publish"
   | "claim_started"
   | "claim_submitted"
@@ -28,6 +29,13 @@ export type TrackingAction =
 export const analyticsSchemaVersion = "1.0";
 
 type TrackingValue = string | number | boolean | undefined;
+
+const activeSearchContextKey = "tenlo_active_search_context_v1";
+
+type ActiveSearchContext = {
+  search_id: string;
+  recorded_at: number;
+};
 
 export function hasAnalyticsConsent() {
   if (typeof window === "undefined") return false;
@@ -77,4 +85,27 @@ export function sendTrackingPayload(payload: Record<string, unknown>) {
 export function pushTrackingEvent(action: TrackingAction, params: Record<string, TrackingValue>) {
   if (typeof window === "undefined" || !hasAnalyticsConsent()) return;
   sendTrackingPayload({ event: action, ...eventEnvelope(), ...params });
+}
+
+export function setActiveSearchContext(searchId: string) {
+  try {
+    window.sessionStorage.setItem(activeSearchContextKey, JSON.stringify({ search_id: searchId, recorded_at: Date.now() }));
+  } catch {
+    // La medición no debe bloquear la navegación si el almacenamiento está restringido.
+  }
+}
+
+export function getActiveSearchContext(): Pick<ActiveSearchContext, "search_id"> | null {
+  try {
+    const raw = window.sessionStorage.getItem(activeSearchContextKey);
+    if (!raw) return null;
+    const context = JSON.parse(raw) as ActiveSearchContext;
+    if (!context.search_id || Date.now() - context.recorded_at > 30 * 60 * 1000) {
+      window.sessionStorage.removeItem(activeSearchContextKey);
+      return null;
+    }
+    return { search_id: context.search_id };
+  } catch {
+    return null;
+  }
 }

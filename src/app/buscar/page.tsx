@@ -109,6 +109,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         municipality={selected.municipio}
         filters={selected}
         resultsCount={filtered.length}
+        results={filtered.map((listing) => ({ id: listing.id, category: listing.categoryId, municipality: listing.municipality }))}
       />
       <p className="label">Marketplace local moderado</p>
       <h1 className="page-title">{selected.region === "madrid" ? "Oferta para familias en Madrid" : "Buscar recursos"}</h1>
@@ -138,7 +139,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
           </div>
           {filtered.length > 0 ? (
             <LoadMoreGrid className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              {filtered.map((listing) => <ListingCard key={listing.id} listing={listing} />)}
+              {filtered.map((listing, index) => <ListingCard key={listing.id} listing={listing} searchPosition={index + 1} />)}
             </LoadMoreGrid>
           ) : (
             <div className="card p-6 md:p-8">

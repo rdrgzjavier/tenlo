@@ -33,7 +33,7 @@ Este documento fija una definición única para producto, GA4, Supabase y Looker
 | --- | --- | --- | --- | --- | --- |
 | Búsquedas | `search_results_viewed` únicos por `search_id` | GA4 + Supabase | Diaria | Producto | El texto libre solo se conserva saneado en backend |
 | Tasa de cero resultados | Búsquedas con `zero_results=true` / búsquedas | Supabase | Diaria | Producto | Comparar por categoría y municipio |
-| CTR de resultados | `result_opened` / impresiones visibles de resultado | GA4 | Diaria | Producto | Requiere activar `result_impression` |
+| CTR de resultados | `result_opened` / `provider_impression` | GA4 | Diaria | Producto | Ambos eventos comparten `search_id`, ficha y posición |
 | Profundidad de búsqueda | Fichas abiertas / búsqueda | GA4 | Semanal | Producto | No mide por sí sola calidad |
 | Conversión búsqueda-solicitud | Solicitudes creadas con `search_id` / búsquedas | GA4 + Supabase | Semanal | Producto | Requiere atribuir `search_id` a la solicitud |
 | Adquisición activada | Usuarios que realizan una acción de valor / usuarios adquiridos por canal | GA4 | Semanal | Marketing | Depende del consentimiento estadístico |

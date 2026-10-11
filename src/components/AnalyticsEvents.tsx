@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { hasAnalyticsConsent, sendTrackingPayload, toDataLayerEvent } from "@/lib/analytics";
+import { getActiveSearchContext, hasAnalyticsConsent, sendTrackingPayload, toDataLayerEvent } from "@/lib/analytics";
 
 declare global {
   interface Window {
@@ -19,7 +19,9 @@ export default function AnalyticsEvents() {
       if (!tracked) return;
       const payload = toDataLayerEvent(tracked);
       if (!payload) return;
-      sendTrackingPayload(payload);
+      const { searchContext: shouldAddSearchContext, ...eventPayload } = payload as Record<string, unknown>;
+      const searchContext = shouldAddSearchContext === "true" ? getActiveSearchContext() : null;
+      sendTrackingPayload({ ...eventPayload, ...searchContext });
     }
 
     document.addEventListener("click", pushTrackedEvent);

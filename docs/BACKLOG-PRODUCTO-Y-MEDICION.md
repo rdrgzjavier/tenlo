@@ -54,7 +54,7 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - Aplicación en Next.js 15, React 18, TypeScript y Tailwind 3.
 - `typecheck` y `lint` pasan correctamente.
 - El contenido público continúa dependiendo de `src/lib/mock-data.ts`.
-- Existen siete migraciones de Supabase. Las migraciones `0006` y `0007` se aplicaron en producción el 5 de octubre de 2026 y se verificaron mediante consulta: `search_events` y `connection_requests` existen, tienen RLS activa y los permisos de inserción previstos.
+- Existen nueve migraciones de Supabase. Las migraciones `0006` y `0007` se aplicaron en producción el 5 de octubre de 2026 y se verificaron mediante consulta: `search_events` y `connection_requests` existen, tienen RLS activa y los permisos de inserción previstos. La migración `0009` se aplicó y verificó el 7 de octubre de 2026.
 - Hay autenticación y algunas páginas conectadas a Supabase, pero no una fuente de datos real unificada para el directorio.
 - La reclamación de ficha ya puede iniciarse sin cuenta; la aprobación y los cambios siguen sujetos a verificación posterior.
 - El formulario de registro ya solicita tipo de usuario, nombre público, email, teléfono, contraseña, municipio y centro opcional. Para proveedores también muestra tipología, web, descripción, zona, modalidad, edades, disponibilidad, credenciales y otros campos.
@@ -317,10 +317,11 @@ Tenlo debe poder explicar qué buscan las familias y qué rendimiento obtiene ca
 - [x] Registrar en Supabase término saneado, categoría, municipio, filtros, número de resultados y momento de la búsqueda, tanto para personas anónimas como autenticadas.
 - [ ] Clasificar las búsquedas en verticales: colegios, guarderías, servicios, actividades, centros y las que se incorporen después.
 - [ ] Registrar reformulaciones: qué cambia la persona cuando la primera búsqueda no le sirve.
-- [ ] Registrar búsquedas sin resultados, con pocos resultados o sin proveedores disponibles.
-- [ ] Registrar qué resultados se mostraron y en qué posición.
+- [x] Registrar búsquedas sin resultados y permitir identificar búsquedas con pocos resultados mediante `results_count`.
+- [ ] Distinguir expresamente cuándo existen resultados pero ningún proveedor está disponible.
+- [x] Registrar qué resultados se renderizaron y en qué posición, vinculados mediante `search_id`.
 - [ ] Relacionar búsqueda con ficha vista, guardado, contacto, respuesta y conexión útil.
-- [ ] Sanear o clasificar el texto libre antes de enviarlo a herramientas analíticas; una búsqueda puede contener datos personales o información sensible.
+- [x] Sanear el texto libre antes de persistirlo, descartar posibles emails o teléfonos y no enviarlo a GA4.
 - [ ] Crear un informe de demanda con:
   - [ ] términos e intenciones más buscados;
   - [ ] categorías y verticales con más demanda;
@@ -333,8 +334,8 @@ Tenlo debe poder explicar qué buscan las familias y qué rendimiento obtiene ca
 
 ### Tráfico y rendimiento de cada ficha
 
-- [ ] Medir impresiones de la ficha en listados y resultados.
-- [ ] Medir posición en la que apareció, tipo de listado y búsqueda que originó la impresión.
+- [x] Medir impresiones renderizadas de la ficha en resultados de búsqueda.
+- [x] Medir posición y búsqueda de origen mediante un `search_id` compartido; falta extenderlo a otros tipos de listado.
 - [ ] Medir visitas únicas y sesiones de la ficha, evitando inflarlas con recargas.
 - [ ] Medir fuente/medio/campaña, entrada SEO, navegación interna y tráfico directo.
 - [ ] Medir scroll o consumo de secciones relevantes solo si ayuda a tomar una decisión de producto.
@@ -431,19 +432,19 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 ### Descubrimiento y búsqueda
 
 - [ ] `search_started`
-- [ ] `search_submitted`
-- [ ] `search_results_viewed`
-- [ ] `search_zero_results`
+- [x] `search_submitted`
+- [x] `search_results_viewed`
+- [x] `search_zero_results`
 - [ ] `filter_applied`
-- [ ] `provider_impression`
+- [x] `provider_impression`
 - [x] `provider_profile_viewed`
 - [ ] `provider_compared`
 - [x] `provider_saved`
 - [x] `provider_unsaved`
 - [ ] `provider_shared`
-- [ ] `provider_suggestion_started`
-- [ ] `provider_suggestion_submitted`
-- [ ] `map_directions_clicked`
+- [x] `provider_suggestion_started`
+- [x] `provider_suggestion_submitted`
+- [x] `map_directions_clicked`
 
 Propiedades recomendadas: `search_id`, categoría, municipio, zona, número de resultados, filtros, posición del proveedor, fuente/medio/campaña y tipo de dispositivo.
 

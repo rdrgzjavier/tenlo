@@ -20,12 +20,14 @@ Versión: `1.0`
 | `search_results_viewed` | Se muestran resultados | `search_id`, categoría, municipio, filtros normalizados, `result_count`, `zero_results` | GA4 + Supabase |
 | `search_zero_results` | La búsqueda no ofrece opciones | `search_id`, categoría, municipio, filtros | GA4 + Supabase |
 | `search_refined` | Se modifican filtros o intención | `search_id`, filtro cambiado, número de intento | GA4 + Supabase |
-| `result_impression` | Una ficha entra en el listado visible | `search_id`, `provider_id`, posición, categoría | GA4 |
+| `provider_impression` | Una ficha forma parte de los resultados renderizados | `search_id`, identificador de ficha, posición, categoría y municipio | GA4 |
 | `result_opened` | Se abre una ficha desde resultados | `search_id`, `provider_id`, posición, categoría | GA4 |
 | `provider_suggestion_started` | Desde cero resultados se abre el formulario para proponer una opción | categoría normalizada, municipio, origen | GA4 |
 | `provider_suggestion_submitted` | La propuesta queda guardada para revisión | identificador interno de propuesta, categoría normalizada, municipio | GA4 + Supabase |
 
 El término escrito solo se almacena en Supabase tras sanear emails, teléfonos y posibles datos sensibles. GA4 recibe una intención o categoría normalizada, no el texto libre.
+
+La entrada inicial a `/buscar` sin término ni filtros no cuenta como búsqueda. Las impresiones se deduplican junto con la búsqueda y `result_opened` hereda el mismo `search_id` cuando el clic procede de una tarjeta de resultados.
 
 El nombre, la web, la ubicación exacta, las notas y los datos de contacto aportados al proponer un proveedor permanecen en Supabase y no se envían a GA4. La propuesta requiere revisión humana antes de generar una ficha `No verificada`.
 

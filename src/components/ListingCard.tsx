@@ -64,7 +64,7 @@ function categoryDisplayName(listing: Listing, categoryName?: string) {
   return isChildcareListing(listing) ? "Canguro" : categoryName;
 }
 
-export default function ListingCard({ listing }: { listing: Listing }) {
+export default function ListingCard({ listing, searchPosition }: { listing: Listing; searchPosition?: number }) {
   const category = categories.find((item) => item.id === listing.categoryId);
   const center = centers.find((item) => item.id === listing.centerId);
   const provider = providers.find((item) => item.userId === listing.userId);
@@ -85,15 +85,22 @@ export default function ListingCard({ listing }: { listing: Listing }) {
     "cumpleaños"
   ];
   const visibleTags = uniqueDisplayTags(listing.tags, hiddenTags).slice(0, 4);
+  const resultTracking = trackingAttrs("result_opened", {
+    item: listing.id,
+    category: listing.categoryId,
+    municipality: listing.municipality,
+    position: searchPosition,
+    searchContext: searchPosition ? true : undefined
+  });
 
   return (
     <article className="card flex flex-col overflow-hidden">
-      <Link href={detailHref} aria-label={`Saber más sobre ${listing.title}`} className="relative block">
+      <Link href={detailHref} aria-label={`Saber más sobre ${listing.title}`} className="relative block" {...resultTracking}>
         <ImageWithFallback src={listing.image} fallbackSrc={fallbackImage(listing.categoryId, listing.slug)} alt={`Imagen ilustrativa para ${listing.title}`} className="h-44 w-full object-cover" illustrative />
         <span className="absolute right-3 top-3"><TrustBadge level={listing.trustLevel} variant="solid" /></span>
       </Link>
       <div className="flex flex-1 flex-col p-5">
-        <h3 className="card-title text-ink"><Link href={detailHref}>{listing.title}</Link></h3>
+        <h3 className="card-title text-ink"><Link href={detailHref} {...resultTracking}>{listing.title}</Link></h3>
         <p className="supporting-copy mt-2 line-clamp-3">{listing.description}</p>
         <div className="mt-4 flex flex-wrap gap-2">
           {primaryCategory ? <span className="chip">{primaryCategory}</span> : null}
@@ -110,7 +117,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           <div className="flex justify-between gap-3"><dt>Precio</dt><dd className="font-medium text-ink">{listing.priceLabel ?? (listing.price ? `${listing.price} €` : "Consultar")}</dd></div>
         </dl>
         <div className="mt-auto flex flex-wrap gap-2 pt-5">
-          <Link href={detailHref} aria-label={`Saber más sobre ${listing.title}`} className="btn-primary flex-1 text-center" {...trackingAttrs("result_opened", { item: listing.id, category: listing.categoryId, municipality: listing.municipality })}>Saber más</Link>
+          <Link href={detailHref} aria-label={`Saber más sobre ${listing.title}`} className="btn-primary flex-1 text-center" {...resultTracking}>Saber más</Link>
           <Link href={`/solicitar?item=${listing.slug}`} className="icon-button" aria-label={isChildcareListing(listing) ? "Solicitar contacto" : "Contactar"} {...trackingAttrs("contact_started", { item: listing.id, category: listing.categoryId })}><MessageCircle size={18} /></Link>
           <FavoriteButton label={`Guardar ${listing.title}`} targetId={listing.id} />
         </div>
