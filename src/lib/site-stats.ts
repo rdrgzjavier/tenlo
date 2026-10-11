@@ -1,4 +1,4 @@
-import { centers, listings, providers } from "@/lib/mock-data";
+import { categories, centers, listings, providers } from "@/lib/mock-data";
 
 function publishedCount(categoryId?: string) {
   return listings.filter((listing) => {
@@ -12,7 +12,8 @@ export function getSiteStats() {
 
   return {
     centers: centers.length || publishedCount("centros"),
-    localResources: providers.length || publishedLocalResources
+    localResources: providers.length || publishedLocalResources,
+    categories: categories.length
   };
 }
 

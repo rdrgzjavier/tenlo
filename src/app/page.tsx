@@ -16,10 +16,12 @@ import {
   PartyPopper,
   Search,
   ShieldCheck,
+  Shapes,
   Sparkles,
   UsersRound
 } from "lucide-react";
 import ImageWithFallback from "@/components/ImageWithFallback";
+import NewsletterForm from "@/components/NewsletterForm";
 import { TrustBadge } from "@/components/Badge";
 import ValidatedSearchForm from "@/components/ValidatedSearchForm";
 import { trackingAttrs } from "@/lib/analytics";
@@ -154,7 +156,7 @@ export default function Home() {
     { value: `+${formatStat(stats.centers)}`, label: "Centros educativos", Icon: GraduationCap },
     { value: `+${formatStat(Math.max(stats.localResources, totalPublished))}`, label: "Recursos locales", Icon: MapPinned },
     { value: "+4", label: "Zonas cubiertas", Icon: MapPin },
-    { value: "Contenido", label: "Supervisado", Icon: ShieldCheck }
+    { value: `+${formatStat(stats.categories)}`, label: "Categorías disponibles", Icon: Shapes }
   ];
   const featuredCenters = centers.slice(0, 3);
 
@@ -223,7 +225,7 @@ export default function Home() {
       <section className="page py-14 lg:py-16">
         <div className="mx-auto mb-7 max-w-3xl text-left md:text-center">
           <h2 className="section-title lg:whitespace-nowrap">Oferta local para decidir con confianza</h2>
-          <p className="supporting-copy mt-3">Datos vivos del directorio Tenlo: centros educativos, recursos disponibles, zonas cubiertas y contenido supervisado.</p>
+          <p className="supporting-copy mt-3">Datos vivos del directorio Tenlo: centros educativos, recursos disponibles, zonas cubiertas y categorías para familias.</p>
         </div>
         <div className="grid grid-cols-2 overflow-hidden rounded-[24px] border border-line bg-white shadow-soft lg:grid-cols-4">
           {statCards.map(({ value, label, Icon }) => (
@@ -405,11 +407,7 @@ export default function Home() {
               <p className="supporting-copy mt-2">Recibe novedades, recursos y recomendaciones pensadas para familias como la tuya.</p>
             </div>
           </div>
-          <form action="/contacto" className="grid min-w-[min(100%,460px)] gap-3 xl:grid-cols-[1fr_auto]">
-            <label className="sr-only" htmlFor="newsletter-email">Tu correo electrónico</label>
-            <input id="newsletter-email" name="email" type="email" placeholder="Tu correo electrónico" className="field m-0 bg-white" />
-            <button className="btn-primary" type="submit">Suscribirme</button>
-          </form>
+          <NewsletterForm />
         </div>
       </section>
     </>

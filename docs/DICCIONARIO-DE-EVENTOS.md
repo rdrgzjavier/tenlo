@@ -77,3 +77,12 @@ El nombre, la web, la ubicación exacta, las notas y los datos de contacto aport
 - `usefulness_reported`, únicamente como evento agregado.
 
 Las conversiones se revisarán después de comprobar que no existen duplicados entre cliente y servidor.
+
+## Newsletter
+
+| Evento | Cuándo ocurre | Propiedades permitidas | Destino |
+|---|---|---|---|
+| `newsletter_subscribed` | Supabase confirma el alta o reconoce un email ya suscrito | origen del formulario | GA4 + Supabase |
+| `newsletter_failed` | El alta no puede completarse | origen del formulario | GA4 |
+
+El email y la fecha de consentimiento se almacenan exclusivamente en Supabase. Nunca se envía el email a GA4.

@@ -389,7 +389,7 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 ### Consentimientos
 
 - [ ] Separar aceptación de condiciones, privacidad, comunicaciones operativas y marketing.
-- [ ] Añadir consentimiento de marketing explícito, opcional y no premarcado.
+- [ ] Añadir consentimiento de marketing explícito, opcional y no premarcado. El formulario de newsletter de Home ya lo solicita y persiste el alta en `newsletter_subscribers`; falta integrarlo también en el registro y definir preferencias por finalidad.
 - [ ] Guardar para cada consentimiento: finalidad, versión del texto, fecha, origen y estado actual.
 - [ ] Permitir retirar el consentimiento con facilidad y conservar prueba de la retirada.
 - [ ] No enviar campañas comerciales a personas que solo aceptaron comunicaciones necesarias para prestar el servicio.

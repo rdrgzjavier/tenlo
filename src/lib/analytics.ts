@@ -21,6 +21,8 @@ export type TrackingAction =
   | "claim_submitted"
   | "provider_suggestion_started"
   | "provider_suggestion_submitted"
+  | "newsletter_subscribed"
+  | "newsletter_failed"
   | "map_directions_clicked";
 
 export const analyticsSchemaVersion = "1.0";
