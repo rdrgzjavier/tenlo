@@ -44,8 +44,3 @@ create unique index if not exists services_external_key_unique
 create unique index if not exists listings_external_key_unique
   on public.listings (external_key) where external_key is not null;
 
-drop policy if exists "Public can read centers" on public.centers;
-create policy "Public can read approved centers"
-  on public.centers for select to anon, authenticated
-  using (status = 'approved');
-
