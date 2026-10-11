@@ -367,6 +367,7 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 
 ### Datos de cuenta y perfil
 
+- [x] Permitir recuperar una contraseña olvidada mediante enlace seguro de Supabase Auth y establecer una nueva contraseña sin intervención manual.
 - [ ] Definir un modelo de perfil separado de `auth.users` y unido mediante un UUID interno.
 - [ ] Revisar y completar los campos del registro:
   - [ ] nombre de usuario o nombre público;

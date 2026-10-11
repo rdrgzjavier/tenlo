@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 function safeNextPath(value: string | null) {
-  return value?.startsWith("/") ? value : "/area-personal";
+  return value?.startsWith("/") && !value.startsWith("//") ? value : "/area-personal";
 }
 
 export async function GET(request: Request) {
@@ -12,7 +12,12 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createSupabaseServerClient();
-    await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error) {
+      const destination = new URL(next, requestUrl.origin);
+      destination.searchParams.set("error", "invalid_link");
+      return NextResponse.redirect(destination);
+    }
   }
 
   return NextResponse.redirect(new URL(next, requestUrl.origin));

@@ -15,6 +15,7 @@ import {
   Sparkles,
   UsersRound
 } from "lucide-react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { type FormEvent, useMemo, useState } from "react";
 import { centers, municipalities } from "@/lib/mock-data";
@@ -412,6 +413,7 @@ export default function LoginRegistration() {
               </div>
               <button className="btn-secondary" type="submit" disabled={loading === "login"}>{loading === "login" ? "Entrando..." : "Entrar"}</button>
             </form>
+            <Link href="/recuperar-contrasena" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-ink underline decoration-ink/35 underline-offset-4">¿Has olvidado la contraseña?</Link>
             <button className="btn-primary mt-3 w-full justify-center" type="button" onClick={handleGoogleLogin} disabled={loading === "google"}>
               {loading === "google" ? "Conectando..." : "Continuar con Google"}
             </button>
