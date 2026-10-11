@@ -2,7 +2,7 @@
 
 > Documento vivo para decidir, construir y comprobar el MVP de Tenlo.
 >
-> Última revisión: 10 de octubre de 2026.
+> Última revisión: 11 de octubre de 2026.
 
 ## Cómo utilizar este documento
 
@@ -50,12 +50,12 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 
 - Repositorio: `rdrgzjavier/tenlo`.
 - Rama de producción: `main`.
-- Último commit revisado: `89f0e78` (`Aclara confianza y mejora busquedas sin resultados`).
+- Último commit revisado: `19ae385` (`Defer directory read policy cutover`).
 - Aplicación en Next.js 15, React 18, TypeScript y Tailwind 3.
 - `typecheck` y `lint` pasan correctamente.
-- El contenido público continúa dependiendo de `src/lib/mock-data.ts`.
-- Existen doce migraciones de Supabase. Las migraciones `0006` y `0007` se aplicaron en producción el 5 de octubre de 2026 y se verificaron mediante consulta: `search_events` y `connection_requests` existen, tienen RLS activa y los permisos de inserción previstos. La migración `0009` se aplicó y verificó el 7 de octubre de 2026. Las migraciones `0010`, `0011` y `0012` se aplicaron y verificaron el 11 de octubre: endurecen funciones y formularios públicos y conservan la fecha de retirada del consentimiento comercial. El Security Advisor pasó de cinco a un aviso; solo queda la protección de contraseñas filtradas.
-- Hay autenticación y algunas páginas conectadas a Supabase, pero no una fuente de datos real unificada para el directorio.
+- El contenido público continúa dependiendo de `src/lib/mock-data.ts`, pero ya existe una capa de acceso preparada para leer el directorio desde Supabase con retorno seguro a los datos actuales. El cambio de fuente no está activado.
+- Existen trece migraciones de Supabase. Las migraciones `0006` y `0007` se aplicaron en producción el 5 de octubre de 2026 y se verificaron mediante consulta: `search_events` y `connection_requests` existen, tienen RLS activa y los permisos de inserción previstos. La migración `0009` se aplicó y verificó el 7 de octubre de 2026. Las migraciones `0010`, `0011` y `0012` se aplicaron y verificaron el 11 de octubre: endurecen funciones y formularios públicos y conservan la fecha de retirada del consentimiento comercial. La migración `0013` se aplicó el 11 de octubre y añadió claves externas estables, origen del registro e índices únicos para una importación idempotente, además de permitir fichas editoriales no reclamadas sin propietarios ficticios. El Security Advisor pasó de cinco a un aviso; solo queda la protección de contraseñas filtradas.
+- La base está preparada para una fuente de datos real unificada, pero no se activará hasta auditar e importar un lote pequeño y comparar conteos, relaciones y contenido.
 - La reclamación de ficha ya puede iniciarse sin cuenta; la aprobación y los cambios siguen sujetos a verificación posterior.
 - El formulario de registro ya solicita tipo de usuario, nombre público, email, teléfono, contraseña, municipio y centro opcional. Para proveedores también muestra tipología, web, descripción, zona, modalidad, edades, disponibilidad, credenciales y otros campos.
 - El esquema ya incluye centro relacionado, intereses y consentimiento específico de marketing, pero el formulario de registro aún debe conectarlos al guardado y conservar la evidencia del consentimiento.
@@ -150,8 +150,10 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 
 - [x] Elegir Supabase como fuente de verdad definitiva para autenticación, perfiles y operación del marketplace.
 - [x] Aplicar y verificar las migraciones de reclamación anónima, perfiles ampliados, búsquedas y solicitudes de conexión.
-- [ ] Eliminar la dependencia del directorio de `mock-data.ts` mediante una capa de acceso a datos.
-- [ ] Crear una migración/importación controlada para las fichas iniciales.
+- [x] Crear una capa de acceso a datos para Supabase con retorno seguro a `mock-data.ts` mientras se valida la migración.
+- [ ] Activar la capa de Supabase en las páginas públicas y retirar la dependencia de `mock-data.ts` solo después de validar paridad y reversibilidad.
+- [x] Crear una migración y un generador de importación idempotente para fichas editoriales no reclamadas, sin inventar propietarios ni elevar su confianza por defecto.
+- [ ] Auditar e importar el primer lote real. El control actual detecta 12 proveedores/servicios con URL de fuente y excluye 24 centros y 15 proveedores por falta de fuente enlazada o por ser perfiles personales; una URL no sustituye la revisión humana.
 - [ ] Normalizar proveedores, servicios, categorías, municipios y zonas de cobertura.
 - [x] Definir plantillas iniciales por vertical manteniendo una estructura estable dentro de cada tipo:
   - [x] actividades y extraescolares;
