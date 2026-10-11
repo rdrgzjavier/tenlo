@@ -54,7 +54,7 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - Aplicación en Next.js 15, React 18, TypeScript y Tailwind 3.
 - `typecheck` y `lint` pasan correctamente.
 - El contenido público continúa dependiendo de `src/lib/mock-data.ts`.
-- Existen once migraciones de Supabase. Las migraciones `0006` y `0007` se aplicaron en producción el 5 de octubre de 2026 y se verificaron mediante consulta: `search_events` y `connection_requests` existen, tienen RLS activa y los permisos de inserción previstos. La migración `0009` se aplicó y verificó el 7 de octubre de 2026. Las migraciones `0010` y `0011` se aplicaron y verificaron el 11 de octubre: fijan el `search_path` de `set_updated_at`, retiran la ejecución pública de `rls_auto_enable` y acotan las inserciones públicas de newsletter y feedback. El Security Advisor pasó de cinco a un aviso; solo queda la protección de contraseñas filtradas.
+- Existen doce migraciones de Supabase. Las migraciones `0006` y `0007` se aplicaron en producción el 5 de octubre de 2026 y se verificaron mediante consulta: `search_events` y `connection_requests` existen, tienen RLS activa y los permisos de inserción previstos. La migración `0009` se aplicó y verificó el 7 de octubre de 2026. Las migraciones `0010`, `0011` y `0012` se aplicaron y verificaron el 11 de octubre: endurecen funciones y formularios públicos y conservan la fecha de retirada del consentimiento comercial. El Security Advisor pasó de cinco a un aviso; solo queda la protección de contraseñas filtradas.
 - Hay autenticación y algunas páginas conectadas a Supabase, pero no una fuente de datos real unificada para el directorio.
 - La reclamación de ficha ya puede iniciarse sin cuenta; la aprobación y los cambios siguen sujetos a verificación posterior.
 - El formulario de registro ya solicita tipo de usuario, nombre público, email, teléfono, contraseña, municipio y centro opcional. Para proveedores también muestra tipología, web, descripción, zona, modalidad, edades, disponibilidad, credenciales y otros campos.
@@ -370,13 +370,13 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 ### Datos de cuenta y perfil
 
 - [x] Permitir recuperar una contraseña olvidada mediante enlace seguro de Supabase Auth y establecer una nueva contraseña sin intervención manual.
-- [ ] Definir un modelo de perfil separado de `auth.users` y unido mediante un UUID interno.
+- [x] Mantener un modelo `profiles` separado de `auth.users` y unido mediante el UUID de la cuenta.
 - [ ] Revisar y completar los campos del registro:
-  - [ ] nombre de usuario o nombre público;
-  - [ ] email verificado;
-  - [ ] tipo de usuario: familia, proveedor, centro u otro;
-  - [ ] municipio o zona general;
-  - [ ] centro o centros relacionados, siempre opcionales;
+  - [x] nombre de usuario o nombre público;
+  - [x] email verificado mediante Supabase Auth;
+  - [x] tipo de usuario: familia, proveedor, centro u otro;
+  - [x] municipio o zona general;
+  - [x] centro relacionado opcional;
   - [ ] categorías o necesidades de interés, opcionales;
   - [ ] idioma y preferencias de comunicación;
   - [ ] fecha y canal de registro;
@@ -385,28 +385,28 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
   - [ ] fecha de última actividad significativa;
   - [ ] estado de cuenta, baja y solicitud de eliminación.
 - [ ] Permitir que la persona consulte, corrija y elimine sus datos.
-- [ ] Evitar recoger nombres de menores, clase, horarios, fecha de nacimiento, colegio asociado a un menor concreto u otros datos sensibles salvo necesidad real y revisión específica.
-- [ ] No hacer público el centro, email, municipio o intereses de una familia por defecto.
-- [ ] No duplicar contraseñas, tokens o datos gestionados por Supabase Auth en tablas propias.
+- [x] Evitar recoger nombres de menores, clase, horarios, fecha de nacimiento u otros datos sensibles en el registro.
+- [x] No hacer público el centro, email, municipio o intereses de una familia por defecto; `profiles` solo es legible por su titular.
+- [x] No duplicar contraseñas, tokens o datos gestionados por Supabase Auth en tablas propias.
 
 ### Consentimientos
 
 - [ ] Separar aceptación de condiciones, privacidad, comunicaciones operativas y marketing.
-- [ ] Añadir consentimiento de marketing explícito, opcional y no premarcado. El formulario de newsletter de Home ya lo solicita y persiste el alta en `newsletter_subscribers`; falta integrarlo también en el registro y definir preferencias por finalidad.
+- [x] Añadir consentimiento de marketing explícito, opcional y no premarcado en newsletter y registro; falta ampliar preferencias si se crean finalidades comerciales distintas.
 - [ ] Guardar para cada consentimiento: finalidad, versión del texto, fecha, origen y estado actual.
-- [ ] Permitir retirar el consentimiento con facilidad y conservar prueba de la retirada.
+- [x] Permitir retirar el consentimiento desde Datos de cuenta y conservar la fecha de retirada mediante la migración `0012`.
 - [ ] No enviar campañas comerciales a personas que solo aceptaron comunicaciones necesarias para prestar el servicio.
 - [ ] Definir finalidades concretas antes de añadir nuevos campos al registro.
 
 ### Seguridad y gobierno del dato
 
-- [ ] Mantener los datos personales en tablas protegidas con RLS y acceso mínimo por rol.
+- [x] Mantener los datos personales de perfil en tablas protegidas con RLS y acceso del titular.
 - [x] Resolver las advertencias del Security Advisor sobre funciones y políticas públicas; newsletter y feedback siguen abiertos, pero solo admiten filas acotadas y válidas.
   - [x] Aplicar y verificar `0010_harden_database_functions.sql`; ambos avisos de funciones han desaparecido del Security Advisor.
   - [x] Aplicar `0011_guard_public_intake_policies.sql`, probar ambas inserciones bajo rol `anon` dentro de una transacción revertida y volver a ejecutar el Security Advisor.
 - [ ] Activar la protección de contraseñas filtradas antes de abrir el registro real. Supabase la limita al plan Pro o superior; en el plan gratuito actual debe asumirse como riesgo pendiente o cubrirse con otra estrategia antes del lanzamiento.
-- [ ] No exponer claves de servicio de Supabase en el cliente.
-- [ ] Separar PII de tablas de eventos y utilizar IDs internos seudónimos para análisis.
+- [x] No exponer claves de servicio de Supabase en el cliente.
+- [x] Separar PII de tablas de eventos y utilizar IDs internos seudónimos para análisis.
 - [ ] Restringir exportaciones y accesos administrativos; registrar quién puede ver o descargar datos.
 - [ ] Definir política de retención para cuentas inactivas, solicitudes, búsquedas y consentimientos.
 - [ ] Definir procedimientos de acceso, rectificación, portabilidad y eliminación.

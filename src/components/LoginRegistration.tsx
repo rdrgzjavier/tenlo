@@ -155,6 +155,10 @@ function isDuplicatePublicNameError(error: unknown) {
   return typeof error === "object" && error !== null && "code" in error && (error as { code?: string }).code === "23505";
 }
 
+function metadataText(value: unknown, maxLength: number) {
+  return typeof value === "string" ? value.trim().slice(0, maxLength) : "";
+}
+
 function blurActiveField() {
   const activeElement = document.activeElement;
   if (activeElement instanceof HTMLElement) {
@@ -178,6 +182,8 @@ export default function LoginRegistration() {
   const [registerEmail, setRegisterEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [municipality, setMunicipality] = useState("");
+  const [relatedCenter, setRelatedCenter] = useState("");
+  const [marketingConsent, setMarketingConsent] = useState(false);
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [showLoginPassword, setShowLoginPassword] = useState(false);
@@ -246,6 +252,11 @@ export default function LoginRegistration() {
         contact_email: registerEmail || loginEmail,
         phone: phone || null,
         municipality: municipality || null,
+        related_center_name: relatedCenter || null,
+        marketing_consent: marketingConsent,
+        marketing_consent_at: marketingConsent ? new Date().toISOString() : null,
+        marketing_consent_source: marketingConsent ? "registration" : null,
+        marketing_consent_withdrawn_at: null,
         status
       },
       { onConflict: "id" }
@@ -271,12 +282,24 @@ export default function LoginRegistration() {
     const fallbackName = typeof user.user_metadata?.display_name === "string" && user.user_metadata.display_name.length > 0
       ? user.user_metadata.display_name
       : user.email?.split("@")[0] || "Usuario Tenlo";
+    const metadataPhone = metadataText(user.user_metadata?.phone, 40);
+    const metadataMunicipality = metadataText(user.user_metadata?.municipality, 120);
+    const metadataCenter = metadataText(user.user_metadata?.related_center_name, 180);
+    const metadataMarketingConsent = user.user_metadata?.marketing_consent === true;
+    const metadataMarketingConsentAt = metadataMarketingConsent ? metadataText(user.user_metadata?.marketing_consent_at, 40) || new Date().toISOString() : null;
     const { error: profileError } = await supabase.from("profiles").insert({
       id: user.id,
       role,
       display_name: fallbackName,
       public_name: fallbackName,
       contact_email: user.email ?? null,
+      phone: metadataPhone || null,
+      municipality: metadataMunicipality || null,
+      related_center_name: metadataCenter || null,
+      marketing_consent: metadataMarketingConsent,
+      marketing_consent_at: metadataMarketingConsentAt,
+      marketing_consent_source: metadataMarketingConsent ? "registration" : null,
+      marketing_consent_withdrawn_at: null,
       status: role === "family" ? "approved" : "pending_review"
     });
 
@@ -345,7 +368,12 @@ export default function LoginRegistration() {
         emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
         data: {
           display_name: displayName,
-          role: profileRoleForSelection(userType, subtype)
+          role: profileRoleForSelection(userType, subtype),
+          phone: phone || null,
+          municipality,
+          related_center_name: relatedCenter || null,
+          marketing_consent: marketingConsent,
+          marketing_consent_at: marketingConsent ? new Date().toISOString() : null
         }
       }
     });
@@ -511,7 +539,7 @@ export default function LoginRegistration() {
               </label>
               <label className="field-label">
                 Centro relacionado opcional
-                <select className="field" defaultValue="">
+                <select className="field" value={relatedCenter} onChange={(event) => setRelatedCenter(event.target.value)}>
                   <option value="">No indicado</option>
                   {centers.map((c) => <option key={c.id}>{c.name}</option>)}
                 </select>
@@ -566,6 +594,10 @@ export default function LoginRegistration() {
             <label className="rounded-xl border border-line bg-soft p-4 text-sm font-semibold leading-6 text-slatecopy">
               <input required type="checkbox" checked={accepted} onChange={(event) => setAccepted(event.target.checked)} className="mr-2 h-4 w-4 rounded border-line" />
               Confirmo que soy mayor de 18 años o actúo en nombre de una entidad responsable, y que la información no incluye datos personales, fotos ni horarios identificativos de menores.
+            </label>
+            <label className="rounded-xl border border-line bg-white p-4 text-sm leading-6 text-slatecopy">
+              <input type="checkbox" checked={marketingConsent} onChange={(event) => setMarketingConsent(event.target.checked)} className="mr-2 h-4 w-4 rounded border-line" />
+              Quiero recibir por email novedades, recursos y recomendaciones de Tenlo. Es opcional y podré retirar el consentimiento. Consulta la <Link href="/privacidad" className="font-semibold text-ink underline underline-offset-4">política de privacidad</Link>.
             </label>
             <button className="btn-primary w-full md:w-fit" type="submit" disabled={passwordMismatch || loading === "register"}>{loading === "register" ? "Creando cuenta..." : "Crear cuenta"}</button>
           </form>

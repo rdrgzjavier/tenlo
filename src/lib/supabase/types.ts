@@ -39,6 +39,12 @@ type ProfileRow = {
   contact_email: string | null;
   phone: string | null;
   municipality: string | null;
+  related_center_name: string | null;
+  marketing_consent: boolean;
+  marketing_consent_at: string | null;
+  marketing_consent_source: string | null;
+  marketing_consent_withdrawn_at: string | null;
+  interests: string[];
   public_name: string | null;
   status: ModerationStatus;
   review_notes: string | null;
@@ -53,6 +59,12 @@ type ProfileInsert = {
   contact_email?: string | null;
   phone?: string | null;
   municipality?: string | null;
+  related_center_name?: string | null;
+  marketing_consent?: boolean;
+  marketing_consent_at?: string | null;
+  marketing_consent_source?: string | null;
+  marketing_consent_withdrawn_at?: string | null;
+  interests?: string[];
   public_name?: string | null;
   status?: ModerationStatus;
   review_notes?: string | null;

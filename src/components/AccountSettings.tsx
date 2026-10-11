@@ -12,6 +12,9 @@ type AccountSettingsProps = {
   role: string;
   status: string;
   municipality?: string | null;
+  marketingConsent: boolean;
+  marketingConsentAt?: string | null;
+  marketingConsentWithdrawnAt?: string | null;
 };
 
 function statusLabel(status: string) {
@@ -31,18 +34,19 @@ function roleLabel(role: string) {
   return "Cuenta Tenlo";
 }
 
-export default function AccountSettings({ email, displayName, role, status, municipality }: AccountSettingsProps) {
+export default function AccountSettings({ email, displayName, role, status, municipality, marketingConsent, marketingConsentAt, marketingConsentWithdrawnAt }: AccountSettingsProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
   const [currentPassword, setCurrentPassword] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [municipalityValue, setMunicipalityValue] = useState(municipality ?? "");
+  const [marketingConsentValue, setMarketingConsentValue] = useState(marketingConsent);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState("");
-  const [loading, setLoading] = useState<"password" | "municipality" | "delete" | "logout" | null>(null);
+  const [loading, setLoading] = useState<"password" | "municipality" | "marketing" | "delete" | "logout" | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -165,6 +169,40 @@ export default function AccountSettings({ email, displayName, role, status, muni
     setMessage("Solicitud de borrado recibida. El equipo de Tenlo la revisará antes de eliminar o anonimizar datos asociados.");
   }
 
+  async function handleMarketingUpdate(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError(null);
+    setMessage(null);
+
+    const { data: authData } = await supabase.auth.getUser();
+    const user = authData.user;
+    if (!user) {
+      setError("No hemos podido confirmar tu sesión.");
+      return;
+    }
+
+    const changedAt = new Date().toISOString();
+    setLoading("marketing");
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({
+        marketing_consent: marketingConsentValue,
+        marketing_consent_at: marketingConsentValue ? marketingConsentAt ?? changedAt : null,
+        marketing_consent_source: marketingConsentValue ? "account_settings" : null,
+        marketing_consent_withdrawn_at: marketingConsentValue ? null : marketingConsent ? changedAt : marketingConsentWithdrawnAt ?? null
+      })
+      .eq("id", user.id);
+    setLoading(null);
+
+    if (updateError) {
+      setError(updateError.message);
+      return;
+    }
+
+    setMessage(marketingConsentValue ? "Consentimiento de novedades actualizado." : "Has dejado de recibir comunicaciones de marketing.");
+    router.refresh();
+  }
+
   async function handleLogout() {
     setLoading("logout");
     await supabase.auth.signOut();
@@ -212,6 +250,15 @@ export default function AccountSettings({ email, displayName, role, status, muni
           </label>
           <button className="btn-secondary self-end justify-center" type="submit" disabled={loading === "municipality"}>
             {loading === "municipality" ? "Guardando..." : "Guardar municipio"}
+          </button>
+        </form>
+        <form className="mt-4 rounded-2xl border border-line bg-white p-4" onSubmit={handleMarketingUpdate}>
+          <label className="flex items-start gap-3 text-sm leading-6 text-slatecopy">
+            <input type="checkbox" checked={marketingConsentValue} onChange={(event) => setMarketingConsentValue(event.target.checked)} className="mt-1 h-4 w-4 rounded border-line" />
+            <span>Quiero recibir novedades, recursos y recomendaciones de Tenlo. Esta preferencia no afecta a los emails operativos necesarios para gestionar mi cuenta.</span>
+          </label>
+          <button className="btn-secondary mt-4 justify-center" type="submit" disabled={loading === "marketing"}>
+            {loading === "marketing" ? "Guardando..." : "Guardar preferencia"}
           </button>
         </form>
       </section>
