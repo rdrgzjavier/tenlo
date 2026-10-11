@@ -139,7 +139,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] Revisar cada ficha mock antes de hacerla pública como ficha real.
 - [ ] No considerar una web oficial como verificación suficiente por sí sola.
 - [x] Definir los niveles visibles de confianza: `No verificada`, `Gestionada`, `Verificada` y `Oficial`, independientes del plan comercial y de la titularidad del centro.
-- [ ] Mostrar en cada ficha la fuente, fecha de última revisión y estado de control por el proveedor cuando corresponda.
+- [x] Mostrar en cada ficha la fuente, fecha de última revisión y estado de control por el proveedor cuando corresponda. Los campos pendientes se muestran de forma explícita y las fuentes oficiales enlazan a su origen.
 - [x] Utilizar etiquetas breves y comprensibles para el estado de confianza: `No verificada`, `Gestionada`, `Verificada`, `Oficial`.
 - [x] Crear un mecanismo sencillo para solicitar corrección, retirada o actualización desde cada ficha, con motivo estructurado, contexto de la ficha y plazo máximo visible de 4 días laborables.
 - [ ] Revisar derechos de uso de imágenes remotas y evitar presentar imágenes genéricas como si fueran del proveedor.

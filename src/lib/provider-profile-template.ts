@@ -125,8 +125,6 @@ export function providerProfileSections(provider: Provider, listing?: Listing): 
         { label: "Web oficial", value: value(provider.website) },
         { label: "Email", value: value(provider.email) },
         { label: "Teléfono", value: value(provider.phone) },
-        { label: "Fuente", value: value(provider.sourceName) },
-        { label: "Última revisión", value: value(provider.lastReviewed) },
         { label: "Estado de disponibilidad", value: value(listing?.availability) }
       ]
     }

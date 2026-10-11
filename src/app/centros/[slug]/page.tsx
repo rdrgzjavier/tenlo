@@ -6,6 +6,7 @@ import AnalyticsViewEvent from "@/components/AnalyticsViewEvent";
 import { TrustBadge } from "@/components/Badge";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ImageWithFallback from "@/components/ImageWithFallback";
+import InformationTraceability from "@/components/InformationTraceability";
 import JsonLd from "@/components/JsonLd";
 import LocationCard from "@/components/LocationCard";
 import { trackingAttrs } from "@/lib/analytics";
@@ -91,7 +92,14 @@ export default async function CenterDetailPage({ params }: { params: Promise<{ s
             ["Idiomas", center.languages.join(", ")],
             ["Servicios", center.services.join(", ")]
           ]} />
-          <Link href={`/sugerencias?context=centro&item=${center.slug}`} className="inline-flex text-sm font-semibold text-ink underline">¿Hay algún dato incorrecto? Avísanos</Link>
+          <InformationTraceability
+            sourceName={center.source}
+            sourceUrl={center.sourceUrl}
+            lastReviewed={center.lastReviewed}
+            verificationStatus={center.verificationStatus}
+            trustLevel={center.trustLevel}
+            correctionHref={`/sugerencias?context=centro&item=${center.slug}`}
+          />
         </section>
 
         <aside className="card h-fit p-6">

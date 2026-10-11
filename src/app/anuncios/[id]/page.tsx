@@ -6,6 +6,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import AnalyticsViewEvent from "@/components/AnalyticsViewEvent";
 import FavoriteButton from "@/components/FavoriteButton";
 import ImageWithFallback from "@/components/ImageWithFallback";
+import InformationTraceability from "@/components/InformationTraceability";
 import LocationCard from "@/components/LocationCard";
 import { trackingAttrs } from "@/lib/analytics";
 import { uniqueDisplayTags } from "@/lib/display-labels";
@@ -150,7 +151,14 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
                 </dl>
               </section>
             ) : null}
-            <Link href={`/sugerencias?context=anuncio&item=${listing.slug}`} className="inline-flex text-sm font-semibold text-ink underline">¿Hay algún dato incorrecto? Avísanos</Link>
+            <InformationTraceability
+              sourceName={listing.sourceName}
+              sourceUrl={listing.sourceUrl}
+              lastReviewed={listing.lastReviewed}
+              verificationStatus={listing.verificationStatus}
+              trustLevel={listing.trustLevel}
+              correctionHref={`/sugerencias?context=anuncio&item=${listing.slug}`}
+            />
           </section>
         </article>
 

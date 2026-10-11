@@ -6,6 +6,7 @@ import AnalyticsViewEvent from "@/components/AnalyticsViewEvent";
 import { TrustBadge } from "@/components/Badge";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ImageWithFallback from "@/components/ImageWithFallback";
+import InformationTraceability from "@/components/InformationTraceability";
 import JsonLd from "@/components/JsonLd";
 import LocationCard from "@/components/LocationCard";
 import ProfileAvatar from "@/components/ProfileAvatar";
@@ -133,7 +134,14 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
             ) : (
               <ProviderProfileSections provider={provider} listing={listing} />
             )}
-            <Link href={`/sugerencias?context=servicio&item=${provider.id}`} className="inline-flex text-sm font-semibold text-ink underline">¿Hay algún dato incorrecto? Avísanos</Link>
+            <InformationTraceability
+              sourceName={provider.sourceName}
+              sourceUrl={provider.sourceUrl}
+              lastReviewed={provider.lastReviewed}
+              verificationStatus={provider.verificationStatus}
+              trustLevel={provider.trustLevel}
+              correctionHref={`/sugerencias?context=servicio&item=${provider.id}`}
+            />
           </section>
 
           {relatedServices.length > 0 ? (
