@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "noEmit": false,
+    "outDir": ".tmp/directory-seed",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "ES2022"
+  },
+  "include": [
+    "scripts/build-directory-seed.ts",
+    "src/lib/mock-data.ts",
+    "src/lib/display-labels.ts",
+    "src/lib/types.ts"
+  ]
+}
