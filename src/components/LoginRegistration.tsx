@@ -135,7 +135,7 @@ function profileRoleForSelection(type: UserTypeId, subtype: string): ProfileRole
 }
 
 function nextPath(value: string | null) {
-  return value?.startsWith("/") ? value : "/area-personal";
+  return value?.startsWith("/") && !value.startsWith("//") ? value : "/area-personal";
 }
 
 function safeProfileRole(value: unknown): ProfileRole {
