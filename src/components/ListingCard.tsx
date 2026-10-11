@@ -89,7 +89,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
   return (
     <article className="card flex flex-col overflow-hidden">
       <Link href={detailHref} aria-label={`Saber más sobre ${listing.title}`} className="relative block">
-        <ImageWithFallback src={listing.image} fallbackSrc={fallbackImage(listing.categoryId, listing.slug)} alt={`Imagen de ${listing.title}`} className="h-44 w-full object-cover" />
+        <ImageWithFallback src={listing.image} fallbackSrc={fallbackImage(listing.categoryId, listing.slug)} alt={`Imagen ilustrativa para ${listing.title}`} className="h-44 w-full object-cover" illustrative />
         <span className="absolute right-3 top-3"><TrustBadge level={listing.trustLevel} variant="solid" /></span>
       </Link>
       <div className="flex flex-1 flex-col p-5">

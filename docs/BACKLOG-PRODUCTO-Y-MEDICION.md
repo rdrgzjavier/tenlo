@@ -142,7 +142,8 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Mostrar en cada ficha la fuente, fecha de última revisión y estado de control por el proveedor cuando corresponda. Los campos pendientes se muestran de forma explícita y las fuentes oficiales enlazan a su origen.
 - [x] Utilizar etiquetas breves y comprensibles para el estado de confianza: `No verificada`, `Gestionada`, `Verificada`, `Oficial`.
 - [x] Crear un mecanismo sencillo para solicitar corrección, retirada o actualización desde cada ficha, con motivo estructurado, contexto de la ficha y plazo máximo visible de 4 días laborables.
-- [ ] Revisar derechos de uso de imágenes remotas y evitar presentar imágenes genéricas como si fueran del proveedor.
+- [x] Identificar visual y semánticamente las imágenes genéricas como `Imagen ilustrativa` para no presentarlas como fotografías oficiales del proveedor o centro.
+- [ ] Documentar para cada imagen remota su fuente, licencia y fecha de revisión; sustituirla por material oficial cuando el titular lo aporte y autorice.
 - [x] Revisar la promesa principal de reserva: la portada comunica ahora búsqueda, comparación y contacto. Las menciones restantes describen condiciones o información publicada por terceros, no una reserva dentro de Tenlo.
 
 ## P0. Modelo de datos real

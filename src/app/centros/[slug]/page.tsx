@@ -57,7 +57,7 @@ export default async function CenterDetailPage({ params }: { params: Promise<{ s
         url: centerUrl
       }} />
 
-      <ImageWithFallback src={center.image} fallbackSrc={centerFallbackImage} alt={`Imagen de ${center.name}`} className="mb-6 aspect-[16/7] w-full rounded-2xl border border-line object-cover" />
+      <ImageWithFallback src={center.image} fallbackSrc={centerFallbackImage} alt={`Imagen ilustrativa para ${center.name}`} className="aspect-[16/7] w-full rounded-2xl border border-line object-cover" illustrative wrapperClassName="mb-6" />
 
       <div className="mt-4 flex items-start gap-3">
         <h1 className="detail-title text-ink">{center.name}</h1>

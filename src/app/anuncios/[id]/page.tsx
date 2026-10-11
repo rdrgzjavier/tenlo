@@ -91,7 +91,7 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
       <Breadcrumbs items={[{ label: category?.name ?? "Recursos", href: category ? `/categoria/${category.slug}` : "/buscar" }, { label: listing.title }]} />
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
         <article>
-          <ImageWithFallback src={listing.image} fallbackSrc={fallbackImage(listing.categoryId)} alt={`Imagen de ${listing.title}`} className="mb-6 aspect-[16/7] w-full rounded-2xl border border-line object-cover" />
+          <ImageWithFallback src={listing.image} fallbackSrc={fallbackImage(listing.categoryId)} alt={`Imagen ilustrativa para ${listing.title}`} className="aspect-[16/7] w-full rounded-2xl border border-line object-cover" illustrative wrapperClassName="mb-6" />
           <div className="flex items-start gap-3">
             {isVerified ? <ShieldCheck className="mt-1 shrink-0 text-emerald-700" size={28} aria-label="Ficha verificada" /> : null}
             <h1 className="detail-title text-ink">{listing.title}</h1>

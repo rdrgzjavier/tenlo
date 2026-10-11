@@ -269,7 +269,7 @@ export default function Home() {
           {popularServices.map((service) => (
             <article key={service.title} className="card min-w-[270px] overflow-hidden lg:min-w-0">
               <Link href={service.href} aria-label={`Ver ${service.title}${service.signal === "Verificado" ? ", verificada" : ""}`} className="relative block">
-                <ImageWithFallback src={service.image} fallbackSrc={heroImage} alt={`Imagen de ${service.title}`} className="h-36 w-full object-cover" />
+                <ImageWithFallback src={service.image} fallbackSrc={heroImage} alt={`Imagen ilustrativa para ${service.title}`} className="h-36 w-full object-cover" illustrative />
                 {service.signal === "Verificado" ? <span className="absolute right-3 top-3"><TrustBadge level="verified" variant="solid" /></span> : null}
               </Link>
               <div className="p-5">

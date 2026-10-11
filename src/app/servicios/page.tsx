@@ -126,7 +126,7 @@ export default function ServicesPage() {
         {providers.map((provider) => (
           <article key={provider.id} className="card flex h-full flex-col overflow-hidden">
             <Link href={`/servicios/${provider.id}`} aria-label={`Saber más sobre ${provider.businessName}`} className="relative block">
-              <ImageWithFallback src={provider.image} fallbackSrc={providerFallback(provider.id)} alt={`Imagen de ${provider.businessName}`} className="h-44 w-full object-cover" />
+              <ImageWithFallback src={provider.image} fallbackSrc={providerFallback(provider.id)} alt={`Imagen ilustrativa para ${provider.businessName}`} className="h-44 w-full object-cover" illustrative />
               <span className="absolute right-3 top-3"><TrustBadge level={provider.trustLevel} variant="solid" /></span>
             </Link>
             <div className="flex flex-1 flex-col p-5">

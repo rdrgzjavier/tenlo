@@ -28,7 +28,7 @@ export default async function CommunityInitiativePage({ params }: { params: Prom
     <div className="section-shell">
       <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
         <article>
-          <ImageWithFallback src={initiative.image} fallbackSrc={communityFallbackImage} alt={`Imagen de ${initiative.name}`} className="h-64 w-full rounded-2xl border border-line object-cover sm:h-80" />
+          <ImageWithFallback src={initiative.image} fallbackSrc={communityFallbackImage} alt={`Imagen ilustrativa para ${initiative.name}`} className="h-64 w-full rounded-2xl border border-line object-cover sm:h-80" illustrative />
           <p className="label mt-6">Iniciativa comunitaria</p>
           <h1 className="page-title">{initiative.name}</h1>
           <p className="lead">{initiative.summary}</p>

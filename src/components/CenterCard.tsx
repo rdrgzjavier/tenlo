@@ -24,7 +24,7 @@ export default function CenterCard({ center }: { center: Center }) {
   return (
     <article className="card flex h-full flex-col overflow-hidden">
       <Link href={detailHref} aria-label={`Saber más sobre ${center.name}`} className="relative block">
-        <ImageWithFallback src={center.image} fallbackSrc={fallbackImage(center.slug)} alt={`Imagen de ${center.name}`} className="h-44 w-full object-cover" />
+        <ImageWithFallback src={center.image} fallbackSrc={fallbackImage(center.slug)} alt={`Imagen ilustrativa para ${center.name}`} className="h-44 w-full object-cover" illustrative />
         <span className="absolute right-3 top-3"><TrustBadge level={center.trustLevel} variant="solid" /></span>
       </Link>
       <div className="flex flex-1 flex-col p-5">

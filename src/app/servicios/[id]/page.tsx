@@ -105,7 +105,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
         <article>
-          <ImageWithFallback src={provider.image} fallbackSrc={serviceFallbackImage} alt={`Imagen de ${provider.businessName}`} className="h-64 w-full rounded-2xl border border-line object-cover sm:h-80" />
+          <ImageWithFallback src={provider.image} fallbackSrc={serviceFallbackImage} alt={`Imagen ilustrativa para ${provider.businessName}`} className="h-64 w-full rounded-2xl border border-line object-cover sm:h-80" illustrative />
           <div className="mt-6 flex items-center gap-4">
             <ProfileAvatar name={provider.businessName} role="provider" image={provider.image} />
             <div className="flex min-w-0 items-start gap-3">

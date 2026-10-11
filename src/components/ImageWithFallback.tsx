@@ -7,15 +7,17 @@ type ImageWithFallbackProps = {
   fallbackSrc: string;
   alt: string;
   className?: string;
+  illustrative?: boolean;
+  wrapperClassName?: string;
   loading?: "eager" | "lazy";
   fetchPriority?: "high" | "low" | "auto";
 };
 
-export default function ImageWithFallback({ src, fallbackSrc, alt, className, loading = "lazy", fetchPriority }: ImageWithFallbackProps) {
+export default function ImageWithFallback({ src, fallbackSrc, alt, className, illustrative = false, wrapperClassName = "", loading = "lazy", fetchPriority }: ImageWithFallbackProps) {
   const [currentSrc, setCurrentSrc] = useState(src ?? fallbackSrc);
   const priorityProps = fetchPriority ? { fetchPriority } : {};
 
-  return (
+  const image = (
     <img
       {...priorityProps}
       src={currentSrc}
@@ -27,5 +29,16 @@ export default function ImageWithFallback({ src, fallbackSrc, alt, className, lo
         if (currentSrc !== fallbackSrc) setCurrentSrc(fallbackSrc);
       }}
     />
+  );
+
+  if (!illustrative) return image;
+
+  return (
+    <span className={`relative block ${wrapperClassName}`}>
+      {image}
+      <span className="absolute bottom-3 left-3 rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-slatecopy shadow-sm ring-1 ring-line">
+        Imagen ilustrativa
+      </span>
+    </span>
   );
 }
