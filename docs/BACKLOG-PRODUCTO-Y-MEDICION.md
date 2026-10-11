@@ -218,7 +218,8 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 
 - [x] Incorporar en `/buscar` un módulo visible de búsqueda por palabra, zona y categoría, también en móvil.
 - [x] Añadir `Ver mapa y cómo llegar` para centros y negocios mediante una búsqueda externa sin coste de API, sin mostrar ubicaciones exactas de profesionales particulares.
-- [ ] Incorporar dirección profesional pública y coordenadas verificadas al modelo de datos; permitir al proveedor confirmarlas o corregirlas al reclamar su ficha.
+- [x] Preparar en el modelo dirección profesional, coordenadas verificadas, visibilidad de ubicación y municipios de servicio mediante la migración `0014`, distinguiendo negocios físicos de profesionales móviles.
+- [ ] Permitir al proveedor confirmar o corregir dirección, coordenadas, visibilidad y municipios al reclamar su ficha.
 - [ ] Sustituir la búsqueda aproximada por un mapa embebido solo cuando existan coordenadas verificadas, consentimiento/cookies y una estimación de coste aceptada.
 - [ ] Sustituir filtros genéricos por los atributos que realmente permiten decidir en el segmento inicial.
 - [x] Mostrar el número de resultados sin sugerir que más siempre es mejor.
