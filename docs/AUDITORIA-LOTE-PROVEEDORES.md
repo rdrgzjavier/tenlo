@@ -1,8 +1,10 @@
-# Auditoría del primer lote de proveedores
+# Auditoría del bloque 1 de la migración del directorio
 
 > Revisión: 11 de octubre de 2026.
 >
-> Objetivo: decidir qué fichas pueden prepararse como `No verificada` a partir de información pública sin convertir datos didácticos o ficticios en datos reales.
+> Objetivo: preparar un primer bloque seguro mientras se amplía la migración al mayor número posible de entidades reales del piloto, sin convertir datos didácticos o ficticios en datos reales.
+
+Este bloque de diez proveedores no es el alcance final del piloto. Es el primer conjunto con fuente revisada. El inventario de ampliación contiene 24 centros y 22 proveedores organizativos únicos; los tres perfiles personales ficticios quedan excluidos. Cada entidad pendiente se incorporará en cuanto exista una fuente pública suficiente y sus campos hayan sido contrastados.
 
 ## Criterio aplicado
 
@@ -17,10 +19,12 @@ Una ficha solo puede entrar en el lote cuando:
 
 La presencia de una web no equivale a verificación ni autoriza a usar imágenes o textos protegidos. La ficha seguirá mostrando `No verificada` hasta que el proveedor la gestione o Tenlo aplique el proceso de verificación correspondiente.
 
-## Candidatos admitidos para preparación
+## Bloque 1 admitido para preparación
 
 | Proveedor | Municipio | Fuente revisada | Decisión | Observación |
 |---|---|---|---|---|
+| BeOne Boadilla | Boadilla | https://beone.es/centros-deportivos/madrid/boadilla | Preparar | Fuente oficial específica con dirección, teléfono, horarios e instalaciones familiares. |
+| Kumon Pozuelo - Estación | Pozuelo | https://www.kumon.es/pozuelo-estacion | Preparar | Fuente oficial específica con programas, dirección, teléfono, modalidad y horarios. |
 | Hanky Planet Las Rozas | Las Rozas | https://www.hankyplanet.com/celebracion-de-cumpleanos-en-las-rozas/ | Preparar | Debe existir como un proveedor con varias salas/servicios, no como tres proveedores. |
 | Ilusiona Equinoccio | Majadahonda | https://ilusiona.com/equinoccio/ | Preparar | Página específica del centro. Mantener horarios y tarifas como datos sujetos a cambio. |
 | Piccoli | Majadahonda | https://www.piccoli.es/ | Preparar | La web identifica cumpleaños, campamentos, talleres y el negocio responsable. |
@@ -34,16 +38,17 @@ La presencia de una web no equivale a verificación ni autoriza a usar imágenes
 
 | Registro actual | Motivo | Siguiente acción |
 |---|---|---|
-| Hanky Planet Sala 2 | Duplicaría al proveedor Hanky Planet. | Modelarla como servicio asociado al mismo proveedor. |
-| Hanky Planet Sala 3 | Duplicaría al proveedor y la fuente actual es un directorio externo. | Usar la fuente oficial y modelarla como servicio. |
 | The Magic Forest | La fuente disponible es un directorio secundario y puede estar desactualizada. | Localizar y comprobar una fuente oficial vigente. |
 | Centro Cultural Volturno | La URL guardada apunta a la portada municipal, no a una ficha específica. | Localizar una página municipal específica antes de importar. |
+| Centro Deportivo Huerta Vieja | La fuente municipal indica cierre temporal por obras. | Revisar su reapertura antes de incorporarlo como oferta disponible. |
+| Polideportivo Carlos Ruiz | La fuente municipal informa de obras y renovación en curso. | Confirmar qué instalaciones y actividades están operativas antes de importar. |
 
 ## Resultado del control
 
 - Inventario actual: 24 centros, 27 proveedores y 51 fichas generadas desde datos mock.
-- Lote preparado por criterio: 0 centros, 8 proveedores y 8 servicios.
-- Pendiente: normalizar las tres salas de Hanky Planet como servicios de un solo proveedor y completar el modelo de direcciones/coordenadas verificadas.
+- Inventario útil para el piloto: 24 centros y 22 proveedores organizativos únicos, antes de contrastar fuentes. Los tres perfiles personales ficticios no se migrarán.
+- Bloque 1 preparado por criterio: 0 centros, 10 proveedores y 12 servicios. Las tres salas de Hanky Planet quedan asociadas a un único proveedor.
+- Pendiente: contrastar y completar por bloques los 24 centros y los 12 proveedores organizativos únicos restantes; los campos dudosos se dejarán vacíos.
 - No se activa todavía `DIRECTORY_DATA_SOURCE=supabase` ni se modifica la web pública.
 
 ## Comprobaciones antes de ejecutar el lote

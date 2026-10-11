@@ -176,12 +176,12 @@ type ProviderSeed = [
 ];
 
 const providerSeeds: ProviderSeed[] = [
-  ["boadilla-beone", "BeOne Boadilla", "Extraescolares", "deporte, natación, fitness", images.sport, "extraescolares", "Boadilla del Monte", "916 33 63 36", "info@beone.es"],
+  ["boadilla-beone", "BeOne Boadilla", "Extraescolares", "deporte, natación, fitness", images.sport, "extraescolares", "Boadilla del Monte", "916 32 73 61", "", "https://beone.es/centros-deportivos/madrid/boadilla", "Centro deportivo con piscina, escuela de natación, actividades infantiles y ludoteca.", "Consultar programación infantil y disponibilidad con el centro."],
   ["boadilla-musica", "Academia de Música Boadilla", "Extraescolares", "música, piano, guitarra", images.activity, "extraescolares", "Boadilla del Monte", "916 32 30 54", "info@musica-boadilla.es"],
   ["boadilla-british", "British Council Boadilla", "Idiomas", "inglés, oficial, niños", images.activity, "clases-particulares", "Boadilla del Monte", "913 37 36 00", "madrid@britishcouncil.es"],
   ["boadilla-mencia", "Papelería Doña Mencía", "Libros y material", "papelería, libros, material escolar", images.books, "libros-material", "Boadilla del Monte", "916 33 03 40", "libreria@mencia.es"],
   ["pozuelo-cruiz", "Polideportivo Carlos Ruiz", "Extraescolares", "deporte, municipal, escuelas", images.sport, "extraescolares", "Pozuelo de Alarcón", "913 52 23 60", "deportes@pozuelodealarcon.org"],
-  ["pozuelo-kumon", "Kumon Pozuelo", "Extraescolares", "matemáticas, lectura, apoyo", images.activity, "clases-particulares", "Pozuelo de Alarcón", "654 32 10 98", "pozuelo@kumon.es"],
+  ["pozuelo-kumon", "Kumon Pozuelo - Estación", "Extraescolares", "matemáticas, lectura, inglés", images.activity, "clases-particulares", "Pozuelo de Alarcón", "913 51 81 81", "", "https://www.kumon.es/pozuelo-estacion", "Centro Kumon con programas de Matemáticas, Lectura e English, en modalidad presencial y online.", "Lunes a jueves de 16:30 a 19:00; confirmar turno y disponibilidad con el centro."],
   ["majadahonda-hvieja", "Polideportivo Huerta Vieja", "Extraescolares", "deporte, natación, municipal", images.sport, "extraescolares", "Majadahonda", "916 34 94 24", "deportes@majadahonda.org"],
   ["majadahonda-kidsus", "Kids&Us Majadahonda", "Idiomas", "inglés, niños, método propio", images.activity, "clases-particulares", "Majadahonda", "916 39 82 25", "majadahonda@kidsandus.es"],
   ["profesor-mates", "Carlos P.", "Clases particulares", "matemáticas, eso, bachillerato", images.activity, "clases-particulares", "Las Rozas de Madrid", "Contacto protegido", "contacto@tenlo.es"],

@@ -7,6 +7,8 @@ function hasPublicSource(sourceUrl?: string) {
 // Solo entran fichas revisadas una a una. Tener URL no basta para ser importable.
 // Las salas 2 y 3 de Hanky Planet deben ser servicios del mismo proveedor, no proveedores duplicados.
 const auditedProviderIds = new Set([
+  "boadilla-beone",
+  "pozuelo-kumon",
   "hanky-planet-las-rozas-sala-1",
   "ilusiona-equinoccio-majadahonda",
   "piccoli-majadahonda",
@@ -17,18 +19,41 @@ const auditedProviderIds = new Set([
   "club-las-encinas-boadilla",
 ]);
 
+// Algunos registros mock representan servicios de una misma entidad. Esta tabla
+// evita crear proveedores duplicados y conserva las fichas como servicios.
+const canonicalProviderIdBySourceId = new Map<string, string>([
+  ["hanky-planet-las-rozas-sala-2", "hanky-planet-las-rozas-sala-1"],
+  ["hanky-planet-las-rozas-sala-3", "hanky-planet-las-rozas-sala-1"],
+]);
+
+const auditedServiceProviderIds = new Set([
+  ...auditedProviderIds,
+  ...canonicalProviderIdBySourceId.keys(),
+]);
+
 const importableCenters = centers.filter((center) => hasPublicSource(center.sourceUrl));
 const importableProviders = providers.filter(
   (provider) => auditedProviderIds.has(provider.id) && hasPublicSource(provider.sourceUrl),
 );
-const importableProviderIds = new Set(importableProviders.map((provider) => provider.id));
 const importableListings = listings.filter(
-  (listing) => listing.publicationType === "proveedor" && importableProviderIds.has(listing.userId),
+  (listing) => listing.publicationType === "proveedor" && auditedServiceProviderIds.has(listing.userId),
+);
+
+const personalProviderIds = new Set(["profesor-mates", "canguro-ana", "canguro-laura"]);
+const organizationalProviders = providers.filter((provider) => !personalProviderIds.has(provider.id));
+const uniqueOrganizationalProviderIds = new Set(
+  organizationalProviders.map((provider) => canonicalProviderIdBySourceId.get(provider.id) ?? provider.id),
 );
 
 if (process.argv.includes("--summary")) {
   process.stdout.write(`${JSON.stringify({
     sourceInventory: { centers: centers.length, providers: providers.length, listings: listings.length },
+    pilotInventory: {
+      centers: centers.length,
+      organizationalProviderRecords: organizationalProviders.length,
+      uniqueOrganizationalProviders: uniqueOrganizationalProviderIds.size,
+      excludedFictitiousPersonalProfiles: personalProviderIds.size,
+    },
     importable: {
       centers: importableCenters.length,
       providers: importableProviders.length,
@@ -36,7 +61,7 @@ if (process.argv.includes("--summary")) {
     },
     pendingSourceReviewOrNormalization: {
       centers: centers.length - importableCenters.length,
-      providers: providers.length - importableProviders.length,
+      uniqueOrganizationalProviders: uniqueOrganizationalProviderIds.size - importableProviders.length,
     },
     trustLevel: "collected",
     claimed: false,
@@ -141,6 +166,12 @@ where public.business_profiles.owner_id is null
 
 statements.push("", "-- Servicios y fichas navegables. Las relaciones se resuelven por claves estables.");
 for (const listing of importableListings) {
+  const canonicalProviderId = canonicalProviderIdBySourceId.get(listing.userId) ?? listing.userId;
+  const canonicalProvider = providers.find((provider) => provider.id === canonicalProviderId);
+  const isNormalizedChildService = canonicalProviderId !== listing.userId;
+  const serviceSourceName = isNormalizedChildService ? canonicalProvider?.sourceName : listing.sourceName;
+  const serviceSourceUrl = isNormalizedChildService ? canonicalProvider?.sourceUrl : listing.sourceUrl;
+
   statements.push(`insert into public.services (
   external_key, owner_id, business_profile_id, slug, title, category_id, municipality,
   service_area, description, age_min, age_max, price_label, availability, contact_email,
@@ -148,13 +179,13 @@ for (const listing of importableListings) {
   image_url, record_origin
 ) values (
   ${literal(listing.id)}, null,
-  (select id from public.business_profiles where external_key = ${literal(listing.userId)}),
+  (select id from public.business_profiles where external_key = ${literal(canonicalProviderId)}),
   ${literal(listing.slug)}, ${literal(listing.title)}, ${literal(listing.categoryId)},
   ${literal(listing.municipality)}, ${literal(listing.area)}, ${literal(listing.description)},
   ${literal(listing.recommendedAgeMin)}, ${literal(listing.recommendedAgeMax)},
   ${literal(listing.priceLabel)}, ${literal(listing.availability)}, ${literal(listing.details.Email)},
   ${literal(listing.details.Contacto)}, ${literal(listing.details.Web === "No indicado" ? "" : listing.details.Web)},
-  ${literal(listing.sourceName)}, ${literal(listing.sourceUrl)}, ${reviewedDate(listing.lastReviewed)},
+  ${literal(serviceSourceName)}, ${literal(serviceSourceUrl)}, ${reviewedDate(listing.lastReviewed)},
   'collected', 'approved', ${textArray(listing.tags)}, ${literal(listing.image)}, 'tenlo_curated'
 ) on conflict (slug) do update set
   external_key = excluded.external_key,
