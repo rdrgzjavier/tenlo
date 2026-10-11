@@ -315,7 +315,7 @@ Tenlo debe poder explicar qué buscan las familias y qué rendimiento obtiene ca
 
 - [x] Preparar entidad `search_events` con ID anónimo, consulta normalizada, filtros y número de resultados.
 - [x] Registrar en Supabase término saneado, categoría, municipio, filtros, número de resultados y momento de la búsqueda, tanto para personas anónimas como autenticadas.
-- [ ] Clasificar las búsquedas en verticales: colegios, guarderías, servicios, actividades, centros y las que se incorporen después.
+- [x] Clasificar búsquedas con categoría en verticales estables (`education`, `education_support`, `activities`, `care`, `school_goods`); falta clasificar por intención las búsquedas de texto sin categoría.
 - [ ] Registrar reformulaciones: qué cambia la persona cuando la primera búsqueda no le sirve.
 - [x] Registrar búsquedas sin resultados y permitir identificar búsquedas con pocos resultados mediante `results_count`.
 - [ ] Distinguir expresamente cuándo existen resultados pero ningún proveedor está disponible.

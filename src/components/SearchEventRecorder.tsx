@@ -16,6 +16,22 @@ type SearchEventRecorderProps = {
 const sessionStorageKey = "tenlo_analytics_session_id_v1";
 const recentSearchKey = "tenlo_recent_search_v1";
 
+const verticalByCategory: Record<string, string> = {
+  centros: "education",
+  "clases-particulares": "education_support",
+  canguros: "care",
+  campamentos: "activities",
+  extraescolares: "activities",
+  "centros-deportivos": "activities",
+  tecnologia: "activities",
+  uniformes: "school_goods",
+  "libros-material": "school_goods"
+};
+
+function verticalForCategory(category?: string) {
+  return category ? verticalByCategory[category] ?? "other_services" : "unclassified";
+}
+
 function privacySafeQuery(value?: string) {
   if (!value) return null;
   const normalized = value.trim().replace(/\s+/g, " ").toLowerCase().slice(0, 120);
@@ -72,11 +88,13 @@ export default function SearchEventRecorder({ query, category, municipality, fil
       const searchId = window.crypto.randomUUID();
       setActiveSearchContext(searchId);
       const safeQuery = privacySafeQuery(query);
+      const verticalId = verticalForCategory(category);
       const safeFilters = { ...parsedFilters };
       delete safeFilters.tag;
       const eventParams = {
         search_id: searchId,
         category: category,
+        vertical_id: verticalId,
         municipality,
         has_keyword: Boolean(safeQuery),
         result_count: resultsCount,
@@ -105,6 +123,7 @@ export default function SearchEventRecorder({ query, category, municipality, fil
           user_id: authData.user?.id ?? null,
           normalized_query: safeQuery,
           category_id: category || null,
+          vertical_id: verticalId,
           municipality: municipality || null,
           filters: { ...safeFilters, has_keyword: Boolean(safeQuery) },
           results_count: resultsCount,
