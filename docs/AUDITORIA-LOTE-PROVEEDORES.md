@@ -4,7 +4,7 @@
 >
 > Objetivo: preparar un primer bloque seguro mientras se amplía la migración al mayor número posible de entidades reales del piloto, sin convertir datos didácticos o ficticios en datos reales.
 
-Este bloque de cuatro centros y once proveedores no es el alcance final del piloto. Es el primer conjunto con fuente revisada. El inventario de ampliación contiene 24 centros y 22 proveedores organizativos únicos; los tres perfiles personales ficticios quedan excluidos. Cada entidad pendiente se incorporará en cuanto exista una fuente pública suficiente y sus campos hayan sido contrastados.
+Este bloque de ocho centros y once proveedores no es el alcance final del piloto. Es el primer conjunto con fuente revisada. El inventario de ampliación contiene 24 centros y 22 proveedores organizativos únicos; los tres perfiles personales ficticios quedan excluidos. Cada entidad pendiente se incorporará en cuanto exista una fuente pública suficiente y sus campos hayan sido contrastados.
 
 ## Criterio aplicado
 
@@ -43,6 +43,10 @@ La presencia de una web no equivale a verificación ni autoriza a usar imágenes
 | Colegio Hélade | Boadilla | https://colegiohelade.es/ | Web oficial con etapas, servicios y contacto. |
 | Mirabal International School | Boadilla | https://www.colegiomirabal.com/ | Web oficial con etapas y propuesta educativa. |
 | Colegio Quercus | Boadilla | https://www.colegioquercus.com/ | Web oficial con etapas, servicios y contacto. |
+| CEIPSO El Cantizal | Las Rozas | https://site.educa.madrid.org/cp.elcantizal.lasrozas/ | Fuente oficial EducaMadrid con etapas y contacto. |
+| Fundación Colegio Bérriz | Las Rozas | https://colegioberriz.com/ | Web oficial con etapas, servicios y contacto. |
+| Colegio Europeo de Madrid | Las Rozas | https://www.colegioeuropeodemadrid.com/ | Web oficial con etapas, propuesta internacional y contacto. |
+| St. Michael's School | Boadilla | https://stmichaelsschool.es/ | Web oficial con ubicación, contacto y propuesta bilingüe. |
 
 ## Candidatos retenidos
 
@@ -57,8 +61,8 @@ La presencia de una web no equivale a verificación ni autoriza a usar imágenes
 
 - Inventario actual: 24 centros, 27 proveedores y 51 fichas generadas desde datos mock.
 - Inventario útil para el piloto: 24 centros y 22 proveedores organizativos únicos, antes de contrastar fuentes. Los tres perfiles personales ficticios no se migrarán.
-- Bloque 1 preparado por criterio: 4 centros, 11 proveedores y 13 servicios. Las tres salas de Hanky Planet quedan asociadas a un único proveedor.
-- Pendiente: contrastar y completar por bloques los 20 centros y los 11 proveedores organizativos únicos restantes; los campos dudosos se dejarán vacíos.
+- Bloque 1 preparado por criterio: 8 centros, 11 proveedores y 13 servicios. Las tres salas de Hanky Planet quedan asociadas a un único proveedor.
+- Pendiente: contrastar y completar por bloques los 16 centros y los 11 proveedores organizativos únicos restantes; los campos dudosos se dejarán vacíos.
 - No se activa todavía `DIRECTORY_DATA_SOURCE=supabase` ni se modifica la web pública.
 
 ## Comprobaciones antes de ejecutar el lote
