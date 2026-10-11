@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { pushTrackingEvent } from "@/lib/analytics";
 
 type ProviderSuggestionFormProps = {
   initialLocation?: string;
@@ -46,6 +47,7 @@ export default function ProviderSuggestionForm({ initialLocation = "", initialSe
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "No se pudo enviar la propuesta.");
+      pushTrackingEvent("provider_suggestion_submitted", { municipality: location || undefined });
       form.reset();
       setStatus("sent");
     } catch (submissionError) {
@@ -70,7 +72,7 @@ export default function ProviderSuggestionForm({ initialLocation = "", initialSe
       <p className="text-sm leading-6 text-muted">La propuesta quedará pendiente de revisión. Tenlo solo creará una ficha <strong>No verificada</strong> cuando pueda contrastar información profesional pública suficiente.</p>
       {error ? <p className="rounded-xl border border-coral/30 bg-coral/10 p-3 text-sm font-semibold text-coral" role="alert">{error}</p> : null}
       {status === "sent" ? <p className="rounded-xl border border-line bg-soft p-4 text-sm font-semibold leading-6 text-slatecopy">Gracias. Revisaremos la propuesta antes de crear o publicar cualquier ficha.</p> : null}
-      <button type="submit" className="btn-primary w-full sm:w-fit" disabled={status === "sending"} data-track-action="provider_suggestion_submitted">
+      <button type="submit" className="btn-primary w-full sm:w-fit" disabled={status === "sending"}>
         {status === "sending" ? "Enviando..." : "Proponer proveedor"}
       </button>
     </form>

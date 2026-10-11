@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BarChart3, CheckCircle2, FilePenLine, Search, ShieldCheck, UsersRound } from "lucide-react";
+import AnalyticsViewEvent from "@/components/AnalyticsViewEvent";
 import { TrustBadge } from "@/components/Badge";
 import { trackingAttrs } from "@/lib/analytics";
 
@@ -27,6 +28,7 @@ const steps = [
 export default function ProvidersPage() {
   return (
     <div>
+      <AnalyticsViewEvent event="provider_landing_viewed" params={{ page_path: "/proveedores" }} />
       <section className="section-shell grid items-center gap-10 lg:grid-cols-[1.08fr_.92fr]">
         <div>
           <p className="label">Tenlo para proveedores</p>

@@ -466,9 +466,9 @@ Propiedades recomendadas: `request_id`, proveedor, categoría, municipio, posici
 
 ### Activación y ciclo del proveedor
 
-- [ ] `provider_landing_viewed`
-- [ ] `claim_started`
-- [ ] `claim_submitted`
+- [x] `provider_landing_viewed`
+- [x] `claim_started`
+- [x] `claim_submitted`
 - [ ] `claim_approved`
 - [ ] `claim_rejected`
 - [ ] `profile_edit_started`

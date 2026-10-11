@@ -22,6 +22,7 @@ export type TrackingAction =
   | "claim_submitted"
   | "provider_suggestion_started"
   | "provider_suggestion_submitted"
+  | "provider_landing_viewed"
   | "newsletter_subscribed"
   | "newsletter_failed"
   | "map_directions_clicked";
