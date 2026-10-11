@@ -4,7 +4,7 @@
 >
 > Objetivo: preparar un primer bloque seguro mientras se amplía la migración al mayor número posible de entidades reales del piloto, sin convertir datos didácticos o ficticios en datos reales.
 
-Este bloque de diez proveedores no es el alcance final del piloto. Es el primer conjunto con fuente revisada. El inventario de ampliación contiene 24 centros y 22 proveedores organizativos únicos; los tres perfiles personales ficticios quedan excluidos. Cada entidad pendiente se incorporará en cuanto exista una fuente pública suficiente y sus campos hayan sido contrastados.
+Este bloque de cuatro centros y once proveedores no es el alcance final del piloto. Es el primer conjunto con fuente revisada. El inventario de ampliación contiene 24 centros y 22 proveedores organizativos únicos; los tres perfiles personales ficticios quedan excluidos. Cada entidad pendiente se incorporará en cuanto exista una fuente pública suficiente y sus campos hayan sido contrastados.
 
 ## Criterio aplicado
 
@@ -25,6 +25,7 @@ La presencia de una web no equivale a verificación ni autoriza a usar imágenes
 |---|---|---|---|---|
 | BeOne Boadilla | Boadilla | https://beone.es/centros-deportivos/madrid/boadilla | Preparar | Fuente oficial específica con dirección, teléfono, horarios e instalaciones familiares. |
 | Kumon Pozuelo - Estación | Pozuelo | https://www.kumon.es/pozuelo-estacion | Preparar | Fuente oficial específica con programas, dirección, teléfono, modalidad y horarios. |
+| Kids&Us Majadahonda | Majadahonda | https://www.kidsandus.es/es/academias-ingles/majadahonda | Preparar | Fuente oficial específica con edades, dirección, teléfono y horario. |
 | Hanky Planet Las Rozas | Las Rozas | https://www.hankyplanet.com/celebracion-de-cumpleanos-en-las-rozas/ | Preparar | Debe existir como un proveedor con varias salas/servicios, no como tres proveedores. |
 | Ilusiona Equinoccio | Majadahonda | https://ilusiona.com/equinoccio/ | Preparar | Página específica del centro. Mantener horarios y tarifas como datos sujetos a cambio. |
 | Piccoli | Majadahonda | https://www.piccoli.es/ | Preparar | La web identifica cumpleaños, campamentos, talleres y el negocio responsable. |
@@ -33,6 +34,15 @@ La presencia de una web no equivale a verificación ni autoriza a usar imágenes
 | Hop Galaxy Boadilla | Boadilla | https://www.hopgalaxy.com/boadilla | Preparar | Página específica con actividad, dirección, contacto y horario. |
 | El Miniclub | Boadilla | https://elminiclub.com/ | Preparar | Web oficial accesible; revisar los campos concretos antes de ejecutar el lote. |
 | Club Las Encinas de Boadilla | Boadilla | https://www.clublasencinas.es/Pages/108-cumpleanyos_y_celebraciones_infantiles_i_club_las_encinas_de_boadilla | Preparar | Página específica de cumpleaños y celebraciones infantiles. |
+
+## Centros admitidos para preparación
+
+| Centro | Municipio | Fuente revisada | Observación |
+|---|---|---|---|
+| CEIP Ágora | Boadilla | https://site.educa.madrid.org/cp.agora.boadilla/ | Fuente oficial educativa con ubicación y contacto. |
+| Colegio Hélade | Boadilla | https://colegiohelade.es/ | Web oficial con etapas, servicios y contacto. |
+| Mirabal International School | Boadilla | https://www.colegiomirabal.com/ | Web oficial con etapas y propuesta educativa. |
+| Colegio Quercus | Boadilla | https://www.colegioquercus.com/ | Web oficial con etapas, servicios y contacto. |
 
 ## Candidatos retenidos
 
@@ -47,8 +57,8 @@ La presencia de una web no equivale a verificación ni autoriza a usar imágenes
 
 - Inventario actual: 24 centros, 27 proveedores y 51 fichas generadas desde datos mock.
 - Inventario útil para el piloto: 24 centros y 22 proveedores organizativos únicos, antes de contrastar fuentes. Los tres perfiles personales ficticios no se migrarán.
-- Bloque 1 preparado por criterio: 0 centros, 10 proveedores y 12 servicios. Las tres salas de Hanky Planet quedan asociadas a un único proveedor.
-- Pendiente: contrastar y completar por bloques los 24 centros y los 12 proveedores organizativos únicos restantes; los campos dudosos se dejarán vacíos.
+- Bloque 1 preparado por criterio: 4 centros, 11 proveedores y 13 servicios. Las tres salas de Hanky Planet quedan asociadas a un único proveedor.
+- Pendiente: contrastar y completar por bloques los 20 centros y los 11 proveedores organizativos únicos restantes; los campos dudosos se dejarán vacíos.
 - No se activa todavía `DIRECTORY_DATA_SOURCE=supabase` ni se modifica la web pública.
 
 ## Comprobaciones antes de ejecutar el lote

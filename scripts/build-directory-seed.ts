@@ -9,6 +9,7 @@ function hasPublicSource(sourceUrl?: string) {
 const auditedProviderIds = new Set([
   "boadilla-beone",
   "pozuelo-kumon",
+  "majadahonda-kidsus",
   "hanky-planet-las-rozas-sala-1",
   "ilusiona-equinoccio-majadahonda",
   "piccoli-majadahonda",

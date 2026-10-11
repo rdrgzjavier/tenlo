@@ -97,15 +97,15 @@ function normalizeTags(values: string[]) {
   return tags;
 }
 
-type CenterSeed = [string, string, string, Center["type"], NonNullable<Center["religiousCharacter"]>, string[], string, string[], string, string];
+type CenterSeed = [string, string, string, Center["type"], NonNullable<Center["religiousCharacter"]>, string[], string, string[], string, string, string?];
 const centerSeeds: CenterSeed[] = [
   ["el-cantizal", "colegio-el-cantizal", "Colegio El Cantizal", "publico", "laico", ["Infantil", "Primaria", "ESO"], "CEIPSO público bilingüe en Las Rozas.", ["Público", "Bilingüe"], "Las Rozas de Madrid", "916 40 73 80"],
   ["berriz-veracruz", "colegio-berriz-veracruz", "Colegio Berriz - Veracruz", "concertado", "catolico", ["Infantil", "Primaria", "ESO", "Bachillerato"], "Centro concertado católico bilingüe.", ["Concertado", "Católico"], "Las Rozas de Madrid", "916 31 82 23"],
   ["europeo-madrid", "colegio-europeo-de-madrid", "Colegio Europeo de Madrid", "privado", "laico", ["Infantil", "Primaria", "ESO", "Bachillerato"], "Colegio privado internacional.", ["Privado", "Bilingüe"], "Las Rozas de Madrid", "916 36 10 21"],
-  ["boadilla-agora", "ceip-agora-boadilla", "CEIP Ágora", "publico", "laico", ["Infantil", "Primaria"], "Colegio público bilingüe de referencia en Boadilla.", ["Público", "Bilingüe"], "Boadilla del Monte", "916 33 03 64"],
-  ["boadilla-helade", "colegio-helade-boadilla", "Colegio Hélade", "concertado", "laico", ["Infantil", "Primaria", "ESO", "Bachillerato"], "Centro concertado con excelentes instalaciones.", ["Concertado", "Laico"], "Boadilla del Monte", "916 32 63 60"],
-  ["boadilla-mirabal", "mirabal-international-school", "Mirabal International School", "privado", "laico", ["Infantil", "Primaria", "ESO", "Bachillerato"], "Prestigioso colegio privado bilingüe.", ["Privado", "Internacional"], "Boadilla del Monte", "916 33 15 50"],
-  ["boadilla-quercus", "colegio-quercus-boadilla", "Colegio Quercus", "concertado", "laico", ["Infantil", "Primaria", "ESO", "Bachillerato"], "Cooperativa de enseñanza con enfoque integral.", ["Concertado", "Laico"], "Boadilla del Monte", "916 33 80 50"],
+  ["boadilla-agora", "ceip-agora-boadilla", "CEIP Ágora", "publico", "laico", ["Infantil", "Primaria"], "Colegio público bilingüe de referencia en Boadilla.", ["Público", "Bilingüe"], "Boadilla del Monte", "916 33 11 47", "https://site.educa.madrid.org/cp.agora.boadilla/"],
+  ["boadilla-helade", "colegio-helade-boadilla", "Colegio Hélade", "concertado", "laico", ["Infantil", "Primaria", "ESO", "Bachillerato"], "Centro concertado con oferta desde Infantil hasta Bachillerato.", ["Concertado", "Laico"], "Boadilla del Monte", "916 33 80 62", "https://colegiohelade.es/"],
+  ["boadilla-mirabal", "mirabal-international-school", "Mirabal International School", "privado", "laico", ["Infantil", "Primaria", "ESO", "Bachillerato"], "Colegio privado multilingüe con Bachillerato nacional e internacional.", ["Privado", "Internacional"], "Boadilla del Monte", "916 33 17 11", "https://www.colegiomirabal.com/"],
+  ["boadilla-quercus", "colegio-quercus-boadilla", "Colegio Quercus", "concertado", "laico", ["Infantil", "Primaria", "ESO", "Bachillerato"], "Centro con etapas de Infantil a Bachillerato y oferta de actividades extraescolares.", ["Concertado", "Laico"], "Boadilla del Monte", "916 33 85 16", "https://www.colegioquercus.com/"],
   ["boadilla-stmichaels", "st-michaels-school-boadilla", "St. Michael's School", "privado", "catolico", ["Infantil", "Primaria", "ESO", "Bachillerato"], "Colegio privado con fuerte base en inglés.", ["Privado", "Bilingüe"], "Boadilla del Monte", "916 33 00 11"],
   ["ei-romanillos", "escuela-infantil-romanillos", "E.I. Romanillos", "publico", "laico", ["0-3 años"], "Escuela infantil pública en Boadilla.", ["Público", "0-3 años"], "Boadilla del Monte", "916 33 10 06"],
   ["ei-juan-austria", "escuela-infantil-juan-de-austria", "E.I. Juan de Austria", "publico", "laico", ["0-3 años"], "Escuela infantil pública de calidad.", ["Público", "0-3 años"], "Boadilla del Monte", "916 32 27 44"],
@@ -125,7 +125,7 @@ const centerSeeds: CenterSeed[] = [
   ["ei-talin", "escuela-infantil-talin-majadahonda", "E.I. Talín", "publico", "laico", ["0-3 años"], "Escuela infantil con larga trayectoria.", ["Público", "0-3 años"], "Majadahonda", "916 38 42 11"]
 ];
 
-export const centers: Center[] = centerSeeds.map(([id, slug, name, type, religiousCharacter, stages, description, tags, municipality, phone]) => ({
+export const centers: Center[] = centerSeeds.map(([id, slug, name, type, religiousCharacter, stages, description, tags, municipality, phone, website]) => ({
   id,
   slug,
   name,
@@ -136,12 +136,12 @@ export const centers: Center[] = centerSeeds.map(([id, slug, name, type, religio
   address: "Consultar dirección pública",
   phone,
   email: "",
-  website: "",
+  website: website ?? "",
   languages: ["Inglés"],
   services: ["Comedor", "Extraescolares", "Orientación"],
   description,
-  source: "",
-  sourceUrl: undefined,
+  source: website ? "Web oficial del centro" : "",
+  sourceUrl: website,
   lastReviewed: "Mayo de 2026",
   verificationStatus: "",
   isPublicInformation: true,
@@ -183,7 +183,7 @@ const providerSeeds: ProviderSeed[] = [
   ["pozuelo-cruiz", "Polideportivo Carlos Ruiz", "Extraescolares", "deporte, municipal, escuelas", images.sport, "extraescolares", "Pozuelo de Alarcón", "913 52 23 60", "deportes@pozuelodealarcon.org"],
   ["pozuelo-kumon", "Kumon Pozuelo - Estación", "Extraescolares", "matemáticas, lectura, inglés", images.activity, "clases-particulares", "Pozuelo de Alarcón", "913 51 81 81", "", "https://www.kumon.es/pozuelo-estacion", "Centro Kumon con programas de Matemáticas, Lectura e English, en modalidad presencial y online.", "Lunes a jueves de 16:30 a 19:00; confirmar turno y disponibilidad con el centro."],
   ["majadahonda-hvieja", "Polideportivo Huerta Vieja", "Extraescolares", "deporte, natación, municipal", images.sport, "extraescolares", "Majadahonda", "916 34 94 24", "deportes@majadahonda.org"],
-  ["majadahonda-kidsus", "Kids&Us Majadahonda", "Idiomas", "inglés, niños, método propio", images.activity, "clases-particulares", "Majadahonda", "916 39 82 25", "majadahonda@kidsandus.es"],
+  ["majadahonda-kidsus", "Kids&Us Majadahonda", "Idiomas", "inglés, niños, método propio", images.activity, "clases-particulares", "Majadahonda", "916 39 10 53", "", "https://www.kidsandus.es/es/academias-ingles/majadahonda", "Academia de inglés para alumnado de 1 a 18 años con cursos adaptados por etapas.", "Lunes a viernes de 12:00 a 20:30; confirmar grupos y disponibilidad con el centro."],
   ["profesor-mates", "Carlos P.", "Clases particulares", "matemáticas, eso, bachillerato", images.activity, "clases-particulares", "Las Rozas de Madrid", "Contacto protegido", "contacto@tenlo.es"],
   ["canguro-ana", "Ana M.", "Canguros", "canguro, tardes, ayuda con deberes", images.service, "canguros", "Las Rozas de Madrid", "Contacto protegido", "contacto@tenlo.es"],
   ["canguro-laura", "Laura R.", "Canguros", "canguro, fines de semana", images.service, "canguros", "Pozuelo de Alarcón", "Contacto protegido", "contacto@tenlo.es"],
