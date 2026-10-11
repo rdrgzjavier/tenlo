@@ -5,9 +5,16 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 export async function POST(request: Request) {
   const data = await request.json();
   const message = String(data.message || "").trim();
+  const allowedRequestTypes = new Set(["correction", "update", "withdrawal", "unsafe_content", "other"]);
+  const requestType = allowedRequestTypes.has(String(data.requestType || "")) ? String(data.requestType) : "";
+  const baseContext = String(data.context || "general");
+  const requiresRequestType = ["anuncio", "centro", "servicio", "report_listing"].includes(baseContext);
 
   if (message.length < 10) {
     return NextResponse.json({ ok: false, error: "Cuéntanos un poco más para poder revisarlo." }, { status: 400 });
+  }
+  if (requiresRequestType && !requestType) {
+    return NextResponse.json({ ok: false, error: "Selecciona el tipo de solicitud." }, { status: 400 });
   }
 
   const supabase = await createSupabaseServerClient();
@@ -16,7 +23,7 @@ export async function POST(request: Request) {
 
   const payload = {
     user_id: user?.id ?? null,
-    context: String(data.context || "general").slice(0, 80),
+    context: `${baseContext}${requestType ? `:${requestType}` : ""}`.slice(0, 80),
     item_id: String(data.itemId || "").slice(0, 140),
     name: String(data.name || "").trim().slice(0, 120) || null,
     email: String(data.email || "").trim().slice(0, 180) || user?.email || null,
@@ -30,6 +37,7 @@ export async function POST(request: Request) {
 
   const adminHtml = tenloEmailShell("Nueva sugerencia en Tenlo", rows({
     Contexto: payload.context,
+    "Tipo de solicitud": requestType || "No indicado",
     "Elemento relacionado": payload.item_id,
     Nombre: payload.name,
     Email: payload.email,

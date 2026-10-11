@@ -167,7 +167,7 @@ export default function Home() {
               <Image src={heroImage} alt="Persona adulta caminando de la mano con una menor, sin datos identificativos" fill sizes="(max-width: 767px) calc(100vw - 40px), 0px" className="object-cover object-center" priority fetchPriority="high" unoptimized />
             </div>
             <h1 className="page-title max-w-3xl">Encuentra, compara y contacta con servicios para tu familia</h1>
-            <p className="lead">Actividades, apoyo escolar, salud, tecnología, transporte y mucho más. Información organizada por zona, sin datos identificativos de menores.</p>
+            <p className="lead">Actividades, apoyo escolar, salud, tecnología, transporte y mucho más organizado por zona.</p>
             <ValidatedSearchForm className="mt-8 grid gap-3 rounded-[24px] bg-panel p-3 shadow-soft sm:grid-cols-[1fr_0.72fr_auto]" message="Indica qué quieres encontrar o dónde quieres buscar.">
               <label className="flex min-h-14 items-center gap-3 rounded-2xl bg-white px-4 ring-1 ring-line">
                 <Search size={20} className="text-muted" aria-hidden />

@@ -141,7 +141,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Definir los niveles visibles de confianza: `No verificada`, `Gestionada`, `Verificada` y `Oficial`, independientes del plan comercial y de la titularidad del centro.
 - [ ] Mostrar en cada ficha la fuente, fecha de última revisión y estado de control por el proveedor cuando corresponda.
 - [x] Utilizar etiquetas breves y comprensibles para el estado de confianza: `No verificada`, `Gestionada`, `Verificada`, `Oficial`.
-- [ ] Crear un mecanismo sencillo para solicitar corrección, retirada o actualización.
+- [x] Crear un mecanismo sencillo para solicitar corrección, retirada o actualización desde cada ficha, con motivo estructurado, contexto de la ficha y plazo máximo visible de 4 días laborables.
 - [ ] Revisar derechos de uso de imágenes remotas y evitar presentar imágenes genéricas como si fueran del proveedor.
 - [x] Revisar la promesa principal de reserva: la portada comunica ahora búsqueda, comparación y contacto. Las menciones restantes describen condiciones o información publicada por terceros, no una reserva dentro de Tenlo.
 

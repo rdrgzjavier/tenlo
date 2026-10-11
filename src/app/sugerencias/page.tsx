@@ -12,12 +12,15 @@ export default async function SuggestionsPage({ searchParams }: { searchParams: 
   const isProviderSuggestion = resolvedSearchParams.context === "provider_suggestion";
   const isContactRequest = resolvedSearchParams.context === "contact_request";
   const isReport = resolvedSearchParams.context === "report_listing";
+  const isProfileMaintenance = ["anuncio", "centro", "servicio"].includes(resolvedSearchParams.context ?? "");
   const title = isProviderSuggestion
     ? "Propón un proveedor o actividad"
     : isContactRequest
       ? "Contacta a través de Tenlo"
       : isReport
         ? "Reportar publicación"
+        : isProfileMaintenance
+          ? "Corregir, actualizar o retirar una ficha"
         : "¿Echas en falta algo?";
 
   return (
@@ -31,6 +34,8 @@ export default async function SuggestionsPage({ searchParams }: { searchParams: 
             ? "Envía tu solicitud y la gestionaremos sin exponer información sensible de menores."
             : isReport
               ? "Cuéntanos qué problema has detectado. Revisaremos la publicación y tomaremos las medidas necesarias."
+              : isProfileMaintenance
+                ? "Indica qué información debemos corregir, actualizar o retirar. Revisaremos la solicitud en un plazo máximo de 4 días laborables."
               : "Tenlo está creciendo con información local útil para familias. Si detectas un dato incorrecto, conoces un servicio que debería aparecer o tienes una idea para mejorar la experiencia, cuéntanoslo."}
       </p>
 
@@ -45,7 +50,7 @@ export default async function SuggestionsPage({ searchParams }: { searchParams: 
       </section>
 
       <section className="card mt-6 p-5 md:p-8">
-        <h2 className="text-2xl font-semibold text-ink">{isProviderSuggestion ? "Datos para revisar" : isContactRequest ? "Datos de la solicitud" : isReport ? "Datos del reporte" : "Enviar sugerencia"}</h2>
+        <h2 className="text-2xl font-semibold text-ink">{isProviderSuggestion ? "Datos para revisar" : isContactRequest || isProfileMaintenance ? "Datos de la solicitud" : isReport ? "Datos del reporte" : "Enviar sugerencia"}</h2>
         <p className="mt-2 text-sm leading-6 text-muted">
           Revisamos las propuestas antes de incorporarlas. No incluyas datos identificativos de menores, fotos personales ni información sensible.
         </p>
