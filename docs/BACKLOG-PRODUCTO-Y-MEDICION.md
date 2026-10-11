@@ -54,7 +54,7 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - Aplicación en Next.js 15, React 18, TypeScript y Tailwind 3.
 - `typecheck` y `lint` pasan correctamente.
 - El contenido público continúa dependiendo de `src/lib/mock-data.ts`.
-- Existen nueve migraciones de Supabase. Las migraciones `0006` y `0007` se aplicaron en producción el 5 de octubre de 2026 y se verificaron mediante consulta: `search_events` y `connection_requests` existen, tienen RLS activa y los permisos de inserción previstos. La migración `0009` se aplicó y verificó el 7 de octubre de 2026.
+- Existen once migraciones de Supabase. Las migraciones `0006` y `0007` se aplicaron en producción el 5 de octubre de 2026 y se verificaron mediante consulta: `search_events` y `connection_requests` existen, tienen RLS activa y los permisos de inserción previstos. La migración `0009` se aplicó y verificó el 7 de octubre de 2026. Las migraciones `0010` y `0011` se aplicaron y verificaron el 11 de octubre: fijan el `search_path` de `set_updated_at`, retiran la ejecución pública de `rls_auto_enable` y acotan las inserciones públicas de newsletter y feedback. El Security Advisor pasó de cinco a un aviso; solo queda la protección de contraseñas filtradas.
 - Hay autenticación y algunas páginas conectadas a Supabase, pero no una fuente de datos real unificada para el directorio.
 - La reclamación de ficha ya puede iniciarse sin cuenta; la aprobación y los cambios siguen sujetos a verificación posterior.
 - El formulario de registro ya solicita tipo de usuario, nombre público, email, teléfono, contraseña, municipio y centro opcional. Para proveedores también muestra tipología, web, descripción, zona, modalidad, edades, disponibilidad, credenciales y otros campos.
@@ -401,8 +401,10 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 ### Seguridad y gobierno del dato
 
 - [ ] Mantener los datos personales en tablas protegidas con RLS y acceso mínimo por rol.
-- [ ] Resolver las advertencias del Security Advisor: fijar `search_path` de `set_updated_at`, retirar la ejecución pública de `rls_auto_enable()` y documentar las políticas públicas deliberadas de newsletter y feedback.
-- [ ] Activar la protección de contraseñas filtradas en Supabase Auth antes de abrir el registro real.
+- [x] Resolver las advertencias del Security Advisor sobre funciones y políticas públicas; newsletter y feedback siguen abiertos, pero solo admiten filas acotadas y válidas.
+  - [x] Aplicar y verificar `0010_harden_database_functions.sql`; ambos avisos de funciones han desaparecido del Security Advisor.
+  - [x] Aplicar `0011_guard_public_intake_policies.sql`, probar ambas inserciones bajo rol `anon` dentro de una transacción revertida y volver a ejecutar el Security Advisor.
+- [ ] Activar la protección de contraseñas filtradas antes de abrir el registro real. Supabase la limita al plan Pro o superior; en el plan gratuito actual debe asumirse como riesgo pendiente o cubrirse con otra estrategia antes del lanzamiento.
 - [ ] No exponer claves de servicio de Supabase en el cliente.
 - [ ] Separar PII de tablas de eventos y utilizar IDs internos seudónimos para análisis.
 - [ ] Restringir exportaciones y accesos administrativos; registrar quién puede ver o descargar datos.
