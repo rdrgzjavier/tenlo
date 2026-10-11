@@ -1,4 +1,6 @@
 import { centers, listings, providers } from "../src/lib/mock-data";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 
 function hasPublicSource(sourceUrl?: string) {
   return Boolean(sourceUrl?.startsWith("https://") || sourceUrl?.startsWith("http://"));
@@ -83,9 +85,7 @@ function textArray(values: string[]) {
 }
 
 function reviewedDate(value?: string) {
-  if (!value) return "null";
-  const match = value.match(/(20\d{2})/);
-  return match ? literal(`${match[1]}-05-01`) : "null";
+  return value ? literal("2026-10-11") : "null";
 }
 
 const statements: string[] = [
@@ -226,5 +226,17 @@ statements.push(
   "commit;",
 );
 
-process.stdout.write(`${statements.join("\n\n")}\n`);
+const sql = `${statements.join("\n\n")}\n`;
+const writeIndex = process.argv.indexOf("--write");
+
+if (writeIndex >= 0) {
+  const requestedPath = process.argv[writeIndex + 1];
+  if (!requestedPath) throw new Error("Falta la ruta después de --write");
+  const outputPath = resolve(requestedPath);
+  mkdirSync(dirname(outputPath), { recursive: true });
+  writeFileSync(outputPath, sql, "utf8");
+  process.stdout.write(`${outputPath}\n`);
+} else {
+  process.stdout.write(sql);
+}
 
