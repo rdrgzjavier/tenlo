@@ -84,6 +84,17 @@ function textArray(values: string[]) {
   return `array[${values.map(literal).join(", ")}]::text[]`;
 }
 
+function contactValue(value?: string) {
+  if (!value) return null;
+  const normalized = value.trim().toLocaleLowerCase("es-ES");
+  if (
+    normalized === "no indicado" ||
+    normalized === "contacto protegido" ||
+    normalized.startsWith("consultar en web")
+  ) return null;
+  return value;
+}
+
 function reviewedDate(value?: string) {
   return value ? literal("2026-10-11") : "null";
 }
@@ -141,7 +152,7 @@ for (const provider of importableProviders) {
   ${literal(provider.municipality)}, ${literal(provider.serviceArea)}, ${literal(provider.category)},
   'collected', 'approved', ${literal(provider.sourceName)}, ${literal(provider.sourceUrl)},
   ${reviewedDate(provider.lastReviewed)}, 'unclaimed', 'free', ${literal(provider.description)},
-  ${literal(provider.phone)}, ${literal(provider.email)}, ${textArray(provider.tags)},
+  ${literal(contactValue(provider.phone))}, ${literal(contactValue(provider.email))}, ${textArray(provider.tags)},
   ${literal(provider.image)}, 'tenlo_curated', '{}'::jsonb
 ) on conflict (external_key) where external_key is not null do update set
   business_name = excluded.business_name,
@@ -184,8 +195,8 @@ for (const listing of importableListings) {
   ${literal(listing.slug)}, ${literal(listing.title)}, ${literal(listing.categoryId)},
   ${literal(listing.municipality)}, ${literal(listing.area)}, ${literal(listing.description)},
   ${literal(listing.recommendedAgeMin)}, ${literal(listing.recommendedAgeMax)},
-  ${literal(listing.priceLabel)}, ${literal(listing.availability)}, ${literal(listing.details.Email)},
-  ${literal(listing.details.Contacto)}, ${literal(listing.details.Web === "No indicado" ? "" : listing.details.Web)},
+  ${literal(listing.priceLabel)}, ${literal(listing.availability)}, ${literal(contactValue(listing.details.Email))},
+  ${literal(contactValue(listing.details.Contacto))}, ${literal(contactValue(listing.details.Web))},
   ${literal(serviceSourceName)}, ${literal(serviceSourceUrl)}, ${reviewedDate(listing.lastReviewed)},
   'collected', 'approved', ${textArray(listing.tags)}, ${literal(listing.image)}, 'tenlo_curated'
 ) on conflict (slug) do update set

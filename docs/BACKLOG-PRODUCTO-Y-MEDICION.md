@@ -154,6 +154,8 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] Activar la capa de Supabase en las páginas públicas y retirar la dependencia de `mock-data.ts` solo después de validar paridad y reversibilidad.
 - [x] Crear una migración y un generador de importación idempotente para fichas editoriales no reclamadas, sin inventar propietarios ni elevar su confianza por defecto.
 - [ ] Migrar progresivamente a Supabase el inventario útil del piloto: 24 centros y hasta 22 proveedores organizativos únicos. El bloque 1 ya normaliza 11 centros, 11 proveedores y 13 servicios; las tres salas de Hanky Planet pertenecen a un único proveedor. Los tres perfiles personales ficticios quedan fuera. Los registros restantes se incorporarán por bloques al contrastar una fuente pública específica. Véase `docs/AUDITORIA-LOTE-PROVEEDORES.md`.
+  - [x] Importar y verificar el bloque 1 en Supabase: 11 centros, 11 proveedores no reclamados y 13 servicios; cero huérfanos, propietarios ficticios, duplicados o niveles de confianza elevados. Seed repetido sin alterar recuentos el 11-10-2026.
+  - [ ] Contrastar e importar los 13 centros y 11 proveedores organizativos únicos restantes.
 - [ ] Normalizar proveedores, servicios, categorías, municipios y zonas de cobertura.
 - [x] Definir plantillas iniciales por vertical manteniendo una estructura estable dentro de cada tipo:
   - [x] actividades y extraescolares;

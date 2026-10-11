@@ -551,7 +551,7 @@ insert into public.business_profiles (
   'Majadahonda', 'Majadahonda y alrededores', 'Talleres y campamentos',
   'collected', 'approved', 'Web oficial del proveedor', 'https://www.piccoli.es/',
   '2026-10-11', 'unclaimed', 'free', 'Centro que ofrece cumpleaños a medida con temática y taller, además de campamentos y días sin cole.',
-  '693 74 15 10', 'Consultar en web', array['Cumpleaños', 'Talleres', 'Campamentos']::text[],
+  '693 74 15 10', null, array['Cumpleaños', 'Talleres', 'Campamentos']::text[],
   'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
 ) on conflict (external_key) where external_key is not null do update set
   business_name = excluded.business_name,
@@ -711,7 +711,7 @@ insert into public.business_profiles (
   'Boadilla del Monte', 'Boadilla del Monte y alrededores', 'Celebraciones familiares',
   'collected', 'approved', 'Web oficial del proveedor', 'https://www.clublasencinas.es/Pages/108-cumpleanyos_y_celebraciones_infantiles_i_club_las_encinas_de_boadilla',
   '2026-10-11', 'unclaimed', 'free', 'Club con instalaciones sociales, infantiles y deportivas en entorno natural para cumpleaños y celebraciones familiares.',
-  '916 33 03 64', 'Consultar en web', array['Cumpleaños', 'Celebraciones familiares']::text[],
+  '916 33 03 64', null, array['Cumpleaños', 'Celebraciones familiares']::text[],
   'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
 ) on conflict (external_key) where external_key is not null do update set
   business_name = excluded.business_name,
@@ -1036,7 +1036,7 @@ insert into public.services (
   'piccoli-majadahonda', 'Piccoli Majadahonda', 'campamentos',
   'Majadahonda', 'Majadahonda y alrededores', 'Centro que ofrece cumpleaños a medida con temática y taller, además de campamentos y días sin cole.',
   3, 16,
-  'Consultar', 'Horario no publicado de forma estable en la web; conviene confirmar disponibilidad al reservar.', 'Consultar en web',
+  'Consultar', 'Horario no publicado de forma estable en la web; conviene confirmar disponibilidad al reservar.', null,
   '693 74 15 10', 'https://www.piccoli.es/',
   'Web oficial del proveedor', 'https://www.piccoli.es/', '2026-10-11',
   'collected', 'approved', array['Cumpleaños', 'Talleres', 'Campamentos']::text[], 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
@@ -1241,7 +1241,7 @@ insert into public.services (
   'club-las-encinas-boadilla', 'Club Las Encinas de Boadilla', 'extraescolares',
   'Boadilla del Monte', 'Boadilla del Monte y alrededores', 'Club con instalaciones sociales, infantiles y deportivas en entorno natural para cumpleaños y celebraciones familiares.',
   3, 16,
-  'Consultar', 'Horario y disponibilidad de cumpleaños sujetos a reserva y calendario del club; confirmar con el centro.', 'Consultar en web',
+  'Consultar', 'Horario y disponibilidad de cumpleaños sujetos a reserva y calendario del club; confirmar con el centro.', null,
   '916 33 03 64', 'https://www.clublasencinas.es/Pages/108-cumpleanyos_y_celebraciones_infantiles_i_club_las_encinas_de_boadilla',
   'Web oficial del proveedor', 'https://www.clublasencinas.es/Pages/108-cumpleanyos_y_celebraciones_infantiles_i_club_las_encinas_de_boadilla', '2026-10-11',
   'collected', 'approved', array['Cumpleaños', 'Celebraciones familiares']::text[], 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'

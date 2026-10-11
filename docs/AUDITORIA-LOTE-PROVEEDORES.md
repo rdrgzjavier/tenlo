@@ -64,7 +64,8 @@ La presencia de una web no equivale a verificación ni autoriza a usar imágenes
 
 - Inventario actual: 24 centros, 27 proveedores y 51 fichas generadas desde datos mock.
 - Inventario útil para el piloto: 24 centros y 22 proveedores organizativos únicos, antes de contrastar fuentes. Los tres perfiles personales ficticios no se migrarán.
-- Bloque 1 preparado por criterio: 11 centros, 11 proveedores y 13 servicios. Las tres salas de Hanky Planet quedan asociadas a un único proveedor.
+- Bloque 1 importado en Supabase: 11 centros, 11 proveedores y 13 servicios. Las tres salas de Hanky Planet quedan asociadas a un único proveedor.
+- Verificación posterior: 0 servicios huérfanos, 0 proveedores con propietario, 0 fichas reclamadas, 0 niveles de confianza elevados y 0 claves duplicadas. La segunda ejecución mantuvo los mismos recuentos.
 - Pendiente: contrastar y completar por bloques los 13 centros y los 11 proveedores organizativos únicos restantes; los campos dudosos se dejarán vacíos.
 - No se activa todavía `DIRECTORY_DATA_SOURCE=supabase` ni se modifica la web pública.
 
