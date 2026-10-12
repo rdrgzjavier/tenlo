@@ -1,10 +1,10 @@
 # Auditoría de la migración progresiva del directorio
 
-> Revisión: 12 de octubre de 2026.
+> Revisión: 13 de octubre de 2026.
 >
 > Objetivo: preparar un primer bloque seguro mientras se amplía la migración al mayor número posible de entidades reales del piloto, sin convertir datos didácticos o ficticios en datos reales.
 
-El primer bloque importado contiene once centros y once proveedores. El seed reproducible ya se ha ampliado a dieciocho centros con fuente revisada y mantiene los once proveedores iniciales. El inventario total contiene 24 centros y 22 proveedores organizativos únicos; los tres perfiles personales ficticios quedan excluidos. Cada entidad pendiente se incorporará en cuanto exista una fuente pública suficiente y sus campos hayan sido contrastados.
+La base de datos y el seed reproducible contienen dieciocho centros y once proveedores con fuente revisada. El inventario total contiene 24 centros y 22 proveedores organizativos únicos; los tres perfiles personales ficticios quedan excluidos. Cada entidad pendiente se incorporará en cuanto exista una fuente pública suficiente y sus campos hayan sido contrastados.
 
 ## Criterio aplicado
 
@@ -71,9 +71,8 @@ La presencia de una web no equivale a verificación ni autoriza a usar imágenes
 
 - Inventario actual: 24 centros, 27 proveedores y 51 fichas generadas desde datos mock.
 - Inventario útil para el piloto: 24 centros y 22 proveedores organizativos únicos, antes de contrastar fuentes. Los tres perfiles personales ficticios no se migrarán.
-- Bloque 1 importado en Supabase: 11 centros, 11 proveedores y 13 servicios. Las tres salas de Hanky Planet quedan asociadas a un único proveedor.
-- Ampliación preparada en el seed: 18 centros, 11 proveedores y 13 servicios. La importación y verificación de los siete centros nuevos sigue pendiente.
-- Verificación posterior: 0 servicios huérfanos, 0 proveedores con propietario, 0 fichas reclamadas, 0 niveles de confianza elevados y 0 claves duplicadas. La segunda ejecución mantuvo los mismos recuentos.
+- Directorio importado en Supabase: 18 centros, 11 proveedores y 13 servicios. Las tres salas de Hanky Planet quedan asociadas a un único proveedor.
+- Verificación posterior del 13-10-2026: 0 servicios huérfanos, 0 proveedores con propietario, 0 fichas reclamadas y 0 niveles de confianza elevados.
 - Pendiente de fuente o normalización: 6 centros y 11 proveedores organizativos únicos; los campos dudosos se dejarán vacíos.
 - No se activa todavía `DIRECTORY_DATA_SOURCE=supabase` ni se modifica la web pública.
 

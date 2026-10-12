@@ -153,10 +153,10 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Crear una capa de acceso a datos para Supabase con retorno seguro a `mock-data.ts` mientras se valida la migración.
 - [ ] Activar la capa de Supabase en las páginas públicas y retirar la dependencia de `mock-data.ts` solo después de validar paridad y reversibilidad.
 - [x] Crear una migración y un generador de importación idempotente para fichas editoriales no reclamadas, sin inventar propietarios ni elevar su confianza por defecto.
-- [ ] Migrar progresivamente a Supabase el inventario útil del piloto: 24 centros y hasta 22 proveedores organizativos únicos. Supabase contiene 11 centros, 11 proveedores y 13 servicios verificados tras la importación; el seed reproducible ya prepara 18 centros, 11 proveedores y 13 servicios. Las tres salas de Hanky Planet pertenecen a un único proveedor y los tres perfiles personales ficticios quedan fuera. Véase `docs/AUDITORIA-LOTE-PROVEEDORES.md`.
+- [ ] Migrar progresivamente a Supabase el inventario útil del piloto: 24 centros y hasta 22 proveedores organizativos únicos. Supabase y el seed reproducible contienen 18 centros, 11 proveedores y 13 servicios verificados tras la importación. Las tres salas de Hanky Planet pertenecen a un único proveedor y los tres perfiles personales ficticios quedan fuera. Véase `docs/AUDITORIA-LOTE-PROVEEDORES.md`.
   - [x] Importar y verificar el bloque 1 en Supabase: 11 centros, 11 proveedores no reclamados y 13 servicios; cero huérfanos, propietarios ficticios, duplicados o niveles de confianza elevados. Seed repetido sin alterar recuentos el 11-10-2026.
   - [x] Contrastar y preparar siete centros adicionales con fuentes oficiales; corregir nombre y teléfono cuando el dato inicial estaba desactualizado.
-  - [ ] Importar y verificar en Supabase los siete centros adicionales ya preparados.
+  - [x] Importar y verificar en Supabase los siete centros adicionales: 18 centros totales; cero servicios huérfanos, propietarios ficticios, fichas reclamadas o niveles de confianza elevados el 13-10-2026.
   - [ ] Contrastar los 6 centros y 11 proveedores organizativos únicos restantes.
 - [ ] Normalizar proveedores, servicios, categorías, municipios y zonas de cobertura.
 - [x] Definir plantillas iniciales por vertical manteniendo una estructura estable dentro de cada tipo:
