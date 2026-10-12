@@ -281,6 +281,40 @@ insert into public.centers (
   stages, languages, services, description, address, phone, email, website,
   source_name, source_url, last_reviewed, trust_level, tags, image_url, status, record_origin
 ) values (
+  'ei-romanillos', 'escuela-infantil-romanillos', 'E.I. Romanillos', 'Boadilla del Monte',
+  'publico', 'laico', array['0-3 años']::text[],
+  array['Inglés']::text[], array['Comedor', 'Extraescolares', 'Orientación']::text[], 'Escuela infantil pública de primer ciclo en Boadilla del Monte.',
+  'Consultar dirección pública', '916 33 08 21', null, 'https://site.educa.madrid.org/eei.romanillos.boadilla/',
+  'Web oficial del centro', 'https://site.educa.madrid.org/eei.romanillos.boadilla/', '2026-10-11',
+  'collected', array['Público', '0-3 años']::text[], 'https://images.unsplash.com/photo-1544253386-89d1b7642674?auto=format&fit=crop&w=1200&q=80', 'approved', 'tenlo_curated'
+) on conflict (slug) do update set
+  external_key = excluded.external_key,
+  name = excluded.name,
+  municipality = excluded.municipality,
+  center_type = excluded.center_type,
+  religious_character = excluded.religious_character,
+  stages = excluded.stages,
+  languages = excluded.languages,
+  services = excluded.services,
+  description = excluded.description,
+  address = excluded.address,
+  phone = excluded.phone,
+  email = excluded.email,
+  website = excluded.website,
+  source_name = excluded.source_name,
+  source_url = excluded.source_url,
+  last_reviewed = excluded.last_reviewed,
+  trust_level = 'collected',
+  tags = excluded.tags,
+  image_url = excluded.image_url,
+  status = 'approved',
+  record_origin = 'tenlo_curated';
+
+insert into public.centers (
+  external_key, slug, name, municipality, center_type, religious_character,
+  stages, languages, services, description, address, phone, email, website,
+  source_name, source_url, last_reviewed, trust_level, tags, image_url, status, record_origin
+) values (
   'pozuelo-everest', 'colegio-everest-pozuelo', 'Everest School Monteclaro', 'Pozuelo de Alarcón',
   'privado', 'catolico', array['Infantil', 'Primaria', 'ESO', 'Bachillerato']::text[],
   array['Inglés']::text[], array['Comedor', 'Extraescolares', 'Orientación']::text[], 'Colegio privado, católico y bilingüe en Pozuelo de Alarcón.',
@@ -349,12 +383,216 @@ insert into public.centers (
   stages, languages, services, description, address, phone, email, website,
   source_name, source_url, last_reviewed, trust_level, tags, image_url, status, record_origin
 ) values (
+  'pozuelo-sanjose', 'ceip-san-jose-obrero-pozuelo', 'CEIP San José Obrero', 'Pozuelo de Alarcón',
+  'publico', 'laico', array['Infantil', 'Primaria']::text[],
+  array['Inglés']::text[], array['Comedor', 'Extraescolares', 'Orientación']::text[], 'Colegio público bilingüe de Educación Infantil y Primaria en Pozuelo de Alarcón.',
+  'Consultar dirección pública', '917 15 23 82', null, 'https://www.educa2.madrid.org/web/centro.cp.sanjoseobrero.pozuelodealarcon/inicio',
+  'Web oficial del centro', 'https://www.educa2.madrid.org/web/centro.cp.sanjoseobrero.pozuelodealarcon/inicio', '2026-10-11',
+  'collected', array['Público', 'Bilingüe']::text[], 'https://images.unsplash.com/photo-1577891729319-f4871c6ec217?auto=format&fit=crop&w=1200&q=80', 'approved', 'tenlo_curated'
+) on conflict (slug) do update set
+  external_key = excluded.external_key,
+  name = excluded.name,
+  municipality = excluded.municipality,
+  center_type = excluded.center_type,
+  religious_character = excluded.religious_character,
+  stages = excluded.stages,
+  languages = excluded.languages,
+  services = excluded.services,
+  description = excluded.description,
+  address = excluded.address,
+  phone = excluded.phone,
+  email = excluded.email,
+  website = excluded.website,
+  source_name = excluded.source_name,
+  source_url = excluded.source_url,
+  last_reviewed = excluded.last_reviewed,
+  trust_level = 'collected',
+  tags = excluded.tags,
+  image_url = excluded.image_url,
+  status = 'approved',
+  record_origin = 'tenlo_curated';
+
+insert into public.centers (
+  external_key, slug, name, municipality, center_type, religious_character,
+  stages, languages, services, description, address, phone, email, website,
+  source_name, source_url, last_reviewed, trust_level, tags, image_url, status, record_origin
+) values (
   'pozuelo-montetabor', 'colegio-monte-tabor-pozuelo', 'Colegio Monte Tabor', 'Pozuelo de Alarcón',
   'concertado', 'catolico', array['Infantil', 'Primaria', 'ESO', 'Bachillerato']::text[],
   array['Inglés']::text[], array['Comedor', 'Extraescolares', 'Orientación']::text[], 'Centro concertado con ideario católico.',
   'Consultar dirección pública', '915 12 21 38', null, 'https://www.colegiomontetabor.es/',
   'Web oficial del centro', 'https://www.colegiomontetabor.es/', '2026-10-11',
   'collected', array['Concertado', 'Católico']::text[], 'https://images.unsplash.com/photo-1577891729319-f4871c6ec217?auto=format&fit=crop&w=1200&q=80', 'approved', 'tenlo_curated'
+) on conflict (slug) do update set
+  external_key = excluded.external_key,
+  name = excluded.name,
+  municipality = excluded.municipality,
+  center_type = excluded.center_type,
+  religious_character = excluded.religious_character,
+  stages = excluded.stages,
+  languages = excluded.languages,
+  services = excluded.services,
+  description = excluded.description,
+  address = excluded.address,
+  phone = excluded.phone,
+  email = excluded.email,
+  website = excluded.website,
+  source_name = excluded.source_name,
+  source_url = excluded.source_url,
+  last_reviewed = excluded.last_reviewed,
+  trust_level = 'collected',
+  tags = excluded.tags,
+  image_url = excluded.image_url,
+  status = 'approved',
+  record_origin = 'tenlo_curated';
+
+insert into public.centers (
+  external_key, slug, name, municipality, center_type, religious_character,
+  stages, languages, services, description, address, phone, email, website,
+  source_name, source_url, last_reviewed, trust_level, tags, image_url, status, record_origin
+) values (
+  'pozuelo-british', 'british-council-school-pozuelo', 'The British School - El Colegio Británico', 'Pozuelo de Alarcón',
+  'privado', 'laico', array['Infantil', 'Primaria', 'ESO', 'Bachillerato']::text[],
+  array['Inglés']::text[], array['Comedor', 'Extraescolares', 'Orientación']::text[], 'Colegio británico privado para alumnado de 1 a 18 años, anteriormente conocido como British Council School.',
+  'Consultar dirección pública', '913 37 36 12', null, 'https://www.thebritishschool.org/en',
+  'Web oficial del centro', 'https://www.thebritishschool.org/en', '2026-10-11',
+  'collected', array['Privado', 'Británico']::text[], 'https://images.unsplash.com/photo-1577891729319-f4871c6ec217?auto=format&fit=crop&w=1200&q=80', 'approved', 'tenlo_curated'
+) on conflict (slug) do update set
+  external_key = excluded.external_key,
+  name = excluded.name,
+  municipality = excluded.municipality,
+  center_type = excluded.center_type,
+  religious_character = excluded.religious_character,
+  stages = excluded.stages,
+  languages = excluded.languages,
+  services = excluded.services,
+  description = excluded.description,
+  address = excluded.address,
+  phone = excluded.phone,
+  email = excluded.email,
+  website = excluded.website,
+  source_name = excluded.source_name,
+  source_url = excluded.source_url,
+  last_reviewed = excluded.last_reviewed,
+  trust_level = 'collected',
+  tags = excluded.tags,
+  image_url = excluded.image_url,
+  status = 'approved',
+  record_origin = 'tenlo_curated';
+
+insert into public.centers (
+  external_key, slug, name, municipality, center_type, religious_character,
+  stages, languages, services, description, address, phone, email, website,
+  source_name, source_url, last_reviewed, trust_level, tags, image_url, status, record_origin
+) values (
+  'majadahonda-caude', 'colegio-caude-majadahonda', 'Colegio Caude', 'Majadahonda',
+  'concertado', 'laico', array['Infantil', 'Primaria', 'ESO', 'Bachillerato']::text[],
+  array['Inglés']::text[], array['Comedor', 'Extraescolares', 'Orientación']::text[], 'Centro concertado-privado con oferta educativa desde Infantil hasta Bachillerato.',
+  'Consultar dirección pública', '916 02 80 22', null, 'https://colegiocaude.com/',
+  'Web oficial del centro', 'https://colegiocaude.com/', '2026-10-11',
+  'collected', array['Concertado', 'Laico']::text[], 'https://images.unsplash.com/photo-1577891729319-f4871c6ec217?auto=format&fit=crop&w=1200&q=80', 'approved', 'tenlo_curated'
+) on conflict (slug) do update set
+  external_key = excluded.external_key,
+  name = excluded.name,
+  municipality = excluded.municipality,
+  center_type = excluded.center_type,
+  religious_character = excluded.religious_character,
+  stages = excluded.stages,
+  languages = excluded.languages,
+  services = excluded.services,
+  description = excluded.description,
+  address = excluded.address,
+  phone = excluded.phone,
+  email = excluded.email,
+  website = excluded.website,
+  source_name = excluded.source_name,
+  source_url = excluded.source_url,
+  last_reviewed = excluded.last_reviewed,
+  trust_level = 'collected',
+  tags = excluded.tags,
+  image_url = excluded.image_url,
+  status = 'approved',
+  record_origin = 'tenlo_curated';
+
+insert into public.centers (
+  external_key, slug, name, municipality, center_type, religious_character,
+  stages, languages, services, description, address, phone, email, website,
+  source_name, source_url, last_reviewed, trust_level, tags, image_url, status, record_origin
+) values (
+  'majadahonda-sanjaime', 'colegio-san-jaime-majadahonda', 'Colegio San Jaime', 'Majadahonda',
+  'concertado', 'catolico', array['Infantil', 'Primaria', 'ESO', 'Bachillerato']::text[],
+  array['Inglés']::text[], array['Comedor', 'Extraescolares', 'Orientación']::text[], 'Centro privado concertado católico con etapas desde Infantil hasta Bachillerato.',
+  'Consultar dirección pública', '916 79 92 46', null, 'https://colegiosanjaime.es/',
+  'Web oficial del centro', 'https://colegiosanjaime.es/', '2026-10-11',
+  'collected', array['Concertado', 'Católico']::text[], 'https://images.unsplash.com/photo-1577891729319-f4871c6ec217?auto=format&fit=crop&w=1200&q=80', 'approved', 'tenlo_curated'
+) on conflict (slug) do update set
+  external_key = excluded.external_key,
+  name = excluded.name,
+  municipality = excluded.municipality,
+  center_type = excluded.center_type,
+  religious_character = excluded.religious_character,
+  stages = excluded.stages,
+  languages = excluded.languages,
+  services = excluded.services,
+  description = excluded.description,
+  address = excluded.address,
+  phone = excluded.phone,
+  email = excluded.email,
+  website = excluded.website,
+  source_name = excluded.source_name,
+  source_url = excluded.source_url,
+  last_reviewed = excluded.last_reviewed,
+  trust_level = 'collected',
+  tags = excluded.tags,
+  image_url = excluded.image_url,
+  status = 'approved',
+  record_origin = 'tenlo_curated';
+
+insert into public.centers (
+  external_key, slug, name, municipality, center_type, religious_character,
+  stages, languages, services, description, address, phone, email, website,
+  source_name, source_url, last_reviewed, trust_level, tags, image_url, status, record_origin
+) values (
+  'majadahonda-galdos', 'ceip-benito-perez-galdos-majadahonda', 'CEIP Benito Pérez Galdós', 'Majadahonda',
+  'publico', 'laico', array['Infantil', 'Primaria']::text[],
+  array['Inglés']::text[], array['Comedor', 'Extraescolares', 'Orientación']::text[], 'Colegio público con etapas de segundo ciclo de Infantil y Primaria en Majadahonda.',
+  'Consultar dirección pública', '916 38 64 53', null, 'https://www.educa2.madrid.org/web/centro.cp.perezgaldos.majadahonda/inicio',
+  'Web oficial del centro', 'https://www.educa2.madrid.org/web/centro.cp.perezgaldos.majadahonda/inicio', '2026-10-11',
+  'collected', array['Público', 'Laico']::text[], 'https://images.unsplash.com/photo-1577891729319-f4871c6ec217?auto=format&fit=crop&w=1200&q=80', 'approved', 'tenlo_curated'
+) on conflict (slug) do update set
+  external_key = excluded.external_key,
+  name = excluded.name,
+  municipality = excluded.municipality,
+  center_type = excluded.center_type,
+  religious_character = excluded.religious_character,
+  stages = excluded.stages,
+  languages = excluded.languages,
+  services = excluded.services,
+  description = excluded.description,
+  address = excluded.address,
+  phone = excluded.phone,
+  email = excluded.email,
+  website = excluded.website,
+  source_name = excluded.source_name,
+  source_url = excluded.source_url,
+  last_reviewed = excluded.last_reviewed,
+  trust_level = 'collected',
+  tags = excluded.tags,
+  image_url = excluded.image_url,
+  status = 'approved',
+  record_origin = 'tenlo_curated';
+
+insert into public.centers (
+  external_key, slug, name, municipality, center_type, religious_character,
+  stages, languages, services, description, address, phone, email, website,
+  source_name, source_url, last_reviewed, trust_level, tags, image_url, status, record_origin
+) values (
+  'ei-tamaral', 'escuela-infantil-tamaral-majadahonda', 'E.I. Tamaral', 'Majadahonda',
+  'publico', 'laico', array['0-3 años']::text[],
+  array['Inglés']::text[], array['Comedor', 'Extraescolares', 'Orientación']::text[], 'Escuela infantil pública municipal de primer ciclo en Majadahonda.',
+  'Consultar dirección pública', '687 20 53 13', null, 'https://www.educa.madrid.org/eei.tamaral.majadahonda',
+  'Web oficial del centro', 'https://www.educa.madrid.org/eei.tamaral.majadahonda', '2026-10-11',
+  'collected', array['Público', '0-3 años']::text[], 'https://images.unsplash.com/photo-1544253386-89d1b7642674?auto=format&fit=crop&w=1200&q=80', 'approved', 'tenlo_curated'
 ) on conflict (slug) do update set
   external_key = excluded.external_key,
   name = excluded.name,
@@ -1273,7 +1511,7 @@ where public.services.owner_id is null
 
 
 
--- Comprobaciones esperadas para este lote: 11 centros, 11 proveedores y 13 servicios.
+-- Comprobaciones esperadas para este lote: 18 centros, 11 proveedores y 13 servicios.
 
 select record_origin, count(*) from public.centers group by record_origin order by record_origin;
 

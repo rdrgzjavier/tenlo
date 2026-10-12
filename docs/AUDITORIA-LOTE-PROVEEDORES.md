@@ -1,10 +1,10 @@
-# Auditoría del bloque 1 de la migración del directorio
+# Auditoría de la migración progresiva del directorio
 
-> Revisión: 11 de octubre de 2026.
+> Revisión: 12 de octubre de 2026.
 >
 > Objetivo: preparar un primer bloque seguro mientras se amplía la migración al mayor número posible de entidades reales del piloto, sin convertir datos didácticos o ficticios en datos reales.
 
-Este bloque de once centros y once proveedores no es el alcance final del piloto. Es el primer conjunto con fuente revisada. El inventario de ampliación contiene 24 centros y 22 proveedores organizativos únicos; los tres perfiles personales ficticios quedan excluidos. Cada entidad pendiente se incorporará en cuanto exista una fuente pública suficiente y sus campos hayan sido contrastados.
+El primer bloque importado contiene once centros y once proveedores. El seed reproducible ya se ha ampliado a dieciocho centros con fuente revisada y mantiene los once proveedores iniciales. El inventario total contiene 24 centros y 22 proveedores organizativos únicos; los tres perfiles personales ficticios quedan excluidos. Cada entidad pendiente se incorporará en cuanto exista una fuente pública suficiente y sus campos hayan sido contrastados.
 
 ## Criterio aplicado
 
@@ -50,6 +50,13 @@ La presencia de una web no equivale a verificación ni autoriza a usar imágenes
 | Everest School Monteclaro | Pozuelo | https://www.everestschool.es/ | Web oficial con etapas y propuesta educativa; teléfono pendiente de contraste. |
 | Kensington School | Pozuelo | https://www.kensington-school.es/ | Web oficial y aviso legal con etapas y contacto. |
 | Colegio Monte Tabor | Pozuelo | https://www.colegiomontetabor.es/ | Web oficial con etapas, servicios y contacto. |
+| E.I. Romanillos | Boadilla | https://site.educa.madrid.org/eei.romanillos.boadilla/ | Fuente oficial EducaMadrid; teléfono y etapa corregidos respecto al dato inicial. |
+| CEIP San José Obrero | Pozuelo | https://www.educa2.madrid.org/web/centro.cp.sanjoseobrero.pozuelodealarcon/inicio | Fuente oficial EducaMadrid con actividad reciente, etapas y contacto. |
+| The British School - El Colegio Británico | Pozuelo | https://www.thebritishschool.org/en | Web oficial actual; nombre y teléfono actualizados respecto a la antigua denominación British Council School. |
+| Colegio Caude | Majadahonda | https://colegiocaude.com/ | Web oficial con etapas, ubicación y contacto. |
+| Colegio San Jaime | Majadahonda | https://colegiosanjaime.es/ | Web oficial con etapas, ideario y contacto. |
+| CEIP Benito Pérez Galdós | Majadahonda | https://www.educa2.madrid.org/web/centro.cp.perezgaldos.majadahonda/inicio | Fuente oficial EducaMadrid con etapas y contacto. |
+| E.I. Tamaral | Majadahonda | https://www.educa.madrid.org/eei.tamaral.majadahonda | Ficha oficial de la Comunidad de Madrid para el curso 2026/2027. |
 
 ## Candidatos retenidos
 
@@ -65,8 +72,9 @@ La presencia de una web no equivale a verificación ni autoriza a usar imágenes
 - Inventario actual: 24 centros, 27 proveedores y 51 fichas generadas desde datos mock.
 - Inventario útil para el piloto: 24 centros y 22 proveedores organizativos únicos, antes de contrastar fuentes. Los tres perfiles personales ficticios no se migrarán.
 - Bloque 1 importado en Supabase: 11 centros, 11 proveedores y 13 servicios. Las tres salas de Hanky Planet quedan asociadas a un único proveedor.
+- Ampliación preparada en el seed: 18 centros, 11 proveedores y 13 servicios. La importación y verificación de los siete centros nuevos sigue pendiente.
 - Verificación posterior: 0 servicios huérfanos, 0 proveedores con propietario, 0 fichas reclamadas, 0 niveles de confianza elevados y 0 claves duplicadas. La segunda ejecución mantuvo los mismos recuentos.
-- Pendiente: contrastar y completar por bloques los 13 centros y los 11 proveedores organizativos únicos restantes; los campos dudosos se dejarán vacíos.
+- Pendiente de fuente o normalización: 6 centros y 11 proveedores organizativos únicos; los campos dudosos se dejarán vacíos.
 - No se activa todavía `DIRECTORY_DATA_SOURCE=supabase` ni se modifica la web pública.
 
 ## Comprobaciones antes de ejecutar el lote
