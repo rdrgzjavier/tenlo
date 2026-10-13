@@ -43,9 +43,9 @@ El nombre, la web, la ubicación exacta, las notas y los datos de contacto aport
 
 | Evento | Cuándo ocurre | Propiedades permitidas | Destino |
 |---|---|---|---|
-| `provider_profile_viewed` | Se abre una ficha de proveedor | `provider_id`, categoría, municipio, nivel de confianza | GA4 |
+| `provider_profile_viewed` | Primera apertura de una ficha de proveedor en la sesión del navegador | `provider_id`, categoría, municipio, nivel de confianza, `view_scope=session_unique` | GA4 |
 | `provider_shared` | Se completa el menú nativo de compartir o se copia el enlace de una ficha | `item`, `type`, `method` | GA4 |
-| `center_profile_viewed` | Se abre una ficha de centro | `center_id`, municipio, nivel de confianza | GA4 |
+| `center_profile_viewed` | Primera apertura de una ficha de centro en la sesión del navegador | `center_id`, municipio, nivel de confianza, `view_scope=session_unique` | GA4 |
 | `map_directions_clicked` | Se abre el mapa externo para ubicar un centro o negocio | identificador de ficha, tipo de entidad, municipio, origen | GA4 |
 | `provider_saved` | Una persona autenticada guarda una ficha | identificador de ficha, tipo de entidad, categoría, origen | GA4 + Supabase |
 | `provider_unsaved` | Una persona autenticada elimina una ficha de favoritos | identificador de ficha, tipo de entidad, categoría, origen | GA4 + Supabase |

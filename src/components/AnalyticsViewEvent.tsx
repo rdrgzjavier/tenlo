@@ -12,8 +12,24 @@ export default function AnalyticsViewEvent({ event, params }: { event: TrackingA
     let tracked = false;
     const trackView = () => {
       if (tracked || !hasAnalyticsConsent()) return;
+      const parsedParams = JSON.parse(serializedParams) as Record<string, AnalyticsValue>;
+      const entityId = parsedParams.provider_id ?? parsedParams.center_id ?? parsedParams.item;
+      const uniqueViewKey = entityId ? `tenlo_unique_view_v1:${event}:${entityId}` : null;
+
+      if (uniqueViewKey) {
+        try {
+          if (window.sessionStorage.getItem(uniqueViewKey)) {
+            tracked = true;
+            return;
+          }
+          window.sessionStorage.setItem(uniqueViewKey, new Date().toISOString());
+        } catch {
+          // Si el almacenamiento está restringido, se mantiene la medición básica.
+        }
+      }
+
       tracked = true;
-      pushTrackingEvent(event, JSON.parse(serializedParams));
+      pushTrackingEvent(event, { ...parsedParams, view_scope: uniqueViewKey ? "session_unique" : "page_load" });
     };
 
     const readyTimer = window.setInterval(trackView, 50);
