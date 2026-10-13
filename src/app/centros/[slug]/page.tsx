@@ -107,15 +107,15 @@ export default async function CenterDetailPage({ params }: { params: Promise<{ s
           <h2 className="subsection-title text-ink">Contactar con el centro</h2>
           <p className="mt-2 text-sm leading-6 text-muted">Utiliza los datos públicos del centro y evita compartir información sensible de menores.</p>
           {cleanValue(center.phone) !== "No indicado" ? (
-            <a href={`tel:${center.phone.replace(/\s/g, "")}`} className="btn-primary mt-5 w-full" {...trackingAttrs("contact_phone_clicked", { item: center.id, type: "center", category: "centros" })}><Phone size={16} /> Llamar</a>
+            <a href={`tel:${center.phone.replace(/\s/g, "")}`} className="btn-primary mt-5 w-full" {...trackingAttrs("contact_phone_clicked", { item: center.id, type: "center", category: "centros", municipality: center.municipality })}><Phone size={16} /> Llamar</a>
           ) : null}
           {centerUrl ? (
-            <a href={centerUrl} target="_blank" rel="noreferrer" className="btn-secondary mt-3 w-full" {...trackingAttrs("contact_web_clicked", { item: center.id, type: "center", category: "centros" })}><ExternalLink size={16} /> Web oficial</a>
+            <a href={centerUrl} target="_blank" rel="noreferrer" className="btn-secondary mt-3 w-full" {...trackingAttrs("contact_web_clicked", { item: center.id, type: "center", category: "centros", municipality: center.municipality })}><ExternalLink size={16} /> Web oficial</a>
           ) : null}
           {centerEmail ? (
-            <a href={`mailto:${centerEmail}`} className="btn-secondary mt-3 w-full" {...trackingAttrs("contact_email_clicked", { item: center.id, type: "center", category: "centros" })}><Mail size={16} /> Email</a>
+            <a href={`mailto:${centerEmail}`} className="btn-secondary mt-3 w-full" {...trackingAttrs("contact_email_clicked", { item: center.id, type: "center", category: "centros", municipality: center.municipality })}><Mail size={16} /> Email</a>
           ) : null}
-          <ShareButton category="centros" className="btn-secondary mt-3 w-full" itemId={center.id} itemType="center" title={center.name} />
+          <ShareButton category="centros" className="btn-secondary mt-3 w-full" itemId={center.id} itemType="center" municipality={center.municipality} title={center.name} />
           <div className="my-5 border-t border-line" />
           <h2 className="subsection-title text-ink">¿Representas este centro?</h2>
           <p className="mt-2 text-sm leading-6 text-muted">Si representas este centro, puedes corregir datos, aportar una imagen oficial o solicitar que el equipo de Tenlo valide la ficha.</p>

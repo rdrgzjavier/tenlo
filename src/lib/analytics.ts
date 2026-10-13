@@ -1,4 +1,5 @@
 import { verticalIdForCategory } from "@/lib/verticals";
+import { municipalityIdForName } from "@/lib/municipalities";
 
 export type TrackingAction =
   | "page_view"
@@ -108,8 +109,22 @@ function sanitizeTrackingEntries(entries: Array<[string, unknown]>) {
 }
 
 function withStableDimensions(params: Record<string, TrackingValue>) {
-  if (params.vertical_id || typeof params.category !== "string") return params;
-  return { ...params, vertical_id: verticalIdForCategory(params.category) };
+  const dimensions = { ...params };
+
+  if (typeof params.category === "string") {
+    dimensions.category_id ??= params.category;
+    dimensions.vertical_id ??= verticalIdForCategory(params.category);
+  }
+  if (typeof params.municipality === "string") {
+    dimensions.municipality_id ??= municipalityIdForName(params.municipality);
+  }
+  if (!dimensions.profile_id) {
+    if (typeof params.provider_id === "string") dimensions.profile_id = `provider:${params.provider_id}`;
+    else if (typeof params.center_id === "string") dimensions.profile_id = `center:${params.center_id}`;
+    else if (typeof params.item === "string" && typeof params.type === "string") dimensions.profile_id = `${params.type}:${params.item}`;
+  }
+
+  return dimensions;
 }
 
 export function trackingAttrs(action: TrackingAction, params: Record<string, TrackingValue>) {

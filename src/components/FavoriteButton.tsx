@@ -12,13 +12,14 @@ type FavoriteButtonProps = {
   category?: string;
   className?: string;
   label?: string;
+  municipality?: string;
   showLabel?: boolean;
   targetId: string;
   targetType?: "listing" | "center" | "provider";
   initialSaved?: boolean;
 };
 
-export default function FavoriteButton({ category, className = "icon-button", label = "Guardar favorito", showLabel = false, targetId, targetType = "listing", initialSaved = false }: FavoriteButtonProps) {
+export default function FavoriteButton({ category, className = "icon-button", label = "Guardar favorito", municipality, showLabel = false, targetId, targetType = "listing", initialSaved = false }: FavoriteButtonProps) {
   const [open, setOpen] = useState(false);
   const [saved, setSaved] = useState(initialSaved);
   const [loading, setLoading] = useState(false);
@@ -86,7 +87,7 @@ export default function FavoriteButton({ category, className = "icon-button", la
     const nextSaved = !saved;
     setSaved(nextSaved);
     setNotice(nextSaved ? "Guardado en tus favoritos." : "Eliminado de tus favoritos.");
-    pushTrackingEvent(nextSaved ? "provider_saved" : "provider_unsaved", { item: targetId, type: targetType, category });
+    pushTrackingEvent(nextSaved ? "provider_saved" : "provider_unsaved", { item: targetId, type: targetType, category, municipality });
     setLoading(false);
     router.refresh();
   }

@@ -9,7 +9,8 @@ Versión: `1.0`
 - Supabase conserva el estado real de reclamaciones, solicitudes, respuestas y conexiones útiles.
 - Nunca se envían a GA4 nombres, emails, teléfonos, direcciones precisas, texto libre ni datos de menores.
 - Los eventos críticos deben incluir `event_id`, `schema_version` y los identificadores no personales disponibles.
-- Todo evento con categoría recibe automáticamente un `vertical_id` estable antes de entrar en `dataLayer`.
+- Todo evento con categoría recibe automáticamente `category_id` y `vertical_id`; todo evento con municipio recibe `municipality_id` antes de entrar en `dataLayer`.
+- `profile_id` usa el formato estable `<tipo>:<id>` cuando están disponibles el tipo de entidad y su identificador. No contiene datos personales.
 - Un clic en teléfono, web o email no equivale a una conexión útil.
 - Los valores inexistentes se omiten; no se sustituyen por textos que parezcan datos reales.
 
@@ -37,6 +38,8 @@ Las vistas, guardados, compartidos y contactos heredan durante 30 minutos el `se
 La entrada inicial a `/buscar` sin término ni filtros no cuenta como búsqueda. Las impresiones se deduplican junto con la búsqueda y `result_opened` hereda el mismo `search_id` cuando el clic procede de una tarjeta de resultados.
 
 Las verticales iniciales son `education`, `education_support`, `activities`, `care`, `health`, `school_goods` y `other_services`; una búsqueda sin categoría queda como `unclassified` hasta incorporar clasificación por intención. La normalización acepta tanto identificadores técnicos como etiquetas visibles y elimina variaciones de mayúsculas, acentos y separadores.
+
+Los municipios piloto usan los identificadores `las-rozas`, `majadahonda`, `pozuelo` y `boadilla`. Los nombres visibles pueden cambiar sin romper las series históricas. Cualquier municipio nuevo se normaliza a un slug estable hasta incorporarlo al catálogo.
 
 El nombre, la web, la ubicación exacta, las notas y los datos de contacto aportados al proponer un proveedor permanecen en Supabase y no se envían a GA4. La propuesta requiere revisión humana antes de generar una ficha `No verificada`.
 

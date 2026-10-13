@@ -139,7 +139,7 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
                               href={`tel:${phone}`}
                               className="inline-flex min-h-11 items-center justify-end gap-2 font-semibold text-ink underline decoration-ink/35 underline-offset-4"
                               aria-label={`Llamar al ${value}`}
-                              {...trackingAttrs("contact_phone_clicked", { item: listing.id, type: "listing", category: listing.categoryId })}
+                              {...trackingAttrs("contact_phone_clicked", { item: listing.id, type: "listing", category: listing.categoryId, municipality: listing.municipality })}
                             >
                               <Phone size={16} aria-hidden />
                               {value}
@@ -167,9 +167,9 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
           <div className="card p-5">
             <h2 className="subsection-title text-ink">{childcareListing ? "Solicitud protegida" : "Contacto protegido"}</h2>
             <p className="mt-2 text-sm leading-6 text-muted">El contacto se inicia desde la plataforma. No compartas datos personales de menores, horarios personales ni información sensible.</p>
-            <Link href={`/solicitar?item=${listing.slug}`} className="btn-primary mt-5 w-full" {...trackingAttrs("contact_started", { item: listing.id, category: listing.categoryId })}><MessageCircle size={16} /> {childcareListing ? "Solicitar contacto" : "Contactar"}</Link>
-            <FavoriteButton category={listing.categoryId} className="btn-secondary mt-3 w-full" label="Guardar favorito" targetId={listing.id} showLabel />
-            <ShareButton category={listing.categoryId} className="btn-secondary mt-3 w-full" itemId={listing.id} itemType="listing" title={listing.title} />
+            <Link href={`/solicitar?item=${listing.slug}`} className="btn-primary mt-5 w-full" {...trackingAttrs("contact_started", { item: listing.id, type: "listing", category: listing.categoryId, municipality: listing.municipality })}><MessageCircle size={16} /> {childcareListing ? "Solicitar contacto" : "Contactar"}</Link>
+            <FavoriteButton category={listing.categoryId} className="btn-secondary mt-3 w-full" label="Guardar favorito" municipality={listing.municipality} targetId={listing.id} showLabel />
+            <ShareButton category={listing.categoryId} className="btn-secondary mt-3 w-full" itemId={listing.id} itemType="listing" municipality={listing.municipality} title={listing.title} />
             <Link href={`/sugerencias?context=report_listing&item=${listing.slug}`} className="btn-secondary mt-3 w-full"><Flag size={16} /> Reportar publicación</Link>
           </div>
           <div className="rounded-2xl border border-coral/30 bg-coral/5 p-5">

@@ -303,14 +303,14 @@ Arquitectura inicial recomendada:
 - [ ] Revisar Cookiebot antes de que venza la prueba Premium de 14 días y confirmar el plan gratuito aplicable, sin activar una suscripción de pago.
 - [x] Prohibir técnicamente el envío a GA4 de nombre, email, teléfono, texto libre, direcciones precisas o información de menores mediante un filtro central aplicado antes del `dataLayer` y de los atributos de medición.
 - [x] Crear el diccionario inicial y la taxonomía `1.0` de eventos; mantenerla versionada conforme se implementen los flujos.
-- [ ] Definir identificadores estables no personales:
+- [x] Definir identificadores estables no personales y derivarlos centralmente cuando existan los datos de origen:
   - `provider_id`;
   - `profile_id`;
   - `request_id`;
   - `category_id`;
   - `municipality_id`;
   - `search_id`;
-  - `experiment_id` y `variant_id` cuando corresponda.
+  - `experiment_id` y `variant_id` se incorporarán cuando se active el primer experimento, no antes.
 - [ ] Definir qué eventos se envían desde cliente, cuáles desde servidor y cuáles desde ambos con deduplicación.
 - [x] Añadir en el cliente `event_id`, timestamp ISO y versión del esquema a los eventos enviados al `dataLayer`.
 - [ ] Añadir timestamp de servidor, versión de esquema y deduplicación a los eventos críticos persistidos o emitidos desde backend.
@@ -350,7 +350,7 @@ Tenlo debe poder explicar qué buscan las familias y qué rendimiento obtiene ca
 - [x] Medir la primera vista de cada ficha por sesión del navegador con `view_scope=session_unique`, evitando inflarla con recargas; mantener `page_view` separado para el tráfico general.
 - [ ] Medir fuente/medio/campaña, entrada SEO, navegación interna y tráfico directo.
 - [ ] Medir scroll o consumo de secciones relevantes solo si ayuda a tomar una decisión de producto.
-- [ ] Medir guardados, compartidos, clics externos, inicios de contacto y solicitudes completadas.
+- [x] Medir guardados, compartidos, clics externos, inicios de contacto y solicitudes completadas, con categoría, vertical, municipio y ficha estables cuando estén disponibles.
 - [ ] Relacionar solicitudes con respuesta, tiempo de respuesta, utilidad y resultado.
 - [ ] Calcular por ficha:
   - [ ] impresiones;
