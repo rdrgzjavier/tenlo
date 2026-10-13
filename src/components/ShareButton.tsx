@@ -5,13 +5,14 @@ import { useState } from "react";
 import { pushTrackingEvent } from "@/lib/analytics";
 
 type ShareButtonProps = {
+  category?: string;
   className?: string;
   itemId: string;
   itemType: "center" | "listing" | "provider";
   title: string;
 };
 
-export default function ShareButton({ className = "btn-secondary", itemId, itemType, title }: ShareButtonProps) {
+export default function ShareButton({ category, className = "btn-secondary", itemId, itemType, title }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
 
   async function handleShare() {
@@ -20,7 +21,7 @@ export default function ShareButton({ className = "btn-secondary", itemId, itemT
     if (navigator.share) {
       try {
         await navigator.share({ title, text: `Mira esta ficha en Tenlo: ${title}`, url });
-        pushTrackingEvent("provider_shared", { item: itemId, type: itemType, method: "native_share" });
+        pushTrackingEvent("provider_shared", { item: itemId, type: itemType, category, method: "native_share" });
         return;
       } catch (error) {
         if (error instanceof DOMException && error.name === "AbortError") return;
@@ -30,7 +31,7 @@ export default function ShareButton({ className = "btn-secondary", itemId, itemT
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
-      pushTrackingEvent("provider_shared", { item: itemId, type: itemType, method: "copy_link" });
+      pushTrackingEvent("provider_shared", { item: itemId, type: itemType, category, method: "copy_link" });
       window.setTimeout(() => setCopied(false), 2500);
     } catch {
       setCopied(false);

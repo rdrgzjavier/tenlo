@@ -1,3 +1,5 @@
+import { verticalIdForCategory } from "@/lib/verticals";
+
 export type TrackingAction =
   | "page_view"
   | "result_opened"
@@ -84,7 +86,6 @@ const searchLinkedActions = new Set<TrackingAction>([
 export function shouldAttachSearchContext(action: unknown): action is TrackingAction {
   return typeof action === "string" && searchLinkedActions.has(action as TrackingAction);
 }
-
 export function hasAnalyticsConsent() {
   if (typeof window === "undefined") return false;
   return window.__tenloAnalyticsConsent === true;
@@ -106,8 +107,13 @@ function sanitizeTrackingEntries(entries: Array<[string, unknown]>) {
   });
 }
 
+function withStableDimensions(params: Record<string, TrackingValue>) {
+  if (params.vertical_id || typeof params.category !== "string") return params;
+  return { ...params, vertical_id: verticalIdForCategory(params.category) };
+}
+
 export function trackingAttrs(action: TrackingAction, params: Record<string, TrackingValue>) {
-  const safeParams = Object.fromEntries(sanitizeTrackingEntries(Object.entries(params)));
+  const safeParams = Object.fromEntries(sanitizeTrackingEntries(Object.entries(withStableDimensions(params))));
   return Object.fromEntries(
     Object.entries({
       "data-track-action": action,
@@ -147,7 +153,7 @@ export function sendTrackingPayload(payload: Record<string, unknown>) {
 export function pushTrackingEvent(action: TrackingAction, params: Record<string, TrackingValue>) {
   if (typeof window === "undefined" || !hasAnalyticsConsent()) return;
   const searchContext = shouldAttachSearchContext(action) ? getActiveSearchContext() : null;
-  sendTrackingPayload({ event: action, ...eventEnvelope(), ...params, ...searchContext });
+  sendTrackingPayload({ event: action, ...eventEnvelope(), ...withStableDimensions(params), ...searchContext });
 }
 
 export function setActiveSearchContext(searchId: string) {

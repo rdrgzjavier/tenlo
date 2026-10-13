@@ -169,23 +169,23 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
               : "Consulta la web o los datos públicos del proveedor antes de reservar o contratar."}
           </p>
           {childcareProvider ? (
-            <Link href={`/solicitar?item=${provider.id}`} className="btn-primary mt-5 w-full" {...trackingAttrs("contact_started", { item: provider.id, type: "provider" })}>
+            <Link href={`/solicitar?item=${provider.id}`} className="btn-primary mt-5 w-full" {...trackingAttrs("contact_started", { item: provider.id, type: "provider", category: provider.category })}>
               <MessageCircle size={16} /> Solicitar contacto
             </Link>
           ) : providerUrl ? (
-            <a href={providerUrl} target="_blank" rel="noreferrer" className="btn-primary mt-5 w-full" {...trackingAttrs("contact_web_clicked", { item: provider.id, type: "provider" })}>
+            <a href={providerUrl} target="_blank" rel="noreferrer" className="btn-primary mt-5 w-full" {...trackingAttrs("contact_web_clicked", { item: provider.id, type: "provider", category: provider.category })}>
               Web oficial<ExternalLink size={16} />
             </a>
           ) : providerEmail ? (
-            <a href={`mailto:${provider.email}`} className="btn-primary mt-5 w-full" {...trackingAttrs("contact_email_clicked", { item: provider.id, type: "provider" })}>
+            <a href={`mailto:${provider.email}`} className="btn-primary mt-5 w-full" {...trackingAttrs("contact_email_clicked", { item: provider.id, type: "provider", category: provider.category })}>
               <Mail size={16} /> Contactar
             </a>
           ) : cleanValue(provider.phone) !== "No indicado" ? (
-            <a href={`tel:${provider.phone.replace(/\s/g, "")}`} className="btn-primary mt-5 w-full" {...trackingAttrs("contact_phone_clicked", { item: provider.id, type: "provider" })}>
+            <a href={`tel:${provider.phone.replace(/\s/g, "")}`} className="btn-primary mt-5 w-full" {...trackingAttrs("contact_phone_clicked", { item: provider.id, type: "provider", category: provider.category })}>
               <Phone size={16} /> Llamar
             </a>
           ) : null}
-          <ShareButton className="btn-secondary mt-3 w-full" itemId={provider.id} itemType="provider" title={provider.businessName} />
+          <ShareButton category={provider.category} className="btn-secondary mt-3 w-full" itemId={provider.id} itemType="provider" title={provider.businessName} />
           <Link href={`/validar-ficha?tipo=servicio&id=${provider.id}`} className="btn-secondary mt-3 w-full" {...trackingAttrs("claim_started", { item: provider.id, type: "provider" })}>¿Es tu negocio?</Link>
         </aside>
       </div>

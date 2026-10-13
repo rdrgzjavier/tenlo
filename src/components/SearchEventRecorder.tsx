@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { createSupabaseBrowserClient, hasSupabaseBrowserConfig } from "@/lib/supabase/client";
 import { hasAnalyticsConsent, pushTrackingEvent, setActiveSearchContext } from "@/lib/analytics";
+import { verticalIdForCategory } from "@/lib/verticals";
 
 type SearchEventRecorderProps = {
   query?: string;
@@ -23,22 +24,6 @@ type RecentSearch = {
   recordedAt?: number;
   searchId?: string;
 };
-
-const verticalByCategory: Record<string, string> = {
-  centros: "education",
-  "clases-particulares": "education_support",
-  canguros: "care",
-  campamentos: "activities",
-  extraescolares: "activities",
-  "centros-deportivos": "activities",
-  tecnologia: "activities",
-  uniformes: "school_goods",
-  "libros-material": "school_goods"
-};
-
-function verticalForCategory(category?: string) {
-  return category ? verticalByCategory[category] ?? "other_services" : "unclassified";
-}
 
 function privacySafeQuery(value?: string) {
   if (!value) return null;
@@ -112,7 +97,7 @@ export default function SearchEventRecorder({ query, category, municipality, fil
       const resolvedSearchId = searchId || window.crypto.randomUUID();
       rememberRecording(signature, resolvedSearchId);
       setActiveSearchContext(resolvedSearchId);
-      const verticalId = verticalForCategory(category);
+      const verticalId = verticalIdForCategory(category);
       const eventParams = {
         search_id: resolvedSearchId,
         category: category,

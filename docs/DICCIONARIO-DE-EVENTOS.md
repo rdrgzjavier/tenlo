@@ -9,6 +9,7 @@ Versión: `1.0`
 - Supabase conserva el estado real de reclamaciones, solicitudes, respuestas y conexiones útiles.
 - Nunca se envían a GA4 nombres, emails, teléfonos, direcciones precisas, texto libre ni datos de menores.
 - Los eventos críticos deben incluir `event_id`, `schema_version` y los identificadores no personales disponibles.
+- Todo evento con categoría recibe automáticamente un `vertical_id` estable antes de entrar en `dataLayer`.
 - Un clic en teléfono, web o email no equivale a una conexión útil.
 - Los valores inexistentes se omiten; no se sustituyen por textos que parezcan datos reales.
 
@@ -35,7 +36,7 @@ Las vistas, guardados, compartidos y contactos heredan durante 30 minutos el `se
 
 La entrada inicial a `/buscar` sin término ni filtros no cuenta como búsqueda. Las impresiones se deduplican junto con la búsqueda y `result_opened` hereda el mismo `search_id` cuando el clic procede de una tarjeta de resultados.
 
-Las verticales iniciales son `education`, `education_support`, `activities`, `care` y `school_goods`; una búsqueda sin categoría queda como `unclassified` hasta incorporar clasificación por intención.
+Las verticales iniciales son `education`, `education_support`, `activities`, `care`, `health`, `school_goods` y `other_services`; una búsqueda sin categoría queda como `unclassified` hasta incorporar clasificación por intención. La normalización acepta tanto identificadores técnicos como etiquetas visibles y elimina variaciones de mayúsculas, acentos y separadores.
 
 El nombre, la web, la ubicación exacta, las notas y los datos de contacto aportados al proponer un proveedor permanecen en Supabase y no se envían a GA4. La propuesta requiere revisión humana antes de generar una ficha `No verificada`.
 
@@ -43,9 +44,9 @@ El nombre, la web, la ubicación exacta, las notas y los datos de contacto aport
 
 | Evento | Cuándo ocurre | Propiedades permitidas | Destino |
 |---|---|---|---|
-| `provider_profile_viewed` | Primera apertura de una ficha de proveedor en la sesión del navegador | `provider_id`, categoría, municipio, nivel de confianza, `view_scope=session_unique` | GA4 |
-| `provider_shared` | Se completa el menú nativo de compartir o se copia el enlace de una ficha | `item`, `type`, `method` | GA4 |
-| `center_profile_viewed` | Primera apertura de una ficha de centro en la sesión del navegador | `center_id`, municipio, nivel de confianza, `view_scope=session_unique` | GA4 |
+| `provider_profile_viewed` | Primera apertura de una ficha de proveedor en la sesión del navegador | `provider_id`, categoría, `vertical_id`, municipio, nivel de confianza, `view_scope=session_unique` | GA4 |
+| `provider_shared` | Se completa el menú nativo de compartir o se copia el enlace de una ficha | `item`, `type`, categoría, `vertical_id`, `method` | GA4 |
+| `center_profile_viewed` | Primera apertura de una ficha de centro en la sesión del navegador | `center_id`, categoría, `vertical_id`, municipio, nivel de confianza, `view_scope=session_unique` | GA4 |
 | `map_directions_clicked` | Se abre el mapa externo para ubicar un centro o negocio | identificador de ficha, tipo de entidad, municipio, origen | GA4 |
 | `provider_saved` | Una persona autenticada guarda una ficha | identificador de ficha, tipo de entidad, categoría, origen | GA4 + Supabase |
 | `provider_unsaved` | Una persona autenticada elimina una ficha de favoritos | identificador de ficha, tipo de entidad, categoría, origen | GA4 + Supabase |

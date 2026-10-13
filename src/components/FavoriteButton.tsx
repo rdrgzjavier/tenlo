@@ -9,6 +9,7 @@ import { pushTrackingEvent } from "@/lib/analytics";
 import { createSupabaseBrowserClient, hasSupabaseBrowserConfig } from "@/lib/supabase/client";
 
 type FavoriteButtonProps = {
+  category?: string;
   className?: string;
   label?: string;
   showLabel?: boolean;
@@ -17,7 +18,7 @@ type FavoriteButtonProps = {
   initialSaved?: boolean;
 };
 
-export default function FavoriteButton({ className = "icon-button", label = "Guardar favorito", showLabel = false, targetId, targetType = "listing", initialSaved = false }: FavoriteButtonProps) {
+export default function FavoriteButton({ category, className = "icon-button", label = "Guardar favorito", showLabel = false, targetId, targetType = "listing", initialSaved = false }: FavoriteButtonProps) {
   const [open, setOpen] = useState(false);
   const [saved, setSaved] = useState(initialSaved);
   const [loading, setLoading] = useState(false);
@@ -85,7 +86,7 @@ export default function FavoriteButton({ className = "icon-button", label = "Gua
     const nextSaved = !saved;
     setSaved(nextSaved);
     setNotice(nextSaved ? "Guardado en tus favoritos." : "Eliminado de tus favoritos.");
-    pushTrackingEvent(nextSaved ? "provider_saved" : "provider_unsaved", { item: targetId, type: targetType });
+    pushTrackingEvent(nextSaved ? "provider_saved" : "provider_unsaved", { item: targetId, type: targetType, category });
     setLoading(false);
     router.refresh();
   }

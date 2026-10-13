@@ -365,7 +365,7 @@ Tenlo debe poder explicar qué buscan las familias y qué rendimiento obtiene ca
 
 ### Rendimiento por vertical
 
-- [ ] Aplicar a cada ficha una dimensión estable `vertical_id` además de categoría y tipo de proveedor.
+- [x] Aplicar a vistas, impresiones, guardados, compartidos y contactos de cada ficha una dimensión estable `vertical_id` además de categoría y tipo de proveedor, normalizada centralmente antes de `dataLayer`.
 - [ ] Crear informes comparables para colegios, guarderías, servicios, actividades y futuras verticales.
 - [ ] Comparar volumen de demanda, cobertura de oferta, engagement, contacto, respuesta y resultado por vertical.
 - [ ] Poder desglosar por municipio, categoría, estado de reclamación, confianza, plan y periodo.
