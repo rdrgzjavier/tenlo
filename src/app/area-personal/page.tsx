@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Bookmark, ClipboardCheck, ClipboardList, FilePlus2, Settings, ShieldCheck } from "lucide-react";
+import { Bookmark, ClipboardCheck, ClipboardList, FilePlus2, LayoutDashboard, Settings, ShieldCheck } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
@@ -130,6 +130,9 @@ export default async function PersonalAreaPage() {
   const { user, profile } = await ensureProfile();
   const reviewStatus = profile?.status === "approved" ? "Cuenta activa" : "Pendiente de revisión";
   const displayName = profile?.public_name ?? profile?.display_name ?? user.email?.split("@")[0] ?? "Tenlo";
+  const visibleActions = profile?.role === "tenlo_admin"
+    ? [...accountActions, { title: "Operación del piloto", text: "Revisa reclamaciones, solicitudes, publicaciones, bajas e incidencias.", href: "/admin", Icon: LayoutDashboard }]
+    : accountActions;
 
   return (
     <div className="section-shell">
@@ -138,7 +141,7 @@ export default async function PersonalAreaPage() {
       <p className="lead max-w-5xl">El espacio donde podrás gestionar favoritos, publicaciones y datos de contacto de tu cuenta.</p>
 
       <div className="mt-8 grid gap-4 md:grid-cols-2">
-        {accountActions.map(({ title, text, href, Icon }) => (
+        {visibleActions.map(({ title, text, href, Icon }) => (
           <Link key={title} href={href} className="card p-6 transition-colors hover:border-ink">
             <Icon size={28} className="text-ink" aria-hidden />
             <h2 className="mt-4 text-lg font-bold text-slatecopy">{title}</h2>

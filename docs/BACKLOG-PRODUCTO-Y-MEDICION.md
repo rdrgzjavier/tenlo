@@ -201,7 +201,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   6. revisar y enviar.
 - [ ] Evitar pedir todos los datos antes de mostrar la ficha actual y el beneficio de actualizarla.
 - [ ] Confirmar por email la recepción y explicar el siguiente paso y plazo.
-- [ ] Crear cola administrativa para revisar, aprobar, pedir información o rechazar reclamaciones.
+- [ ] Completar acciones para aprobar, pedir información o rechazar reclamaciones. La cola privada de lectura y priorización ya está disponible para `tenlo_admin`.
 - [ ] Notificar al proveedor cuando la ficha se publique o necesite cambios.
 - [ ] Permitir que el proveedor solicite baja o retirada.
 - [ ] Registrar cada estado y tiempo del flujo para poder medirlo.
@@ -266,7 +266,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 
 ## P1. Backoffice mínimo
 
-- [ ] Crear vista administrativa de fichas, reclamaciones, solicitudes y resultados.
+- [ ] Completar la vista administrativa con fichas y resultados. La primera bandeja privada ya reúne reclamaciones, solicitudes, publicaciones/bajas e incidencias para el rol `tenlo_admin`.
 - [ ] Permitir corregir estados sin editar directamente la base de datos.
 - [ ] Crear alertas para reclamaciones pendientes, solicitudes sin respuesta y fichas desactualizadas.
 - [ ] Registrar notas operativas sin exponerlas al proveedor o a la familia.
