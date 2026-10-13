@@ -347,7 +347,7 @@ Tenlo debe poder explicar qué buscan las familias y qué rendimiento obtiene ca
 - [x] Medir impresiones renderizadas de la ficha en resultados de búsqueda.
 - [x] Medir posición y búsqueda de origen mediante un `search_id` compartido; falta extenderlo a otros tipos de listado.
 - [x] Medir la primera vista de cada ficha por sesión del navegador con `view_scope=session_unique`, evitando inflarla con recargas; mantener `page_view` separado para el tráfico general.
-- [ ] Medir fuente/medio/campaña, entrada SEO, navegación interna y tráfico directo.
+- [x] Medir fuente/medio/campaña, entrada orgánica, referencia, navegación interna y tráfico directo sin guardar la URL completa de referencia ni UTMs que parezcan datos personales.
 - [ ] Medir scroll o consumo de secciones relevantes solo si ayuda a tomar una decisión de producto.
 - [x] Medir guardados, compartidos, clics externos, inicios de contacto y solicitudes completadas, con categoría, vertical, municipio y ficha estables cuando estén disponibles.
 - [ ] Relacionar solicitudes con respuesta, tiempo de respuesta, utilidad y resultado.

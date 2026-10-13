@@ -3,6 +3,9 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { hasAnalyticsConsent, pushTrackingEvent } from "@/lib/analytics";
+import { currentAcquisitionContext } from "@/lib/acquisition";
+
+const navigationSessionKey = "tenlo_page_view_recorded_v1";
 
 function pageType(pathname: string) {
   if (pathname === "/") return "home";
@@ -22,10 +25,23 @@ export default function PageViewTracker() {
       if (tracked) return;
       if (!hasAnalyticsConsent()) return;
       tracked = true;
+      let previousPageRecorded = false;
+      try {
+        previousPageRecorded = window.sessionStorage.getItem(navigationSessionKey) === "1";
+      } catch {
+        // La medición no debe bloquear la navegación si el almacenamiento está restringido.
+      }
       pushTrackingEvent("page_view", {
         page_path: pathname,
-        page_type: pageType(pathname)
+        page_type: pageType(pathname),
+        navigation_scope: previousPageRecorded ? "internal" : "entry",
+        ...currentAcquisitionContext()
       });
+      try {
+        window.sessionStorage.setItem(navigationSessionKey, "1");
+      } catch {
+        // Sin estado de sesión se mantiene la medición básica de página.
+      }
     };
 
     const readyTimer = window.setInterval(trackPageView, 50);

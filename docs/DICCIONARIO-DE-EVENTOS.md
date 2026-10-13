@@ -18,6 +18,7 @@ Versión: `1.0`
 
 | Evento | Cuándo ocurre | Propiedades permitidas | Destino |
 |---|---|---|---|
+| `page_view` | Primera vista consentida y cambios de ruta | `page_path`, `page_type`, `navigation_scope`, `entry_channel`, host de referencia y UTMs saneadas | GA4 |
 | `search_started` | La persona envía una búsqueda válida | `search_id`, origen, categoría, municipio, `filter_count`, `has_keyword` | GA4 |
 | `filter_applied` | La persona aplica uno o más filtros válidos | `search_id`, origen, categoría, municipio, `filter_count`, `has_keyword` | GA4 |
 | `search_results_viewed` | Se muestran resultados | `search_id`, `vertical_id`, categoría, municipio, filtros normalizados, `result_count`, `zero_results` | GA4 + Supabase |
@@ -31,6 +32,8 @@ Versión: `1.0`
 | `provider_suggestion_submitted` | La propuesta queda guardada para revisión | identificador interno de propuesta, categoría normalizada, municipio | GA4 + Supabase |
 
 El término escrito solo se almacena en Supabase tras sanear emails, teléfonos y posibles datos sensibles. GA4 recibe una intención o categoría normalizada, no el texto libre.
+
+La atribución propia clasifica la entrada como `campaign`, `organic_search`, `referral` o `direct`. Solo conserva el host de referencia, nunca su ruta o parámetros, y sanea `utm_source`, `utm_medium`, `utm_campaign` y `utm_content`. GA4 mantiene además su atribución nativa.
 
 La capa común de analítica elimina antes del `dataLayer` los parámetros con claves personales o de texto libre, valores que parezcan emails o teléfonos y cadenas de más de 120 caracteres. La misma protección se aplica a atributos HTML y eventos enviados desde componentes cliente.
 
