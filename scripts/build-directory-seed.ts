@@ -46,6 +46,16 @@ const importableListings = listings.filter(
 );
 
 const personalProviderIds = new Set(["profesor-mates", "canguro-ana", "canguro-laura"]);
+const excludedOrganizationalProviderIds = new Set([
+  "boadilla-british",
+  "boadilla-mencia",
+  "pozuelo-cruiz",
+  "majadahonda-hvieja",
+  "las-rozas-campamentos-activa",
+  "pozuelo-robotica-lab",
+  "majadahonda-club-raqueta",
+  "boadilla-uniformes-local",
+]);
 const organizationalProviders = providers.filter((provider) => !personalProviderIds.has(provider.id));
 const uniqueOrganizationalProviderIds = new Set(
   organizationalProviders.map((provider) => canonicalProviderIdBySourceId.get(provider.id) ?? provider.id),
@@ -59,6 +69,7 @@ if (process.argv.includes("--summary")) {
       organizationalProviderRecords: organizationalProviders.length,
       uniqueOrganizationalProviders: uniqueOrganizationalProviderIds.size,
       excludedFictitiousPersonalProfiles: personalProviderIds.size,
+      excludedUnverifiableOrganizationalProfiles: excludedOrganizationalProviderIds.size,
     },
     importable: {
       centers: importableCenters.length,
@@ -67,7 +78,8 @@ if (process.argv.includes("--summary")) {
     },
     pendingSourceReviewOrNormalization: {
       centers: centers.length - importableCenters.length,
-      uniqueOrganizationalProviders: uniqueOrganizationalProviderIds.size - importableProviders.length,
+      uniqueOrganizationalProviders:
+        uniqueOrganizationalProviderIds.size - importableProviders.length - excludedOrganizationalProviderIds.size,
     },
     trustLevel: "collected",
     claimed: false,

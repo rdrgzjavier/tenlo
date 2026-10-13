@@ -153,15 +153,15 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Crear una capa de acceso a datos para Supabase con retorno seguro a `mock-data.ts` mientras se valida la migración.
 - [ ] Activar la capa de Supabase en las páginas públicas y retirar la dependencia de `mock-data.ts` solo después de validar paridad y reversibilidad.
 - [x] Crear una migración y un generador de importación idempotente para fichas editoriales no reclamadas, sin inventar propietarios ni elevar su confianza por defecto.
-- [ ] Migrar progresivamente a Supabase el inventario útil del piloto: 24 centros y hasta 22 proveedores organizativos únicos. Supabase contiene 21 centros, 11 proveedores y 13 servicios; el seed reproducible está preparado para alcanzar 14 proveedores y 16 servicios contrastados. Las tres salas de Hanky Planet pertenecen a un único proveedor y los tres perfiles personales ficticios quedan fuera. Véase `docs/AUDITORIA-LOTE-PROVEEDORES.md`.
+- [x] Auditar el inventario inicial completo y migrar a Supabase todo lo útil del piloto: de 24 centros y 22 proveedores organizativos únicos se admiten 21 centros y 14 proveedores con 16 servicios contrastados; el resto queda clasificado y fuera de publicación hasta disponer de evidencia suficiente. Las tres salas de Hanky Planet pertenecen a un único proveedor y los tres perfiles personales ficticios quedan fuera. Véase `docs/AUDITORIA-LOTE-PROVEEDORES.md`.
   - [x] Importar y verificar el bloque 1 en Supabase: 11 centros, 11 proveedores no reclamados y 13 servicios; cero huérfanos, propietarios ficticios, duplicados o niveles de confianza elevados. Seed repetido sin alterar recuentos el 11-10-2026.
   - [x] Contrastar y preparar siete centros adicionales con fuentes oficiales; corregir nombre y teléfono cuando el dato inicial estaba desactualizado.
   - [x] Importar y verificar en Supabase los siete centros adicionales: 18 centros totales; cero servicios huérfanos, propietarios ficticios, fichas reclamadas o niveles de confianza elevados el 13-10-2026.
   - [x] Contrastar e importar tres centros adicionales con fuente oficial: E.I. Los Álamos, CEIP Francisco de Quevedo y E.I. Talín. Resultado: 21 centros; 0 servicios huérfanos, propietarios asignados o fichas reclamadas el 13-10-2026.
   - [x] Retener fuera de Supabase tres centros sin correspondencia oficial suficiente en el municipio indicado: E.I. Juan de Austria, E.I. El Principito y Colegio Engage.
   - [x] Contrastar y preparar Pulso Música, The Magic Forest y Centro Cultural Volturno con fuentes oficiales específicas.
-  - [ ] Importar y verificar el lote de tres proveedores preparado: objetivo 14 proveedores y 16 servicios.
-  - [ ] Contrastar los 8 proveedores organizativos únicos restantes.
+  - [x] Importar y verificar el lote de Pulso Música, The Magic Forest y Centro Cultural Volturno: 14 proveedores y 16 servicios; segunda ejecución sin duplicados y contadores de integridad a cero el 13-10-2026.
+  - [x] Contrastar los 8 proveedores organizativos restantes: seis registros didácticos o no sostenibles excluidos y dos polideportivos retenidos mientras continúan en obras.
 - [ ] Normalizar proveedores, servicios, categorías, municipios y zonas de cobertura.
 - [x] Definir plantillas iniciales por vertical manteniendo una estructura estable dentro de cada tipo:
   - [x] actividades y extraescolares;

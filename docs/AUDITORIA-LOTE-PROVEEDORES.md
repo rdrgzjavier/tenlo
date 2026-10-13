@@ -4,7 +4,7 @@
 >
 > Objetivo: preparar un primer bloque seguro mientras se amplía la migración al mayor número posible de entidades reales del piloto, sin convertir datos didácticos o ficticios en datos reales.
 
-La base de datos contiene veintiún centros y once proveedores con fuente revisada. El seed reproducible añade tres proveedores contrastados y queda preparado para alcanzar catorce proveedores y dieciséis servicios. El inventario total contiene 24 centros y 22 proveedores organizativos únicos; los tres perfiles personales ficticios quedan excluidos. Cada entidad pendiente se incorporará en cuanto exista una fuente pública suficiente y sus campos hayan sido contrastados.
+La base de datos y el seed reproducible contienen veintiún centros, catorce proveedores y dieciséis servicios con fuente revisada. El inventario total contiene 24 centros y 22 proveedores organizativos únicos; los tres perfiles personales ficticios quedan excluidos. Cada entidad pendiente se incorporará en cuanto exista una fuente pública suficiente y sus campos hayan sido contrastados.
 
 ## Criterio aplicado
 
@@ -79,13 +79,27 @@ La presencia de una web no equivale a verificación ni autoriza a usar imágenes
 | Centro Deportivo Huerta Vieja | La fuente municipal indica cierre temporal por obras. | Revisar su reapertura antes de incorporarlo como oferta disponible. |
 | Polideportivo Carlos Ruiz | La fuente municipal informa de obras y renovación en curso. | Confirmar qué instalaciones y actividades están operativas antes de importar. |
 
+## Proveedores organizativos no importables del inventario inicial
+
+| Registro actual | Decisión | Motivo |
+|---|---|---|
+| British Council Boadilla | Excluir | No existe un centro oficial de British Council en Boadilla que corresponda con los datos del mock. |
+| Papelería Doña Mencía | Excluir | Las fuentes públicas localizadas no sostienen una papelería con ese nombre y contacto; existe un comercio distinto llamado Mencía y Yo. |
+| Polideportivo Carlos Ruiz | Retener | El centro es real, pero continúa en obras en octubre de 2026 y la ficha mock promete una oferta que no se puede confirmar como operativa. |
+| Polideportivo Huerta Vieja | Retener | El complejo sigue en reforma integral; la apertura estacional de la piscina de verano terminó el 13-09-2026. |
+| Activa Campamentos Las Rozas | Excluir | Nombre, descripción y disponibilidad son datos didácticos sin una organización identificable detrás. |
+| Robótica Lab Pozuelo | Excluir | Registro genérico sin entidad, dirección o fuente pública contrastable. |
+| Club Raqueta Majadahonda | Excluir | Registro genérico sin correspondencia oficial suficiente en el municipio. |
+| Uniformes Boadilla | Excluir | Registro genérico sin comercio identificable ni fuente pública. |
+
 ## Resultado del control
 
 - Inventario actual: 24 centros, 27 proveedores y 51 fichas generadas desde datos mock.
 - Inventario útil para el piloto: 24 centros y 22 proveedores organizativos únicos, antes de contrastar fuentes. Los tres perfiles personales ficticios no se migrarán.
-- Directorio importado en Supabase: 21 centros, 11 proveedores y 13 servicios. El siguiente lote idempotente está preparado para alcanzar 14 proveedores y 16 servicios. Las tres salas de Hanky Planet quedan asociadas a un único proveedor.
+- Directorio importado en Supabase: 21 centros, 14 proveedores y 16 servicios. Las tres salas de Hanky Planet quedan asociadas a un único proveedor.
 - Verificación posterior del 13-10-2026: 0 servicios huérfanos, 0 proveedores con propietario, 0 fichas reclamadas y 0 niveles de confianza elevados.
-- Pendiente de fuente o normalización: 3 centros y 8 proveedores organizativos únicos; los campos dudosos se dejarán vacíos.
+- El lote completo se ejecutó dos veces el 13-10-2026 y mantuvo los mismos recuentos, confirmando su idempotencia.
+- Pendiente de fuente o normalización: 3 centros; los 8 proveedores organizativos restantes ya están clasificados como excluidos o retenidos hasta que cambie su situación. Los campos dudosos se dejarán vacíos.
 - No se activa todavía `DIRECTORY_DATA_SOURCE=supabase` ni se modifica la web pública.
 
 ## Comprobaciones antes de ejecutar el lote
