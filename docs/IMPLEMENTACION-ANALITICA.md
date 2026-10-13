@@ -4,6 +4,8 @@ Estado: Cookiebot, GA4 y GTM de Tenlo creados y conectados en producción; recha
 
 Definiciones, fórmulas y estructura de informes: [Catálogo de KPIs y reporting](./CATALOGO-DE-KPIS-Y-REPORTING.md).
 
+Procedimiento reproducible de validación: [QA de analítica y consentimiento](./QA-ANALITICA.md).
+
 ## Arquitectura y responsabilidades
 
 | Capa | Responsabilidad | No debe hacer |
@@ -39,6 +41,8 @@ Definiciones, fórmulas y estructura de informes: [Catálogo de KPIs y reporting
 El informe de proveedor debe separar claramente visibilidad, interés, contactos y resultados. Un clic o una visita no se presentará como cliente conseguido.
 
 ## QA obligatorio
+
+La matriz de fuentes, deduplicación y casos paso a paso se mantiene en `QA-ANALITICA.md`.
 
 - Rechazar cookies: no aparecen cookies `_ga` y las etiquetas de GA4 no se activan con almacenamiento concedido.
 - Aceptar estadísticas: Consent Mode cambia `analytics_storage` a `granted` y GA4 recibe eventos de prueba.

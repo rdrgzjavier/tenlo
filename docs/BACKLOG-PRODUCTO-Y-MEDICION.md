@@ -311,11 +311,11 @@ Arquitectura inicial recomendada:
   - `municipality_id`;
   - `search_id`;
   - `experiment_id` y `variant_id` se incorporarán cuando se active el primer experimento, no antes.
-- [ ] Definir qué eventos se envían desde cliente, cuáles desde servidor y cuáles desde ambos con deduplicación.
+- [x] Definir qué eventos se envían desde cliente, cuáles desde servidor y cuáles desde ambos con deduplicación en `QA-ANALITICA.md`.
 - [x] Añadir en el cliente `event_id`, timestamp ISO y versión del esquema a los eventos enviados al `dataLayer`.
 - [ ] Añadir timestamp de servidor, versión de esquema y deduplicación a los eventos críticos persistidos o emitidos desde backend.
 - [ ] Crear entornos de prueba y reglas para excluir tráfico interno.
-- [ ] Preparar un procedimiento de QA con GTM Preview, GA4 DebugView y validación en Supabase.
+- [x] Preparar un procedimiento de QA con GTM Preview, GA4 DebugView y validación en Supabase (`QA-ANALITICA.md`).
 - [ ] Definir retención, acceso, borrado y anonimización de datos.
 
 ## P0. Informes de búsquedas, fichas y verticales
