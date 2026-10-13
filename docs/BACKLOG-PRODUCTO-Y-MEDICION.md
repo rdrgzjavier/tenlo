@@ -153,11 +153,13 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Crear una capa de acceso a datos para Supabase con retorno seguro a `mock-data.ts` mientras se valida la migración.
 - [ ] Activar la capa de Supabase en las páginas públicas y retirar la dependencia de `mock-data.ts` solo después de validar paridad y reversibilidad.
 - [x] Crear una migración y un generador de importación idempotente para fichas editoriales no reclamadas, sin inventar propietarios ni elevar su confianza por defecto.
-- [ ] Migrar progresivamente a Supabase el inventario útil del piloto: 24 centros y hasta 22 proveedores organizativos únicos. Supabase y el seed reproducible contienen 18 centros, 11 proveedores y 13 servicios verificados tras la importación. Las tres salas de Hanky Planet pertenecen a un único proveedor y los tres perfiles personales ficticios quedan fuera. Véase `docs/AUDITORIA-LOTE-PROVEEDORES.md`.
+- [ ] Migrar progresivamente a Supabase el inventario útil del piloto: 24 centros y hasta 22 proveedores organizativos únicos. Supabase y el seed reproducible contienen 21 centros, 11 proveedores y 13 servicios contrastados tras la importación. Las tres salas de Hanky Planet pertenecen a un único proveedor y los tres perfiles personales ficticios quedan fuera. Véase `docs/AUDITORIA-LOTE-PROVEEDORES.md`.
   - [x] Importar y verificar el bloque 1 en Supabase: 11 centros, 11 proveedores no reclamados y 13 servicios; cero huérfanos, propietarios ficticios, duplicados o niveles de confianza elevados. Seed repetido sin alterar recuentos el 11-10-2026.
   - [x] Contrastar y preparar siete centros adicionales con fuentes oficiales; corregir nombre y teléfono cuando el dato inicial estaba desactualizado.
   - [x] Importar y verificar en Supabase los siete centros adicionales: 18 centros totales; cero servicios huérfanos, propietarios ficticios, fichas reclamadas o niveles de confianza elevados el 13-10-2026.
-  - [ ] Contrastar los 6 centros y 11 proveedores organizativos únicos restantes.
+  - [x] Contrastar e importar tres centros adicionales con fuente oficial: E.I. Los Álamos, CEIP Francisco de Quevedo y E.I. Talín. Resultado: 21 centros; 0 servicios huérfanos, propietarios asignados o fichas reclamadas el 13-10-2026.
+  - [x] Retener fuera de Supabase tres centros sin correspondencia oficial suficiente en el municipio indicado: E.I. Juan de Austria, E.I. El Principito y Colegio Engage.
+  - [ ] Contrastar los 11 proveedores organizativos únicos restantes.
 - [ ] Normalizar proveedores, servicios, categorías, municipios y zonas de cobertura.
 - [x] Definir plantillas iniciales por vertical manteniendo una estructura estable dentro de cada tipo:
   - [x] actividades y extraescolares;
@@ -170,11 +172,11 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Mostrar todos los campos de la plantilla correspondiente aunque no estén informados, usando `Pendiente de verificar` y sin inventar valores.
 - [ ] Añadir a proveedor/ficha:
   - [x] preparar en el esquema estado de reclamación;
-  - [ ] estado de publicación;
+  - [x] estado de publicación en el esquema, reglas de lectura y área personal;
   - [x] preparar en el esquema nivel de confianza;
   - [x] preparar en el esquema plan comercial independiente;
-  - [ ] fecha de última revisión;
-  - [ ] fuente y URL de la fuente;
+  - [x] fecha de última revisión visible en la trazabilidad de centros, proveedores y anuncios;
+  - [x] fuente y URL de la fuente visibles y enlazadas cuando existe una fuente pública;
   - [x] preparar en el esquema porcentaje de ficha completa;
   - [x] preparar en el esquema disponibilidad para recibir solicitudes;
   - [ ] categorías y zonas aceptadas;

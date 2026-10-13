@@ -4,7 +4,7 @@
 >
 > Objetivo: preparar un primer bloque seguro mientras se amplía la migración al mayor número posible de entidades reales del piloto, sin convertir datos didácticos o ficticios en datos reales.
 
-La base de datos y el seed reproducible contienen dieciocho centros y once proveedores con fuente revisada. El inventario total contiene 24 centros y 22 proveedores organizativos únicos; los tres perfiles personales ficticios quedan excluidos. Cada entidad pendiente se incorporará en cuanto exista una fuente pública suficiente y sus campos hayan sido contrastados.
+La base de datos y el seed reproducible contienen veintiún centros y once proveedores con fuente revisada. El inventario total contiene 24 centros y 22 proveedores organizativos únicos; los tres perfiles personales ficticios quedan excluidos. Cada entidad pendiente se incorporará en cuanto exista una fuente pública suficiente y sus campos hayan sido contrastados.
 
 ## Criterio aplicado
 
@@ -57,6 +57,17 @@ La presencia de una web no equivale a verificación ni autoriza a usar imágenes
 | Colegio San Jaime | Majadahonda | https://colegiosanjaime.es/ | Web oficial con etapas, ideario y contacto. |
 | CEIP Benito Pérez Galdós | Majadahonda | https://www.educa2.madrid.org/web/centro.cp.perezgaldos.majadahonda/inicio | Fuente oficial EducaMadrid con etapas y contacto. |
 | E.I. Tamaral | Majadahonda | https://www.educa.madrid.org/eei.tamaral.majadahonda | Ficha oficial de la Comunidad de Madrid para el curso 2026/2027. |
+| E.I. Los Álamos | Pozuelo | https://www.comunidad.madrid/centros/escuela-educacion-infantil-alamos | Ficha oficial; teléfono corregido respecto al dato inicial. |
+| CEIP Francisco de Quevedo | Majadahonda | https://www.comunidad.madrid/centros/centro-francisco-quevedo-majadahonda | Ficha oficial; etapas, bilingüismo y teléfono contrastados. |
+| E.I. Talín | Majadahonda | https://www.comunidad.madrid/centros/escuela-educacion-infantil-talin | Ficha oficial; titularidad municipal y teléfono corregidos. |
+
+## Centros retenidos o descartados
+
+| Registro actual | Motivo | Siguiente acción |
+|---|---|---|
+| E.I. Juan de Austria (Boadilla) | No aparece entre las escuelas infantiles oficiales del municipio y el teléfono no se ha podido sostener con una fuente pública. | Mantener fuera de Supabase; retirar o sustituir el mock cuando se cierre la depuración del inventario. |
+| E.I. El Principito (Pozuelo) | Las fuentes oficiales localizadas corresponden a centros homónimos de otros municipios, no a Pozuelo. | Mantener fuera de Supabase y no trasladar datos de homónimos. |
+| Colegio Engage (Majadahonda) | No se ha localizado una fuente oficial vigente que confirme la oferta y los datos actuales. | Mantener fuera de Supabase hasta localizar al titular o una fuente registral vigente. |
 
 ## Candidatos retenidos
 
@@ -71,9 +82,9 @@ La presencia de una web no equivale a verificación ni autoriza a usar imágenes
 
 - Inventario actual: 24 centros, 27 proveedores y 51 fichas generadas desde datos mock.
 - Inventario útil para el piloto: 24 centros y 22 proveedores organizativos únicos, antes de contrastar fuentes. Los tres perfiles personales ficticios no se migrarán.
-- Directorio importado en Supabase: 18 centros, 11 proveedores y 13 servicios. Las tres salas de Hanky Planet quedan asociadas a un único proveedor.
+- Directorio importado en Supabase: 21 centros, 11 proveedores y 13 servicios. Las tres salas de Hanky Planet quedan asociadas a un único proveedor.
 - Verificación posterior del 13-10-2026: 0 servicios huérfanos, 0 proveedores con propietario, 0 fichas reclamadas y 0 niveles de confianza elevados.
-- Pendiente de fuente o normalización: 6 centros y 11 proveedores organizativos únicos; los campos dudosos se dejarán vacíos.
+- Pendiente de fuente o normalización: 3 centros y 11 proveedores organizativos únicos; los campos dudosos se dejarán vacíos.
 - No se activa todavía `DIRECTORY_DATA_SOURCE=supabase` ni se modifica la web pública.
 
 ## Comprobaciones antes de ejecutar el lote

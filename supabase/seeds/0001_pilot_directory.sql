@@ -485,6 +485,40 @@ insert into public.centers (
   stages, languages, services, description, address, phone, email, website,
   source_name, source_url, last_reviewed, trust_level, tags, image_url, status, record_origin
 ) values (
+  'ei-los-alamos', 'escuela-infantil-los-alamos', 'E.I. Los Álamos', 'Pozuelo de Alarcón',
+  'publico', 'laico', array['0-3 años']::text[],
+  array['Inglés']::text[], array['Comedor', 'Extraescolares', 'Orientación']::text[], 'Escuela infantil pública de primer ciclo en Pozuelo de Alarcón.',
+  'Consultar dirección pública', '913 51 43 10', null, 'https://www.comunidad.madrid/centros/escuela-educacion-infantil-alamos',
+  'Web oficial del centro', 'https://www.comunidad.madrid/centros/escuela-educacion-infantil-alamos', '2026-10-11',
+  'collected', array['Público', '0-3 años']::text[], 'https://images.unsplash.com/photo-1544253386-89d1b7642674?auto=format&fit=crop&w=1200&q=80', 'approved', 'tenlo_curated'
+) on conflict (slug) do update set
+  external_key = excluded.external_key,
+  name = excluded.name,
+  municipality = excluded.municipality,
+  center_type = excluded.center_type,
+  religious_character = excluded.religious_character,
+  stages = excluded.stages,
+  languages = excluded.languages,
+  services = excluded.services,
+  description = excluded.description,
+  address = excluded.address,
+  phone = excluded.phone,
+  email = excluded.email,
+  website = excluded.website,
+  source_name = excluded.source_name,
+  source_url = excluded.source_url,
+  last_reviewed = excluded.last_reviewed,
+  trust_level = 'collected',
+  tags = excluded.tags,
+  image_url = excluded.image_url,
+  status = 'approved',
+  record_origin = 'tenlo_curated';
+
+insert into public.centers (
+  external_key, slug, name, municipality, center_type, religious_character,
+  stages, languages, services, description, address, phone, email, website,
+  source_name, source_url, last_reviewed, trust_level, tags, image_url, status, record_origin
+) values (
   'majadahonda-caude', 'colegio-caude-majadahonda', 'Colegio Caude', 'Majadahonda',
   'concertado', 'laico', array['Infantil', 'Primaria', 'ESO', 'Bachillerato']::text[],
   array['Inglés']::text[], array['Comedor', 'Extraescolares', 'Orientación']::text[], 'Centro concertado-privado con oferta educativa desde Infantil hasta Bachillerato.',
@@ -553,6 +587,40 @@ insert into public.centers (
   stages, languages, services, description, address, phone, email, website,
   source_name, source_url, last_reviewed, trust_level, tags, image_url, status, record_origin
 ) values (
+  'majadahonda-quevedo', 'ceip-francisco-de-quevedo-majadahonda', 'CEIP Francisco de Quevedo', 'Majadahonda',
+  'publico', 'laico', array['Infantil', 'Primaria']::text[],
+  array['Inglés']::text[], array['Comedor', 'Extraescolares', 'Orientación']::text[], 'Colegio público bilingüe de Educación Infantil y Primaria en Majadahonda.',
+  'Consultar dirección pública', '916 34 75 70', null, 'https://www.comunidad.madrid/centros/centro-francisco-quevedo-majadahonda',
+  'Web oficial del centro', 'https://www.comunidad.madrid/centros/centro-francisco-quevedo-majadahonda', '2026-10-11',
+  'collected', array['Público', 'Bilingüe']::text[], 'https://images.unsplash.com/photo-1577891729319-f4871c6ec217?auto=format&fit=crop&w=1200&q=80', 'approved', 'tenlo_curated'
+) on conflict (slug) do update set
+  external_key = excluded.external_key,
+  name = excluded.name,
+  municipality = excluded.municipality,
+  center_type = excluded.center_type,
+  religious_character = excluded.religious_character,
+  stages = excluded.stages,
+  languages = excluded.languages,
+  services = excluded.services,
+  description = excluded.description,
+  address = excluded.address,
+  phone = excluded.phone,
+  email = excluded.email,
+  website = excluded.website,
+  source_name = excluded.source_name,
+  source_url = excluded.source_url,
+  last_reviewed = excluded.last_reviewed,
+  trust_level = 'collected',
+  tags = excluded.tags,
+  image_url = excluded.image_url,
+  status = 'approved',
+  record_origin = 'tenlo_curated';
+
+insert into public.centers (
+  external_key, slug, name, municipality, center_type, religious_character,
+  stages, languages, services, description, address, phone, email, website,
+  source_name, source_url, last_reviewed, trust_level, tags, image_url, status, record_origin
+) values (
   'majadahonda-galdos', 'ceip-benito-perez-galdos-majadahonda', 'CEIP Benito Pérez Galdós', 'Majadahonda',
   'publico', 'laico', array['Infantil', 'Primaria']::text[],
   array['Inglés']::text[], array['Comedor', 'Extraescolares', 'Orientación']::text[], 'Colegio público con etapas de segundo ciclo de Infantil y Primaria en Majadahonda.',
@@ -592,6 +660,40 @@ insert into public.centers (
   array['Inglés']::text[], array['Comedor', 'Extraescolares', 'Orientación']::text[], 'Escuela infantil pública municipal de primer ciclo en Majadahonda.',
   'Consultar dirección pública', '687 20 53 13', null, 'https://www.educa.madrid.org/eei.tamaral.majadahonda',
   'Web oficial del centro', 'https://www.educa.madrid.org/eei.tamaral.majadahonda', '2026-10-11',
+  'collected', array['Público', '0-3 años']::text[], 'https://images.unsplash.com/photo-1544253386-89d1b7642674?auto=format&fit=crop&w=1200&q=80', 'approved', 'tenlo_curated'
+) on conflict (slug) do update set
+  external_key = excluded.external_key,
+  name = excluded.name,
+  municipality = excluded.municipality,
+  center_type = excluded.center_type,
+  religious_character = excluded.religious_character,
+  stages = excluded.stages,
+  languages = excluded.languages,
+  services = excluded.services,
+  description = excluded.description,
+  address = excluded.address,
+  phone = excluded.phone,
+  email = excluded.email,
+  website = excluded.website,
+  source_name = excluded.source_name,
+  source_url = excluded.source_url,
+  last_reviewed = excluded.last_reviewed,
+  trust_level = 'collected',
+  tags = excluded.tags,
+  image_url = excluded.image_url,
+  status = 'approved',
+  record_origin = 'tenlo_curated';
+
+insert into public.centers (
+  external_key, slug, name, municipality, center_type, religious_character,
+  stages, languages, services, description, address, phone, email, website,
+  source_name, source_url, last_reviewed, trust_level, tags, image_url, status, record_origin
+) values (
+  'ei-talin', 'escuela-infantil-talin-majadahonda', 'E.I. Talín', 'Majadahonda',
+  'publico', 'laico', array['0-3 años']::text[],
+  array['Inglés']::text[], array['Comedor', 'Extraescolares', 'Orientación']::text[], 'Escuela infantil pública municipal de primer ciclo en Majadahonda.',
+  'Consultar dirección pública', '916 39 11 99', null, 'https://www.comunidad.madrid/centros/escuela-educacion-infantil-talin',
+  'Web oficial del centro', 'https://www.comunidad.madrid/centros/escuela-educacion-infantil-talin', '2026-10-11',
   'collected', array['Público', '0-3 años']::text[], 'https://images.unsplash.com/photo-1544253386-89d1b7642674?auto=format&fit=crop&w=1200&q=80', 'approved', 'tenlo_curated'
 ) on conflict (slug) do update set
   external_key = excluded.external_key,
@@ -1511,7 +1613,7 @@ where public.services.owner_id is null
 
 
 
--- Comprobaciones esperadas para este lote: 18 centros, 11 proveedores y 13 servicios.
+-- Comprobaciones esperadas para este lote: 21 centros, 11 proveedores y 13 servicios.
 
 select record_origin, count(*) from public.centers group by record_origin order by record_origin;
 
