@@ -34,21 +34,81 @@ function roleLabel(role: string) {
   return "Cuenta Tenlo";
 }
 
+function normalizePublicName(value: string) {
+  return value.trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+function isValidPublicName(value: string) {
+  const normalized = normalizePublicName(value);
+  return normalized.length >= 3 && normalized.length <= 40 && /^[\p{L}\p{N} ._-]+$/u.test(normalized);
+}
+
 export default function AccountSettings({ email, displayName, role, status, municipality, marketingConsent, marketingConsentAt, marketingConsentWithdrawnAt }: AccountSettingsProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
   const [currentPassword, setCurrentPassword] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [displayNameValue, setDisplayNameValue] = useState(displayName);
   const [municipalityValue, setMunicipalityValue] = useState(municipality ?? "");
   const [marketingConsentValue, setMarketingConsentValue] = useState(marketingConsent);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState("");
-  const [loading, setLoading] = useState<"password" | "municipality" | "marketing" | "delete" | "logout" | null>(null);
+  const [loading, setLoading] = useState<"profile" | "password" | "municipality" | "marketing" | "delete" | "logout" | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  async function handlePublicNameUpdate(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError(null);
+    setMessage(null);
+
+    const publicName = displayNameValue.trim().replace(/\s+/g, " ");
+    if (!isValidPublicName(publicName)) {
+      setError("El nombre público debe tener entre 3 y 40 caracteres y usar solo letras, números, espacios, punto, guion o guion bajo.");
+      return;
+    }
+
+    const { data: authData } = await supabase.auth.getUser();
+    const user = authData.user;
+    if (!user) {
+      setError("No hemos podido confirmar tu sesión.");
+      return;
+    }
+
+    setLoading("profile");
+    const { error: usernameError } = await supabase.from("profile_usernames").upsert(
+      { profile_id: user.id, public_name_normalized: normalizePublicName(publicName) },
+      { onConflict: "profile_id" }
+    );
+
+    if (usernameError) {
+      setLoading(null);
+      setError(usernameError.code === "23505" ? "Ese nombre público ya está en uso." : "No hemos podido reservar el nombre público.");
+      return;
+    }
+
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .update({ display_name: publicName, public_name: publicName })
+      .eq("id", user.id);
+    setLoading(null);
+
+    if (profileError) {
+      await supabase.from("profile_usernames").upsert(
+        { profile_id: user.id, public_name_normalized: normalizePublicName(displayName) },
+        { onConflict: "profile_id" }
+      );
+      setError("No hemos podido actualizar el nombre público.");
+      return;
+    }
+
+    setDisplayNameValue(publicName);
+    setMessage("Nombre público actualizado.");
+    router.refresh();
+  }
 
   async function handlePasswordUpdate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -154,7 +214,7 @@ export default function AccountSettings({ email, displayName, role, status, muni
       submission_type: "account_deletion",
       payload: {
         email,
-        display_name: displayName,
+        display_name: displayNameValue,
         requested_from: "datos-cuenta"
       }
     });
@@ -218,7 +278,7 @@ export default function AccountSettings({ email, displayName, role, status, muni
       <section className="card p-5 md:p-6">
         <h2 className="text-xl font-bold text-slatecopy">Datos visibles de la cuenta</h2>
         <p className="mt-2 text-sm leading-6 text-muted">
-          Por seguridad, el email y el nombre público no se editan desde esta pantalla. Si necesitas corregir un dato, contacta con Tenlo.
+          El email identifica tu acceso y requiere un proceso de verificación para cambiarlo. Puedes corregir aquí tu nombre público y municipio.
         </p>
         <dl className="mt-5 grid gap-4 md:grid-cols-2">
           <div className="rounded-2xl bg-soft p-4">
@@ -227,7 +287,7 @@ export default function AccountSettings({ email, displayName, role, status, muni
           </div>
           <div className="rounded-2xl bg-soft p-4">
             <dt className="text-sm font-semibold text-muted">Nombre público</dt>
-            <dd className="mt-1 text-base font-bold text-slatecopy">{displayName}</dd>
+            <dd className="mt-1 text-base font-bold text-slatecopy">{displayNameValue}</dd>
           </div>
           <div className="rounded-2xl bg-soft p-4">
             <dt className="text-sm font-semibold text-muted">Tipo de cuenta</dt>
@@ -238,6 +298,15 @@ export default function AccountSettings({ email, displayName, role, status, muni
             <dd className="mt-1 text-base font-bold text-slatecopy">{statusLabel(status)}</dd>
           </div>
         </dl>
+        <form className="mt-5 grid gap-3 rounded-2xl bg-soft p-4 md:grid-cols-[1fr_auto]" onSubmit={handlePublicNameUpdate}>
+          <label className="field-label">
+            Nombre público
+            <input className="field bg-white font-normal" minLength={3} maxLength={40} value={displayNameValue} onChange={(event) => setDisplayNameValue(event.target.value)} />
+          </label>
+          <button className="btn-secondary self-end justify-center" type="submit" disabled={loading === "profile"}>
+            {loading === "profile" ? "Guardando..." : "Guardar nombre"}
+          </button>
+        </form>
         <form className="mt-5 grid gap-3 rounded-2xl bg-soft p-4 md:grid-cols-[1fr_auto]" onSubmit={handleMunicipalityUpdate}>
           <label className="field-label">
             Municipio principal
