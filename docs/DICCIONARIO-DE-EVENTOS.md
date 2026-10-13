@@ -20,6 +20,7 @@ Versión: `1.0`
 | `filter_applied` | La persona aplica uno o más filtros válidos | `search_id`, origen, categoría, municipio, `filter_count`, `has_keyword` | GA4 |
 | `search_results_viewed` | Se muestran resultados | `search_id`, `vertical_id`, categoría, municipio, filtros normalizados, `result_count`, `zero_results` | GA4 + Supabase |
 | `search_zero_results` | La búsqueda no ofrece opciones | `search_id`, categoría, municipio, filtros | GA4 + Supabase |
+| `search_reformulated` | Se realiza otra búsqueda distinta en los 30 minutos posteriores | `previous_search_id`, `search_id`, categoría, municipio, `has_keyword`, `result_count` | GA4 |
 | `search_refined` | Se modifican filtros o intención | `search_id`, filtro cambiado, número de intento | GA4 + Supabase |
 | `provider_impression` | Una ficha forma parte de los resultados renderizados | `search_id`, identificador de ficha, posición, categoría y municipio | GA4 |
 | `result_opened` | Se abre una ficha desde resultados | `search_id`, `provider_id`, posición, categoría | GA4 |

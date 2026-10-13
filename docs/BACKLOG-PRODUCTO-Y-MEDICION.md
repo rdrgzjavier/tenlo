@@ -323,7 +323,7 @@ Tenlo debe poder explicar qué buscan las familias y qué rendimiento obtiene ca
 - [x] Preparar entidad `search_events` con ID anónimo, consulta normalizada, filtros y número de resultados.
 - [x] Registrar en Supabase término saneado, categoría, municipio, filtros, número de resultados y momento de la búsqueda, tanto para personas anónimas como autenticadas.
 - [x] Clasificar búsquedas con categoría en verticales estables (`education`, `education_support`, `activities`, `care`, `school_goods`); falta clasificar por intención las búsquedas de texto sin categoría.
-- [ ] Registrar reformulaciones: qué cambia la persona cuando la primera búsqueda no le sirve.
+- [x] Registrar reformulaciones enlazadas durante 30 minutos mediante `previous_search_id` y `search_id`, sin guardar ni enviar a GA4 el texto o su firma local.
 - [x] Registrar búsquedas sin resultados y permitir identificar búsquedas con pocos resultados mediante `results_count`.
 - [ ] Distinguir expresamente cuándo existen resultados pero ningún proveedor está disponible.
 - [x] Registrar qué resultados se renderizaron y en qué posición, vinculados mediante `search_id`.

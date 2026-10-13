@@ -16,6 +16,13 @@ type SearchEventRecorderProps = {
 
 const sessionStorageKey = "tenlo_analytics_session_id_v1";
 const recentSearchKey = "tenlo_recent_search_v1";
+const reformulationWindowMs = 30 * 60 * 1000;
+
+type RecentSearch = {
+  signature?: string;
+  recordedAt?: number;
+  searchId?: string;
+};
 
 const verticalByCategory: Record<string, string> = {
   centros: "education",
@@ -52,20 +59,33 @@ function anonymousSessionId() {
   }
 }
 
-function wasRecentlyRecorded(signature: string) {
+function keywordSignature(value: string | null) {
+  if (!value) return "none";
+  let hash = 2166136261;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0).toString(36);
+}
+
+function recentSearch() {
   try {
     const raw = window.sessionStorage.getItem(recentSearchKey);
-    if (!raw) return false;
-    const recent = JSON.parse(raw) as { signature?: string; recordedAt?: number };
-    return recent.signature === signature && Boolean(recent.recordedAt && Date.now() - recent.recordedAt < 5_000);
+    return raw ? JSON.parse(raw) as RecentSearch : null;
   } catch {
-    return false;
+    return null;
   }
 }
 
-function rememberRecording(signature: string) {
+function wasRecentlyRecorded(signature: string) {
+  const recent = recentSearch();
+  return recent?.signature === signature && Boolean(recent.recordedAt && Date.now() - recent.recordedAt < 5_000);
+}
+
+function rememberRecording(signature: string, searchId: string) {
   try {
-    window.sessionStorage.setItem(recentSearchKey, JSON.stringify({ signature, recordedAt: Date.now() }));
+    window.sessionStorage.setItem(recentSearchKey, JSON.stringify({ signature, searchId, recordedAt: Date.now() }));
   } catch {
     // La medición no debe bloquear la experiencia si el almacenamiento está restringido.
   }
@@ -81,17 +101,18 @@ export default function SearchEventRecorder({ query, category, municipality, fil
     const hasSearchIntent = Boolean(query || category || municipality || Object.entries(parsedFilters).some(([key, value]) => key !== "region" && Boolean(value)));
     if (!hasSearchIntent) return;
 
-    const signature = JSON.stringify({ query, category, municipality, serializedFilters, resultsCount });
+    const safeQuery = privacySafeQuery(query);
+    const safeFilters = { ...parsedFilters };
+    delete safeFilters.tag;
+    const signature = JSON.stringify({ keyword: keywordSignature(safeQuery), category, municipality, filters: safeFilters, resultsCount });
     const recordSearch = () => {
       if (lastRecordedSignature.current === signature || wasRecentlyRecorded(signature) || !hasAnalyticsConsent()) return;
+      const previousSearch = recentSearch();
       lastRecordedSignature.current = signature;
-      rememberRecording(signature);
       const resolvedSearchId = searchId || window.crypto.randomUUID();
+      rememberRecording(signature, resolvedSearchId);
       setActiveSearchContext(resolvedSearchId);
-      const safeQuery = privacySafeQuery(query);
       const verticalId = verticalForCategory(category);
-      const safeFilters = { ...parsedFilters };
-      delete safeFilters.tag;
       const eventParams = {
         search_id: resolvedSearchId,
         category: category,
@@ -103,6 +124,22 @@ export default function SearchEventRecorder({ query, category, municipality, fil
       };
       pushTrackingEvent("search_results_viewed", eventParams);
       if (resultsCount === 0) pushTrackingEvent("search_zero_results", eventParams);
+      if (
+        previousSearch?.signature &&
+        previousSearch.signature !== signature &&
+        previousSearch.searchId &&
+        previousSearch.recordedAt &&
+        Date.now() - previousSearch.recordedAt < reformulationWindowMs
+      ) {
+        pushTrackingEvent("search_reformulated", {
+          previous_search_id: previousSearch.searchId,
+          search_id: resolvedSearchId,
+          category,
+          municipality,
+          has_keyword: Boolean(safeQuery),
+          result_count: resultsCount
+        });
+      }
       (JSON.parse(serializedResults) as SearchEventRecorderProps["results"]).forEach((result, index) => {
         pushTrackingEvent("provider_impression", {
           search_id: resolvedSearchId,
