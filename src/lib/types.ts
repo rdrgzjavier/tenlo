@@ -12,11 +12,11 @@ export type Center = {
 };
 
 export type Listing = {
-  id: string; slug: string; userId: string; categoryId: string; centerId?: string; title: string; description: string; municipality: string; area: string; recommendedAgeMin?: number; recommendedAgeMax?: number; price?: number; priceLabel?: string; condition?: "nuevo" | "usado" | "buen estado"; availability?: string; sourceName?: string; sourceUrl?: string; lastReviewed?: string; verificationStatus?: string; isPublicInformation?: boolean; publicationType: "familia" | "proveedor" | "centro" | "comunidad"; status: ModerationStatus; verified: boolean; trustLevel: TrustLevel; image?: string; tags: string[]; details: Record<string, string>;
+  id: string; slug: string; userId: string; categoryId: string; centerId?: string; title: string; description: string; municipality: string; area: string; recommendedAgeMin?: number; recommendedAgeMax?: number; price?: number; priceLabel?: string; condition?: "nuevo" | "usado" | "buen estado"; availability?: string; acceptsRequests?: boolean; sourceName?: string; sourceUrl?: string; lastReviewed?: string; verificationStatus?: string; isPublicInformation?: boolean; publicationType: "familia" | "proveedor" | "centro" | "comunidad"; status: ModerationStatus; verified: boolean; trustLevel: TrustLevel; image?: string; tags: string[]; details: Record<string, string>;
 };
 
 export type Provider = {
-  id: string; userId: string; businessName: string; category: string; description: string; municipality: string; serviceArea: string; website: string; phone: string; email: string; sourceName?: string; sourceUrl?: string; lastReviewed?: string; verificationStatus?: string; isPublicInformation?: boolean; verified: boolean; trustLevel: TrustLevel; plan: ProviderPlan; tags: string[]; image?: string;
+  id: string; userId: string; businessName: string; category: string; description: string; municipality: string; serviceArea: string; website: string; phone: string; email: string; acceptsRequests?: boolean; sourceName?: string; sourceUrl?: string; lastReviewed?: string; verificationStatus?: string; isPublicInformation?: boolean; verified: boolean; trustLevel: TrustLevel; plan: ProviderPlan; tags: string[]; image?: string;
 };
 
 export type CommunityPost = { id: string; title: string; category: string; municipality: string; summary: string; status: ModerationStatus; };

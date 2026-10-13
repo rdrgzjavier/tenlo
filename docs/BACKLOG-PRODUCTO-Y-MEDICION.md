@@ -328,7 +328,7 @@ Tenlo debe poder explicar qué buscan las familias y qué rendimiento obtiene ca
 - [x] Clasificar búsquedas con categoría en verticales estables (`education`, `education_support`, `activities`, `care`, `school_goods`); falta clasificar por intención las búsquedas de texto sin categoría.
 - [x] Registrar reformulaciones enlazadas durante 30 minutos mediante `previous_search_id` y `search_id`, sin guardar ni enviar a GA4 el texto o su firma local.
 - [x] Registrar búsquedas sin resultados y permitir identificar búsquedas con pocos resultados mediante `results_count`.
-- [ ] Distinguir expresamente cuándo existen resultados pero ningún proveedor está disponible.
+- [x] Distinguir cuándo existen fichas de proveedor pero ninguna ha confirmado que acepta solicitudes, tanto en interfaz como en GA4 y en los filtros persistidos de `search_events`.
 - [x] Registrar qué resultados se renderizaron y en qué posición, vinculados mediante `search_id`.
 - [x] Relacionar búsqueda con ficha vista, guardado, compartido y contacto mediante un `search_id` anónimo activo durante 30 minutos. Respuesta y conexión útil se incorporarán cuando exista el flujo del proveedor.
 - [x] Sanear el texto libre antes de persistirlo, descartar posibles emails o teléfonos y no enviarlo a GA4.

@@ -12,7 +12,7 @@ type SearchEventRecorderProps = {
   filters: Record<string, string | undefined>;
   searchId?: string;
   resultsCount: number;
-  results: Array<{ id: string; category: string; municipality: string }>;
+  results: Array<{ id: string; category: string; municipality: string; isProvider: boolean; acceptsRequests: boolean }>;
 };
 
 const sessionStorageKey = "tenlo_analytics_session_id_v1";
@@ -89,7 +89,11 @@ export default function SearchEventRecorder({ query, category, municipality, fil
     const safeQuery = privacySafeQuery(query);
     const safeFilters = { ...parsedFilters };
     delete safeFilters.tag;
-    const signature = JSON.stringify({ keyword: keywordSignature(safeQuery), category, municipality, filters: safeFilters, resultsCount });
+    const parsedResults = JSON.parse(serializedResults) as SearchEventRecorderProps["results"];
+    const providerResultCount = parsedResults.filter((result) => result.isProvider).length;
+    const availableProviderCount = parsedResults.filter((result) => result.isProvider && result.acceptsRequests).length;
+    const noAvailableProviders = providerResultCount > 0 && availableProviderCount === 0;
+    const signature = JSON.stringify({ keyword: keywordSignature(safeQuery), category, municipality, filters: safeFilters, resultsCount, availableProviderCount });
     const recordSearch = () => {
       if (lastRecordedSignature.current === signature || wasRecentlyRecorded(signature) || !hasAnalyticsConsent()) return;
       const previousSearch = recentSearch();
@@ -105,10 +109,14 @@ export default function SearchEventRecorder({ query, category, municipality, fil
         municipality,
         has_keyword: Boolean(safeQuery),
         result_count: resultsCount,
-        zero_results: resultsCount === 0
+        zero_results: resultsCount === 0,
+        provider_result_count: providerResultCount,
+        available_provider_count: availableProviderCount,
+        no_available_providers: noAvailableProviders
       };
       pushTrackingEvent("search_results_viewed", eventParams);
       if (resultsCount === 0) pushTrackingEvent("search_zero_results", eventParams);
+      if (noAvailableProviders) pushTrackingEvent("search_no_available_results", eventParams);
       if (
         previousSearch?.signature &&
         previousSearch.signature !== signature &&
@@ -125,7 +133,7 @@ export default function SearchEventRecorder({ query, category, municipality, fil
           result_count: resultsCount
         });
       }
-      (JSON.parse(serializedResults) as SearchEventRecorderProps["results"]).forEach((result, index) => {
+      parsedResults.forEach((result, index) => {
         pushTrackingEvent("provider_impression", {
           search_id: resolvedSearchId,
           item: result.id,
@@ -148,7 +156,7 @@ export default function SearchEventRecorder({ query, category, municipality, fil
           category_id: category || null,
           vertical_id: verticalId,
           municipality: municipality || null,
-          filters: { ...safeFilters, has_keyword: Boolean(safeQuery) },
+          filters: { ...safeFilters, has_keyword: Boolean(safeQuery), provider_result_count: providerResultCount, available_provider_count: availableProviderCount, no_available_providers: noAvailableProviders },
           results_count: resultsCount,
           zero_results: resultsCount === 0,
           schema_version: "1.0"

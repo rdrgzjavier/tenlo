@@ -22,6 +22,7 @@ export type TrackingAction =
   | "search_submitted"
   | "search_results_viewed"
   | "search_zero_results"
+  | "search_no_available_results"
   | "search_reformulated"
   | "provider_impression"
   | "publish"

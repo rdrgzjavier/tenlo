@@ -101,6 +101,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     if (selected.precio === "25" && listing.price && listing.price > 25) return false;
     return true;
   });
+  const providerResults = filtered.filter((listing) => listing.publicationType === "proveedor");
+  const availableProviderCount = providerResults.filter((listing) => listing.acceptsRequests).length;
+  const hasOnlyUnconfirmedProviders = providerResults.length > 0 && availableProviderCount === 0;
 
   return (
     <div className="section-shell">
@@ -111,7 +114,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         filters={selected}
         searchId={searchId}
         resultsCount={filtered.length}
-        results={filtered.map((listing) => ({ id: listing.id, category: listing.categoryId, municipality: listing.municipality }))}
+        results={filtered.map((listing) => ({ id: listing.id, category: listing.categoryId, municipality: listing.municipality, isProvider: listing.publicationType === "proveedor", acceptsRequests: listing.acceptsRequests === true }))}
       />
       <p className="label">Marketplace local moderado</p>
       <h1 className="page-title">{selected.region === "madrid" ? "Oferta para familias en Madrid" : "Buscar recursos"}</h1>
@@ -139,6 +142,11 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm font-semibold text-slatecopy">{filtered.length} resultado{filtered.length === 1 ? "" : "s"}</p>
           </div>
+          {hasOnlyUnconfirmedProviders ? (
+            <div className="mb-4 rounded-2xl border border-line bg-soft p-4 text-sm leading-6 text-slatecopy" role="status">
+              Hay opciones informativas, pero estos proveedores todavía no han confirmado que acepten solicitudes desde Tenlo. Puedes consultar sus fichas y canales públicos mientras completamos el piloto.
+            </div>
+          ) : null}
           {filtered.length > 0 ? (
             <LoadMoreGrid className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {filtered.map((listing, index) => <ListingCard key={listing.id} listing={listing} searchPosition={index + 1} />)}

@@ -53,6 +53,7 @@ type BusinessRow = {
   last_reviewed: string | null;
   trust_level: TrustLevel;
   commercial_plan: Provider["plan"];
+  accepts_requests: boolean;
   tags: string[];
   image_url: string | null;
 };
@@ -144,6 +145,7 @@ function mapProvider(row: BusinessRow): Provider {
     website: row.website ?? "",
     phone: row.phone ?? "",
     email: row.contact_email ?? "",
+    acceptsRequests: row.accepts_requests,
     sourceName: row.source_name ?? undefined,
     sourceUrl: row.source_url ?? undefined,
     lastReviewed: formatReviewDate(row.last_reviewed),
@@ -205,6 +207,7 @@ function mapService(row: ServiceRow, providerById: Map<string, Provider>): Listi
     recommendedAgeMax: row.age_max ?? undefined,
     priceLabel: row.price_label ?? undefined,
     availability: row.availability ?? undefined,
+    acceptsRequests: provider?.acceptsRequests ?? false,
     sourceName: row.source_name ?? undefined,
     sourceUrl: row.source_url ?? undefined,
     lastReviewed: formatReviewDate(row.last_reviewed),
