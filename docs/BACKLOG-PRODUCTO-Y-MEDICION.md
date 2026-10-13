@@ -327,7 +327,7 @@ Tenlo debe poder explicar qué buscan las familias y qué rendimiento obtiene ca
 - [x] Registrar búsquedas sin resultados y permitir identificar búsquedas con pocos resultados mediante `results_count`.
 - [ ] Distinguir expresamente cuándo existen resultados pero ningún proveedor está disponible.
 - [x] Registrar qué resultados se renderizaron y en qué posición, vinculados mediante `search_id`.
-- [ ] Relacionar búsqueda con ficha vista, guardado, contacto, respuesta y conexión útil.
+- [x] Relacionar búsqueda con ficha vista, guardado, compartido y contacto mediante un `search_id` anónimo activo durante 30 minutos. Respuesta y conexión útil se incorporarán cuando exista el flujo del proveedor.
 - [x] Sanear el texto libre antes de persistirlo, descartar posibles emails o teléfonos y no enviarlo a GA4.
 - [ ] Crear un informe de demanda con:
   - [ ] términos e intenciones más buscados;
@@ -440,17 +440,17 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 
 ### Descubrimiento y búsqueda
 
-- [ ] `search_started`
+- [x] `search_started`: se emite al enviar una búsqueda válida desde Home o `/buscar`, sin incluir el texto buscado.
 - [x] `search_submitted`
 - [x] `search_results_viewed`
 - [x] `search_zero_results`
-- [ ] `filter_applied`
+- [x] `filter_applied`: se emite al aplicar filtros válidos y registra solo categoría, municipio, cantidad de filtros y presencia de palabra clave.
 - [x] `provider_impression`
 - [x] `provider_profile_viewed`
 - [ ] `provider_compared`
 - [x] `provider_saved`
 - [x] `provider_unsaved`
-- [ ] `provider_shared`
+- [x] `provider_shared`: disponible en fichas de centro, servicio y anuncio; registra menú nativo completado o copia de enlace, nunca una cancelación.
 - [x] `provider_suggestion_started`
 - [x] `provider_suggestion_submitted`
 - [x] `map_directions_clicked`

@@ -79,7 +79,7 @@ export default function ServicesPage() {
       </section>
 
       {/* Filters Section */}
-      <ValidatedSearchForm className="filter-shell sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_auto]" message="Completa al menos una palabra clave, zona, tipología o precio para filtrar.">
+      <ValidatedSearchForm className="filter-shell sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_auto]" message="Completa al menos una palabra clave, zona, tipología o precio para filtrar." trackingEvent="filter_applied" trackingPlacement="services_filters">
         <div className="filter-control">
           <Search size={18} className="text-muted" />
           <input name="tag" aria-label="Buscar servicios por palabra clave" placeholder="Palabra clave..." className="filter-input" />

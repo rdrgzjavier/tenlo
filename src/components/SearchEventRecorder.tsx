@@ -9,6 +9,7 @@ type SearchEventRecorderProps = {
   category?: string;
   municipality?: string;
   filters: Record<string, string | undefined>;
+  searchId?: string;
   resultsCount: number;
   results: Array<{ id: string; category: string; municipality: string }>;
 };
@@ -70,7 +71,7 @@ function rememberRecording(signature: string) {
   }
 }
 
-export default function SearchEventRecorder({ query, category, municipality, filters, resultsCount, results }: SearchEventRecorderProps) {
+export default function SearchEventRecorder({ query, category, municipality, filters, searchId, resultsCount, results }: SearchEventRecorderProps) {
   const lastRecordedSignature = useRef("");
   const serializedFilters = JSON.stringify(filters);
   const serializedResults = JSON.stringify(results);
@@ -85,14 +86,14 @@ export default function SearchEventRecorder({ query, category, municipality, fil
       if (lastRecordedSignature.current === signature || wasRecentlyRecorded(signature) || !hasAnalyticsConsent()) return;
       lastRecordedSignature.current = signature;
       rememberRecording(signature);
-      const searchId = window.crypto.randomUUID();
-      setActiveSearchContext(searchId);
+      const resolvedSearchId = searchId || window.crypto.randomUUID();
+      setActiveSearchContext(resolvedSearchId);
       const safeQuery = privacySafeQuery(query);
       const verticalId = verticalForCategory(category);
       const safeFilters = { ...parsedFilters };
       delete safeFilters.tag;
       const eventParams = {
-        search_id: searchId,
+        search_id: resolvedSearchId,
         category: category,
         vertical_id: verticalId,
         municipality,
@@ -104,7 +105,7 @@ export default function SearchEventRecorder({ query, category, municipality, fil
       if (resultsCount === 0) pushTrackingEvent("search_zero_results", eventParams);
       (JSON.parse(serializedResults) as SearchEventRecorderProps["results"]).forEach((result, index) => {
         pushTrackingEvent("provider_impression", {
-          search_id: searchId,
+          search_id: resolvedSearchId,
           item: result.id,
           category: result.category,
           municipality: result.municipality,
@@ -118,7 +119,7 @@ export default function SearchEventRecorder({ query, category, municipality, fil
         const supabase = createSupabaseBrowserClient();
         const { data: authData } = await supabase.auth.getUser();
         await supabase.from("search_events").insert({
-          search_id: searchId,
+          search_id: resolvedSearchId,
           anonymous_session_id: anonymousSessionId(),
           user_id: authData.user?.id ?? null,
           normalized_query: safeQuery,
@@ -144,7 +145,7 @@ export default function SearchEventRecorder({ query, category, municipality, fil
       window.clearTimeout(stopTimer);
       window.removeEventListener("tenlo:analytics-ready", recordSearch);
     };
-  }, [category, municipality, query, resultsCount, serializedFilters, serializedResults]);
+  }, [category, municipality, query, resultsCount, searchId, serializedFilters, serializedResults]);
 
   return null;
 }

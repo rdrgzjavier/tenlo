@@ -1,19 +1,24 @@
 "use client";
 
 import { FormEvent, ReactNode, useId, useState } from "react";
+import { pushTrackingEvent } from "@/lib/analytics";
 
 type ValidatedSearchFormProps = {
   action?: string;
   className?: string;
   children: ReactNode;
   message?: string;
+  trackingEvent?: "filter_applied" | "search_started";
+  trackingPlacement?: string;
 };
 
 export default function ValidatedSearchForm({
   action = "/buscar",
   className,
   children,
-  message = "Completa al menos un campo para buscar o filtrar."
+  message = "Completa al menos un campo para buscar o filtrar.",
+  trackingEvent,
+  trackingPlacement
 }: ValidatedSearchFormProps) {
   const [error, setError] = useState("");
   const errorId = useId();
@@ -27,6 +32,26 @@ export default function ValidatedSearchForm({
       return;
     }
     setError("");
+    if (trackingEvent) {
+      const searchId = window.crypto.randomUUID();
+      let searchIdInput = event.currentTarget.elements.namedItem("search_id") as HTMLInputElement | null;
+      if (!searchIdInput) {
+        searchIdInput = document.createElement("input");
+        searchIdInput.type = "hidden";
+        searchIdInput.name = "search_id";
+        event.currentTarget.append(searchIdInput);
+      }
+      searchIdInput.value = searchId;
+      const activeFields = Array.from(data.entries()).filter(([, value]) => String(value).trim().length > 0);
+      pushTrackingEvent(trackingEvent, {
+        search_id: searchId,
+        placement: trackingPlacement,
+        category: String(data.get("categoria") ?? "") || undefined,
+        municipality: String(data.get("municipio") ?? "") || undefined,
+        filter_count: activeFields.length,
+        has_keyword: Boolean(String(data.get("tag") ?? data.get("q") ?? "").trim())
+      });
+    }
   }
 
   return (

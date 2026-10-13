@@ -9,6 +9,7 @@ import ImageWithFallback from "@/components/ImageWithFallback";
 import InformationTraceability from "@/components/InformationTraceability";
 import JsonLd from "@/components/JsonLd";
 import LocationCard from "@/components/LocationCard";
+import ShareButton from "@/components/ShareButton";
 import { trackingAttrs } from "@/lib/analytics";
 import { centerTypeLabel, religiousCharacterLabel, uniqueDisplayTags } from "@/lib/display-labels";
 import { centers, findCenter } from "@/lib/mock-data";
@@ -114,6 +115,7 @@ export default async function CenterDetailPage({ params }: { params: Promise<{ s
           {centerEmail ? (
             <a href={`mailto:${centerEmail}`} className="btn-secondary mt-3 w-full" {...trackingAttrs("contact_email_clicked", { item: center.id, type: "center" })}><Mail size={16} /> Email</a>
           ) : null}
+          <ShareButton className="btn-secondary mt-3 w-full" itemId={center.id} itemType="center" title={center.name} />
           <div className="my-5 border-t border-line" />
           <h2 className="subsection-title text-ink">¿Representas este centro?</h2>
           <p className="mt-2 text-sm leading-6 text-muted">Si representas este centro, puedes corregir datos, aportar una imagen oficial o solicitar que el equipo de Tenlo valide la ficha.</p>

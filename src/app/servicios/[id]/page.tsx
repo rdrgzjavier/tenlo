@@ -11,6 +11,7 @@ import JsonLd from "@/components/JsonLd";
 import LocationCard from "@/components/LocationCard";
 import ProfileAvatar from "@/components/ProfileAvatar";
 import ProviderProfileSections from "@/components/ProviderProfileSections";
+import ShareButton from "@/components/ShareButton";
 import { trackingAttrs } from "@/lib/analytics";
 import { uniqueDisplayTags } from "@/lib/display-labels";
 import { ageLabel, findProvider, listings, providers } from "@/lib/mock-data";
@@ -184,6 +185,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
               <Phone size={16} /> Llamar
             </a>
           ) : null}
+          <ShareButton className="btn-secondary mt-3 w-full" itemId={provider.id} itemType="provider" title={provider.businessName} />
           <Link href={`/validar-ficha?tipo=servicio&id=${provider.id}`} className="btn-secondary mt-3 w-full" {...trackingAttrs("claim_started", { item: provider.id, type: "provider" })}>¿Es tu negocio?</Link>
         </aside>
       </div>

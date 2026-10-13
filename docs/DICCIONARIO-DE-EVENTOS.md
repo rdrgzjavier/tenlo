@@ -16,7 +16,8 @@ Versión: `1.0`
 
 | Evento | Cuándo ocurre | Propiedades permitidas | Destino |
 |---|---|---|---|
-| `search_started` | La persona inicia una búsqueda | `search_id`, origen | GA4 |
+| `search_started` | La persona envía una búsqueda válida | `search_id`, origen, categoría, municipio, `filter_count`, `has_keyword` | GA4 |
+| `filter_applied` | La persona aplica uno o más filtros válidos | `search_id`, origen, categoría, municipio, `filter_count`, `has_keyword` | GA4 |
 | `search_results_viewed` | Se muestran resultados | `search_id`, `vertical_id`, categoría, municipio, filtros normalizados, `result_count`, `zero_results` | GA4 + Supabase |
 | `search_zero_results` | La búsqueda no ofrece opciones | `search_id`, categoría, municipio, filtros | GA4 + Supabase |
 | `search_refined` | Se modifican filtros o intención | `search_id`, filtro cambiado, número de intento | GA4 + Supabase |
@@ -26,6 +27,8 @@ Versión: `1.0`
 | `provider_suggestion_submitted` | La propuesta queda guardada para revisión | identificador interno de propuesta, categoría normalizada, municipio | GA4 + Supabase |
 
 El término escrito solo se almacena en Supabase tras sanear emails, teléfonos y posibles datos sensibles. GA4 recibe una intención o categoría normalizada, no el texto libre.
+
+Las vistas, guardados, compartidos y contactos heredan durante 30 minutos el `search_id` anónimo de la última búsqueda. Esto permite reconstruir el funnel sin identificar a la persona en GA4.
 
 La entrada inicial a `/buscar` sin término ni filtros no cuenta como búsqueda. Las impresiones se deduplican junto con la búsqueda y `result_opened` hereda el mismo `search_id` cuando el clic procede de una tarjeta de resultados.
 
@@ -38,6 +41,7 @@ El nombre, la web, la ubicación exacta, las notas y los datos de contacto aport
 | Evento | Cuándo ocurre | Propiedades permitidas | Destino |
 |---|---|---|---|
 | `provider_profile_viewed` | Se abre una ficha de proveedor | `provider_id`, categoría, municipio, nivel de confianza | GA4 |
+| `provider_shared` | Se completa el menú nativo de compartir o se copia el enlace de una ficha | `item`, `type`, `method` | GA4 |
 | `center_profile_viewed` | Se abre una ficha de centro | `center_id`, municipio, nivel de confianza | GA4 |
 | `map_directions_clicked` | Se abre el mapa externo para ubicar un centro o negocio | identificador de ficha, tipo de entidad, municipio, origen | GA4 |
 | `provider_saved` | Una persona autenticada guarda una ficha | identificador de ficha, tipo de entidad, categoría, origen | GA4 + Supabase |

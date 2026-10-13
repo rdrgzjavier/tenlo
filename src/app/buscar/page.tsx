@@ -78,6 +78,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     tag: value(resolvedSearchParams, "tag"),
     region: value(resolvedSearchParams, "region")
   };
+  const searchId = value(resolvedSearchParams, "search_id");
 
   const [ageMin, ageMax] = selected.edad?.split("-").map(Number) ?? [];
   const filtered = listings.filter((listing) => {
@@ -108,17 +109,18 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         category={selected.categoria}
         municipality={selected.municipio}
         filters={selected}
+        searchId={searchId}
         resultsCount={filtered.length}
         results={filtered.map((listing) => ({ id: listing.id, category: listing.categoryId, municipality: listing.municipality }))}
       />
       <p className="label">Marketplace local moderado</p>
       <h1 className="page-title">{selected.region === "madrid" ? "Oferta para familias en Madrid" : "Buscar recursos"}</h1>
       <p className="lead">Encuentra publicaciones y servicios alrededor del centro, filtrados por zona y necesidades familiares no identificativas.</p>
-      <ValidatedSearchForm className="card mt-8 grid gap-3 p-4 md:grid-cols-[1fr_0.72fr_0.72fr_auto]" message="Escribe qué buscas o selecciona una zona o categoría.">
+      <ValidatedSearchForm className="card mt-8 grid gap-3 p-4 md:grid-cols-[1fr_0.72fr_0.72fr_auto]" message="Escribe qué buscas o selecciona una zona o categoría." trackingEvent="search_started" trackingPlacement="search_page">
         <label className="field-label">Qué buscas<input name="tag" defaultValue={selected.tag ?? ""} className="field font-normal placeholder:text-muted" placeholder="Actividad, servicio o nombre" /></label>
         <label className="field-label">Zona<select name="municipio" defaultValue={selected.municipio ?? ""} className="field font-normal"><option value="">Todas las zonas</option>{municipalities.map((municipality) => <option key={municipality.id} value={municipality.name}>{municipality.name}</option>)}</select></label>
         <label className="field-label">Categoría<select name="categoria" defaultValue={selected.categoria ?? ""} className="field font-normal"><option value="">Todas las categorías</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
-        <button className="btn-primary self-end" type="submit" {...trackingAttrs("search_submitted", { placement: "search_page" })}>Buscar</button>
+        <button className="btn-primary self-end" type="submit">Buscar</button>
       </ValidatedSearchForm>
       {selected.region === "madrid" ? (
         <div className="mt-6 flex flex-wrap gap-3">

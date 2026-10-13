@@ -170,7 +170,7 @@ export default function Home() {
             </div>
             <h1 className="page-title max-w-3xl">Encuentra, compara y contacta con servicios para tu familia</h1>
             <p className="lead">Actividades, apoyo escolar, salud, tecnología, transporte y mucho más organizado por zona.</p>
-            <ValidatedSearchForm className="mt-8 grid gap-3 rounded-[24px] bg-panel p-3 shadow-soft sm:grid-cols-[1fr_0.72fr_auto]" message="Indica qué quieres encontrar o dónde quieres buscar.">
+            <ValidatedSearchForm className="mt-8 grid gap-3 rounded-[24px] bg-panel p-3 shadow-soft sm:grid-cols-[1fr_0.72fr_auto]" message="Indica qué quieres encontrar o dónde quieres buscar." trackingEvent="search_started" trackingPlacement="home_hero">
               <label className="flex min-h-14 items-center gap-3 rounded-2xl bg-white px-4 ring-1 ring-line">
                 <Search size={20} className="text-muted" aria-hidden />
                 <span className="sr-only">Servicio</span>
@@ -184,7 +184,7 @@ export default function Home() {
                   {municipalities.map((municipality) => <option key={municipality.id} value={municipality.name}>{municipality.name}</option>)}
                 </select>
               </label>
-              <button className="btn-primary min-w-40" type="submit" {...trackingAttrs("search_submitted", { placement: "home_hero" })}>Buscar servicios</button>
+              <button className="btn-primary min-w-40" type="submit">Buscar servicios</button>
             </ValidatedSearchForm>
             <Link href="/centros" className="mt-4 inline-flex w-full items-center justify-center gap-2 text-sm font-bold text-ink md:w-fit md:justify-start">Explorar centros educativos <ArrowRight size={16} aria-hidden /></Link>
             <div className="mt-7 grid justify-items-center gap-4 sm:grid-cols-3 sm:justify-items-stretch">

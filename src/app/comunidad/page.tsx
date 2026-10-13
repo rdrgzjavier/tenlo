@@ -36,7 +36,7 @@ export default function CommunityPage() {
 
       <div className="mt-8">
         <ResponsiveFilterPanel>
-          <ValidatedSearchForm className="filter-shell sm:grid-cols-[1fr_1fr_1fr_auto]" message="Completa al menos una palabra, zona o tipo de contenido para filtrar.">
+          <ValidatedSearchForm className="filter-shell sm:grid-cols-[1fr_1fr_1fr_auto]" message="Completa al menos una palabra, zona o tipo de contenido para filtrar." trackingEvent="filter_applied" trackingPlacement="community_filters">
             <div className="filter-control">
               <Search size={18} className="text-muted" />
               <input name="tag" aria-label="Buscar contenido de comunidad por palabra o etiqueta" placeholder="Busca por palabra o tag..." className="filter-input" />

@@ -13,6 +13,9 @@ export type TrackingAction =
   | "share"
   | "provider_saved"
   | "provider_unsaved"
+  | "provider_shared"
+  | "search_started"
+  | "filter_applied"
   | "search_submitted"
   | "search_results_viewed"
   | "search_zero_results"
@@ -37,6 +40,25 @@ type ActiveSearchContext = {
   search_id: string;
   recorded_at: number;
 };
+
+const searchLinkedActions = new Set<TrackingAction>([
+  "result_opened",
+  "provider_profile_viewed",
+  "center_profile_viewed",
+  "provider_saved",
+  "provider_unsaved",
+  "provider_shared",
+  "contact_started",
+  "contact_email_clicked",
+  "contact_phone_clicked",
+  "contact_web_clicked",
+  "contact_form_completed",
+  "request_created"
+]);
+
+export function shouldAttachSearchContext(action: unknown): action is TrackingAction {
+  return typeof action === "string" && searchLinkedActions.has(action as TrackingAction);
+}
 
 export function hasAnalyticsConsent() {
   if (typeof window === "undefined") return false;
@@ -85,7 +107,8 @@ export function sendTrackingPayload(payload: Record<string, unknown>) {
 
 export function pushTrackingEvent(action: TrackingAction, params: Record<string, TrackingValue>) {
   if (typeof window === "undefined" || !hasAnalyticsConsent()) return;
-  sendTrackingPayload({ event: action, ...eventEnvelope(), ...params });
+  const searchContext = shouldAttachSearchContext(action) ? getActiveSearchContext() : null;
+  sendTrackingPayload({ event: action, ...eventEnvelope(), ...params, ...searchContext });
 }
 
 export function setActiveSearchContext(searchId: string) {
