@@ -297,7 +297,7 @@ Arquitectura inicial recomendada:
 - [x] Crear el informe base `Tenlo - adquisición, búsqueda y conexiones` en Looker Studio y conectarlo a la propiedad GA4 de Tenlo.
 - [ ] Construir las páginas y gráficos de Looker Studio cuando GA4 confirme recepción de datos; no presentar ceros iniciales como rendimiento real.
 - [ ] Revisar Cookiebot antes de que venza la prueba Premium de 14 días y confirmar el plan gratuito aplicable, sin activar una suscripción de pago.
-- [ ] Prohibir el envío a GA4 de nombre, email, teléfono, texto libre, direcciones precisas o información de menores.
+- [x] Prohibir técnicamente el envío a GA4 de nombre, email, teléfono, texto libre, direcciones precisas o información de menores mediante un filtro central aplicado antes del `dataLayer` y de los atributos de medición.
 - [x] Crear el diccionario inicial y la taxonomía `1.0` de eventos; mantenerla versionada conforme se implementen los flujos.
 - [ ] Definir identificadores estables no personales:
   - `provider_id`;

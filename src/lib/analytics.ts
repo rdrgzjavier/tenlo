@@ -34,6 +34,30 @@ export const analyticsSchemaVersion = "1.0";
 
 type TrackingValue = string | number | boolean | undefined;
 
+const protectedTrackingKeys = new Set([
+  "address",
+  "child_name",
+  "contact_email",
+  "contact_phone",
+  "email",
+  "first_name",
+  "full_address",
+  "full_name",
+  "last_name",
+  "message",
+  "minor_name",
+  "name",
+  "normalized_query",
+  "notes",
+  "phone",
+  "query",
+  "search_term",
+  "text"
+]);
+
+const emailPattern = /\b[^\s@]+@[^\s@]+\.[^\s@]+\b/i;
+const phonePattern = /(?:\+?34)?[\s.-]*\d(?:[\s.-]*\d){7,}/;
+
 const activeSearchContextKey = "tenlo_active_search_context_v1";
 
 type ActiveSearchContext = {
@@ -73,11 +97,20 @@ function eventEnvelope() {
   };
 }
 
+function sanitizeTrackingEntries(entries: Array<[string, unknown]>) {
+  return entries.filter(([key, value]) => {
+    if (protectedTrackingKeys.has(key.toLowerCase())) return false;
+    if (typeof value !== "string") return typeof value === "number" || typeof value === "boolean";
+    return value.length <= 120 && !emailPattern.test(value) && !phonePattern.test(value);
+  });
+}
+
 export function trackingAttrs(action: TrackingAction, params: Record<string, TrackingValue>) {
+  const safeParams = Object.fromEntries(sanitizeTrackingEntries(Object.entries(params)));
   return Object.fromEntries(
     Object.entries({
       "data-track-action": action,
-      ...Object.fromEntries(Object.entries(params).map(([key, value]) => [`data-track-${key}`, value]))
+      ...Object.fromEntries(Object.entries(safeParams).map(([key, value]) => [`data-track-${key}`, value]))
     }).filter(([, value]) => value !== undefined)
   );
 }
@@ -86,23 +119,28 @@ export function toDataLayerEvent(element: HTMLElement) {
   const event = element.dataset.trackAction;
   if (!event) return null;
 
+  const params = Object.entries(element.dataset)
+    .filter(([key]) => key.startsWith("track") && key !== "trackAction")
+    .map(([key, value]) => [key.replace(/^track/, "").replace(/^[A-Z]/, (letter) => letter.toLowerCase()), value] as [string, unknown]);
+
   return {
     ...eventEnvelope(),
-    ...Object.fromEntries(
-    Object.entries(element.dataset)
-      .filter(([key]) => key.startsWith("track"))
-      .map(([key, value]) => {
-        const name = key === "trackAction" ? "event" : key.replace(/^track/, "").replace(/^[A-Z]/, (letter) => letter.toLowerCase());
-        return [name, value];
-      })
-    )
+    event,
+    ...Object.fromEntries(sanitizeTrackingEntries(params))
   };
 }
 
 export function sendTrackingPayload(payload: Record<string, unknown>) {
   if (!hasAnalyticsConsent() || !window.dataLayer) return;
   if (typeof payload.event !== "string") return;
-  window.dataLayer.push(payload);
+  const { event, event_id, event_timestamp, schema_version, ...params } = payload;
+  window.dataLayer.push({
+    event,
+    event_id,
+    event_timestamp,
+    schema_version,
+    ...Object.fromEntries(sanitizeTrackingEntries(Object.entries(params)))
+  });
 }
 
 export function pushTrackingEvent(action: TrackingAction, params: Record<string, TrackingValue>) {

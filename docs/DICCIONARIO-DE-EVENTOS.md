@@ -28,6 +28,8 @@ Versión: `1.0`
 
 El término escrito solo se almacena en Supabase tras sanear emails, teléfonos y posibles datos sensibles. GA4 recibe una intención o categoría normalizada, no el texto libre.
 
+La capa común de analítica elimina antes del `dataLayer` los parámetros con claves personales o de texto libre, valores que parezcan emails o teléfonos y cadenas de más de 120 caracteres. La misma protección se aplica a atributos HTML y eventos enviados desde componentes cliente.
+
 Las vistas, guardados, compartidos y contactos heredan durante 30 minutos el `search_id` anónimo de la última búsqueda. Esto permite reconstruir el funnel sin identificar a la persona en GA4.
 
 La entrada inicial a `/buscar` sin término ni filtros no cuenta como búsqueda. Las impresiones se deduplican junto con la búsqueda y `result_opened` hereda el mismo `search_id` cuando el clic procede de una tarjeta de resultados.
