@@ -2,7 +2,7 @@
 
 > Documento vivo para decidir, construir y comprobar el MVP de Tenlo.
 >
-> Última revisión: 11 de octubre de 2026.
+> Última revisión: 13 de octubre de 2026.
 
 ## Cómo utilizar este documento
 
@@ -85,28 +85,27 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 ## Segmento inicial y propuesta de valor
 
 - [x] Elegir el ámbito inicial: actividades y servicios familiares verificables en Las Rozas, Majadahonda, Pozuelo y Boadilla.
-- [ ] Ordenar las subcategorías para que el piloto no intente activar todas al mismo tiempo.
-- [ ] Definir la necesidad concreta que Tenlo ayuda a resolver en ese segmento.
-- [ ] Definir qué significa una opción adecuada para esa necesidad.
-- [ ] Definir la propuesta de valor para la familia en una frase.
-- [ ] Definir la propuesta de valor para el proveedor en una frase.
-- [ ] Fijar el número mínimo de proveedores activos necesarios para iniciar el piloto.
-- [ ] Fijar qué categorías quedan expresamente fuera del primer piloto.
+- [x] Ordenar las subcategorías para que el piloto no intente activar todas al mismo tiempo (`DEFINICIONES-OPERATIVAS-PILOTO.md`).
+- [x] Definir la necesidad concreta que Tenlo ayuda a resolver en ese segmento.
+- [x] Definir qué significa una opción adecuada para esa necesidad.
+- [x] Definir la propuesta de valor para la familia en una frase.
+- [x] Definir la propuesta de valor para el proveedor en una frase.
+- [x] Fijar el mínimo inicial en 10 proveedores activos, al menos dos categorías prioritarias y dos municipios.
+- [x] Dejar fuera de la activación inicial canguros particulares, intercambio entre familias, transporte y oferta sin identidad profesional verificable.
 
 ## Definiciones operativas
 
-- [ ] Definir **conexión útil**.
-  - Propuesta inicial: solicitud suficientemente cualificada, enviada a un proveedor adecuado y respondida dentro del plazo acordado.
-- [ ] Definir cuándo un proveedor está **reclamado**, **completo**, **verificado**, **publicado**, **activo** e **inactivo**.
-- [ ] Definir un SLA inicial de respuesta: `[24/48/72 horas]`.
-- [ ] Definir qué constituye una solicitud relevante y quién puede marcarla como irrelevante.
-- [ ] Definir qué resultado se puede medir durante el piloto: respuesta, conversación, propuesta, reserva o contratación.
+- [x] Definir **conexión útil**: solicitud relevante entregada, respondida en 48 horas con disponibilidad, alternativa o siguiente paso y utilidad confirmada al menos por una parte.
+- [x] Definir cuándo un proveedor está **reclamado**, **completo**, **verificado**, **publicado**, **activo** e **inactivo**.
+- [x] Fijar un SLA inicial de primera respuesta de 48 horas naturales desde la entrega efectiva.
+- [x] Definir qué constituye una solicitud relevante: el proveedor puede marcarla con motivo estructurado y Javier resuelve discrepancias.
+- [x] Medir por separado respuesta, conversación, propuesta, reserva y contratación; los últimos resultados serán autodeclarados durante el piloto.
 - [x] Mantener separados el nivel de confianza y el plan comercial.
   - `Verified`: confianza comprobable.
   - `Pro`: plan comercial con herramientas o beneficios adicionales.
 - [x] Decidir si la reclamación de ficha requiere cuenta desde el principio.
   - Recomendación para el piloto: permitir una solicitud inicial sin registro y verificar la identidad después, para reducir fricción.
-- [ ] Decidir si la familia contacta a un proveedor, a varios o pide a Tenlo una selección asistida.
+- [x] Contacto inicial a un único proveedor; selección asistida por Tenlo si no hay disponibilidad o respuesta dentro del SLA.
 
 ---
 
