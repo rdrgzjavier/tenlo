@@ -40,7 +40,7 @@ export default function ClaimProfileForm({ entityType, entityId, entityName }: C
       return;
     }
 
-    pushTrackingEvent("claim_submitted", { item: entityId, type: entityType });
+    pushTrackingEvent("claim_submitted", { event_id: result.eventId, item: entityId, type: entityType });
     setSent(true);
   }
 

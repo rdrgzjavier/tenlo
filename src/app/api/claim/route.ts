@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
   const data = await request.json();
+  const eventId = crypto.randomUUID();
 
   if (data.company) {
     return NextResponse.json({ ok: true });
@@ -14,6 +15,8 @@ export async function POST(request: Request) {
   const user = authData.user;
 
   const payload = {
+    event_id: eventId,
+    schema_version: "1.0",
     user_id: user?.id ?? null,
     entity_type: String(data.entityType || "provider"),
     entity_id: String(data.entityId || ""),
@@ -69,5 +72,5 @@ export async function POST(request: Request) {
     console.error("Solicitud guardada, pero no se pudo enviar el email", mailError);
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, eventId });
 }

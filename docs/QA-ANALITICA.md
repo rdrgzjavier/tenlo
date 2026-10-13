@@ -12,8 +12,8 @@ Este procedimiento valida el recorrido completo `navegador -> dataLayer -> GTM -
 | Favorito | Evento solo tras confirmar la escritura | Tabla `favorites` | Restricción única `user_id,target_type,target_id`; no emitir si Supabase falla |
 | Compartir | Evento tras completar compartir o copiar | No | Un evento por acción confirmada; cancelar el menú nativo no cuenta |
 | Contacto externo | Evento de clic | No | El clic no se presenta como respuesta ni conexión útil |
-| Solicitud interna | `contact_form_completed` y `request_created` tras insertar | Una fila en `connection_requests` | `request_id` es la clave común; no emitir evento de éxito si falla la escritura |
-| Reclamación | `claim_submitted` tras respuesta correcta de la API | Una fila en `claim_requests` | Identificador persistido de reclamación cuando se incorpore al contrato de respuesta |
+| Solicitud interna | `contact_form_completed` y `request_created` tras insertar | Una fila en `connection_requests` | `event_id` se crea antes de insertar y es común a Supabase y GA4; `request_id` identifica la solicitud |
+| Reclamación | `claim_submitted` tras respuesta correcta de la API | Una fila en `claim_requests` | La API devuelve el `event_id` persistido y el cliente lo reutiliza en GA4 |
 | Newsletter | Evento tras respuesta correcta | Una fila única por email en `newsletter_subscribers` | El email no se envía a GA4; los duplicados se resuelven en Supabase |
 | Respuesta y resultado | No hasta que exista la interfaz del proveedor | Supabase será la fuente de verdad | Un cambio de estado por solicitud y marca temporal de servidor |
 
