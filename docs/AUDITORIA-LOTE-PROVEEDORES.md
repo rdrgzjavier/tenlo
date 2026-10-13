@@ -4,7 +4,7 @@
 >
 > Objetivo: preparar un primer bloque seguro mientras se amplía la migración al mayor número posible de entidades reales del piloto, sin convertir datos didácticos o ficticios en datos reales.
 
-La base de datos y el seed reproducible contienen veintiún centros y once proveedores con fuente revisada. El inventario total contiene 24 centros y 22 proveedores organizativos únicos; los tres perfiles personales ficticios quedan excluidos. Cada entidad pendiente se incorporará en cuanto exista una fuente pública suficiente y sus campos hayan sido contrastados.
+La base de datos contiene veintiún centros y once proveedores con fuente revisada. El seed reproducible añade tres proveedores contrastados y queda preparado para alcanzar catorce proveedores y dieciséis servicios. El inventario total contiene 24 centros y 22 proveedores organizativos únicos; los tres perfiles personales ficticios quedan excluidos. Cada entidad pendiente se incorporará en cuanto exista una fuente pública suficiente y sus campos hayan sido contrastados.
 
 ## Criterio aplicado
 
@@ -34,6 +34,9 @@ La presencia de una web no equivale a verificación ni autoriza a usar imágenes
 | Hop Galaxy Boadilla | Boadilla | https://www.hopgalaxy.com/boadilla | Preparar | Página específica con actividad, dirección, contacto y horario. |
 | El Miniclub | Boadilla | https://elminiclub.com/ | Preparar | Web oficial accesible; revisar los campos concretos antes de ejecutar el lote. |
 | Club Las Encinas de Boadilla | Boadilla | https://www.clublasencinas.es/Pages/108-cumpleanyos_y_celebraciones_infantiles_i_club_las_encinas_de_boadilla | Preparar | Página específica de cumpleaños y celebraciones infantiles. |
+| Pulso Música | Boadilla | https://www.pulsomusica.com/ | Preparar | Sustituye al registro genérico Academia de Música Boadilla; fuente oficial con oferta infantil y contacto. |
+| The Magic Forest | Pozuelo | https://magicforest.kinepolis.es/info-practica | Preparar | Sustituye la fuente secundaria por la página oficial con edades, contacto y horarios de 2026. |
+| Centro Cultural Volturno | Pozuelo | https://www.pozuelodealarcon.org/node/26362 | Preparar | Fuente municipal específica con talleres, contacto y horario de instalaciones. |
 
 ## Centros admitidos para preparación
 
@@ -73,8 +76,6 @@ La presencia de una web no equivale a verificación ni autoriza a usar imágenes
 
 | Registro actual | Motivo | Siguiente acción |
 |---|---|---|
-| The Magic Forest | La fuente disponible es un directorio secundario y puede estar desactualizada. | Localizar y comprobar una fuente oficial vigente. |
-| Centro Cultural Volturno | La URL guardada apunta a la portada municipal, no a una ficha específica. | Localizar una página municipal específica antes de importar. |
 | Centro Deportivo Huerta Vieja | La fuente municipal indica cierre temporal por obras. | Revisar su reapertura antes de incorporarlo como oferta disponible. |
 | Polideportivo Carlos Ruiz | La fuente municipal informa de obras y renovación en curso. | Confirmar qué instalaciones y actividades están operativas antes de importar. |
 
@@ -82,9 +83,9 @@ La presencia de una web no equivale a verificación ni autoriza a usar imágenes
 
 - Inventario actual: 24 centros, 27 proveedores y 51 fichas generadas desde datos mock.
 - Inventario útil para el piloto: 24 centros y 22 proveedores organizativos únicos, antes de contrastar fuentes. Los tres perfiles personales ficticios no se migrarán.
-- Directorio importado en Supabase: 21 centros, 11 proveedores y 13 servicios. Las tres salas de Hanky Planet quedan asociadas a un único proveedor.
+- Directorio importado en Supabase: 21 centros, 11 proveedores y 13 servicios. El siguiente lote idempotente está preparado para alcanzar 14 proveedores y 16 servicios. Las tres salas de Hanky Planet quedan asociadas a un único proveedor.
 - Verificación posterior del 13-10-2026: 0 servicios huérfanos, 0 proveedores con propietario, 0 fichas reclamadas y 0 niveles de confianza elevados.
-- Pendiente de fuente o normalización: 3 centros y 11 proveedores organizativos únicos; los campos dudosos se dejarán vacíos.
+- Pendiente de fuente o normalización: 3 centros y 8 proveedores organizativos únicos; los campos dudosos se dejarán vacíos.
 - No se activa todavía `DIRECTORY_DATA_SOURCE=supabase` ni se modifica la web pública.
 
 ## Comprobaciones antes de ejecutar el lote

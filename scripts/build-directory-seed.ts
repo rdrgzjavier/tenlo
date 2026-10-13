@@ -10,6 +10,7 @@ function hasPublicSource(sourceUrl?: string) {
 // Las salas 2 y 3 de Hanky Planet deben ser servicios del mismo proveedor, no proveedores duplicados.
 const auditedProviderIds = new Set([
   "boadilla-beone",
+  "boadilla-musica",
   "pozuelo-kumon",
   "majadahonda-kidsus",
   "hanky-planet-las-rozas-sala-1",
@@ -20,6 +21,8 @@ const auditedProviderIds = new Set([
   "hop-galaxy-boadilla",
   "el-miniclub-boadilla",
   "club-las-encinas-boadilla",
+  "magic-forest-pozuelo",
+  "centro-cultural-volturno-pozuelo",
 ]);
 
 // Algunos registros mock representan servicios de una misma entidad. Esta tabla

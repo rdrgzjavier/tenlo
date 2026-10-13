@@ -759,6 +759,38 @@ insert into public.business_profiles (
   trust_level, status, source_name, source_url, last_reviewed, claim_status,
   commercial_plan, description, phone, contact_email, tags, image_url, record_origin, details
 ) values (
+  'boadilla-musica', null, 'Pulso Música', 'https://www.pulsomusica.com/',
+  'Boadilla del Monte', 'Boadilla del Monte y alrededores', 'Extraescolares',
+  'collected', 'approved', 'Web oficial del proveedor', 'https://www.pulsomusica.com/',
+  '2026-10-11', 'unclaimed', 'free', 'Escuela de música moderna con iniciación musical desde los 3 años y clases de instrumento desde los 4 años.',
+  '916 32 43 65', null, array['Música', 'Piano', 'Guitarra']::text[],
+  'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
+) on conflict (external_key) where external_key is not null do update set
+  business_name = excluded.business_name,
+  website = excluded.website,
+  municipality = excluded.municipality,
+  service_area = excluded.service_area,
+  category = excluded.category,
+  trust_level = 'collected',
+  status = 'approved',
+  source_name = excluded.source_name,
+  source_url = excluded.source_url,
+  last_reviewed = excluded.last_reviewed,
+  claim_status = case when public.business_profiles.claim_status = 'unclaimed' then 'unclaimed' else public.business_profiles.claim_status end,
+  description = excluded.description,
+  phone = excluded.phone,
+  contact_email = excluded.contact_email,
+  tags = excluded.tags,
+  image_url = excluded.image_url,
+  record_origin = 'tenlo_curated'
+where public.business_profiles.owner_id is null
+  and public.business_profiles.record_origin = 'tenlo_curated';
+
+insert into public.business_profiles (
+  external_key, owner_id, business_name, website, municipality, service_area, category,
+  trust_level, status, source_name, source_url, last_reviewed, claim_status,
+  commercial_plan, description, phone, contact_email, tags, image_url, record_origin, details
+) values (
   'pozuelo-kumon', null, 'Kumon Pozuelo - Estación', 'https://www.kumon.es/pozuelo-estacion',
   'Pozuelo de Alarcón', 'Pozuelo de Alarcón y alrededores', 'Extraescolares',
   'collected', 'approved', 'Web oficial del proveedor', 'https://www.kumon.es/pozuelo-estacion',
@@ -951,11 +983,75 @@ insert into public.business_profiles (
   trust_level, status, source_name, source_url, last_reviewed, claim_status,
   commercial_plan, description, phone, contact_email, tags, image_url, record_origin, details
 ) values (
+  'magic-forest-pozuelo', null, 'The Magic Forest', 'https://magicforest.kinepolis.es/info-practica',
+  'Pozuelo de Alarcón', 'Pozuelo de Alarcón y alrededores', 'Ocio familiar',
+  'collected', 'approved', 'Web oficial del proveedor', 'https://magicforest.kinepolis.es/info-practica',
+  '2026-10-11', 'unclaimed', 'free', 'Parque infantil de Kinépolis Ciudad de la Imagen para niños de 4 a 12 años, con visitas y celebraciones de cumpleaños.',
+  '915 12 70 70', 'info@magicforest.es', array['Cumpleaños', 'Parque infantil']::text[],
+  'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
+) on conflict (external_key) where external_key is not null do update set
+  business_name = excluded.business_name,
+  website = excluded.website,
+  municipality = excluded.municipality,
+  service_area = excluded.service_area,
+  category = excluded.category,
+  trust_level = 'collected',
+  status = 'approved',
+  source_name = excluded.source_name,
+  source_url = excluded.source_url,
+  last_reviewed = excluded.last_reviewed,
+  claim_status = case when public.business_profiles.claim_status = 'unclaimed' then 'unclaimed' else public.business_profiles.claim_status end,
+  description = excluded.description,
+  phone = excluded.phone,
+  contact_email = excluded.contact_email,
+  tags = excluded.tags,
+  image_url = excluded.image_url,
+  record_origin = 'tenlo_curated'
+where public.business_profiles.owner_id is null
+  and public.business_profiles.record_origin = 'tenlo_curated';
+
+insert into public.business_profiles (
+  external_key, owner_id, business_name, website, municipality, service_area, category,
+  trust_level, status, source_name, source_url, last_reviewed, claim_status,
+  commercial_plan, description, phone, contact_email, tags, image_url, record_origin, details
+) values (
   'espacio-cultural-mira-pozuelo', null, 'Espacio Cultural MIRA', 'https://www.pozuelodealarcon.org/node/26355',
   'Pozuelo de Alarcón', 'Pozuelo de Alarcón y alrededores', 'Sala multiusos y cultura',
   'collected', 'approved', 'Web oficial del proveedor', 'https://www.pozuelodealarcon.org/node/26355',
   '2026-10-11', 'unclaimed', 'free', 'Centro cultural municipal con instalaciones amplias y programación familiar; las cesiones o usos de sala dependen de normativa y disponibilidad municipal.',
   '917 62 83 00', 'pmc@pozuelo.madrid', array['Centro cultural', 'Sala multiusos', 'Actividades familiares', 'Pozuelo']::text[],
+  'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
+) on conflict (external_key) where external_key is not null do update set
+  business_name = excluded.business_name,
+  website = excluded.website,
+  municipality = excluded.municipality,
+  service_area = excluded.service_area,
+  category = excluded.category,
+  trust_level = 'collected',
+  status = 'approved',
+  source_name = excluded.source_name,
+  source_url = excluded.source_url,
+  last_reviewed = excluded.last_reviewed,
+  claim_status = case when public.business_profiles.claim_status = 'unclaimed' then 'unclaimed' else public.business_profiles.claim_status end,
+  description = excluded.description,
+  phone = excluded.phone,
+  contact_email = excluded.contact_email,
+  tags = excluded.tags,
+  image_url = excluded.image_url,
+  record_origin = 'tenlo_curated'
+where public.business_profiles.owner_id is null
+  and public.business_profiles.record_origin = 'tenlo_curated';
+
+insert into public.business_profiles (
+  external_key, owner_id, business_name, website, municipality, service_area, category,
+  trust_level, status, source_name, source_url, last_reviewed, claim_status,
+  commercial_plan, description, phone, contact_email, tags, image_url, record_origin, details
+) values (
+  'centro-cultural-volturno-pozuelo', null, 'Centro Cultural Volturno', 'https://www.pozuelodealarcon.org/node/26362',
+  'Pozuelo de Alarcón', 'Pozuelo de Alarcón y alrededores', 'Centro cultural',
+  'collected', 'approved', 'Web oficial del proveedor', 'https://www.pozuelodealarcon.org/node/26362',
+  '2026-10-11', 'unclaimed', 'free', 'Centro cultural municipal con talleres infantiles, juveniles y para adultos en Pozuelo de Alarcón.',
+  '915 12 03 40', 'pmc@pozuelo.madrid', array['Centro cultural', 'Talleres', 'Actividades familiares', 'Pozuelo']::text[],
   'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
 ) on conflict (external_key) where external_key is not null do update set
   business_name = excluded.business_name,
@@ -1093,6 +1189,47 @@ insert into public.services (
   '916 32 73 61', 'https://beone.es/centros-deportivos/madrid/boadilla',
   'Web oficial del proveedor', 'https://beone.es/centros-deportivos/madrid/boadilla', '2026-10-11',
   'collected', 'approved', array['Deporte', 'Natación', 'Fitness']::text[], 'https://images.unsplash.com/photo-1526676037777-05a232554f77?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
+) on conflict (slug) do update set
+  external_key = excluded.external_key,
+  business_profile_id = excluded.business_profile_id,
+  title = excluded.title,
+  category_id = excluded.category_id,
+  municipality = excluded.municipality,
+  service_area = excluded.service_area,
+  description = excluded.description,
+  age_min = excluded.age_min,
+  age_max = excluded.age_max,
+  price_label = excluded.price_label,
+  availability = excluded.availability,
+  contact_email = excluded.contact_email,
+  phone = excluded.phone,
+  website = excluded.website,
+  source_name = excluded.source_name,
+  source_url = excluded.source_url,
+  last_reviewed = excluded.last_reviewed,
+  trust_level = 'collected',
+  status = 'approved',
+  tags = excluded.tags,
+  image_url = excluded.image_url,
+  record_origin = 'tenlo_curated'
+where public.services.owner_id is null
+  and public.services.record_origin = 'tenlo_curated';
+
+insert into public.services (
+  external_key, owner_id, business_profile_id, slug, title, category_id, municipality,
+  service_area, description, age_min, age_max, price_label, availability, contact_email,
+  phone, website, source_name, source_url, last_reviewed, trust_level, status, tags,
+  image_url, record_origin
+) values (
+  'p-boadilla-musica', null,
+  (select id from public.business_profiles where external_key = 'boadilla-musica'),
+  'boadilla-musica', 'Pulso Música', 'extraescolares',
+  'Boadilla del Monte', 'Boadilla del Monte y alrededores', 'Escuela de música moderna con iniciación musical desde los 3 años y clases de instrumento desde los 4 años.',
+  3, 16,
+  'Consultar', 'Consultar grupos, horarios y disponibilidad con la escuela.', null,
+  '916 32 43 65', 'https://www.pulsomusica.com/',
+  'Web oficial del proveedor', 'https://www.pulsomusica.com/', '2026-10-11',
+  'collected', 'approved', array['Música', 'Piano', 'Guitarra']::text[], 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
 ) on conflict (slug) do update set
   external_key = excluded.external_key,
   business_profile_id = excluded.business_profile_id,
@@ -1453,6 +1590,47 @@ insert into public.services (
   phone, website, source_name, source_url, last_reviewed, trust_level, status, tags,
   image_url, record_origin
 ) values (
+  'p-magic-forest-pozuelo', null,
+  (select id from public.business_profiles where external_key = 'magic-forest-pozuelo'),
+  'magic-forest-pozuelo', 'The Magic Forest', 'extraescolares',
+  'Pozuelo de Alarcón', 'Pozuelo de Alarcón y alrededores', 'Parque infantil de Kinépolis Ciudad de la Imagen para niños de 4 a 12 años, con visitas y celebraciones de cumpleaños.',
+  3, 16,
+  'Consultar', 'Mié-jue 17:00-20:30, vie 17:00-21:30, sáb 11:00-21:30 y dom 11:00-20:30; consultar cambios y días especiales.', 'info@magicforest.es',
+  '915 12 70 70', 'https://magicforest.kinepolis.es/info-practica',
+  'Web oficial del proveedor', 'https://magicforest.kinepolis.es/info-practica', '2026-10-11',
+  'collected', 'approved', array['Cumpleaños', 'Parque infantil']::text[], 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
+) on conflict (slug) do update set
+  external_key = excluded.external_key,
+  business_profile_id = excluded.business_profile_id,
+  title = excluded.title,
+  category_id = excluded.category_id,
+  municipality = excluded.municipality,
+  service_area = excluded.service_area,
+  description = excluded.description,
+  age_min = excluded.age_min,
+  age_max = excluded.age_max,
+  price_label = excluded.price_label,
+  availability = excluded.availability,
+  contact_email = excluded.contact_email,
+  phone = excluded.phone,
+  website = excluded.website,
+  source_name = excluded.source_name,
+  source_url = excluded.source_url,
+  last_reviewed = excluded.last_reviewed,
+  trust_level = 'collected',
+  status = 'approved',
+  tags = excluded.tags,
+  image_url = excluded.image_url,
+  record_origin = 'tenlo_curated'
+where public.services.owner_id is null
+  and public.services.record_origin = 'tenlo_curated';
+
+insert into public.services (
+  external_key, owner_id, business_profile_id, slug, title, category_id, municipality,
+  service_area, description, age_min, age_max, price_label, availability, contact_email,
+  phone, website, source_name, source_url, last_reviewed, trust_level, status, tags,
+  image_url, record_origin
+) values (
   'p-espacio-cultural-mira-pozuelo', null,
   (select id from public.business_profiles where external_key = 'espacio-cultural-mira-pozuelo'),
   'espacio-cultural-mira-pozuelo', 'Espacio Cultural MIRA', 'extraescolares',
@@ -1462,6 +1640,47 @@ insert into public.services (
   '917 62 83 00', 'https://www.pozuelodealarcon.org/node/26355',
   'Web oficial del proveedor', 'https://www.pozuelodealarcon.org/node/26355', '2026-10-11',
   'collected', 'approved', array['Centro cultural', 'Sala multiusos', 'Actividades familiares', 'Pozuelo']::text[], 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
+) on conflict (slug) do update set
+  external_key = excluded.external_key,
+  business_profile_id = excluded.business_profile_id,
+  title = excluded.title,
+  category_id = excluded.category_id,
+  municipality = excluded.municipality,
+  service_area = excluded.service_area,
+  description = excluded.description,
+  age_min = excluded.age_min,
+  age_max = excluded.age_max,
+  price_label = excluded.price_label,
+  availability = excluded.availability,
+  contact_email = excluded.contact_email,
+  phone = excluded.phone,
+  website = excluded.website,
+  source_name = excluded.source_name,
+  source_url = excluded.source_url,
+  last_reviewed = excluded.last_reviewed,
+  trust_level = 'collected',
+  status = 'approved',
+  tags = excluded.tags,
+  image_url = excluded.image_url,
+  record_origin = 'tenlo_curated'
+where public.services.owner_id is null
+  and public.services.record_origin = 'tenlo_curated';
+
+insert into public.services (
+  external_key, owner_id, business_profile_id, slug, title, category_id, municipality,
+  service_area, description, age_min, age_max, price_label, availability, contact_email,
+  phone, website, source_name, source_url, last_reviewed, trust_level, status, tags,
+  image_url, record_origin
+) values (
+  'p-centro-cultural-volturno-pozuelo', null,
+  (select id from public.business_profiles where external_key = 'centro-cultural-volturno-pozuelo'),
+  'centro-cultural-volturno-pozuelo', 'Centro Cultural Volturno', 'extraescolares',
+  'Pozuelo de Alarcón', 'Pozuelo de Alarcón y alrededores', 'Centro cultural municipal con talleres infantiles, juveniles y para adultos en Pozuelo de Alarcón.',
+  3, 16,
+  'Consultar', 'Instalaciones de lunes a viernes de 8:00 a 22:00; secretaría cerrada temporalmente según la ficha municipal.', 'pmc@pozuelo.madrid',
+  '915 12 03 40', 'https://www.pozuelodealarcon.org/node/26362',
+  'Web oficial del proveedor', 'https://www.pozuelodealarcon.org/node/26362', '2026-10-11',
+  'collected', 'approved', array['Centro cultural', 'Talleres', 'Actividades familiares', 'Pozuelo']::text[], 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
 ) on conflict (slug) do update set
   external_key = excluded.external_key,
   business_profile_id = excluded.business_profile_id,
@@ -1613,7 +1832,7 @@ where public.services.owner_id is null
 
 
 
--- Comprobaciones esperadas para este lote: 21 centros, 11 proveedores y 13 servicios.
+-- Comprobaciones esperadas para este lote: 21 centros, 14 proveedores y 16 servicios.
 
 select record_origin, count(*) from public.centers group by record_origin order by record_origin;
 
