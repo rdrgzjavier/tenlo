@@ -395,7 +395,7 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
   - [ ] estado de onboarding;
   - [ ] fecha de última actividad significativa;
   - [ ] estado de cuenta, baja y solicitud de eliminación.
-- [ ] Permitir que la persona consulte, corrija y elimine sus datos.
+- [x] Permitir que la persona consulte sus datos, corrija municipio, contraseña y consentimiento, descargue una copia privada en JSON y solicite su eliminación. La ejecución administrativa de borrado/anonimización sigue el procedimiento pendiente de gobierno del dato.
 - [x] Evitar recoger nombres de menores, clase, horarios, fecha de nacimiento u otros datos sensibles en el registro.
 - [x] No hacer público el centro, email, municipio o intereses de una familia por defecto; `profiles` solo es legible por su titular.
 - [x] No duplicar contraseñas, tokens o datos gestionados por Supabase Auth en tablas propias.
@@ -420,7 +420,7 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 - [x] Separar PII de tablas de eventos y utilizar IDs internos seudónimos para análisis.
 - [ ] Restringir exportaciones y accesos administrativos; registrar quién puede ver o descargar datos.
 - [ ] Definir política de retención para cuentas inactivas, solicitudes, búsquedas y consentimientos.
-- [ ] Definir procedimientos de acceso, rectificación, portabilidad y eliminación.
+- [ ] Completar el procedimiento administrativo de acceso, rectificación y eliminación. La portabilidad básica ya está disponible mediante una exportación JSON privada y la baja se registra como solicitud revisable.
 - [ ] Preparar copias de seguridad y restauración antes de almacenar información real.
 - [ ] Revisar privacidad y seguridad antes de incorporar un CRM, plataforma de emailing o nuevo conector.
 

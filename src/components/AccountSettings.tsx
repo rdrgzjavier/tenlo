@@ -2,7 +2,7 @@
 
 import { type FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, LogOut, Trash2 } from "lucide-react";
+import { Download, Eye, EyeOff, LogOut, Trash2 } from "lucide-react";
 import { municipalities } from "@/lib/mock-data";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
@@ -300,11 +300,16 @@ export default function AccountSettings({ email, displayName, role, status, muni
       <section className="card p-5 md:p-6">
         <h2 className="text-xl font-bold text-slatecopy">Seguridad y baja</h2>
         <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+          <a className="btn-secondary justify-center" href="/api/account/export" download>
+            <Download size={18} aria-hidden />
+            Descargar mis datos
+          </a>
           <button className="btn-secondary justify-center" type="button" onClick={handleLogout} disabled={loading === "logout"}>
             <LogOut size={18} aria-hidden />
             {loading === "logout" ? "Cerrando..." : "Cerrar sesión"}
           </button>
         </div>
+        <p className="mt-3 text-xs leading-5 text-muted">La descarga se genera en el momento, requiere tu sesión activa y no se almacena en el navegador de Tenlo.</p>
         <form className="mt-6 rounded-2xl border border-coral/20 bg-coral/5 p-4" onSubmit={handleDeleteRequest}>
           <h3 className="minor-title">Solicitar borrado de cuenta</h3>
           <p className="mt-2 text-sm leading-6 text-muted">
