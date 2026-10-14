@@ -33,6 +33,8 @@ export type TrackingAction =
   | "provider_landing_viewed"
   | "newsletter_subscribed"
   | "newsletter_failed"
+  | "registration_completed"
+  | "registration_failed"
   | "map_directions_clicked";
 
 export const analyticsSchemaVersion = "1.0";

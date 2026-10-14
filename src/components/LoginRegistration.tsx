@@ -4,6 +4,7 @@ import {
   BriefcaseBusiness,
   Bus,
   CalendarDays,
+  CheckCircle2,
   Eye,
   EyeOff,
   GraduationCap,
@@ -19,6 +20,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { type FormEvent, useMemo, useState } from "react";
 import { centers, municipalities } from "@/lib/mock-data";
+import { pushTrackingEvent } from "@/lib/analytics";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import type { ProfileRole } from "@/lib/supabase/types";
 
@@ -191,8 +193,8 @@ export default function LoginRegistration() {
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [accepted, setAccepted] = useState(false);
   const [loading, setLoading] = useState<"login" | "register" | "google" | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [registrationComplete, setRegistrationComplete] = useState(false);
 
   const Icon = typeIcons[userType];
   const showBusinessFields = needsBusinessFields(userType);
@@ -318,7 +320,6 @@ export default function LoginRegistration() {
     event.preventDefault();
     blurActiveField();
     setError(null);
-    setMessage(null);
     setLoading("login");
 
     const { data, error: loginError } = await supabase.auth.signInWithPassword({
@@ -342,52 +343,64 @@ export default function LoginRegistration() {
     event.preventDefault();
     blurActiveField();
     setError(null);
-    setMessage(null);
 
     if (password !== passwordConfirm) {
       setError("Las contraseñas no coinciden.");
+      pushTrackingEvent("registration_failed", { failure_stage: "validation", failure_reason: "password_mismatch", account_type: userType });
       return;
     }
 
     if (!accepted) {
       setError("Debes confirmar que eres una persona adulta o entidad responsable.");
+      pushTrackingEvent("registration_failed", { failure_stage: "validation", failure_reason: "adult_confirmation_missing", account_type: userType });
       return;
     }
 
     const isUsernameAvailable = await checkUsernameAvailability(displayName);
     if (!isUsernameAvailable) {
       setError("El nombre de usuario no está disponible o no cumple el formato.");
+      pushTrackingEvent("registration_failed", { failure_stage: "username_check", failure_reason: "public_name_unavailable", account_type: userType });
       return;
     }
 
     setLoading("register");
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email: registerEmail,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
-        data: {
-          display_name: displayName,
-          role: profileRoleForSelection(userType, subtype),
-          phone: phone || null,
-          municipality,
-          related_center_name: relatedCenter || null,
-          marketing_consent: marketingConsent,
-          marketing_consent_at: marketingConsent ? new Date().toISOString() : null
-        }
-      }
-    });
+    let failureStage = "auth_signup";
 
     try {
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: registerEmail,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
+          data: {
+            display_name: displayName,
+            role: profileRoleForSelection(userType, subtype),
+            phone: phone || null,
+            municipality,
+            related_center_name: relatedCenter || null,
+            marketing_consent: marketingConsent,
+            marketing_consent_at: marketingConsent ? new Date().toISOString() : null
+          }
+        }
+      });
+
       if (signUpError) throw signUpError;
       if (data.user && data.session) {
+        failureStage = "profile_creation";
         await createOrUpdateProfile(data.user.id);
+        pushTrackingEvent("registration_completed", { account_type: userType, confirmation_required: false, marketing_consent: marketingConsent });
         router.push(redirectTo);
         router.refresh();
         return;
       }
-      setMessage("Cuenta creada. Revisa tu email para confirmar el acceso antes de entrar en Tenlo.");
+      pushTrackingEvent("registration_completed", { account_type: userType, confirmation_required: true, marketing_consent: marketingConsent });
+      setRegistrationComplete(true);
     } catch (err) {
+      pushTrackingEvent("registration_failed", {
+        failure_stage: failureStage,
+        failure_reason: isDuplicatePublicNameError(err) ? "public_name_conflict" : "request_rejected",
+        account_type: userType
+      });
       setError(isDuplicatePublicNameError(err) ? "Ese nombre de usuario ya está en uso." : err instanceof Error ? err.message : "No hemos podido crear la cuenta.");
     } finally {
       setLoading(null);
@@ -397,7 +410,6 @@ export default function LoginRegistration() {
   async function handleGoogleLogin() {
     blurActiveField();
     setError(null);
-    setMessage(null);
     setLoading("google");
     const { error: googleError } = await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -421,6 +433,25 @@ export default function LoginRegistration() {
             El perfil representa a una persona adulta, una entidad o un centro. No se solicitan fotos, horarios personales, clases ni datos identificativos de menores.
           </p>
 
+          {registrationComplete ? (
+            <section className="mt-8 rounded-2xl border border-sage/40 bg-sage/10 p-6 text-center md:p-8" role="status" aria-live="polite">
+              <span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-white text-petrol ring-1 ring-sage/40">
+                <CheckCircle2 size={34} aria-hidden />
+              </span>
+              <h2 className="mt-5 text-2xl font-bold text-ink md:text-3xl">Tu cuenta se ha creado correctamente</h2>
+              <p className="mx-auto mt-3 max-w-xl text-base leading-7 text-slatecopy">
+                Te hemos enviado un email para confirmar tu dirección. Abre ese mensaje y pulsa el enlace antes de entrar en Tenlo.
+              </p>
+              <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-muted">
+                Si no lo encuentras, revisa las carpetas de spam o promociones. El correo puede tardar unos minutos.
+              </p>
+              <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+                <Link href="/" className="btn-primary justify-center">Volver al inicio</Link>
+                <button type="button" className="btn-secondary justify-center" onClick={() => setRegistrationComplete(false)}>Entrar en Tenlo</button>
+              </div>
+            </section>
+          ) : (
+          <>
           <div className="mt-6 rounded-2xl border border-line bg-soft p-4">
             <h2 className="text-base font-bold text-slatecopy">¿Ya tienes cuenta?</h2>
             <form className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_auto]" onSubmit={handleLogin}>
@@ -448,8 +479,6 @@ export default function LoginRegistration() {
           </div>
 
           {error ? <p className="mt-4 rounded-xl border border-coral/30 bg-coral/10 p-3 text-sm font-semibold text-coral">{error}</p> : null}
-          {message ? <p className="mt-4 rounded-xl border border-sage/30 bg-sage/10 p-3 text-sm font-semibold text-petrol">{message}</p> : null}
-
           <form className="mt-6 grid gap-5" onSubmit={handleRegister}>
             <section className="rounded-2xl border border-line bg-white p-4">
               <label className="field-label">
@@ -601,6 +630,8 @@ export default function LoginRegistration() {
             </label>
             <button className="btn-primary w-full md:w-fit" type="submit" disabled={passwordMismatch || loading === "register"}>{loading === "register" ? "Creando cuenta..." : "Crear cuenta"}</button>
           </form>
+          </>
+          )}
         </div>
 
         <aside className="rounded-2xl border border-line bg-panel p-5 md:p-6">

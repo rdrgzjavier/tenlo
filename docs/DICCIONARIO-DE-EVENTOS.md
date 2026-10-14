@@ -105,3 +105,12 @@ Las conversiones se revisarán después de comprobar que no existen duplicados e
 | `newsletter_failed` | El alta no puede completarse | origen del formulario | GA4 |
 
 El email y la fecha de consentimiento se almacenan exclusivamente en Supabase. Nunca se envía el email a GA4.
+
+## Registro de usuarios
+
+| Evento | Cuándo ocurre | Propiedades permitidas | Destino |
+|---|---|---|---|
+| `registration_completed` | Supabase Auth acepta el alta | tipo de cuenta, si requiere confirmación y consentimiento comercial como booleanos | GA4; Supabase Auth es la fuente de verdad |
+| `registration_failed` | Una validación o petición impide completar el alta | tipo de cuenta, etapa y motivo normalizados | GA4 |
+
+No se envían a GA4 el email, el teléfono, el nombre de usuario ni el mensaje técnico del error. La cifra total de cuentas creadas se obtiene de Supabase Auth; GA4 sirve para analizar el embudo consentido y localizar etapas con fallos.
