@@ -183,7 +183,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   - [ ] categorías y zonas aceptadas;
   - [x] preparar en el esquema preferencias de contacto;
   - [x] preparar en el esquema motivo de inactividad o rechazo.
-- [ ] Añadir historial de cambios y responsable de cada modificación.
+- [ ] Añadir historial de cambios y responsable de cada modificación. La migración `0017_admin_queue_status_history.sql` crea el historial automático de estados; falta aplicarla y validar su consulta.
 - [ ] Definir reglas RLS y permisos para proveedor, familia, moderación y administración.
 - [ ] Crear copias de seguridad y procedimiento de recuperación.
 
@@ -267,7 +267,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 ## P1. Backoffice mínimo
 
 - [ ] Completar la vista administrativa con fichas y resultados. La primera bandeja privada ya reúne reclamaciones, solicitudes, publicaciones/bajas e incidencias para el rol `tenlo_admin`.
-- [ ] Permitir corregir estados sin editar directamente la base de datos.
+- [ ] Permitir corregir estados sin editar directamente la base de datos. Interfaz, API restringida e historial de cambios preparados; falta aplicar la migración `0017_admin_queue_status_history.sql` en producción y validar el flujo.
 - [ ] Crear alertas para reclamaciones pendientes, solicitudes sin respuesta y fichas desactualizadas. Ya están activas en `/admin` las alertas de solicitudes abiertas durante más de 48 horas y moderaciones pendientes durante más de cuatro días laborables; falta la alerta de fichas desactualizadas.
 - [ ] Registrar notas operativas sin exponerlas al proveedor o a la familia.
 - [x] Exportar datos básicos para seguimiento manual durante el piloto mediante un CSV privado, limitado a `tenlo_admin`, sin textos libres y protegido frente a fórmulas de hoja de cálculo.

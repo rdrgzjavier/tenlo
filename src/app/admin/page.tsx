@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { AlertTriangle, ClipboardCheck, Download, FileCheck2, Flag, Inbox } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
+import AdminStatusControl from "@/components/AdminStatusControl";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -120,6 +121,7 @@ export default async function AdminPage() {
               <p className="mt-2 text-slatecopy">{claim.entity_type} · {claim.entity_id}</p>
               <p className="mt-1 break-all text-muted">{claim.requester_name} · {claim.requester_email}</p>
               <p className="mt-2 text-xs text-muted">{dateLabel(claim.created_at)}</p>
+              <AdminStatusControl queue="claim" recordId={claim.id} currentStatus={claim.status} />
             </article>
           )) : <p className="text-sm text-muted">No hay reclamaciones.</p>}
         </QueueSection>
@@ -131,6 +133,7 @@ export default async function AdminPage() {
               <div className="mt-2"><PriorityFlag visible={overdueRequests.some((item) => item.id === request.id)} label="Más de 48 horas" /></div>
               <p className="mt-2 text-slatecopy">{request.category_id ?? "Sin categoría"} · {request.municipality ?? "Sin municipio"}</p>
               <p className="mt-2 text-xs text-muted">{dateLabel(request.created_at)}</p>
+              <AdminStatusControl queue="connection" recordId={request.id} currentStatus={request.status} />
             </article>
           )) : <p className="text-sm text-muted">No hay solicitudes.</p>}
         </QueueSection>
@@ -141,6 +144,7 @@ export default async function AdminPage() {
               <div className="flex flex-wrap items-center justify-between gap-2"><strong className="text-ink">{submission.submission_type}</strong><span className="chip">{submission.status}</span></div>
               <div className="mt-2"><PriorityFlag visible={overdueSubmissions.some((item) => item.id === submission.id)} label="Más de 4 días laborables" /></div>
               <p className="mt-2 text-xs text-muted">{dateLabel(submission.created_at)}</p>
+              <AdminStatusControl queue="submission" recordId={submission.id} currentStatus={submission.status} />
             </article>
           )) : <p className="text-sm text-muted">No hay publicaciones ni bajas pendientes.</p>}
         </QueueSection>
@@ -153,6 +157,7 @@ export default async function AdminPage() {
               <p className="mt-2 text-slatecopy">{item.item_id ?? "Sin ficha asociada"}</p>
               {item.email ? <p className="mt-1 break-all text-muted">{item.name ? `${item.name} · ` : ""}{item.email}</p> : null}
               <p className="mt-2 text-xs text-muted">{dateLabel(item.created_at)}</p>
+              <AdminStatusControl queue="feedback" recordId={item.id} currentStatus={item.status} />
             </article>
           )) : <p className="text-sm text-muted">No hay avisos pendientes.</p>}
         </QueueSection>
