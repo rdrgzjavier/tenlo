@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { ClipboardCheck, FileCheck2, Flag, Inbox } from "lucide-react";
+import { ClipboardCheck, Download, FileCheck2, Flag, Inbox } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
@@ -58,7 +58,14 @@ export default async function AdminPage() {
     <main className="section-shell">
       <p className="label">Acceso restringido</p>
       <h1 className="page-title">Operación del piloto</h1>
-      <p className="lead max-w-4xl">Cola privada para revisar reclamaciones, solicitudes y tareas recibidas. Los datos de contacto se usan solo para gestionar cada petición.</p>
+      <div className="flex flex-col items-start gap-4 md:flex-row md:items-end md:justify-between">
+        <p className="lead max-w-4xl">Cola privada para revisar reclamaciones, solicitudes y tareas recibidas. Los datos de contacto se usan solo para gestionar cada petición.</p>
+        <a href="/api/admin/export" className="btn-secondary shrink-0" download>
+          <Download size={18} aria-hidden />
+          Exportar CSV
+        </a>
+      </div>
+      <p className="mt-3 max-w-4xl text-sm leading-6 text-muted">La exportación contiene datos operativos y de contacto. Guárdala solo mientras sea necesaria y no la compartas fuera de la gestión del piloto.</p>
       {queryError ? <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">No se ha podido cargar una parte de la cola. Revisa las políticas y vuelve a intentarlo.</p> : null}
 
       <div className="mt-8 grid gap-5 xl:grid-cols-2">

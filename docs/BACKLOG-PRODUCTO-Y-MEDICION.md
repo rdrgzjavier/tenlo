@@ -270,7 +270,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] Permitir corregir estados sin editar directamente la base de datos.
 - [ ] Crear alertas para reclamaciones pendientes, solicitudes sin respuesta y fichas desactualizadas.
 - [ ] Registrar notas operativas sin exponerlas al proveedor o a la familia.
-- [ ] Exportar datos básicos para seguimiento manual durante el piloto.
+- [x] Exportar datos básicos para seguimiento manual durante el piloto mediante un CSV privado, limitado a `tenlo_admin`, sin textos libres y protegido frente a fórmulas de hoja de cálculo.
 
 ---
 
@@ -727,7 +727,7 @@ No iniciar contacto sistemático con proveedores hasta poder marcar:
 - [ ] Build reproducible y variables documentadas.
 - [ ] Fichas iniciales revisadas, con fuente y fecha.
 - [ ] Flujo de reclamación probado de extremo a extremo.
-- [ ] Cola de moderación operativa.
+- [x] Cola de moderación operativa con acceso restringido a `tenlo_admin` y exportación básica para seguimiento manual.
 - [ ] Emails de confirmación y seguimiento funcionando. Plantilla de confirmación de Tenlo preparada; falta crear/configurar Resend, autenticar un subdominio remitente en Cloudflare, conectar SMTP en Supabase y completar una prueba de entrega y confirmación.
 - [ ] Política de privacidad y condiciones alineadas con los datos recogidos.
 - [ ] Taxonomía de eventos P0 implantada y validada.
