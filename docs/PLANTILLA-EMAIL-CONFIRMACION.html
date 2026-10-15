@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Confirma tu cuenta de Tenlo</title>
+  </head>
+  <body style="margin:0;background:#f7f5f2;font-family:Arial,Helvetica,sans-serif;color:#18181b;">
+    <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Confirma tu email para terminar de crear tu cuenta de Tenlo.</div>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#f7f5f2;">
+      <tr>
+        <td align="center" style="padding:32px 16px;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:600px;background:#ffffff;border:1px solid #e7e2dc;border-radius:24px;overflow:hidden;">
+            <tr>
+              <td style="padding:32px 32px 20px;text-align:center;">
+                <img src="https://tenlo.es/brand/tenlo-isotipo-192.png" width="72" height="72" alt="Tenlo" style="display:block;margin:0 auto 14px;border:0;border-radius:18px;">
+                <div style="font-size:28px;line-height:34px;font-weight:800;color:#5b46ff;">Tenlo</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0 32px 32px;">
+                <h1 style="margin:0;font-size:28px;line-height:36px;text-align:center;color:#18181b;">Confirma tu cuenta</h1>
+                <p style="margin:18px 0 0;font-size:16px;line-height:26px;color:#53535b;">Gracias por registrarte en Tenlo, la plataforma para encontrar y contactar con centros, actividades y servicios útiles para familias cerca de ti.</p>
+                <p style="margin:14px 0 0;font-size:16px;line-height:26px;color:#53535b;">Necesitamos comprobar que esta dirección de email es tuya. Pulsa el botón para completar el registro y acceder a tu cuenta.</p>
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                  <tr>
+                    <td align="center" style="padding:28px 0;">
+                      <a href="{{ .ConfirmationURL }}" style="display:inline-block;background:#5b46ff;color:#ffffff;text-decoration:none;font-size:16px;line-height:20px;font-weight:700;padding:16px 28px;border-radius:14px;">Confirmar mi email</a>
+                    </td>
+                  </tr>
+                </table>
+                <p style="margin:0;font-size:14px;line-height:22px;color:#707078;">Si no has creado esta cuenta, puedes ignorar este mensaje. No compartas este enlace con otras personas.</p>
+                <p style="margin:18px 0 0;font-size:12px;line-height:19px;color:#8a8a92;word-break:break-all;">Si el botón no funciona, copia y pega este enlace en tu navegador:<br><a href="{{ .ConfirmationURL }}" style="color:#5b46ff;">{{ .ConfirmationURL }}</a></p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:22px 32px;background:#f2efff;text-align:center;font-size:13px;line-height:20px;color:#64646c;">
+                Tenlo · Servicios y recursos para familias en Madrid noroeste<br>
+                <a href="https://tenlo.es" style="color:#5b46ff;text-decoration:none;font-weight:700;">tenlo.es</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

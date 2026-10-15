@@ -728,7 +728,7 @@ No iniciar contacto sistemático con proveedores hasta poder marcar:
 - [ ] Fichas iniciales revisadas, con fuente y fecha.
 - [ ] Flujo de reclamación probado de extremo a extremo.
 - [ ] Cola de moderación operativa.
-- [ ] Emails de confirmación y seguimiento funcionando.
+- [ ] Emails de confirmación y seguimiento funcionando. Plantilla de confirmación de Tenlo preparada; falta crear/configurar Resend, autenticar un subdominio remitente en Cloudflare, conectar SMTP en Supabase y completar una prueba de entrega y confirmación.
 - [ ] Política de privacidad y condiciones alineadas con los datos recogidos.
 - [ ] Taxonomía de eventos P0 implantada y validada.
 - [ ] Dashboard mínimo o consulta operativa para ver reclamaciones y estados.
