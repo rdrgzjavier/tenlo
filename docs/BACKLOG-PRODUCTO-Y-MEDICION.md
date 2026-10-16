@@ -72,7 +72,7 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - El alias heredado `https://kiryco.vercel.app` continúa respondiendo, pero el dominio canónico público es `https://tenlo.es`.
 - El código utiliza `https://tenlo.es` como dominio canónico por defecto y permite configurarlo por entorno mediante `NEXT_PUBLIC_SITE_URL`.
 - `tenlo.es` y `www.tenlo.es` están conectados a Vercel: la raíz responde en producción y `www` redirige permanentemente (`308`) a `tenlo.es`.
-- La matriz de Vercel fue revisada de nuevo el 7 de octubre de 2026: Supabase está configurado para producción y preview; `ADMIN_EMAIL` y `NEXT_PUBLIC_SITE_URL=https://tenlo.es` están configuradas. `NEXT_PUBLIC_COOKIEBOT_ID` usa el grupo real de Tenlo y `NEXT_PUBLIC_GTM_ID=GTM-KT8CKRPK` está configurada solo en producción. Siguen pendientes `RESEND_API_KEY` y `MAIL_FROM`; `SUPABASE_SERVICE_ROLE_KEY` no se añadirá hasta que una función administrativa la necesite. El 16/10/2026 se creó `notificaciones.tenlo.es` en Resend y se publicaron en Cloudflare sus registros DKIM, SPF/CNAME y DMARC; Resend aún debe completar la verificación antes de crear la clave restringida y conectar SMTP.
+- La matriz de Vercel fue revisada de nuevo el 16 de octubre de 2026: Supabase está configurado para producción y preview; `ADMIN_EMAIL` y `NEXT_PUBLIC_SITE_URL=https://tenlo.es` están configuradas. `NEXT_PUBLIC_COOKIEBOT_ID` usa el grupo real de Tenlo y `NEXT_PUBLIC_GTM_ID=GTM-KT8CKRPK` está configurada solo en producción. `RESEND_API_KEY` y `MAIL_FROM` ya están configuradas solo en Production y el redespliegue `6DVC2TZvP` terminó en estado `Ready`. `SUPABASE_SERVICE_ROLE_KEY` no se añadirá hasta que una función administrativa la necesite. `notificaciones.tenlo.es` está verificado en Resend con DKIM, SPF/CNAME y DMARC publicados; SMTP y la plantilla de confirmación de Tenlo quedaron guardados en Supabase. Falta rotar la credencial tras la configuración y completar el alta de prueba.
 - La zona gratuita `tenlo.es` está activa en Cloudflare con la raíz `A 216.198.79.1` y `www CNAME 4b8f150f986f3ce8.vercel-dns-017.com`, ambos en modo Solo DNS. La resolución pública utiliza `david.ns.cloudflare.com` y `norah.ns.cloudflare.com` desde el 06/10/2026.
 - DonDominio no tiene creada aún ninguna cuenta ni alias de correo para `tenlo.es`.
 
@@ -121,7 +121,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Crear `.env.example` sin secretos con todas las variables requeridas y su finalidad.
 - [x] Documentar variables por entorno: local, preview y production, incluyendo exposición, comportamiento cuando faltan y comprobaciones previas al despliegue.
 - [x] Auditar en Vercel la presencia de Supabase, Resend, Cookiebot, URL pública y correo administrativo por entorno.
-- [ ] Añadir las variables ausentes detectadas en la auditoría y volver a desplegar. `NEXT_PUBLIC_SITE_URL`, Cookiebot y GTM ya están configurados y desplegados; el dominio transaccional y sus DNS ya están preparados. Quedan la verificación final de Resend, `RESEND_API_KEY`, `MAIL_FROM`, SMTP de Supabase y el redespliegue/prueba de entrega.
+- [x] Añadir las variables ausentes detectadas en la auditoría y volver a desplegar. `NEXT_PUBLIC_SITE_URL`, Cookiebot, GTM, `RESEND_API_KEY` y `MAIL_FROM` están configurados en sus entornos previstos. El redespliegue de Production `6DVC2TZvP` terminó en estado `Ready` el 16/10/2026.
 - [x] Corregir en Supabase Auth la `Site URL` a `https://tenlo.es` y añadir `https://tenlo.es/auth/callback` a la lista permitida. Configuración aplicada y redirect OAuth verificado el 16/10/2026; se mantienen temporalmente Kiryco y localhost por compatibilidad.
 - [x] Completar la conexión de `tenlo.es` y `www.tenlo.es` a Vercel: raíz en producción y redirección `308` de `www` verificadas.
 - [x] Definir dominio canónico y redirección única: raíz `tenlo.es`; `www` redirige con `308` a la raíz.
@@ -729,7 +729,7 @@ No iniciar contacto sistemático con proveedores hasta poder marcar:
 - [ ] Fichas iniciales revisadas, con fuente y fecha.
 - [ ] Flujo de reclamación probado de extremo a extremo.
 - [x] Cola de moderación operativa con acceso restringido a `tenlo_admin` y exportación básica para seguimiento manual.
-- [ ] Emails de confirmación y seguimiento funcionando. Plantilla de confirmación de Tenlo preparada; cuenta y subdominio `notificaciones.tenlo.es` creados, con DKIM, SPF/CNAME y DMARC publicados y resolviendo el 16/10/2026. Falta que Resend marque el dominio como verificado, crear una clave restringida, desactivar el seguimiento de enlaces, conectar SMTP en Supabase y completar una prueba de entrega y confirmación.
+- [ ] Emails de confirmación y seguimiento funcionando. `notificaciones.tenlo.es` está verificado; DKIM, SPF/CNAME y DMARC resuelven; el seguimiento de enlaces no está activado; SMTP, remitente y plantilla de confirmación están guardados; y Vercel tiene las variables de Production desplegadas. Falta rotar la clave usada durante la configuración y completar una prueba real de entrega, confirmación y redirección.
 - [ ] Política de privacidad y condiciones alineadas con los datos recogidos.
 - [ ] Taxonomía de eventos P0 implantada y validada.
 - [ ] Dashboard mínimo o consulta operativa para ver reclamaciones y estados.
