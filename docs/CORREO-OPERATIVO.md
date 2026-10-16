@@ -25,9 +25,11 @@ La plantilla preparada para **Confirm sign up** está en `docs/PLANTILLA-EMAIL-C
 
 Antes de activarla:
 
-1. Crear o conectar la cuenta de Resend.
-2. Añadir en Cloudflare los registros SPF y DKIM indicados por Resend para el subdominio.
-3. Verificar el dominio en Resend y desactivar el seguimiento de enlaces para no alterar el enlace de confirmación de Supabase.
+1. [x] Crear la cuenta de Resend de Tenlo y registrar `notificaciones.tenlo.es`.
+2. [x] Añadir en Cloudflare los registros DKIM y SPF/CNAME indicados por Resend, todos en modo `Solo DNS`, y una política DMARC inicial de monitorización (`p=none`). Registros publicados y resueltos públicamente el 16/10/2026.
+3. [ ] Esperar a que Resend complete la verificación del dominio y desactivar el seguimiento de enlaces para no alterar el enlace de confirmación de Supabase.
 4. Configurar en Supabase Authentication > Emails > SMTP Settings el host, puerto, usuario, contraseña y remitente de Resend.
 5. Pegar la plantilla, guardar y realizar un alta de prueba en una dirección distinta.
 6. Verificar remitente, asunto, logotipo, CTA, enlace, versión móvil, carpeta de spam y redirección final.
+
+La credencial de producción debe tener solo permiso de envío y, cuando Resend permita seleccionarlo tras verificar el dominio, quedar restringida a `notificaciones.tenlo.es`. No se guardará en el repositorio.
