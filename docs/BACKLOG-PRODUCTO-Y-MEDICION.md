@@ -122,6 +122,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Documentar variables por entorno: local, preview y production, incluyendo exposición, comportamiento cuando faltan y comprobaciones previas al despliegue.
 - [x] Auditar en Vercel la presencia de Supabase, Resend, Cookiebot, URL pública y correo administrativo por entorno.
 - [ ] Añadir las variables ausentes detectadas en la auditoría y volver a desplegar. `NEXT_PUBLIC_SITE_URL`, Cookiebot y GTM ya están configurados y desplegados; quedan el proveedor de correo transaccional, `RESEND_API_KEY` y `MAIL_FROM`.
+- [ ] Corregir en Supabase Auth la `Site URL`, que el 16/10/2026 todavía apunta a `https://kiryco.vercel.app`, y añadir `https://tenlo.es/auth/callback` a la lista permitida. Mantener temporalmente el callback heredado solo para no romper sesiones o enlaces ya emitidos.
 - [x] Completar la conexión de `tenlo.es` y `www.tenlo.es` a Vercel: raíz en producción y redirección `308` de `www` verificadas.
 - [x] Definir dominio canónico y redirección única: raíz `tenlo.es`; `www` redirige con `308` a la raíz.
 - [x] Cambiar los nameservers en DonDominio a los asignados por Cloudflare.
@@ -183,7 +184,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   - [ ] categorías y zonas aceptadas;
   - [x] preparar en el esquema preferencias de contacto;
   - [x] preparar en el esquema motivo de inactividad o rechazo.
-- [x] Añadir historial de cambios y responsable de cada modificación. La migración `0017_admin_queue_status_history.sql` registra automáticamente cada cambio y `/admin` muestra las últimas acciones con responsable y fecha.
+- [x] Añadir historial de cambios y responsable de cada modificación. La migración `0017_admin_queue_status_history.sql` registra automáticamente cada cambio; el 16/10/2026 se validaron dos transiciones reversibles con responsable y fecha en `/admin`.
 - [ ] Definir reglas RLS y permisos para proveedor, familia, moderación y administración.
 - [ ] Crear copias de seguridad y procedimiento de recuperación.
 
@@ -267,7 +268,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 ## P1. Backoffice mínimo
 
 - [ ] Completar la vista administrativa con fichas y resultados. La primera bandeja privada ya reúne reclamaciones, solicitudes, publicaciones/bajas e incidencias para el rol `tenlo_admin`.
-- [ ] Permitir corregir estados sin editar directamente la base de datos. Interfaz, API restringida e historial de cambios preparados; falta aplicar la migración `0017_admin_queue_status_history.sql` en producción y validar el flujo.
+- [x] Permitir corregir estados sin editar directamente la base de datos. Interfaz, API restringida e historial validados de extremo a extremo el 16/10/2026; el registro usado en la prueba recuperó su estado original.
 - [x] Crear alertas para reclamaciones pendientes, solicitudes sin respuesta y fichas desactualizadas. `/admin` destaca solicitudes abiertas durante más de 48 horas, moderaciones pendientes durante más de cuatro días laborables y fichas sin revisar durante 180 días.
 - [ ] Registrar notas operativas sin exponerlas al proveedor o a la familia.
 - [x] Exportar datos básicos para seguimiento manual durante el piloto mediante un CSV privado, limitado a `tenlo_admin`, sin textos libres y protegido frente a fórmulas de hoja de cálculo.
