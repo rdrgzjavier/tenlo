@@ -183,7 +183,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   - [ ] categorías y zonas aceptadas;
   - [x] preparar en el esquema preferencias de contacto;
   - [x] preparar en el esquema motivo de inactividad o rechazo.
-- [ ] Añadir historial de cambios y responsable de cada modificación. La migración `0017_admin_queue_status_history.sql` crea el historial automático de estados; falta aplicarla y validar su consulta.
+- [x] Añadir historial de cambios y responsable de cada modificación. La migración `0017_admin_queue_status_history.sql` registra automáticamente cada cambio y `/admin` muestra las últimas acciones con responsable y fecha.
 - [ ] Definir reglas RLS y permisos para proveedor, familia, moderación y administración.
 - [ ] Crear copias de seguridad y procedimiento de recuperación.
 

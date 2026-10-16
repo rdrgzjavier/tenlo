@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { AlertTriangle, ClipboardCheck, Download, FileCheck2, Flag, Inbox } from "lucide-react";
+import { AlertTriangle, ClipboardCheck, Download, FileCheck2, Flag, History, Inbox } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import AdminStatusControl from "@/components/AdminStatusControl";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
@@ -69,18 +69,20 @@ export default async function AdminPage() {
   const { data: profile } = await supabase.from("profiles").select("role,status").eq("id", authData.user.id).maybeSingle();
   if (profile?.role !== "tenlo_admin" || profile.status !== "approved") redirect("/area-personal");
 
-  const [claimsResult, requestsResult, submissionsResult, feedbackResult] = await Promise.all([
+  const [claimsResult, requestsResult, submissionsResult, feedbackResult, auditResult] = await Promise.all([
     supabase.from("claim_requests").select("id,entity_type,entity_id,entity_name,requester_name,requester_email,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("connection_requests").select("id,target_type,target_id,category_id,municipality,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("submissions").select("id,submission_type,status,created_at").order("created_at", { ascending: false }).limit(100),
-    supabase.from("feedback_requests").select("id,context,item_id,name,email,status,created_at").order("created_at", { ascending: false }).limit(100)
+    supabase.from("feedback_requests").select("id,context,item_id,name,email,status,created_at").order("created_at", { ascending: false }).limit(100),
+    supabase.from("admin_queue_audit").select("id,queue,record_id,previous_status,new_status,changed_by,changed_at").order("changed_at", { ascending: false }).limit(30)
   ]);
 
-  const queryError = claimsResult.error || requestsResult.error || submissionsResult.error || feedbackResult.error;
+  const queryError = claimsResult.error || requestsResult.error || submissionsResult.error || feedbackResult.error || auditResult.error;
   const claims = claimsResult.data ?? [];
   const requests = requestsResult.data ?? [];
   const submissions = submissionsResult.data ?? [];
   const feedback = feedbackResult.data ?? [];
+  const audit = auditResult.data ?? [];
   const overdueClaims = claims.filter((item) => ["draft", "pending_review"].includes(item.status) && isPastBusinessDaySla(item.created_at, 4));
   const overdueRequests = requests.filter((item) => !["responded", "declined", "closed"].includes(item.status) && isOlderThanHours(item.created_at, 48));
   const overdueSubmissions = submissions.filter((item) => ["draft", "pending_review"].includes(item.status) && isPastBusinessDaySla(item.created_at, 4));
@@ -162,6 +164,26 @@ export default async function AdminPage() {
           )) : <p className="text-sm text-muted">No hay avisos pendientes.</p>}
         </QueueSection>
       </div>
+
+      <section className="card mt-5 p-5 md:p-6">
+        <div className="flex items-center gap-3">
+          <History size={22} className="text-ink" aria-hidden />
+          <h2 className="subsection-title text-ink">Últimos cambios de estado</h2>
+        </div>
+        <p className="mt-2 text-sm leading-6 text-muted">Registro interno de las últimas acciones realizadas desde esta cola.</p>
+        <div className="mt-5 grid gap-3">
+          {audit.length ? audit.map((entry) => (
+            <article key={entry.id} className="rounded-2xl border border-line bg-soft p-4 text-sm">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <strong className="text-ink">{entry.queue} · {entry.record_id}</strong>
+                <span className="text-xs text-muted">{dateLabel(entry.changed_at)}</span>
+              </div>
+              <p className="mt-2 text-slatecopy"><span className="chip">{entry.previous_status}</span> <span aria-hidden>→</span> <span className="chip">{entry.new_status}</span></p>
+              <p className="mt-2 break-all text-xs text-muted">Responsable: {entry.changed_by ?? "Sistema"}</p>
+            </article>
+          )) : <p className="text-sm text-muted">Todavía no hay cambios de estado registrados.</p>}
+        </div>
+      </section>
     </main>
   );
 }
