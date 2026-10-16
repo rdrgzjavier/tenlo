@@ -122,7 +122,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Documentar variables por entorno: local, preview y production, incluyendo exposición, comportamiento cuando faltan y comprobaciones previas al despliegue.
 - [x] Auditar en Vercel la presencia de Supabase, Resend, Cookiebot, URL pública y correo administrativo por entorno.
 - [ ] Añadir las variables ausentes detectadas en la auditoría y volver a desplegar. `NEXT_PUBLIC_SITE_URL`, Cookiebot y GTM ya están configurados y desplegados; quedan el proveedor de correo transaccional, `RESEND_API_KEY` y `MAIL_FROM`.
-- [ ] Corregir en Supabase Auth la `Site URL`, que el 16/10/2026 todavía apunta a `https://kiryco.vercel.app`, y añadir `https://tenlo.es/auth/callback` a la lista permitida. Mantener temporalmente el callback heredado solo para no romper sesiones o enlaces ya emitidos.
+- [x] Corregir en Supabase Auth la `Site URL` a `https://tenlo.es` y añadir `https://tenlo.es/auth/callback` a la lista permitida. Configuración aplicada y redirect OAuth verificado el 16/10/2026; se mantienen temporalmente Kiryco y localhost por compatibilidad.
 - [x] Completar la conexión de `tenlo.es` y `www.tenlo.es` a Vercel: raíz en producción y redirección `308` de `www` verificadas.
 - [x] Definir dominio canónico y redirección única: raíz `tenlo.es`; `www` redirige con `308` a la raíz.
 - [x] Cambiar los nameservers en DonDominio a los asignados por Cloudflare.
