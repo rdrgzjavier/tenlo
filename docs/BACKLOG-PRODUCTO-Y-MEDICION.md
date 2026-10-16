@@ -268,7 +268,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 
 - [ ] Completar la vista administrativa con fichas y resultados. La primera bandeja privada ya reúne reclamaciones, solicitudes, publicaciones/bajas e incidencias para el rol `tenlo_admin`.
 - [ ] Permitir corregir estados sin editar directamente la base de datos. Interfaz, API restringida e historial de cambios preparados; falta aplicar la migración `0017_admin_queue_status_history.sql` en producción y validar el flujo.
-- [ ] Crear alertas para reclamaciones pendientes, solicitudes sin respuesta y fichas desactualizadas. Ya están activas en `/admin` las alertas de solicitudes abiertas durante más de 48 horas y moderaciones pendientes durante más de cuatro días laborables; falta la alerta de fichas desactualizadas.
+- [x] Crear alertas para reclamaciones pendientes, solicitudes sin respuesta y fichas desactualizadas. `/admin` destaca solicitudes abiertas durante más de 48 horas, moderaciones pendientes durante más de cuatro días laborables y fichas sin revisar durante 180 días.
 - [ ] Registrar notas operativas sin exponerlas al proveedor o a la familia.
 - [x] Exportar datos básicos para seguimiento manual durante el piloto mediante un CSV privado, limitado a `tenlo_admin`, sin textos libres y protegido frente a fórmulas de hoja de cálculo.
 

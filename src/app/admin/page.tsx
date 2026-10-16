@@ -39,6 +39,12 @@ function isPastBusinessDaySla(value: string | null | undefined, businessDays: nu
   return deadline ? Date.now() > deadline.getTime() : false;
 }
 
+function staleReviewCutoff(days = 180) {
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - days);
+  return cutoff.toISOString().slice(0, 10);
+}
+
 function PriorityFlag({ visible, label }: { visible: boolean; label: string }) {
   if (!visible) return null;
   return <span className="inline-flex items-center gap-1 rounded-full bg-coral/10 px-2.5 py-1 text-xs font-bold text-coral"><AlertTriangle size={14} aria-hidden />{label}</span>;
@@ -69,25 +75,31 @@ export default async function AdminPage() {
   const { data: profile } = await supabase.from("profiles").select("role,status").eq("id", authData.user.id).maybeSingle();
   if (profile?.role !== "tenlo_admin" || profile.status !== "approved") redirect("/area-personal");
 
-  const [claimsResult, requestsResult, submissionsResult, feedbackResult, auditResult] = await Promise.all([
+  const reviewCutoff = staleReviewCutoff();
+  const [claimsResult, requestsResult, submissionsResult, feedbackResult, auditResult, staleServicesResult, staleCentersResult] = await Promise.all([
     supabase.from("claim_requests").select("id,entity_type,entity_id,entity_name,requester_name,requester_email,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("connection_requests").select("id,target_type,target_id,category_id,municipality,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("submissions").select("id,submission_type,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("feedback_requests").select("id,context,item_id,name,email,status,created_at").order("created_at", { ascending: false }).limit(100),
-    supabase.from("admin_queue_audit").select("id,queue,record_id,previous_status,new_status,changed_by,changed_at").order("changed_at", { ascending: false }).limit(30)
+    supabase.from("admin_queue_audit").select("id,queue,record_id,previous_status,new_status,changed_by,changed_at").order("changed_at", { ascending: false }).limit(30),
+    supabase.from("services").select("id,title,municipality,last_reviewed").eq("status", "approved").or(`last_reviewed.is.null,last_reviewed.lt.${reviewCutoff}`).order("last_reviewed", { ascending: true, nullsFirst: true }).limit(50),
+    supabase.from("centers").select("id,name,municipality,last_reviewed").or(`last_reviewed.is.null,last_reviewed.lt.${reviewCutoff}`).order("last_reviewed", { ascending: true, nullsFirst: true }).limit(50)
   ]);
 
-  const queryError = claimsResult.error || requestsResult.error || submissionsResult.error || feedbackResult.error || auditResult.error;
+  const queryError = claimsResult.error || requestsResult.error || submissionsResult.error || feedbackResult.error || auditResult.error || staleServicesResult.error || staleCentersResult.error;
   const claims = claimsResult.data ?? [];
   const requests = requestsResult.data ?? [];
   const submissions = submissionsResult.data ?? [];
   const feedback = feedbackResult.data ?? [];
   const audit = auditResult.data ?? [];
+  const staleServices = staleServicesResult.data ?? [];
+  const staleCenters = staleCentersResult.data ?? [];
   const overdueClaims = claims.filter((item) => ["draft", "pending_review"].includes(item.status) && isPastBusinessDaySla(item.created_at, 4));
   const overdueRequests = requests.filter((item) => !["responded", "declined", "closed"].includes(item.status) && isOlderThanHours(item.created_at, 48));
   const overdueSubmissions = submissions.filter((item) => ["draft", "pending_review"].includes(item.status) && isPastBusinessDaySla(item.created_at, 4));
   const overdueFeedback = feedback.filter((item) => ["draft", "pending_review"].includes(item.status) && isPastBusinessDaySla(item.created_at, 4));
-  const overdueTotal = overdueClaims.length + overdueRequests.length + overdueSubmissions.length + overdueFeedback.length;
+  const staleTotal = staleServices.length + staleCenters.length;
+  const overdueTotal = overdueClaims.length + overdueRequests.length + overdueSubmissions.length + overdueFeedback.length + staleTotal;
 
   return (
     <main className="section-shell">
@@ -108,7 +120,7 @@ export default async function AdminPage() {
             <AlertTriangle className="mt-0.5 shrink-0 text-coral" size={22} aria-hidden />
             <div>
               <h2 className="text-base font-bold text-ink">{overdueTotal} {overdueTotal === 1 ? "tarea requiere" : "tareas requieren"} atención</h2>
-              <p className="mt-1 text-sm leading-6 text-slatecopy">Solicitudes abiertas durante más de 48 horas o revisiones pendientes que superan cuatro días laborables.</p>
+              <p className="mt-1 text-sm leading-6 text-slatecopy">Solicitudes abiertas durante más de 48 horas, revisiones pendientes que superan cuatro días laborables o fichas sin revisar en los últimos 180 días.</p>
             </div>
           </div>
         </section>
@@ -164,6 +176,34 @@ export default async function AdminPage() {
           )) : <p className="text-sm text-muted">No hay avisos pendientes.</p>}
         </QueueSection>
       </div>
+
+      <section className="card mt-5 p-5 md:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <AlertTriangle size={22} className="text-ink" aria-hidden />
+            <h2 className="subsection-title text-ink">Fichas pendientes de actualización</h2>
+          </div>
+          <span className="chip">{staleTotal}</span>
+        </div>
+        <p className="mt-2 text-sm leading-6 text-muted">Fichas publicadas sin fecha de revisión o cuya última revisión supera 180 días. La alerta no cambia su visibilidad automáticamente.</p>
+        <div className="mt-5 grid gap-3 md:grid-cols-2">
+          {staleServices.map((service) => (
+            <article key={`service-${service.id}`} className="rounded-2xl border border-line bg-soft p-4 text-sm">
+              <strong className="text-ink">{service.title}</strong>
+              <p className="mt-1 text-slatecopy">Servicio · {service.municipality}</p>
+              <p className="mt-2 text-xs text-muted">Última revisión: {service.last_reviewed ? dateLabel(service.last_reviewed) : "No indicada"}</p>
+            </article>
+          ))}
+          {staleCenters.map((center) => (
+            <article key={`center-${center.id}`} className="rounded-2xl border border-line bg-soft p-4 text-sm">
+              <strong className="text-ink">{center.name}</strong>
+              <p className="mt-1 text-slatecopy">Centro · {center.municipality}</p>
+              <p className="mt-2 text-xs text-muted">Última revisión: {center.last_reviewed ? dateLabel(center.last_reviewed) : "No indicada"}</p>
+            </article>
+          ))}
+          {!staleTotal ? <p className="text-sm text-muted">No hay fichas que superen el umbral de revisión.</p> : null}
+        </div>
+      </section>
 
       <section className="card mt-5 p-5 md:p-6">
         <div className="flex items-center gap-3">
