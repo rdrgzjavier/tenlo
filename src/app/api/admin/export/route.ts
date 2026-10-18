@@ -21,7 +21,14 @@ const columns = [
   "contact_email",
   "contact_phone",
   "context",
-  "message"
+  "message",
+  "provider_notified_at",
+  "first_response_at",
+  "closed_at",
+  "provider_response_summary",
+  "alternative_summary",
+  "family_useful",
+  "family_outcome"
 ] as const;
 
 type CsvRow = Partial<Record<(typeof columns)[number], string | null | undefined>>;
@@ -59,7 +66,7 @@ export async function GET() {
     return NextResponse.json({ error: "No tienes permiso para exportar la cola." }, { status: 403 });
   }
 
-  const [claimsResult, requestsResult, submissionsResult, feedbackResult] = await Promise.all([
+  const [claimsResult, requestsResult, submissionsResult, feedbackResult, connectionFeedbackResult] = await Promise.all([
     supabase
       .from("claim_requests")
       .select("id,entity_type,entity_id,entity_name,requester_name,requester_email,requester_phone,status,created_at,updated_at")
@@ -67,7 +74,7 @@ export async function GET() {
       .limit(1000),
     supabase
       .from("connection_requests")
-      .select("id,family_id,provider_id,service_id,target_type,target_id,category_id,municipality,status,created_at,updated_at")
+      .select("id,family_id,provider_id,service_id,target_type,target_id,category_id,municipality,status,provider_notified_at,first_response_at,closed_at,provider_response_summary,alternative_summary,created_at,updated_at")
       .order("created_at", { ascending: false })
       .limit(1000),
     supabase
@@ -79,15 +86,20 @@ export async function GET() {
       .from("feedback_requests")
       .select("id,user_id,context,item_id,name,email,message,status,created_at,updated_at")
       .order("created_at", { ascending: false })
+      .limit(1000),
+    supabase
+      .from("connection_feedback")
+      .select("request_id,useful,outcome")
       .limit(1000)
   ]);
 
-  const failed = [claimsResult, requestsResult, submissionsResult, feedbackResult].find((result) => result.error);
+  const failed = [claimsResult, requestsResult, submissionsResult, feedbackResult, connectionFeedbackResult].find((result) => result.error);
   if (failed?.error) {
     console.error("No se pudo preparar la exportación administrativa", failed.error);
     return NextResponse.json({ error: "No hemos podido preparar la exportación." }, { status: 500 });
   }
 
+  const connectionFeedback = new Map((connectionFeedbackResult.data ?? []).map((item) => [item.request_id, item]));
   const rows: CsvRow[] = [
     ...(claimsResult.data ?? []).map((item) => ({
       queue: "claim",
@@ -114,7 +126,14 @@ export async function GET() {
       municipality: item.municipality,
       account_id: item.family_id,
       provider_id: item.provider_id,
-      service_id: item.service_id
+      service_id: item.service_id,
+      provider_notified_at: item.provider_notified_at,
+      first_response_at: item.first_response_at,
+      closed_at: item.closed_at,
+      provider_response_summary: item.provider_response_summary,
+      alternative_summary: item.alternative_summary,
+      family_useful: connectionFeedback.has(item.id) ? String(connectionFeedback.get(item.id)?.useful) : "",
+      family_outcome: connectionFeedback.get(item.id)?.outcome
     })),
     ...(submissionsResult.data ?? []).map((item) => ({
       queue: "submission",

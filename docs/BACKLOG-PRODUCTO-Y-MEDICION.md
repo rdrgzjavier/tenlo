@@ -733,7 +733,7 @@ No iniciar contacto sistemático con proveedores hasta poder marcar:
 - [ ] Emails de confirmación y seguimiento funcionando. `notificaciones.tenlo.es` está verificado; DKIM, SPF/CNAME y DMARC resuelven; el seguimiento de enlaces no está activado; SMTP, remitente y plantilla de confirmación están guardados; la credencial está rotada y las claves anteriores revocadas; y Vercel tiene las variables de Production desplegadas. Falta completar una prueba real de entrega, confirmación y redirección.
 - [ ] Política de privacidad y condiciones alineadas con los datos recogidos.
 - [ ] Taxonomía de eventos P0 implantada y validada.
-- [ ] Dashboard mínimo o consulta operativa para ver reclamaciones y estados.
+- [x] Dashboard mínimo en administración para ver colas, vencimientos, solicitudes gestionadas, conexiones útiles y mediana de primera respuesta. Las exportaciones incluyen además el seguimiento y el resultado declarado por la familia.
 - [ ] Informe de búsquedas y rendimiento por ficha validado con datos de prueba.
 - [ ] Base de perfiles con RLS, consentimiento de marketing y proceso de baja probados.
 - [ ] Proceso de corrección, retirada y soporte definido.

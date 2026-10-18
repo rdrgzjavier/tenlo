@@ -12,15 +12,16 @@ export async function GET() {
     return NextResponse.json({ error: "Sesión no válida." }, { status: 401 });
   }
 
-  const [profile, favorites, submissions, requests, claims] = await Promise.all([
+  const [profile, favorites, submissions, requests, requestFeedback, claims] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
     supabase.from("favorites").select("target_type,target_id,created_at").eq("user_id", user.id),
     supabase.from("submissions").select("submission_type,payload,status,created_at,updated_at").eq("user_id", user.id),
-    supabase.from("connection_requests").select("target_type,target_id,category_id,municipality,status,relevance,useful_connection,created_at,updated_at").eq("family_id", user.id),
+    supabase.from("connection_requests").select("id,target_type,target_id,category_id,municipality,status,relevance,useful_connection,provider_response_summary,alternative_summary,last_family_update_at,created_at,updated_at").eq("family_id", user.id),
+    supabase.from("connection_feedback").select("request_id,useful,outcome,created_at,updated_at").eq("family_id", user.id),
     supabase.from("claim_requests").select("entity_type,entity_id,entity_name,role_description,corrections,official_website,image_url,status,created_at,updated_at").eq("user_id", user.id)
   ]);
 
-  const failed = [profile, favorites, submissions, requests, claims].find((result) => result.error);
+  const failed = [profile, favorites, submissions, requests, requestFeedback, claims].find((result) => result.error);
   if (failed?.error) {
     console.error("No se pudo preparar la exportación de cuenta", failed.error);
     return NextResponse.json({ error: "No hemos podido preparar tus datos." }, { status: 500 });
@@ -40,6 +41,7 @@ export async function GET() {
     favorites: favorites.data ?? [],
     submissions: submissions.data ?? [],
     connection_requests: requests.data ?? [],
+    connection_feedback: requestFeedback.data ?? [],
     claim_requests: claims.data ?? []
   };
 

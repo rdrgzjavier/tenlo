@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { AlertTriangle, ArrowRight, ClipboardCheck, Download, ExternalLink, FileCheck2, Flag, History, Inbox, Mail, Phone } from "lucide-react";
+import { AlertTriangle, ArrowRight, BarChart3, CheckCircle2, ClipboardCheck, Download, ExternalLink, FileCheck2, Flag, History, Inbox, Mail, Phone } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import AdminStatusControl from "@/components/AdminStatusControl";
 import AdminNotes from "@/components/AdminNotes";
@@ -108,7 +108,7 @@ export default async function AdminPage() {
   const reviewCutoff = staleReviewCutoff();
   const [claimsResult, requestsResult, submissionsResult, feedbackResult, connectionFeedbackResult, auditResult, notesResult, staleServicesResult, staleCentersResult] = await Promise.all([
     supabase.from("claim_requests").select("id,entity_type,entity_id,entity_name,requester_name,requester_email,requester_phone,role_description,corrections,official_website,image_url,status,created_at").order("created_at", { ascending: false }).limit(100),
-    supabase.from("connection_requests").select("id,family_id,target_type,target_id,category_id,municipality,message,contact_preference,status,provider_notified_at,provider_response_summary,alternative_summary,created_at").order("created_at", { ascending: false }).limit(100),
+    supabase.from("connection_requests").select("id,family_id,target_type,target_id,category_id,municipality,message,contact_preference,status,provider_notified_at,provider_response_summary,alternative_summary,first_response_at,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("submissions").select("id,user_id,submission_type,payload,review_notes,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("feedback_requests").select("id,context,item_id,name,email,message,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("connection_feedback").select("request_id,useful,outcome,updated_at").order("updated_at", { ascending: false }).limit(500),
@@ -135,6 +135,18 @@ export default async function AdminPage() {
   const overdueFeedback = feedback.filter((item) => ["draft", "pending_review"].includes(item.status) && isPastBusinessDaySla(item.created_at, 4));
   const staleTotal = staleServices.length + staleCenters.length;
   const overdueTotal = overdueClaims.length + overdueRequests.length + overdueSubmissions.length + overdueFeedback.length + staleTotal;
+  const completedRequests = requests.filter((item) => ["responded", "declined", "closed"].includes(item.status));
+  const usefulConnections = [...connectionFeedback.values()].filter((item) => item.useful).length;
+  const responseHours = requests
+    .filter((item) => item.first_response_at)
+    .map((item) => (new Date(item.first_response_at!).getTime() - new Date(item.created_at).getTime()) / 3_600_000)
+    .filter((hours) => Number.isFinite(hours) && hours >= 0)
+    .sort((a, b) => a - b);
+  const medianResponseHours = responseHours.length
+    ? responseHours.length % 2
+      ? responseHours[Math.floor(responseHours.length / 2)]
+      : (responseHours[responseHours.length / 2 - 1] + responseHours[responseHours.length / 2]) / 2
+    : null;
 
   return (
     <main className="section-shell">
@@ -149,6 +161,21 @@ export default async function AdminPage() {
       </div>
       <p className="mt-3 max-w-4xl text-sm leading-6 text-muted">La exportación contiene datos operativos y de contacto. Guárdala solo mientras sea necesaria y no la compartas fuera de la gestión del piloto.</p>
       {queryError ? <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">No se ha podido cargar una parte de la cola. Revisa las políticas y vuelve a intentarlo.</p> : null}
+      <section className="card mt-6 p-5 md:p-6" aria-labelledby="pilot-summary-title">
+        <div className="flex items-center gap-3">
+          <BarChart3 size={22} className="text-ink" aria-hidden />
+          <div>
+            <h2 id="pilot-summary-title" className="subsection-title text-ink">Resumen del piloto</h2>
+            <p className="mt-1 text-sm text-muted">Indicadores operativos de las solicitudes cargadas en esta cola.</p>
+          </div>
+        </div>
+        <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Solicitudes recibidas</dt><dd className="mt-2 text-3xl font-black text-ink">{requests.length}</dd></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Con gestión cerrada</dt><dd className="mt-2 text-3xl font-black text-ink">{completedRequests.length}</dd><p className="mt-1 text-xs text-muted">Respondidas, rechazadas o cerradas</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Conexiones útiles</dt><dd className="mt-2 flex items-center gap-2 text-3xl font-black text-ink"><CheckCircle2 size={24} aria-hidden />{usefulConnections}</dd><p className="mt-1 text-xs text-muted">Confirmadas por las familias</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Mediana de primera respuesta</dt><dd className="mt-2 text-3xl font-black text-ink">{medianResponseHours === null ? "Sin datos" : medianResponseHours < 24 ? `${Math.round(medianResponseHours)} h` : `${(medianResponseHours / 24).toFixed(1)} d`}</dd><p className="mt-1 text-xs text-muted">Desde la solicitud hasta la respuesta</p></div>
+        </dl>
+      </section>
       {overdueTotal > 0 ? (
         <section className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4" aria-label="Alertas de plazo">
           <div className="flex items-start gap-3">
