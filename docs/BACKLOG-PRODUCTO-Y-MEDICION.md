@@ -72,7 +72,7 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - El alias heredado `https://kiryco.vercel.app` continúa respondiendo, pero el dominio canónico público es `https://tenlo.es`.
 - El código utiliza `https://tenlo.es` como dominio canónico por defecto y permite configurarlo por entorno mediante `NEXT_PUBLIC_SITE_URL`.
 - `tenlo.es` y `www.tenlo.es` están conectados a Vercel: la raíz responde en producción y `www` redirige permanentemente (`308`) a `tenlo.es`.
-- La matriz de Vercel fue revisada de nuevo el 16 de octubre de 2026: Supabase está configurado para producción y preview; `ADMIN_EMAIL` y `NEXT_PUBLIC_SITE_URL=https://tenlo.es` están configuradas. `NEXT_PUBLIC_COOKIEBOT_ID` usa el grupo real de Tenlo y `NEXT_PUBLIC_GTM_ID=GTM-KT8CKRPK` está configurada solo en producción. `RESEND_API_KEY` y `MAIL_FROM` ya están configuradas solo en Production y el redespliegue `6DVC2TZvP` terminó en estado `Ready`. `SUPABASE_SERVICE_ROLE_KEY` no se añadirá hasta que una función administrativa la necesite. `notificaciones.tenlo.es` está verificado en Resend con DKIM, SPF/CNAME y DMARC publicados; SMTP y la plantilla de confirmación de Tenlo quedaron guardados en Supabase. Falta rotar la credencial tras la configuración y completar el alta de prueba.
+- La matriz de Vercel fue revisada de nuevo el 16 de octubre de 2026: Supabase está configurado para producción y preview; `ADMIN_EMAIL` y `NEXT_PUBLIC_SITE_URL=https://tenlo.es` están configuradas. `NEXT_PUBLIC_COOKIEBOT_ID` usa el grupo real de Tenlo y `NEXT_PUBLIC_GTM_ID=GTM-KT8CKRPK` está configurada solo en producción. `RESEND_API_KEY` y `MAIL_FROM` ya están configuradas solo en Production. La credencial de Resend se rotó, quedó restringida al envío desde `notificaciones.tenlo.es`, se sustituyó en Supabase y Vercel, y las claves anteriores fueron revocadas. El despliegue final `CsH3pxef5` terminó en estado `Ready`. `SUPABASE_SERVICE_ROLE_KEY` no se añadirá hasta que una función administrativa la necesite. `notificaciones.tenlo.es` está verificado en Resend con DKIM, SPF/CNAME y DMARC publicados; SMTP y la plantilla de confirmación de Tenlo quedaron guardados en Supabase. Falta completar el alta de prueba.
 - La zona gratuita `tenlo.es` está activa en Cloudflare con la raíz `A 216.198.79.1` y `www CNAME 4b8f150f986f3ce8.vercel-dns-017.com`, ambos en modo Solo DNS. La resolución pública utiliza `david.ns.cloudflare.com` y `norah.ns.cloudflare.com` desde el 06/10/2026.
 - DonDominio no tiene creada aún ninguna cuenta ni alias de correo para `tenlo.es`.
 
@@ -136,6 +136,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 
 - [x] Eliminar cifras por defecto que puedan parecer reales, como las `100` familias registradas.
 - [x] Revisar el mensaje `100% moderado y seguro`; sustituirlo por una afirmación demostrable.
+- [x] Retirar del directorio público los perfiles personales y proveedores de ejemplo sin identidad ni fuente verificable; las futuras fichas de particulares solo se publicarán tras un alta real y revisión.
 - [ ] Revisar cada ficha mock antes de hacerla pública como ficha real.
 - [ ] No considerar una web oficial como verificación suficiente por sí sola.
 - [x] Definir los niveles visibles de confianza: `No verificada`, `Gestionada`, `Verificada` y `Oficial`, independientes del plan comercial y de la titularidad del centro.
@@ -143,7 +144,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Utilizar etiquetas breves y comprensibles para el estado de confianza: `No verificada`, `Gestionada`, `Verificada`, `Oficial`.
 - [x] Crear un mecanismo sencillo para solicitar corrección, retirada o actualización desde cada ficha, con motivo estructurado, contexto de la ficha y plazo máximo visible de 4 días laborables.
 - [x] Identificar visual y semánticamente las imágenes genéricas como `Imagen ilustrativa` para no presentarlas como fotografías oficiales del proveedor o centro.
-- [ ] Documentar para cada imagen remota su fuente, licencia y fecha de revisión; sustituirla por material oficial cuando el titular lo aporte y autorice.
+- [x] Documentar para cada imagen remota su fuente, licencia y fecha de revisión (`INVENTARIO-IMAGENES.md`); sustituirla por material oficial cuando el titular lo aporte y autorice.
 - [x] Revisar la promesa principal de reserva: la portada comunica ahora búsqueda, comparación y contacto. Las menciones restantes describen condiciones o información publicada por terceros, no una reserva dentro de Tenlo.
 
 ## P0. Modelo de datos real
@@ -729,7 +730,7 @@ No iniciar contacto sistemático con proveedores hasta poder marcar:
 - [ ] Fichas iniciales revisadas, con fuente y fecha.
 - [ ] Flujo de reclamación probado de extremo a extremo.
 - [x] Cola de moderación operativa con acceso restringido a `tenlo_admin` y exportación básica para seguimiento manual.
-- [ ] Emails de confirmación y seguimiento funcionando. `notificaciones.tenlo.es` está verificado; DKIM, SPF/CNAME y DMARC resuelven; el seguimiento de enlaces no está activado; SMTP, remitente y plantilla de confirmación están guardados; y Vercel tiene las variables de Production desplegadas. Falta rotar la clave usada durante la configuración y completar una prueba real de entrega, confirmación y redirección.
+- [ ] Emails de confirmación y seguimiento funcionando. `notificaciones.tenlo.es` está verificado; DKIM, SPF/CNAME y DMARC resuelven; el seguimiento de enlaces no está activado; SMTP, remitente y plantilla de confirmación están guardados; la credencial está rotada y las claves anteriores revocadas; y Vercel tiene las variables de Production desplegadas. Falta completar una prueba real de entrega, confirmación y redirección.
 - [ ] Política de privacidad y condiciones alineadas con los datos recogidos.
 - [ ] Taxonomía de eventos P0 implantada y validada.
 - [ ] Dashboard mínimo o consulta operativa para ver reclamaciones y estados.

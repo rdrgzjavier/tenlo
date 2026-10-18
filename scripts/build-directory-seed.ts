@@ -45,17 +45,15 @@ const importableListings = listings.filter(
   (listing) => listing.publicationType === "proveedor" && auditedServiceProviderIds.has(listing.userId),
 );
 
-const personalProviderIds = new Set(["profesor-mates", "canguro-ana", "canguro-laura"]);
-const excludedOrganizationalProviderIds = new Set([
-  "boadilla-british",
-  "boadilla-mencia",
-  "pozuelo-cruiz",
-  "majadahonda-hvieja",
-  "las-rozas-campamentos-activa",
-  "pozuelo-robotica-lab",
-  "majadahonda-club-raqueta",
-  "boadilla-uniformes-local",
-]);
+const sourceProviderIds = new Set(providers.map((provider) => provider.id));
+const personalProviderIds = new Set(
+  ["profesor-mates", "canguro-ana", "canguro-laura"].filter((id) => sourceProviderIds.has(id)),
+);
+const excludedOrganizationalProviderIds = new Set(
+  ["boadilla-british", "boadilla-mencia", "pozuelo-cruiz", "majadahonda-hvieja"].filter((id) =>
+    sourceProviderIds.has(id),
+  ),
+);
 const organizationalProviders = providers.filter((provider) => !personalProviderIds.has(provider.id));
 const uniqueOrganizationalProviderIds = new Set(
   organizationalProviders.map((provider) => canonicalProviderIdBySourceId.get(provider.id) ?? provider.id),

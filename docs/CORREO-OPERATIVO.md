@@ -33,3 +33,5 @@ Antes de activarla:
 6. Verificar remitente, asunto, logotipo, CTA, enlace, versión móvil, carpeta de spam y redirección final.
 
 La credencial de producción debe tener solo permiso de envío y quedar restringida a `notificaciones.tenlo.es`. No se guardará en el repositorio. `RESEND_API_KEY` se configura como secreto de Production y `MAIL_FROM=Tenlo <acceso@notificaciones.tenlo.es>` como configuración de Production en Vercel.
+
+La credencial de producción se rotó el 16/10/2026 después de completar la configuración. La clave final tiene únicamente permiso de envío para `notificaciones.tenlo.es`, quedó instalada en Supabase y Vercel, y el despliegue de Production `CsH3pxef5` terminó en estado `Ready`. Las credenciales anteriores fueron revocadas en Resend y el repositorio no contiene el secreto.

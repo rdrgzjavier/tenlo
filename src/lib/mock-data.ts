@@ -184,9 +184,6 @@ const providerSeeds: ProviderSeed[] = [
   ["pozuelo-kumon", "Kumon Pozuelo - Estación", "Extraescolares", "matemáticas, lectura, inglés", images.activity, "clases-particulares", "Pozuelo de Alarcón", "913 51 81 81", "", "https://www.kumon.es/pozuelo-estacion", "Centro Kumon con programas de Matemáticas, Lectura e English, en modalidad presencial y online.", "Lunes a jueves de 16:30 a 19:00; confirmar turno y disponibilidad con el centro."],
   ["majadahonda-hvieja", "Polideportivo Huerta Vieja", "Extraescolares", "deporte, natación, municipal", images.sport, "extraescolares", "Majadahonda", "916 34 94 24", "deportes@majadahonda.org"],
   ["majadahonda-kidsus", "Kids&Us Majadahonda", "Idiomas", "inglés, niños, método propio", images.activity, "clases-particulares", "Majadahonda", "916 39 10 53", "", "https://www.kidsandus.es/es/academias-ingles/majadahonda", "Academia de inglés para alumnado de 1 a 18 años con cursos adaptados por etapas.", "Lunes a viernes de 12:00 a 20:30; confirmar grupos y disponibilidad con el centro."],
-  ["profesor-mates", "Carlos P.", "Clases particulares", "matemáticas, eso, bachillerato", images.activity, "clases-particulares", "Las Rozas de Madrid", "Contacto protegido", "contacto@tenlo.es"],
-  ["canguro-ana", "Ana M.", "Canguros", "canguro, tardes, ayuda con deberes", images.service, "canguros", "Las Rozas de Madrid", "Contacto protegido", "contacto@tenlo.es"],
-  ["canguro-laura", "Laura R.", "Canguros", "canguro, fines de semana", images.service, "canguros", "Pozuelo de Alarcón", "Contacto protegido", "contacto@tenlo.es"],
   ["hanky-planet-las-rozas-sala-1", "Hanky Planet Las Rozas - Sala 1", "Salas multiusos", "cumpleaños, salas multiusos, ocio familiar", images.birthday, "extraescolares", "Las Rozas de Madrid", "666 222 269", "lasrozas@hankyplanet.com", "https://www.hankyplanet.com/celebracion-de-cumpleanos-en-las-rozas/", "Sala equipada para cumpleaños, comuniones y fiestas familiares, con servicios opcionales de monitores, decoración y catering.", "Turnos publicados: mañana 10:00-14:30, comida 12:00-18:00, tarde 16:30-21:00, cena 20:00-01:00 y noche 22:00-02:00."],
   ["hanky-planet-las-rozas-sala-2", "Hanky Planet Las Rozas - Sala 2", "Salas multiusos", "cumpleaños, salas multiusos, ocio familiar", images.birthday, "extraescolares", "Las Rozas de Madrid", "666 222 269", "lasrozas@hankyplanet.com", "https://fiestalasrozas.com/", "Sala para fiestas privadas con configuración útil para cumpleaños y celebraciones familiares.", "Turnos publicados: mañana 10:00-14:30, comida 12:00-18:00, tarde 16:30-21:00, cena 19:30-01:00 y noche 22:00-00:00."],
   ["hanky-planet-las-rozas-sala-3", "Hanky Planet Las Rozas - Sala 3", "Salas multiusos", "cumpleaños, salas multiusos, ocio familiar", images.birthday, "extraescolares", "Las Rozas de Madrid", "666 222 269", "lasrozas@hankyplanet.com", "https://www.salasdeocio.com/salas/1244-hanky-planet-las-rozas-i", "Sala de uso exclusivo para cumpleaños familiares con equipamiento de ocio y cocina de apoyo.", "Turnos publicados: mañana 10:00-15:00, tarde 16:00-21:00 y noche 22:00-02:00."],
@@ -201,47 +198,6 @@ const providerSeeds: ProviderSeed[] = [
   ["club-las-encinas-boadilla", "Club Las Encinas de Boadilla", "Celebraciones familiares", "cumpleaños, celebraciones familiares, ocio familiar", images.birthday, "extraescolares", "Boadilla del Monte", "916 33 03 64", "Consultar en web", "https://www.clublasencinas.es/Pages/108-cumpleanyos_y_celebraciones_infantiles_i_club_las_encinas_de_boadilla", "Club con instalaciones sociales, infantiles y deportivas en entorno natural para cumpleaños y celebraciones familiares.", "Horario y disponibilidad de cumpleaños sujetos a reserva y calendario del club; confirmar con el centro." ]
 ];
 
-providerSeeds.push(
-  ["las-rozas-campamentos-activa", "Activa Campamentos Las Rozas", "Campamentos", "campamentos urbanos, días sin cole, conciliación", images.activity, "campamentos", "Las Rozas de Madrid", "", "", "", "Campamentos urbanos por semanas y días sin cole para familias de Las Rozas de Madrid.", "Consultar calendario por temporada."],
-  ["pozuelo-robotica-lab", "Robótica Lab Pozuelo", "Talleres tecnológicos", "robótica, programación, tecnología", images.activity, "tecnologia", "Pozuelo de Alarcón", "", "", "", "Talleres de robótica, programación y pensamiento computacional por grupos de edad en Pozuelo.", "Tardes entre semana y campamentos tecnológicos en vacaciones."],
-  ["majadahonda-club-raqueta", "Club Raqueta Majadahonda", "Centros deportivos", "tenis, pádel, escuela deportiva", images.sport, "centros-deportivos", "Majadahonda", "", "", "", "Escuela deportiva con tenis, pádel y actividades de iniciación en Majadahonda.", "Consultar horarios de escuela y grupos."],
-  ["boadilla-uniformes-local", "Uniformes Boadilla", "Uniformes", "uniformes, arreglos, reutilización", images.uniform, "uniformes", "Boadilla del Monte", "", "", "", "Uniformes, prendas escolares y pequeños arreglos en Boadilla del Monte.", "Horario comercial habitual."]
-);
-
-const childcareProfileDetails: Record<string, Record<string, string>> = {
-  "canguro-ana": {
-    Tarifa: "12 €/hora",
-    Disponibilidad: "Tardes entre semana y sábados por la mañana",
-    Preaviso: "Confirmación recomendada con 24 h de antelación",
-    Experiencia: "4 años de experiencia",
-    Referencias: "Referencias disponibles bajo solicitud",
-    Verificaciones: "Identidad y documentación pendientes de validación por Tenlo",
-    Edades: "Infantil y Primaria",
-    Modalidad: "En casa de la familia",
-    Comodidades: "Ayuda con deberes, merienda y rutinas de tarde",
-    Idiomas: "Español",
-    "Disponibilidad semanal": "Lu:Tarde; Ma:Tarde; Mi:Tarde; Ju:Tarde; Vi:Consultar; Sa:Mañana; Do:No disponible"
-  },
-  "canguro-laura": {
-    Tarifa: "14 €/hora",
-    Disponibilidad: "Fines de semana y noches puntuales",
-    Preaviso: "Confirmación recomendada con 48 h de antelación",
-    Experiencia: "3 años de experiencia",
-    Referencias: "Referencias disponibles bajo solicitud",
-    Verificaciones: "Identidad y documentación pendientes de validación por Tenlo",
-    Edades: "Primaria y primeros cursos de ESO",
-    Modalidad: "En casa de la familia",
-    Comodidades: "Cenas sencillas, rutinas de noche y apoyo puntual con deberes",
-    Idiomas: "Español e inglés básico",
-    "Disponibilidad semanal": "Lu:No disponible; Ma:No disponible; Mi:Tarde; Ju:Consultar; Vi:Noche; Sa:Tarde y noche; Do:Mañana"
-  }
-};
-
-const childcareDescriptions: Record<string, string> = {
-  "canguro-ana": "Soy Ana, canguro en Las Rozas. Acompaño rutinas de tarde, merienda y deberes con un trato tranquilo, responsable y cercano.",
-  "canguro-laura": "Soy Laura, canguro en Pozuelo. Trabajo fines de semana y noches puntuales, cuidando rutinas de cena, juego tranquilo y descanso."
-};
-
 export const providers: Provider[] = providerSeeds.map(([id, businessName, category, rawTags, image, categoryId, municipality, phone, email, website, description]) => {
   const hasOfficialWebsite = Boolean(website?.startsWith("http"));
   const protectedContact = phone.includes("Contacto protegido") || email.includes("tenlo.es");
@@ -252,7 +208,7 @@ export const providers: Provider[] = providerSeeds.map(([id, businessName, categ
     userId: id,
     businessName,
     category,
-    description: childcareDescriptions[id] ?? description ?? providerDescription(businessName, category, municipality),
+    description: description ?? providerDescription(businessName, category, municipality),
     municipality,
     serviceArea: `${municipality} y alrededores`,
     website: hasOfficialWebsite ? website! : "",
@@ -329,8 +285,6 @@ export const listings: Listing[] = [
   ...providers.map((provider) => {
     const seed = providerSeeds.find(([id]) => id === provider.id);
     const availability = seed?.[11] ?? "Consultar disponibilidad";
-    const childcareDetails = childcareProfileDetails[provider.id];
-
     return {
       id: `p-${provider.id}`,
       slug: provider.id,
@@ -342,8 +296,8 @@ export const listings: Listing[] = [
       area: provider.serviceArea,
       recommendedAgeMin: provider.category.toLowerCase().includes("canguro") ? 3 : provider.category.toLowerCase().includes("cumpleaños") ? 3 : 3,
       recommendedAgeMax: provider.category.toLowerCase().includes("canguro") ? 14 : provider.category.toLowerCase().includes("cumpleaños") ? 14 : 16,
-      priceLabel: childcareDetails?.Tarifa ?? "Consultar",
-      availability: childcareDetails?.Disponibilidad ?? availability,
+      priceLabel: "Consultar",
+      availability,
       acceptsRequests: provider.acceptsRequests,
       sourceName: provider.sourceName,
       sourceUrl: provider.sourceUrl,
@@ -357,10 +311,9 @@ export const listings: Listing[] = [
       tags: provider.tags,
       image: provider.image,
       details: {
-        ...childcareDetails,
         Contacto: provider.phone,
         Email: provider.email,
-        Horario: childcareDetails?.Disponibilidad ?? availability,
+        Horario: availability,
         Web: provider.website || "No indicado"
       }
     };
