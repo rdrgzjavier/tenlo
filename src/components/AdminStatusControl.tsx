@@ -66,13 +66,13 @@ export default function AdminStatusControl({ queue, recordId, currentStatus }: {
 
   return (
     <div className="mt-3 border-t border-line pt-3">
-      <label className="text-xs font-bold text-ink" htmlFor={`${queue}-${recordId}`}>Estado operativo</label>
+      <label className="text-xs font-bold text-ink" htmlFor={`${queue}-${recordId}`}>{queue === "feedback" ? "Resultado de la revisión" : "Estado operativo"}</label>
       <div className="mt-1.5 flex flex-col gap-2 sm:flex-row">
         <select id={`${queue}-${recordId}`} className="min-h-11 flex-1 rounded-xl border border-line bg-white px-3 text-sm text-ink" value={status} onChange={(event) => setStatus(event.target.value)} disabled={pending}>
           {statusOptions[queue].map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
         </select>
         <button type="button" className="btn-secondary min-h-11 px-4 py-2 text-sm" onClick={updateStatus} disabled={pending || status === currentStatus}>
-          {pending ? "Guardando…" : "Guardar"}
+          {pending ? "Guardando…" : queue === "feedback" ? "Actualizar estado" : "Guardar"}
         </button>
       </div>
       {feedback ? <p className="mt-2 text-xs text-muted" role="status">{feedback}</p> : null}

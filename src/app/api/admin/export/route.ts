@@ -20,7 +20,8 @@ const columns = [
   "contact_name",
   "contact_email",
   "contact_phone",
-  "context"
+  "context",
+  "message"
 ] as const;
 
 type CsvRow = Partial<Record<(typeof columns)[number], string | null | undefined>>;
@@ -76,7 +77,7 @@ export async function GET() {
       .limit(1000),
     supabase
       .from("feedback_requests")
-      .select("id,user_id,context,item_id,name,email,status,created_at,updated_at")
+      .select("id,user_id,context,item_id,name,email,message,status,created_at,updated_at")
       .order("created_at", { ascending: false })
       .limit(1000)
   ]);
@@ -134,7 +135,8 @@ export async function GET() {
       account_id: item.user_id,
       contact_name: item.name,
       contact_email: item.email,
-      context: item.context
+      context: item.context,
+      message: item.message
     }))
   ];
 

@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
-import { AlertTriangle, ClipboardCheck, Download, FileCheck2, Flag, History, Inbox } from "lucide-react";
+import { AlertTriangle, ArrowRight, ClipboardCheck, Download, FileCheck2, Flag, History, Inbox } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import AdminStatusControl from "@/components/AdminStatusControl";
+import { feedbackContextParts, moderationStatusLabel } from "@/lib/adminFeedback";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -80,7 +82,7 @@ export default async function AdminPage() {
     supabase.from("claim_requests").select("id,entity_type,entity_id,entity_name,requester_name,requester_email,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("connection_requests").select("id,target_type,target_id,category_id,municipality,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("submissions").select("id,submission_type,status,created_at").order("created_at", { ascending: false }).limit(100),
-    supabase.from("feedback_requests").select("id,context,item_id,name,email,status,created_at").order("created_at", { ascending: false }).limit(100),
+    supabase.from("feedback_requests").select("id,context,item_id,name,email,message,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("admin_queue_audit").select("id,queue,record_id,previous_status,new_status,changed_by,changed_at").order("changed_at", { ascending: false }).limit(30),
     supabase.from("services").select("id,title,municipality,last_reviewed").eq("status", "approved").or(`last_reviewed.is.null,last_reviewed.lt.${reviewCutoff}`).order("last_reviewed", { ascending: true, nullsFirst: true }).limit(50),
     supabase.from("centers").select("id,name,municipality,last_reviewed").or(`last_reviewed.is.null,last_reviewed.lt.${reviewCutoff}`).order("last_reviewed", { ascending: true, nullsFirst: true }).limit(50)
@@ -164,13 +166,27 @@ export default async function AdminPage() {
         </QueueSection>
 
         <QueueSection title="Avisos e incidencias" count={feedback.length} Icon={Flag}>
+          <div className="rounded-2xl border border-line bg-white p-4 text-sm leading-6 text-slatecopy">
+            <strong className="text-ink">Cómo gestionar esta cola</strong>
+            <ol className="mt-2 list-decimal space-y-1 pl-5">
+              <li>Abre la incidencia y comprueba el mensaje y la ficha relacionada.</li>
+              <li>Contacta con la persona si falta información.</li>
+              <li>Márcala como Resuelta, Descartada o Archivada.</li>
+            </ol>
+          </div>
           {feedback.length ? feedback.map((item) => (
             <article key={item.id} className="rounded-2xl border border-line bg-soft p-4 text-sm">
-              <div className="flex flex-wrap items-center justify-between gap-2"><strong className="text-ink">{item.context ?? "Aviso general"}</strong><span className="chip">{item.status}</span></div>
+              <div className="flex flex-wrap items-center justify-between gap-2"><strong className="text-ink">{feedbackContextParts(item.context).title}</strong><span className="chip">{moderationStatusLabel(item.status)}</span></div>
               <div className="mt-2"><PriorityFlag visible={overdueFeedback.some((overdueItem) => overdueItem.id === item.id)} label="Más de 4 días laborables" /></div>
-              <p className="mt-2 text-slatecopy">{item.item_id ?? "Sin ficha asociada"}</p>
-              {item.email ? <p className="mt-1 break-all text-muted">{item.name ? `${item.name} · ` : ""}{item.email}</p> : null}
-              <p className="mt-2 text-xs text-muted">{dateLabel(item.created_at)}</p>
+              <p className="mt-3 line-clamp-3 leading-6 text-slatecopy">{item.message}</p>
+              <dl className="mt-3 grid gap-1 text-xs text-muted">
+                <div><dt className="inline font-bold text-ink">Enviado por: </dt><dd className="inline break-all">{item.name || item.email || "Usuario no identificado"}{item.name && item.email ? ` · ${item.email}` : ""}</dd></div>
+                <div><dt className="inline font-bold text-ink">Recibido: </dt><dd className="inline">{dateLabel(item.created_at)}</dd></div>
+                {item.item_id ? <div><dt className="inline font-bold text-ink">Referencia: </dt><dd className="inline break-all">{item.item_id}</dd></div> : null}
+              </dl>
+              <Link href={`/admin/incidencias/${item.id}`} className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl border border-line bg-white px-4 py-2 font-bold text-ink hover:border-ink">
+                Ver incidencia completa <ArrowRight size={16} aria-hidden />
+              </Link>
               <AdminStatusControl queue="feedback" recordId={item.id} currentStatus={item.status} />
             </article>
           )) : <p className="text-sm text-muted">No hay avisos pendientes.</p>}

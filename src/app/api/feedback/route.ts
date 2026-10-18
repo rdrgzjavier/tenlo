@@ -4,10 +4,15 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
   const data = await request.json();
+  if (String(data.website || "").trim()) {
+    return NextResponse.json({ ok: true });
+  }
   const message = String(data.message || "").trim();
   const allowedRequestTypes = new Set(["correction", "update", "withdrawal", "unsafe_content", "other"]);
   const requestType = allowedRequestTypes.has(String(data.requestType || "")) ? String(data.requestType) : "";
-  const baseContext = String(data.context || "general");
+  const allowedContexts = new Set(["general", "contact_request", "report_listing", "anuncio", "centro", "servicio", "comunidad"]);
+  const requestedContext = String(data.context || "general");
+  const baseContext = allowedContexts.has(requestedContext) ? requestedContext : "general";
   const requiresRequestType = ["anuncio", "centro", "servicio", "report_listing"].includes(baseContext);
 
   if (message.length < 10) {
