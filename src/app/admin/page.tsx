@@ -63,6 +63,16 @@ function requestTargetHref(type?: string | null, id?: string | null) {
   return `/anuncios/${encodeURIComponent(id)}`;
 }
 
+function queueLabel(value?: string | null) {
+  const labels: Record<string, string> = {
+    claim: "Reclamación de ficha",
+    connection: "Solicitud de contacto",
+    submission: "Publicación",
+    feedback: "Aviso o incidencia"
+  };
+  return labels[value || ""] || "Tarea administrativa";
+}
+
 function PriorityFlag({ visible, label }: { visible: boolean; label: string }) {
   if (!visible) return null;
   return <span className="inline-flex items-center gap-1 rounded-full bg-coral/10 px-2.5 py-1 text-xs font-bold text-coral"><AlertTriangle size={14} aria-hidden />{label}</span>;
@@ -279,11 +289,15 @@ export default async function AdminPage() {
           {audit.length ? audit.map((entry) => (
             <article key={entry.id} className="rounded-2xl border border-line bg-soft p-4 text-sm">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <strong className="text-ink">{entry.queue} · {entry.record_id}</strong>
+                <strong className="text-ink">{queueLabel(entry.queue)}</strong>
                 <span className="text-xs text-muted">{dateLabel(entry.changed_at)}</span>
               </div>
-              <p className="mt-2 text-slatecopy"><span className="chip">{entry.previous_status}</span> <span aria-hidden>→</span> <span className="chip">{entry.new_status}</span></p>
-              <p className="mt-2 break-all text-xs text-muted">Responsable: {entry.changed_by ?? "Sistema"}</p>
+              <p className="mt-2 text-slatecopy"><span className="chip">{moderationStatusLabel(entry.previous_status)}</span> <span aria-hidden>→</span> <span className="chip">{moderationStatusLabel(entry.new_status)}</span></p>
+              <details className="mt-3 text-xs text-muted">
+                <summary className="cursor-pointer font-bold text-ink">Ver referencia técnica</summary>
+                <p className="mt-2 break-all">Registro: {entry.record_id}</p>
+                <p className="mt-1 break-all">Responsable: {entry.changed_by ? "Administrador de Tenlo" : "Sistema"}</p>
+              </details>
             </article>
           )) : <p className="text-sm text-muted">Todavía no hay cambios de estado registrados.</p>}
         </div>
