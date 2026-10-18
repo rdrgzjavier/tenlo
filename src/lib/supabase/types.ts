@@ -162,6 +162,24 @@ type FeedbackRequestInsert = {
   updated_at?: string;
 };
 
+type AdminQueueNoteRow = {
+  id: string;
+  queue: "claim" | "connection" | "submission" | "feedback";
+  record_id: string;
+  note: string;
+  created_by: string | null;
+  created_at: string;
+};
+
+type AdminQueueNoteInsert = {
+  id?: string;
+  queue: AdminQueueNoteRow["queue"];
+  record_id: string;
+  note: string;
+  created_by: string;
+  created_at?: string;
+};
+
 export type Database = {
   public: {
     Tables: {
@@ -187,6 +205,12 @@ export type Database = {
         Row: FeedbackRequestRow;
         Insert: FeedbackRequestInsert;
         Update: Partial<FeedbackRequestRow>;
+        Relationships: [];
+      };
+      admin_queue_notes: {
+        Row: AdminQueueNoteRow;
+        Insert: AdminQueueNoteInsert;
+        Update: Partial<AdminQueueNoteRow>;
         Relationships: [];
       };
     };

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ArrowLeft, ExternalLink, Mail, UserRound } from "lucide-react";
 import AdminStatusControl from "@/components/AdminStatusControl";
+import AdminNotes from "@/components/AdminNotes";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import { feedbackContextParts, feedbackTargetHref, moderationStatusLabel } from "@/lib/adminFeedback";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
@@ -37,6 +38,13 @@ export default async function FeedbackReviewPage({ params }: { params: Promise<{
     .maybeSingle();
 
   if (error || !item) notFound();
+
+  const { data: notes } = await supabase
+    .from("admin_queue_notes")
+    .select("id,note,created_at")
+    .eq("queue", "feedback")
+    .eq("record_id", id)
+    .order("created_at", { ascending: false });
 
   const context = feedbackContextParts(item.context);
   const targetHref = feedbackTargetHref(item.context, item.item_id);
@@ -84,6 +92,7 @@ export default async function FeedbackReviewPage({ params }: { params: Promise<{
           <p className="mt-1">Comprueba el mensaje y la ficha relacionada. Si necesitas aclaraciones, responde al email. Después marca la incidencia como Resuelta, Descartada o Archivada.</p>
         </div>
 
+        <AdminNotes queue="feedback" recordId={item.id} notes={notes ?? []} />
         <AdminStatusControl queue="feedback" recordId={item.id} currentStatus={item.status} />
         <details className="mt-5 rounded-xl border border-line p-4 text-xs text-muted">
           <summary className="cursor-pointer font-bold text-ink">Ver datos técnicos</summary>
