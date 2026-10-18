@@ -268,7 +268,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 
 ## P1. Backoffice mínimo
 
-- [ ] Completar la vista administrativa con fichas y resultados. La primera bandeja privada ya reúne reclamaciones, solicitudes, publicaciones/bajas e incidencias para el rol `tenlo_admin`.
+- [ ] Completar la vista administrativa con fichas y resultados. La bandeja privada ya reúne reclamaciones, solicitudes, publicaciones/bajas e incidencias para el rol `tenlo_admin`; desde el 18/10/2026 muestra mensajes, contactos, referencias, datos aportados y estados comprensibles. Falta incorporar notas internas y el resultado útil posterior a la conexión.
 - [x] Permitir corregir estados sin editar directamente la base de datos. Interfaz, API restringida e historial validados de extremo a extremo el 16/10/2026; el registro usado en la prueba recuperó su estado original.
 - [x] Crear alertas para reclamaciones pendientes, solicitudes sin respuesta y fichas desactualizadas. `/admin` destaca solicitudes abiertas durante más de 48 horas, moderaciones pendientes durante más de cuatro días laborables y fichas sin revisar durante 180 días.
 - [ ] Registrar notas operativas sin exponerlas al proveedor o a la familia.

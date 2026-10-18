@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { AlertTriangle, ArrowRight, ClipboardCheck, Download, FileCheck2, Flag, History, Inbox } from "lucide-react";
+import { AlertTriangle, ArrowRight, ClipboardCheck, Download, ExternalLink, FileCheck2, Flag, History, Inbox, Mail, Phone } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import AdminStatusControl from "@/components/AdminStatusControl";
 import { feedbackContextParts, moderationStatusLabel } from "@/lib/adminFeedback";
@@ -47,6 +47,22 @@ function staleReviewCutoff(days = 180) {
   return cutoff.toISOString().slice(0, 10);
 }
 
+function recordPayload(value: unknown) {
+  return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
+}
+
+function payloadText(payload: Record<string, unknown>, key: string, fallback = "No indicado") {
+  const value = payload[key];
+  return typeof value === "string" && value.trim() ? value : fallback;
+}
+
+function requestTargetHref(type?: string | null, id?: string | null) {
+  if (!id) return null;
+  if (type === "center") return `/centros/${encodeURIComponent(id)}`;
+  if (type === "provider") return `/servicios/${encodeURIComponent(id)}`;
+  return `/anuncios/${encodeURIComponent(id)}`;
+}
+
 function PriorityFlag({ visible, label }: { visible: boolean; label: string }) {
   if (!visible) return null;
   return <span className="inline-flex items-center gap-1 rounded-full bg-coral/10 px-2.5 py-1 text-xs font-bold text-coral"><AlertTriangle size={14} aria-hidden />{label}</span>;
@@ -79,9 +95,9 @@ export default async function AdminPage() {
 
   const reviewCutoff = staleReviewCutoff();
   const [claimsResult, requestsResult, submissionsResult, feedbackResult, auditResult, staleServicesResult, staleCentersResult] = await Promise.all([
-    supabase.from("claim_requests").select("id,entity_type,entity_id,entity_name,requester_name,requester_email,status,created_at").order("created_at", { ascending: false }).limit(100),
-    supabase.from("connection_requests").select("id,target_type,target_id,category_id,municipality,status,created_at").order("created_at", { ascending: false }).limit(100),
-    supabase.from("submissions").select("id,submission_type,status,created_at").order("created_at", { ascending: false }).limit(100),
+    supabase.from("claim_requests").select("id,entity_type,entity_id,entity_name,requester_name,requester_email,requester_phone,role_description,corrections,official_website,image_url,status,created_at").order("created_at", { ascending: false }).limit(100),
+    supabase.from("connection_requests").select("id,family_id,target_type,target_id,category_id,municipality,message,contact_preference,status,created_at").order("created_at", { ascending: false }).limit(100),
+    supabase.from("submissions").select("id,user_id,submission_type,payload,review_notes,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("feedback_requests").select("id,context,item_id,name,email,message,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("admin_queue_audit").select("id,queue,record_id,previous_status,new_status,changed_by,changed_at").order("changed_at", { ascending: false }).limit(30),
     supabase.from("services").select("id,title,municipality,last_reviewed").eq("status", "approved").or(`last_reviewed.is.null,last_reviewed.lt.${reviewCutoff}`).order("last_reviewed", { ascending: true, nullsFirst: true }).limit(50),
@@ -130,12 +146,26 @@ export default async function AdminPage() {
 
       <div className="mt-8 grid gap-5 xl:grid-cols-2">
         <QueueSection title="Reclamaciones" count={claims.length} Icon={FileCheck2}>
+          <p className="rounded-2xl border border-line bg-white p-4 text-sm leading-6 text-slatecopy">Comprueba la relación de la persona con la entidad, contrasta la web oficial y revisa cada cambio antes de aprobar o rechazar la reclamación.</p>
           {claims.length ? claims.map((claim) => (
             <article key={claim.id} className="rounded-2xl border border-line bg-soft p-4 text-sm">
-              <div className="flex flex-wrap items-center justify-between gap-2"><strong className="text-ink">{claim.entity_name}</strong><span className="chip">{claim.status}</span></div>
+              <div className="flex flex-wrap items-center justify-between gap-2"><strong className="text-ink">{claim.entity_name}</strong><span className="chip">{moderationStatusLabel(claim.status)}</span></div>
               <div className="mt-2"><PriorityFlag visible={overdueClaims.some((item) => item.id === claim.id)} label="Más de 4 días laborables" /></div>
-              <p className="mt-2 text-slatecopy">{claim.entity_type} · {claim.entity_id}</p>
-              <p className="mt-1 break-all text-muted">{claim.requester_name} · {claim.requester_email}</p>
+              <p className="mt-3 line-clamp-3 leading-6 text-slatecopy">{claim.corrections || "No se han indicado cambios concretos."}</p>
+              <p className="mt-2 font-semibold text-ink">{claim.requester_name} · {claim.role_description}</p>
+              <div className="mt-2 flex flex-wrap gap-3">
+                <a className="inline-flex items-center gap-1.5 font-semibold text-ink underline" href={`mailto:${claim.requester_email}`}><Mail size={15} aria-hidden />{claim.requester_email}</a>
+                {claim.requester_phone ? <a className="inline-flex items-center gap-1.5 font-semibold text-ink underline" href={`tel:${claim.requester_phone.replace(/[^+\d]/g, "")}`}><Phone size={15} aria-hidden />{claim.requester_phone}</a> : null}
+              </div>
+              <details className="mt-4 rounded-xl border border-line bg-white p-3">
+                <summary className="cursor-pointer font-bold text-ink">Ver información aportada</summary>
+                <dl className="mt-3 grid gap-2 text-xs text-muted">
+                  <div><dt className="inline font-bold text-ink">Tipo y referencia: </dt><dd className="inline break-all">{claim.entity_type} · {claim.entity_id}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Cambios solicitados: </dt><dd className="inline whitespace-pre-wrap">{claim.corrections || "No indicados"}</dd></div>
+                  {claim.official_website ? <div><dt className="inline font-bold text-ink">Web oficial: </dt><dd className="inline"><a href={claim.official_website} target="_blank" rel="noreferrer" className="break-all underline">{claim.official_website} <ExternalLink className="inline" size={13} aria-hidden /></a></dd></div> : null}
+                  {claim.image_url ? <div><dt className="inline font-bold text-ink">Imagen sugerida: </dt><dd className="inline break-all">{claim.image_url}</dd></div> : null}
+                </dl>
+              </details>
               <p className="mt-2 text-xs text-muted">{dateLabel(claim.created_at)}</p>
               <AdminStatusControl queue="claim" recordId={claim.id} currentStatus={claim.status} />
             </article>
@@ -145,9 +175,12 @@ export default async function AdminPage() {
         <QueueSection title="Solicitudes" count={requests.length} Icon={ClipboardCheck}>
           {requests.length ? requests.map((request) => (
             <article key={request.id} className="rounded-2xl border border-line bg-soft p-4 text-sm">
-              <div className="flex flex-wrap items-center justify-between gap-2"><strong className="text-ink">{request.target_id ?? "Sin ficha"}</strong><span className="chip">{request.status}</span></div>
+              <div className="flex flex-wrap items-center justify-between gap-2"><strong className="text-ink">Solicitud para {request.target_id ?? "una opción sin identificar"}</strong><span className="chip">{moderationStatusLabel(request.status)}</span></div>
               <div className="mt-2"><PriorityFlag visible={overdueRequests.some((item) => item.id === request.id)} label="Más de 48 horas" /></div>
-              <p className="mt-2 text-slatecopy">{request.category_id ?? "Sin categoría"} · {request.municipality ?? "Sin municipio"}</p>
+              <p className="mt-3 whitespace-pre-wrap leading-6 text-slatecopy">{request.message || "La familia no añadió un mensaje."}</p>
+              <p className="mt-2 text-muted">{request.category_id ?? "Sin categoría"} · {request.municipality ?? "Sin municipio"}</p>
+              <p className="mt-1 text-xs text-muted">Canal preferido: {request.contact_preference === "phone" ? "Teléfono" : request.contact_preference === "email" ? "Email" : "A través de Tenlo"}</p>
+              {requestTargetHref(request.target_type, request.target_id) ? <Link href={requestTargetHref(request.target_type, request.target_id)!} target="_blank" rel="noreferrer" className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-xl border border-line bg-white px-4 py-2 font-bold text-ink">Abrir ficha <ExternalLink size={15} aria-hidden /></Link> : null}
               <p className="mt-2 text-xs text-muted">{dateLabel(request.created_at)}</p>
               <AdminStatusControl queue="connection" recordId={request.id} currentStatus={request.status} />
             </article>
@@ -155,14 +188,29 @@ export default async function AdminPage() {
         </QueueSection>
 
         <QueueSection title="Publicaciones y bajas" count={submissions.length} Icon={Inbox}>
-          {submissions.length ? submissions.map((submission) => (
-            <article key={submission.id} className="rounded-2xl border border-line bg-soft p-4 text-sm">
-              <div className="flex flex-wrap items-center justify-between gap-2"><strong className="text-ink">{submission.submission_type}</strong><span className="chip">{submission.status}</span></div>
+          {submissions.length ? submissions.map((submission) => {
+            const payload = recordPayload(submission.payload);
+            return <article key={submission.id} className="rounded-2xl border border-line bg-soft p-4 text-sm">
+              <div className="flex flex-wrap items-center justify-between gap-2"><strong className="text-ink">{payloadText(payload, "title", "Publicación sin título")}</strong><span className="chip">{moderationStatusLabel(submission.status)}</span></div>
               <div className="mt-2"><PriorityFlag visible={overdueSubmissions.some((item) => item.id === submission.id)} label="Más de 4 días laborables" /></div>
+              <p className="mt-3 line-clamp-3 leading-6 text-slatecopy">{payloadText(payload, "description", "No se añadió una descripción.")}</p>
+              <p className="mt-2 text-muted">{payloadText(payload, "category")} · {payloadText(payload, "municipality")}</p>
+              <details className="mt-4 rounded-xl border border-line bg-white p-3">
+                <summary className="cursor-pointer font-bold text-ink">Ver datos de publicación</summary>
+                <dl className="mt-3 grid gap-2 text-xs text-muted">
+                  <div><dt className="inline font-bold text-ink">Tipo: </dt><dd className="inline">{submission.submission_type}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Centro: </dt><dd className="inline">{payloadText(payload, "center")}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Edad: </dt><dd className="inline">{payloadText(payload, "recommended_age")}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Precio: </dt><dd className="inline">{payloadText(payload, "price")}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Contacto: </dt><dd className="inline break-all">{payloadText(payload, "contact")}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Fuente: </dt><dd className="inline">{payloadText(payload, "source")}</dd></div>
+                  {submission.review_notes ? <div><dt className="inline font-bold text-ink">Notas de revisión: </dt><dd className="inline">{submission.review_notes}</dd></div> : null}
+                </dl>
+              </details>
               <p className="mt-2 text-xs text-muted">{dateLabel(submission.created_at)}</p>
               <AdminStatusControl queue="submission" recordId={submission.id} currentStatus={submission.status} />
-            </article>
-          )) : <p className="text-sm text-muted">No hay publicaciones ni bajas pendientes.</p>}
+            </article>;
+          }) : <p className="text-sm text-muted">No hay publicaciones ni bajas pendientes.</p>}
         </QueueSection>
 
         <QueueSection title="Avisos e incidencias" count={feedback.length} Icon={Flag}>

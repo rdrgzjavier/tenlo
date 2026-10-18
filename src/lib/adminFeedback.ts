@@ -22,7 +22,15 @@ const statusLabels: Record<string, string> = {
   pending_review: "Pendiente de revisión",
   approved: "Resuelta",
   rejected: "Descartada",
-  archived: "Archivada"
+  archived: "Archivada",
+  submitted: "Recibida",
+  delivered: "Enviada al proveedor",
+  viewed: "Vista por el proveedor",
+  responded: "Respondida",
+  declined: "Rechazada",
+  alternative_requested: "Alternativa solicitada",
+  alternative_offered: "Alternativa ofrecida",
+  closed: "Cerrada"
 };
 
 export function feedbackContextParts(value?: string | null) {
