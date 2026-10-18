@@ -262,8 +262,8 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Guardar la petición y la alternativa ofrecida en Supabase como estado y seguimiento operativo, no solo como email.
 - [x] Crear una bandeja administrativa con avisos de solicitudes sin respuesta, alternativas pendientes y conversaciones que requieren intervención.
 - [ ] Enviar además una notificación al correo operativo configurable mediante `ADMIN_EMAIL`. Dirección propuesta cuando el dominio esté activo: `solicitudes@tenlo.es`.
-- [ ] Preguntar a ambas partes si la conexión fue útil.
-- [ ] Preguntar posteriormente si avanzó a conversación, propuesta, reserva o contratación.
+- [x] Preguntar a la familia si la conexión fue útil cuando ya existe respuesta, alternativa o cierre. Falta habilitar la valoración equivalente del proveedor.
+- [x] Preguntar a la familia si avanzó a información, conversación, propuesta, reserva o contratación.
 - [ ] Evitar que email, teléfono y web externos sean la única fuente de contacto si se necesita medir resultados.
 
 ## P1. Backoffice mínimo
@@ -471,8 +471,8 @@ Propiedades recomendadas: `search_id`, categoría, municipio, zona, número de r
 - [ ] `provider_notified`
 - [ ] `provider_response_received`
 - [ ] `family_viewed_response`
-- [ ] `connection_marked_useful`
-- [ ] `outcome_reported`
+- [x] `connection_marked_useful`
+- [x] `outcome_reported`
 
 Propiedades recomendadas: `request_id`, proveedor, categoría, municipio, posición de origen, tipo de solicitud, resultado, motivo de no avance y bucket de tiempo de respuesta. Los textos libres permanecen en backend y no se envían a GA4.
 

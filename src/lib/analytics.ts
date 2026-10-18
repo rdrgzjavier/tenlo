@@ -35,7 +35,9 @@ export type TrackingAction =
   | "newsletter_failed"
   | "registration_completed"
   | "registration_failed"
-  | "map_directions_clicked";
+  | "map_directions_clicked"
+  | "connection_marked_useful"
+  | "outcome_reported";
 
 export const analyticsSchemaVersion = "1.0";
 

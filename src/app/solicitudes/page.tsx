@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ClipboardCheck } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
+import RequestOutcomeFeedback from "@/components/RequestOutcomeFeedback";
 import { listings } from "@/lib/mock-data";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
@@ -42,11 +43,12 @@ export default async function RequestsPage() {
   const { data: authData } = await supabase.auth.getUser();
   if (!authData.user) redirect("/login?next=/solicitudes");
 
-  const { data: requests } = await supabase
-    .from("connection_requests")
-    .select("id,target_id,category_id,municipality,status,provider_notified_at,provider_response_summary,alternative_summary,last_family_update_at,created_at")
-    .eq("family_id", authData.user.id)
-    .order("created_at", { ascending: false });
+  const [requestsResult, feedbackResult] = await Promise.all([
+    supabase.from("connection_requests").select("id,target_id,category_id,municipality,status,provider_notified_at,provider_response_summary,alternative_summary,last_family_update_at,created_at").eq("family_id", authData.user.id).order("created_at", { ascending: false }),
+    supabase.from("connection_feedback").select("request_id,useful,outcome").eq("family_id", authData.user.id)
+  ]);
+  const requests = requestsResult.data;
+  const feedbackByRequest = new Map((feedbackResult.data ?? []).map((item) => [item.request_id, item]));
   const hasRequests = Boolean(requests?.length);
 
   return (
@@ -58,6 +60,8 @@ export default async function RequestsPage() {
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           {requests?.map((request) => {
             const listing = listings.find((item) => item.id === request.target_id);
+            const feedback = feedbackByRequest.get(request.id);
+            const canReportOutcome = ["responded", "declined", "alternative_offered", "closed"].includes(request.status);
             return (
               <article key={request.id} className="card p-5">
                 <span className="chip">{statusLabels[request.status] ?? request.status}</span>
@@ -68,6 +72,7 @@ export default async function RequestsPage() {
                 {request.alternative_summary ? <div className="mt-3 rounded-2xl border border-ink/20 bg-ink/5 p-4"><p className="text-xs font-bold uppercase tracking-wide text-ink">Alternativa de Tenlo</p><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slatecopy">{request.alternative_summary}</p></div> : null}
                 {request.last_family_update_at ? <p className="mt-3 text-xs text-muted">Última actualización: {new Intl.DateTimeFormat("es-ES", { dateStyle: "medium", timeStyle: "short" }).format(new Date(request.last_family_update_at))}</p> : null}
                 <p className="mt-3 text-xs text-muted">Enviada el {new Intl.DateTimeFormat("es-ES", { dateStyle: "medium" }).format(new Date(request.created_at))}</p>
+                {canReportOutcome ? <RequestOutcomeFeedback requestId={request.id} initialUseful={feedback?.useful} initialOutcome={feedback?.outcome} /> : null}
                 {listing ? <Link href={`/anuncios/${listing.slug}`} className="btn-secondary mt-5 w-full">Ver ficha</Link> : null}
               </article>
             );

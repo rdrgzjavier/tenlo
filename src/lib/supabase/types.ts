@@ -180,6 +180,16 @@ type AdminQueueNoteInsert = {
   created_at?: string;
 };
 
+type ConnectionFeedbackRow = {
+  id: string;
+  request_id: string;
+  family_id: string;
+  useful: boolean;
+  outcome: "information" | "conversation" | "proposal" | "booking" | "hired" | "not_progressed";
+  created_at: string;
+  updated_at: string;
+};
+
 export type Database = {
   public: {
     Tables: {
@@ -211,6 +221,12 @@ export type Database = {
         Row: AdminQueueNoteRow;
         Insert: AdminQueueNoteInsert;
         Update: Partial<AdminQueueNoteRow>;
+        Relationships: [];
+      };
+      connection_feedback: {
+        Row: ConnectionFeedbackRow;
+        Insert: Omit<ConnectionFeedbackRow, "id" | "created_at" | "updated_at">;
+        Update: Partial<Pick<ConnectionFeedbackRow, "useful" | "outcome">>;
         Relationships: [];
       };
     };
