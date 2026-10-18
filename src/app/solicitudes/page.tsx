@@ -24,6 +24,17 @@ const statusLabels: Record<string, string> = {
   closed: "Cerrada"
 };
 
+const statusExplanations: Record<string, string> = {
+  submitted: "Tenlo ha recibido tu solicitud y la está revisando.",
+  delivered: "La solicitud ya se ha trasladado al proveedor.",
+  viewed: "El proveedor ha consultado la solicitud.",
+  responded: "Hay una respuesta disponible.",
+  declined: "El proveedor no tiene disponibilidad para esta solicitud.",
+  alternative_requested: "Estamos buscando otra opción adecuada.",
+  alternative_offered: "Tenlo ha localizado una posible alternativa.",
+  closed: "El seguimiento de esta solicitud ha finalizado."
+};
+
 export default async function RequestsPage() {
   if (!hasSupabaseServerConfig()) return <PrivateAreaUnavailable />;
 
@@ -33,7 +44,7 @@ export default async function RequestsPage() {
 
   const { data: requests } = await supabase
     .from("connection_requests")
-    .select("id,target_id,category_id,municipality,status,created_at")
+    .select("id,target_id,category_id,municipality,status,provider_notified_at,provider_response_summary,alternative_summary,last_family_update_at,created_at")
     .eq("family_id", authData.user.id)
     .order("created_at", { ascending: false });
   const hasRequests = Boolean(requests?.length);
@@ -52,6 +63,10 @@ export default async function RequestsPage() {
                 <span className="chip">{statusLabels[request.status] ?? request.status}</span>
                 <h2 className="mt-4 text-lg font-bold text-slatecopy">{listing?.title ?? "Solicitud de información"}</h2>
                 <p className="mt-2 text-sm text-muted">{request.municipality ?? listing?.municipality ?? "Zona pendiente"}</p>
+                <p className="mt-3 text-sm leading-6 text-slatecopy">{statusExplanations[request.status] ?? "Estamos revisando el estado de la solicitud."}</p>
+                {request.provider_response_summary ? <div className="mt-4 rounded-2xl border border-line bg-soft p-4"><p className="text-xs font-bold uppercase tracking-wide text-muted">Respuesta</p><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slatecopy">{request.provider_response_summary}</p></div> : null}
+                {request.alternative_summary ? <div className="mt-3 rounded-2xl border border-ink/20 bg-ink/5 p-4"><p className="text-xs font-bold uppercase tracking-wide text-ink">Alternativa de Tenlo</p><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slatecopy">{request.alternative_summary}</p></div> : null}
+                {request.last_family_update_at ? <p className="mt-3 text-xs text-muted">Última actualización: {new Intl.DateTimeFormat("es-ES", { dateStyle: "medium", timeStyle: "short" }).format(new Date(request.last_family_update_at))}</p> : null}
                 <p className="mt-3 text-xs text-muted">Enviada el {new Intl.DateTimeFormat("es-ES", { dateStyle: "medium" }).format(new Date(request.created_at))}</p>
                 {listing ? <Link href={`/anuncios/${listing.slug}`} className="btn-secondary mt-5 w-full">Ver ficha</Link> : null}
               </article>

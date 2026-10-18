@@ -5,6 +5,7 @@ import { AlertTriangle, ArrowRight, ClipboardCheck, Download, ExternalLink, File
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import AdminStatusControl from "@/components/AdminStatusControl";
 import AdminNotes from "@/components/AdminNotes";
+import ConnectionWorkflow from "@/components/ConnectionWorkflow";
 import { feedbackContextParts, moderationStatusLabel } from "@/lib/adminFeedback";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
@@ -107,7 +108,7 @@ export default async function AdminPage() {
   const reviewCutoff = staleReviewCutoff();
   const [claimsResult, requestsResult, submissionsResult, feedbackResult, auditResult, notesResult, staleServicesResult, staleCentersResult] = await Promise.all([
     supabase.from("claim_requests").select("id,entity_type,entity_id,entity_name,requester_name,requester_email,requester_phone,role_description,corrections,official_website,image_url,status,created_at").order("created_at", { ascending: false }).limit(100),
-    supabase.from("connection_requests").select("id,family_id,target_type,target_id,category_id,municipality,message,contact_preference,status,created_at").order("created_at", { ascending: false }).limit(100),
+    supabase.from("connection_requests").select("id,family_id,target_type,target_id,category_id,municipality,message,contact_preference,status,provider_notified_at,provider_response_summary,alternative_summary,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("submissions").select("id,user_id,submission_type,payload,review_notes,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("feedback_requests").select("id,context,item_id,name,email,message,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("admin_queue_audit").select("id,queue,record_id,previous_status,new_status,changed_by,changed_at").order("changed_at", { ascending: false }).limit(30),
@@ -198,7 +199,7 @@ export default async function AdminPage() {
               {requestTargetHref(request.target_type, request.target_id) ? <Link href={requestTargetHref(request.target_type, request.target_id)!} target="_blank" rel="noreferrer" className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-xl border border-line bg-white px-4 py-2 font-bold text-ink">Abrir ficha <ExternalLink size={15} aria-hidden /></Link> : null}
               <p className="mt-2 text-xs text-muted">{dateLabel(request.created_at)}</p>
               <AdminNotes queue="connection" recordId={request.id} notes={notesFor("connection", request.id)} />
-              <AdminStatusControl queue="connection" recordId={request.id} currentStatus={request.status} />
+              <ConnectionWorkflow recordId={request.id} currentStatus={request.status} providerNotifiedAt={request.provider_notified_at} responseSummary={request.provider_response_summary} alternativeSummary={request.alternative_summary} />
             </article>
           )) : <p className="text-sm text-muted">No hay solicitudes.</p>}
         </QueueSection>

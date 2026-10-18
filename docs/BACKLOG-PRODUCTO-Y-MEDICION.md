@@ -256,11 +256,11 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Preparar entidad `connection_requests` con ID, familia, proveedor, categoría, zona, estado y marcas de tiempo.
 - [x] Confirmar a la familia que la solicitud ha sido enviada y comunicar el objetivo operativo de respuesta o alternativa en un máximo de 48 horas.
 - [ ] Notificar al proveedor con un enlace seguro para responder.
-- [ ] Permitir responder, rechazar, indicar falta de disponibilidad o pedir aclaración.
-- [ ] Registrar tiempo de primera respuesta y motivo de rechazo.
+- [x] Permitir registrar respuesta, rechazo, falta de disponibilidad y una actualización visible para la familia desde el backoffice.
+- [x] Registrar aviso al proveedor, primera respuesta, cierre y última actualización comunicada a la familia. Falta estructurar los motivos de rechazo cuando haya volumen suficiente.
 - [ ] Si no hay respuesta, recordar al proveedor y ofrecer alternativas a la familia.
-- [ ] Guardar la petición de alternativas en Supabase como estado o tarea operativa, no solo como email.
-- [ ] Crear una bandeja administrativa con avisos de solicitudes sin respuesta, alternativas pendientes y conversaciones que requieren intervención.
+- [x] Guardar la petición y la alternativa ofrecida en Supabase como estado y seguimiento operativo, no solo como email.
+- [x] Crear una bandeja administrativa con avisos de solicitudes sin respuesta, alternativas pendientes y conversaciones que requieren intervención.
 - [ ] Enviar además una notificación al correo operativo configurable mediante `ADMIN_EMAIL`. Dirección propuesta cuando el dominio esté activo: `solicitudes@tenlo.es`.
 - [ ] Preguntar a ambas partes si la conexión fue útil.
 - [ ] Preguntar posteriormente si avanzó a conversación, propuesta, reserva o contratación.
