@@ -159,6 +159,16 @@ export async function GET() {
     }))
   ];
 
+  const { error: auditError } = await supabase.from("data_export_audit").insert({
+    actor_id: user.id,
+    export_scope: "admin_operation",
+    record_count: rows.length
+  });
+  if (auditError) {
+    console.error("No se pudo registrar la exportación administrativa", auditError);
+    return NextResponse.json({ error: "No hemos podido registrar la exportación de forma segura." }, { status: 500 });
+  }
+
   const date = new Date().toISOString().slice(0, 10);
   return new NextResponse(toCsv(rows), {
     headers: {

@@ -106,25 +106,27 @@ export default async function AdminPage() {
   if (profile?.role !== "tenlo_admin" || profile.status !== "approved") redirect("/area-personal");
 
   const reviewCutoff = staleReviewCutoff();
-  const [claimsResult, requestsResult, submissionsResult, feedbackResult, connectionFeedbackResult, auditResult, notesResult, staleServicesResult, staleCentersResult] = await Promise.all([
+  const [claimsResult, requestsResult, submissionsResult, feedbackResult, connectionFeedbackResult, auditResult, exportAuditResult, notesResult, staleServicesResult, staleCentersResult] = await Promise.all([
     supabase.from("claim_requests").select("id,entity_type,entity_id,entity_name,requester_name,requester_email,requester_phone,role_description,corrections,official_website,image_url,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("connection_requests").select("id,family_id,target_type,target_id,category_id,municipality,message,contact_preference,status,provider_notified_at,provider_response_summary,alternative_summary,first_response_at,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("submissions").select("id,user_id,submission_type,payload,review_notes,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("feedback_requests").select("id,context,item_id,name,email,message,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("connection_feedback").select("request_id,useful,outcome,updated_at").order("updated_at", { ascending: false }).limit(500),
     supabase.from("admin_queue_audit").select("id,queue,record_id,previous_status,new_status,changed_by,changed_at").order("changed_at", { ascending: false }).limit(30),
+    supabase.from("data_export_audit").select("id,export_scope,record_count,created_at").order("created_at", { ascending: false }).limit(20),
     supabase.from("admin_queue_notes").select("id,queue,record_id,note,created_at").order("created_at", { ascending: false }).limit(500),
     supabase.from("services").select("id,title,municipality,last_reviewed").eq("status", "approved").or(`last_reviewed.is.null,last_reviewed.lt.${reviewCutoff}`).order("last_reviewed", { ascending: true, nullsFirst: true }).limit(50),
     supabase.from("centers").select("id,name,municipality,last_reviewed").or(`last_reviewed.is.null,last_reviewed.lt.${reviewCutoff}`).order("last_reviewed", { ascending: true, nullsFirst: true }).limit(50)
   ]);
 
-  const queryError = claimsResult.error || requestsResult.error || submissionsResult.error || feedbackResult.error || connectionFeedbackResult.error || auditResult.error || notesResult.error || staleServicesResult.error || staleCentersResult.error;
+  const queryError = claimsResult.error || requestsResult.error || submissionsResult.error || feedbackResult.error || connectionFeedbackResult.error || auditResult.error || exportAuditResult.error || notesResult.error || staleServicesResult.error || staleCentersResult.error;
   const claims = claimsResult.data ?? [];
   const requests = requestsResult.data ?? [];
   const submissions = submissionsResult.data ?? [];
   const feedback = feedbackResult.data ?? [];
   const connectionFeedback = new Map((connectionFeedbackResult.data ?? []).map((item) => [item.request_id, item]));
   const audit = auditResult.data ?? [];
+  const exportAudit = exportAuditResult.data ?? [];
   const notes = notesResult.data ?? [];
   const notesFor = (queue: "claim" | "connection" | "submission" | "feedback", recordId: string) => notes.filter((item) => item.queue === queue && item.record_id === recordId);
   const staleServices = staleServicesResult.data ?? [];
@@ -339,6 +341,22 @@ export default async function AdminPage() {
               </details>
             </article>
           )) : <p className="text-sm text-muted">Todavía no hay cambios de estado registrados.</p>}
+        </div>
+      </section>
+
+      <section className="card mt-5 p-5 md:p-6">
+        <div className="flex items-center gap-3">
+          <Download size={22} className="text-ink" aria-hidden />
+          <h2 className="subsection-title text-ink">Últimas exportaciones de datos</h2>
+        </div>
+        <p className="mt-2 text-sm leading-6 text-muted">Trazabilidad de descargas. El historial registra el ámbito y volumen, pero nunca copia el contenido exportado.</p>
+        <div className="mt-5 grid gap-3">
+          {exportAudit.length ? exportAudit.map((entry) => (
+            <article key={entry.id} className="flex flex-col gap-1 rounded-2xl border border-line bg-soft p-4 text-sm sm:flex-row sm:items-center sm:justify-between">
+              <div><strong className="text-ink">{entry.export_scope === "admin_operation" ? "Operación del piloto" : "Portabilidad de cuenta"}</strong><p className="mt-1 text-xs text-muted">{entry.record_count} {entry.record_count === 1 ? "registro incluido" : "registros incluidos"}</p></div>
+              <time className="text-xs text-muted" dateTime={entry.created_at}>{dateLabel(entry.created_at)}</time>
+            </article>
+          )) : <p className="text-sm text-muted">Todavía no se ha registrado ninguna exportación.</p>}
         </div>
       </section>
     </main>

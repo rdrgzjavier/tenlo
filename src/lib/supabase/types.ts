@@ -229,6 +229,24 @@ export type Database = {
         Update: Partial<Pick<ConnectionFeedbackRow, "useful" | "outcome">>;
         Relationships: [];
       };
+      data_export_audit: {
+        Row: {
+          id: string;
+          actor_id: string;
+          export_scope: "admin_operation" | "account_portability";
+          record_count: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          actor_id: string;
+          export_scope: "admin_operation" | "account_portability";
+          record_count?: number;
+          created_at?: string;
+        };
+        Update: never;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

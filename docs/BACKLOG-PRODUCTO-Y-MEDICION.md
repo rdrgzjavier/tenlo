@@ -419,7 +419,7 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 - [ ] Activar la protección de contraseñas filtradas antes de abrir el registro real. Supabase la limita al plan Pro o superior; en el plan gratuito actual debe asumirse como riesgo pendiente o cubrirse con otra estrategia antes del lanzamiento.
 - [x] No exponer claves de servicio de Supabase en el cliente.
 - [x] Separar PII de tablas de eventos y utilizar IDs internos seudónimos para análisis.
-- [ ] Restringir exportaciones y accesos administrativos; registrar quién puede ver o descargar datos.
+- [x] Restringir exportaciones y accesos administrativos; registrar quién descarga datos, el ámbito, la fecha y el número de registros, sin duplicar el contenido exportado en el historial.
 - [ ] Definir política de retención para cuentas inactivas, solicitudes, búsquedas y consentimientos.
 - [ ] Completar el procedimiento administrativo de acceso, rectificación y eliminación. La portabilidad básica ya está disponible mediante una exportación JSON privada y la baja se registra como solicitud revisable.
 - [ ] Preparar copias de seguridad y restauración antes de almacenar información real.

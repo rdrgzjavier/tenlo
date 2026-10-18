@@ -45,6 +45,17 @@ export async function GET() {
     claim_requests: claims.data ?? []
   };
 
+  const recordCount = (favorites.data?.length ?? 0) + (submissions.data?.length ?? 0) + (requests.data?.length ?? 0) + (requestFeedback.data?.length ?? 0) + (claims.data?.length ?? 0) + 1;
+  const { error: auditError } = await supabase.from("data_export_audit").insert({
+    actor_id: user.id,
+    export_scope: "account_portability",
+    record_count: recordCount
+  });
+  if (auditError) {
+    console.error("No se pudo registrar la exportación de cuenta", auditError);
+    return NextResponse.json({ error: "No hemos podido registrar la exportación de forma segura." }, { status: 500 });
+  }
+
   const date = exportedAt.slice(0, 10);
   return new NextResponse(JSON.stringify(payload, null, 2), {
     headers: {
