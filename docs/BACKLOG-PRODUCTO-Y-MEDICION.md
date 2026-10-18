@@ -514,7 +514,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 
 ### North Star Metric
 
-- [ ] **Conexiones útiles mensuales**: solicitudes relevantes respondidas dentro del SLA y valoradas como útiles, o una definición inicial equivalente aprobada.
+- [x] **Conexiones útiles mensuales**: solicitudes respondidas o con alternativa que la familia valora como útiles; se conserva además el resultado declarado. La relevancia del proveedor y el cumplimiento de SLA se muestran como dimensiones separadas hasta disponer de muestra suficiente.
 - [ ] Mostrar por separado volumen, porcentaje y tiempo; no mezclar poblaciones distintas en una única puntuación.
 
 ### Funnel de familias
