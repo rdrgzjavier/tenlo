@@ -50,7 +50,7 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 
 - Repositorio: `rdrgzjavier/tenlo`.
 - Rama de producción: `main`.
-- Último commit revisado: `19ae385` (`Defer directory read policy cutover`).
+- Último commit de producción validado: `e946003` (`Harden pilot content and record credential rotation`).
 - Aplicación en Next.js 15, React 18, TypeScript y Tailwind 3.
 - `typecheck` y `lint` pasan correctamente.
 - El contenido público continúa dependiendo de `src/lib/mock-data.ts`, pero ya existe una capa de acceso preparada para leer el directorio desde Supabase con retorno seguro a los datos actuales. El cambio de fuente no está activado.
@@ -64,11 +64,11 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - Favoritos mezcla una señal local de sesión con datos de Supabase y todavía no representa un flujo completo.
 - La aplicación carga Cookiebot y Consent Mode con analítica denegada por defecto, y solo descarga GTM tras consentimiento estadístico. Cookiebot, la propiedad GA4 y el contenedor GTM de Tenlo ya están configurados y publicados. La migración analítica `0009` se aplicó y verificó el 07/10/2026; la vista agregada no es legible por `anon` ni `authenticated`. Queda validar la recepción de eventos y parámetros en GA4 y completar la medición persistente del resultado de cada conexión.
 - `typecheck`, `lint` y `build` pasan en local; las rutas privadas ya no bloquean el prerender cuando faltan variables de Supabase.
-- La actualización a Next.js 15 eliminó los avisos críticos conocidos. La auditoría del 10/10/2026 devuelve 0 críticos, 8 altos y 3 moderados; los avisos restantes proceden de dependencias transitivas de Next.js, ESLint y Tailwind y requieren migraciones mayores a Next.js 16 y Tailwind 4. Deben abordarse con pruebas visuales y funcionales antes de captar usuarios reales.
+- La actualización a Next.js 15 eliminó los avisos críticos conocidos. La auditoría repetida el 18/10/2026 devuelve 0 críticos, 8 altos y 3 moderados; los avisos restantes proceden de dependencias transitivas de Next.js, ESLint y Tailwind y requieren migraciones mayores a Next.js 16 y Tailwind 4. Deben abordarse con pruebas visuales y funcionales antes de captar usuarios reales.
 
 ### Vercel y dominio
 
-- El despliegue de producción de Vercel correspondiente al commit `3e78a23` está en estado `Ready` y fue redesplegado el 6 de octubre de 2026 con la configuración actualizada.
+- El despliegue de producción de Vercel correspondiente al commit `e946003` está en estado `Ready` desde el 18 de octubre de 2026.
 - El alias heredado `https://kiryco.vercel.app` continúa respondiendo, pero el dominio canónico público es `https://tenlo.es`.
 - El código utiliza `https://tenlo.es` como dominio canónico por defecto y permite configurarlo por entorno mediante `NEXT_PUBLIC_SITE_URL`.
 - `tenlo.es` y `www.tenlo.es` están conectados a Vercel: la raíz responde en producción y `www` redirige permanentemente (`308`) a `tenlo.es`.
@@ -115,7 +115,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 
 - [x] Actualizar Next.js y dependencias a versiones soportadas sin avisos críticos conocidos.
 - [x] Repetir `npm audit`, `typecheck`, `lint` y `build` tras la actualización. Resultado del 10/10/2026: 0 críticos, 8 altos y 3 moderados; tipado, lint y build correctos.
-- [ ] Planificar y validar la migración a Next.js 16 y Tailwind CSS 4 para eliminar los avisos restantes sin regresiones visuales ni funcionales.
+- [ ] Planificar y validar la migración a Next.js 16 y Tailwind CSS 4 para eliminar los avisos restantes sin regresiones visuales ni funcionales. El plan, criterios, pruebas y rollback están definidos en `PLAN-MIGRACION-NEXT16-TAILWIND4.md`; falta ejecutar la migración en una rama y validar el preview.
 - [x] Evitar que las páginas privadas conectadas a Supabase se ejecuten durante el prerender del build.
 - [x] Hacer que las rutas privadas muestren un mensaje operativo claro cuando falten variables de Supabase en tiempo de ejecución. El área personal, datos de cuenta, favoritos, publicaciones, solicitudes y publicación degradan a un estado seguro sin exponer errores técnicos.
 - [x] Crear `.env.example` sin secretos con todas las variables requeridas y su finalidad.
