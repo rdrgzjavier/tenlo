@@ -104,6 +104,17 @@ function formatReviewDate(value: string | null) {
   );
 }
 
+function trustStatus(level: TrustLevel) {
+  if (level === "official") return "Información confirmada por la entidad";
+  if (level === "verified") return "Datos esenciales verificados por Tenlo";
+  if (level === "managed") return "Ficha gestionada por la entidad";
+  return "Pendiente de verificación";
+}
+
+function isVerifiedTrust(level: TrustLevel) {
+  return level === "verified" || level === "official";
+}
+
 function mapCenter(row: CenterRow): Center {
   const type = isCenterType(row.center_type) ? row.center_type : "privado";
   return {
@@ -124,11 +135,11 @@ function mapCenter(row: CenterRow): Center {
     source: row.source_name ?? "",
     sourceUrl: row.source_url ?? undefined,
     lastReviewed: formatReviewDate(row.last_reviewed),
-    verificationStatus: "Pendiente de verificación",
+    verificationStatus: trustStatus(row.trust_level),
     isPublicInformation: Boolean(row.source_url),
     tags: row.tags,
     image: row.image_url ?? undefined,
-    verified: false,
+    verified: isVerifiedTrust(row.trust_level),
     trustLevel: row.trust_level,
   };
 }
@@ -149,9 +160,9 @@ function mapProvider(row: BusinessRow): Provider {
     sourceName: row.source_name ?? undefined,
     sourceUrl: row.source_url ?? undefined,
     lastReviewed: formatReviewDate(row.last_reviewed),
-    verificationStatus: "Pendiente de verificación",
+    verificationStatus: trustStatus(row.trust_level),
     isPublicInformation: Boolean(row.source_url),
-    verified: false,
+    verified: isVerifiedTrust(row.trust_level),
     trustLevel: row.trust_level,
     plan: row.commercial_plan,
     tags: row.tags,
@@ -179,7 +190,7 @@ function centerListing(center: Center): Listing {
     isPublicInformation: center.isPublicInformation,
     publicationType: "centro",
     status: "published",
-    verified: false,
+    verified: isVerifiedTrust(center.trustLevel),
     trustLevel: center.trustLevel,
     image: center.image,
     tags: center.tags,
@@ -211,11 +222,11 @@ function mapService(row: ServiceRow, providerById: Map<string, Provider>): Listi
     sourceName: row.source_name ?? undefined,
     sourceUrl: row.source_url ?? undefined,
     lastReviewed: formatReviewDate(row.last_reviewed),
-    verificationStatus: "Pendiente de verificación",
+    verificationStatus: trustStatus(row.trust_level),
     isPublicInformation: Boolean(row.source_url),
     publicationType: "proveedor",
     status: "published",
-    verified: false,
+    verified: isVerifiedTrust(row.trust_level),
     trustLevel: row.trust_level,
     tags: row.tags,
     image: row.image_url ?? undefined,

@@ -41,6 +41,13 @@ function queryTokenGroups(query: string) {
     .map((token) => (keywordAliases[token] ?? [token]).map(normalize));
 }
 
+const availabilityAliases: Record<string, string[]> = {
+  semana: ["esta semana", "semanal", "lunes", "martes", "miercoles", "jueves", "viernes"],
+  tardes: ["tarde", "tardes"],
+  "fin-semana": ["fin de semana", "sabado", "domingo"],
+  plazas: ["plazas abiertas", "plazas disponibles", "inscripcion abierta"]
+};
+
 export async function generateMetadata({ searchParams }: { searchParams: Promise<SearchParams> }): Promise<Metadata> {
   const resolvedSearchParams = await searchParams;
   const cat = value(resolvedSearchParams, "categoria");
@@ -99,8 +106,15 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
       const listingMax = listing.recommendedAgeMax ?? 18;
       if (listingMax < ageMin || listingMin > ageMax) return false;
     }
-    if (selected.precio === "gratis" && (listing.price ?? 0) !== 0 && !listing.priceLabel?.toLowerCase().includes("gratis")) return false;
-    if (selected.precio === "25" && listing.price && listing.price > 25) return false;
+    if (selected.precio === "gratis" && listing.price !== 0 && !listing.priceLabel?.toLowerCase().includes("gratis")) return false;
+    if (selected.precio === "25" && (listing.price === undefined || listing.price > 25)) return false;
+    if (selected.precio === "75" && (listing.price === undefined || listing.price <= 25 || listing.price > 75)) return false;
+    if (selected.precio === "mas-75" && (listing.price === undefined || listing.price <= 75)) return false;
+    if (selected.disponibilidad) {
+      const availabilityTerms = availabilityAliases[selected.disponibilidad] ?? [];
+      const availabilityHaystack = normalize([listing.availability, ...listing.tags, ...Object.values(listing.details)].filter(Boolean).join(" "));
+      if (!availabilityTerms.some((term) => availabilityHaystack.includes(normalize(term)))) return false;
+    }
     return true;
   }).sort((first, second) => {
     if (selected.tag) {

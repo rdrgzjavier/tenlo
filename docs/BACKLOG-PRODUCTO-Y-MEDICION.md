@@ -230,7 +230,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Aplicar y verificar en Supabase el modelo de dirección profesional, coordenadas verificadas, visibilidad de ubicación y municipios de servicio mediante la migración `0014`, distinguiendo negocios físicos de profesionales móviles.
 - [ ] Permitir al proveedor confirmar o corregir dirección, coordenadas, visibilidad y municipios al reclamar su ficha.
 - [ ] Sustituir la búsqueda aproximada por un mapa embebido solo cuando existan coordenadas verificadas, consentimiento/cookies y una estimación de coste aceptada.
-- [ ] Sustituir filtros genéricos por los atributos que realmente permiten decidir en el segmento inicial.
+- [ ] Sustituir filtros genéricos por los atributos que realmente permiten decidir en el segmento inicial. Los filtros visibles de confianza, precio y disponibilidad ya aplican valores reales y no aproximaciones silenciosas; falta validar con familias qué atributos por vertical cambian una decisión.
 - [x] Mostrar el número de resultados sin sugerir que más siempre es mejor.
 - [x] Registrar visualmente búsquedas sin resultados y crear una salida útil para limpiar filtros o pedir ayuda a Tenlo.
 - [x] Permitir proponer desde una búsqueda sin resultados un proveedor con nombre, web, ubicación y servicio; conservarlo pendiente de revisión antes de crear una ficha `No verificada`.
