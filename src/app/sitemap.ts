@@ -1,10 +1,12 @@
 import type { MetadataRoute } from "next";
-import { categories, centers, listings, municipalities, providers } from "@/lib/mock-data";
+import { loadDirectorySnapshot } from "@/lib/directory-repository";
+import { categories, municipalities } from "@/lib/mock-data";
 import { siteConfig } from "@/lib/site";
+import type { Listing } from "@/lib/types";
 
 const baseUrl = siteConfig.currentDomain;
 
-function hasPublishedListings(categoryId: string, municipalityName?: string) {
+function hasPublishedListings(listings: Listing[], categoryId: string, municipalityName?: string) {
   return listings.some((listing) => (
     listing.status === "published" &&
     listing.categoryId === categoryId &&
@@ -12,17 +14,18 @@ function hasPublishedListings(categoryId: string, municipalityName?: string) {
   ));
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const { centers, listings, providers } = await loadDirectorySnapshot();
   const staticRoutes = ["", "/buscar", "/categoria", "/centros", "/servicios", "/comunidad"];
   const trustRoutes = ["/privacidad", "/aviso-legal", "/cookies", "/normas-comunidad", "/contacto", "/sugerencias"];
   const zoneRoutes = municipalities.map((municipality) => `/zonas/${municipality.slug}`);
   const localRoutes = municipalities.flatMap((municipality) => (
     categories
-      .filter((category) => hasPublishedListings(category.id, municipality.name))
+      .filter((category) => hasPublishedListings(listings, category.id, municipality.name))
       .map((category) => `/${municipality.slug}/${category.slug}`)
   ));
   const categoryRoutes = categories
-    .filter((category) => hasPublishedListings(category.id))
+    .filter((category) => hasPublishedListings(listings, category.id))
     .map((category) => `/categoria/${category.slug}`);
   const centerRoutes = centers.map((center) => `/centros/${center.slug}`);
   const serviceRoutes = providers.map((provider) => `/servicios/${provider.id}`);

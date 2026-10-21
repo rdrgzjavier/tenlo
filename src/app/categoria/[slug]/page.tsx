@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import CategoryPageView from "@/components/CategoryPageView";
+import { loadDirectorySnapshot } from "@/lib/directory-repository";
 import { categories, findCategory } from "@/lib/mock-data";
 
 export function generateStaticParams() {
@@ -20,5 +21,6 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   const { slug } = await params;
   const category = findCategory(slug);
   if (!category) notFound();
-  return <CategoryPageView category={category} />;
+  const { listings } = await loadDirectorySnapshot();
+  return <CategoryPageView category={category} listings={listings} />;
 }

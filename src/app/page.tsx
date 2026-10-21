@@ -25,8 +25,9 @@ import NewsletterForm from "@/components/NewsletterForm";
 import { TrustBadge } from "@/components/Badge";
 import ValidatedSearchForm from "@/components/ValidatedSearchForm";
 import { trackingAttrs } from "@/lib/analytics";
+import { loadDirectorySnapshot } from "@/lib/directory-repository";
 import { centerTypeLabel } from "@/lib/display-labels";
-import { centers, listings, municipalities } from "@/lib/mock-data";
+import { municipalities } from "@/lib/mock-data";
 import { formatStat, getSiteStats } from "@/lib/site-stats";
 import { siteConfig } from "@/lib/site";
 
@@ -149,12 +150,13 @@ const realSituations = [
   { text: "Busco un canguro cerca de casa", href: "/buscar?tag=canguros" }
 ];
 
-export default function Home() {
+export default async function Home() {
+  const { centers, listings, providers } = await loadDirectorySnapshot();
   const stats = getSiteStats();
   const totalPublished = listings.filter((listing) => listing.status === "published").length;
   const statCards = [
-    { value: `+${formatStat(stats.centers)}`, label: "Centros educativos", Icon: GraduationCap },
-    { value: `+${formatStat(Math.max(stats.localResources, totalPublished))}`, label: "Recursos locales", Icon: MapPinned },
+    { value: `+${formatStat(centers.length)}`, label: "Centros educativos", Icon: GraduationCap },
+    { value: `+${formatStat(Math.max(providers.length, totalPublished))}`, label: "Recursos locales", Icon: MapPinned },
     { value: "+4", label: "Zonas cubiertas", Icon: MapPin },
     { value: `+${formatStat(stats.categories)}`, label: "Categorías disponibles", Icon: Shapes }
   ];

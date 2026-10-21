@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import CenterCard from "@/components/CenterCard";
 import ListingCard from "@/components/ListingCard";
-import { centers, listings, municipalities } from "@/lib/mock-data";
+import { loadDirectorySnapshot } from "@/lib/directory-repository";
+import { municipalities } from "@/lib/mock-data";
 
 export function generateStaticParams() {
   return municipalities.map((municipality) => ({ slug: municipality.slug }));
@@ -27,6 +28,7 @@ export default async function ZonePage({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const municipality = municipalities.find((item) => item.slug === slug);
   if (!municipality) notFound();
+  const { centers, listings } = await loadDirectorySnapshot();
   const zoneListings = listings.filter((listing) => listing.municipality === municipality.name);
   const zoneCenters = centers.filter((center) => center.municipality === municipality.name);
 

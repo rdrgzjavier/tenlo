@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ListingCard from "@/components/ListingCard";
 import JsonLd from "@/components/JsonLd";
-import { categories, listings, municipalities } from "@/lib/mock-data";
+import { loadDirectorySnapshot } from "@/lib/directory-repository";
+import { categories, municipalities } from "@/lib/mock-data";
 
 type Params = { municipio: string; categoria: string };
 
@@ -37,6 +38,7 @@ export default async function LocalCategoryPage({ params }: { params: Promise<Pa
   const category = categories.find((item) => item.slug === resolvedParams.categoria);
   if (!municipality || !category) notFound();
 
+  const { listings } = await loadDirectorySnapshot();
   const results = listings.filter((listing) => listing.municipality === municipality.name && listing.categoryId === category.id);
 
   return (

@@ -1,11 +1,10 @@
 import Filters from "@/components/Filters";
 import ListingCard from "@/components/ListingCard";
 import ResponsiveFilterPanel from "@/components/ResponsiveFilterPanel";
-import { listings } from "@/lib/mock-data";
-import type { Category } from "@/lib/types";
+import type { Category, Listing } from "@/lib/types";
 import Link from "next/link";
 
-export default function CategoryPageView({ category }: { category: Category }) {
+export default function CategoryPageView({ category, listings }: { category: Category; listings: Listing[] }) {
   const categoryListings = listings.filter((listing) => listing.categoryId === category.id);
 
   return (
