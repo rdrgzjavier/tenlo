@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronDown, ExternalLink, Search } from "lucide-react";
-import { categories, listings, municipalities, providers } from "@/lib/mock-data";
+import { categories, municipalities } from "@/lib/mock-data";
 import { TrustBadge } from "@/components/Badge";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import ValidatedSearchForm from "@/components/ValidatedSearchForm";
 import JsonLd from "@/components/JsonLd";
 import LoadMoreGrid from "@/components/LoadMoreGrid";
 import { trackingAttrs } from "@/lib/analytics";
+import { loadDirectorySnapshot } from "@/lib/directory-repository";
 import { uniqueDisplayTags } from "@/lib/display-labels";
 import { absoluteUrl } from "@/lib/site";
+import type { Listing, Provider } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Servicios para familias en Las Rozas, Majadahonda, Pozuelo y Boadilla",
@@ -33,11 +35,11 @@ function providerFallback(id: string) {
   return serviceFallbacks[index];
 }
 
-function isChildcareProvider(provider: (typeof providers)[number]) {
+function isChildcareProvider(provider: Provider) {
   return provider.category.toLowerCase().includes("canguro");
 }
 
-function providerCategoryLabel(provider: (typeof providers)[number]) {
+function providerCategoryLabel(provider: Provider) {
   return isChildcareProvider(provider) ? "Canguro" : provider.category;
 }
 
@@ -49,7 +51,8 @@ const situations = [
   { text: "Busco un canguro cerca de casa", href: "/buscar?tag=canguros" }
 ];
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const { listings, providers } = await loadDirectorySnapshot();
   const serviceCategories = categories.filter(c => c.id !== "centros");
 
   return (
@@ -146,7 +149,7 @@ export default function ServicesPage() {
                 );
               })()}
               <div className="mt-4 grid gap-2 pb-5 text-sm text-slatecopy">
-                {providerCardFacts(provider).map(([label, value]) => (
+                {providerCardFacts(provider, listings).map(([label, value]) => (
                   <div key={label} className="flex justify-between gap-3"><span>{label}</span><span className="text-right font-medium text-ink">{value}</span></div>
                 ))}
               </div>
@@ -171,7 +174,7 @@ export default function ServicesPage() {
   );
 }
 
-function providerCardFacts(provider: (typeof providers)[number]) {
+function providerCardFacts(provider: Provider, listings: Listing[]) {
   const listing = listings.find((item) => item.userId === provider.userId && item.publicationType === "proveedor");
   if (isChildcareProvider(provider)) {
     return [

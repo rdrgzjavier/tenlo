@@ -5,7 +5,8 @@ import CenterCard from "@/components/CenterCard";
 import ValidatedSearchForm from "@/components/ValidatedSearchForm";
 import JsonLd from "@/components/JsonLd";
 import { absoluteUrl } from "@/lib/site";
-import { centers, municipalities } from "@/lib/mock-data";
+import { loadDirectorySnapshot } from "@/lib/directory-repository";
+import { municipalities } from "@/lib/mock-data";
 
 export const metadata: Metadata = {
   title: "Centros educativos en Madrid noroeste para familias",
@@ -18,7 +19,8 @@ export const metadata: Metadata = {
   }
 };
 
-export default function CentersPage() {
+export default async function CentersPage() {
+  const { centers } = await loadDirectorySnapshot();
   return (
     <div className="section-shell">
       <JsonLd data={{

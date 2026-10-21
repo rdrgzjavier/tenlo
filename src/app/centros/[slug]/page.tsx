@@ -11,18 +11,20 @@ import JsonLd from "@/components/JsonLd";
 import LocationCard from "@/components/LocationCard";
 import ShareButton from "@/components/ShareButton";
 import { trackingAttrs } from "@/lib/analytics";
+import { loadDirectorySnapshot } from "@/lib/directory-repository";
 import { centerTypeLabel, religiousCharacterLabel, uniqueDisplayTags } from "@/lib/display-labels";
-import { centers, findCenter } from "@/lib/mock-data";
 
 const centerFallbackImage = "https://images.pexels.com/photos/5212320/pexels-photo-5212320.jpeg?auto=compress&cs=tinysrgb&w=1600";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const { centers } = await loadDirectorySnapshot();
   return centers.map((center) => ({ slug: center.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const center = findCenter(slug);
+  const { centers } = await loadDirectorySnapshot();
+  const center = centers.find((item) => item.id === slug || item.slug === slug);
   if (!center) return { title: "Centro educativo | Tenlo" };
   return {
     title: `${center.name} en ${center.municipality} | Tenlo`,
@@ -32,7 +34,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CenterDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const center = findCenter(slug);
+  const { centers } = await loadDirectorySnapshot();
+  const center = centers.find((item) => item.id === slug || item.slug === slug);
   if (!center) notFound();
 
   const centerUrl = center.website?.startsWith("http") ? center.website : undefined;

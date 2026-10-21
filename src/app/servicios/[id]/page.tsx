@@ -13,18 +13,19 @@ import ProfileAvatar from "@/components/ProfileAvatar";
 import ProviderProfileSections from "@/components/ProviderProfileSections";
 import ShareButton from "@/components/ShareButton";
 import { trackingAttrs } from "@/lib/analytics";
+import { loadDirectorySnapshot } from "@/lib/directory-repository";
 import { uniqueDisplayTags } from "@/lib/display-labels";
-import { ageLabel, findProvider, listings, providers } from "@/lib/mock-data";
+import { ageLabel } from "@/lib/mock-data";
 import type { Listing, Provider } from "@/lib/types";
 
 const serviceFallbackImage = "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1600";
 
-function isPersonalProvider(provider: NonNullable<ReturnType<typeof findProvider>>) {
+function isPersonalProvider(provider: Provider) {
   const protectedContact = provider.phone.includes("Contacto protegido") || provider.email.endsWith("@tenlo.es");
   return protectedContact || provider.id.startsWith("canguro-") || provider.id.startsWith("profesor-");
 }
 
-function isChildcareProvider(provider: NonNullable<ReturnType<typeof findProvider>>) {
+function isChildcareProvider(provider: Provider) {
   return provider.category.toLowerCase().includes("canguro");
 }
 
@@ -62,30 +63,33 @@ function providerCategoryLabel(provider: Provider) {
   return isChildcareProvider(provider) ? "Canguro" : provider.category;
 }
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const { providers } = await loadDirectorySnapshot();
   return providers.map((provider) => ({ id: provider.id }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const provider = findProvider(id);
+  const { providers } = await loadDirectorySnapshot();
+  const provider = providers.find((item) => item.id === id || item.userId === id);
   if (!provider) return { title: "Servicio no encontrado | Tenlo" };
   return { title: `${provider.businessName} | Servicios para familias | Tenlo`, description: provider.description };
 }
 
 export default async function ServiceDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const provider = findProvider(id);
+  const snapshot = await loadDirectorySnapshot();
+  const provider = snapshot.providers.find((item) => item.id === id || item.userId === id);
   if (!provider) notFound();
 
   const personalProvider = isPersonalProvider(provider);
   const childcareProvider = isChildcareProvider(provider);
-  const listing = listings.find((item) => item.userId === provider.userId && item.publicationType === "proveedor");
+  const listing = snapshot.listings.find((item) => item.userId === provider.userId && item.publicationType === "proveedor");
   const providerUrl = provider.website?.startsWith("http") ? provider.website : undefined;
   const providerEmail = provider.email.includes("@") ? provider.email : undefined;
   const categoryLabel = providerCategoryLabel(provider);
   const visibleTags = uniqueDisplayTags(provider.tags, [categoryLabel, provider.category, provider.municipality, provider.serviceArea, "Canguros", "Referencias"]).slice(0, 6);
-  const relatedServices = providers
+  const relatedServices = snapshot.providers
     .filter((item) => item.id !== provider.id && (item.municipality === provider.municipality || item.category === provider.category))
     .slice(0, 3);
 
