@@ -186,7 +186,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   - [x] preparar en el esquema preferencias de contacto;
   - [x] preparar en el esquema motivo de inactividad o rechazo.
 - [x] Añadir historial de cambios y responsable de cada modificación. La migración `0017_admin_queue_status_history.sql` registra automáticamente cada cambio; el 16/10/2026 se validaron dos transiciones reversibles con responsable y fecha en `/admin`.
-- [ ] Definir reglas RLS y permisos para proveedor, familia, moderación y administración.
+- [ ] Definir reglas RLS y permisos para proveedor, familia, moderación y administración. La matriz y los casos de prueba están auditados en `MATRIZ-RLS-Y-PERMISOS.md`; antes de cerrar faltan limitar centros a aprobados, crear una superficie pública segura para proveedores, ocultar la enumeración de alias y validar los cuatro roles en producción.
 - [ ] Crear copias de seguridad y procedimiento de recuperación. El procedimiento, frecuencia, retención, prueba y criterios de escalado están definidos en `COPIAS-Y-RECUPERACION.md`; falta ejecutar la primera copia y una restauración aislada.
 
 ## P0. Flujo para reclamar y enriquecer una ficha
