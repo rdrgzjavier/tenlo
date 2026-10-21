@@ -21,16 +21,21 @@ export async function POST(request: Request) {
   const { data: profile } = await supabase.from("profiles").select("role,status").eq("id", authData.user.id).maybeSingle();
   if (profile?.role !== "tenlo_admin" || profile.status !== "approved") return NextResponse.json({ error: "No tienes permiso para actualizar solicitudes." }, { status: 403 });
 
+  const { data: existing, error: readError } = await supabase.from("connection_requests").select("status,provider_notified_at,provider_response_summary,alternative_summary,first_response_at,closed_at").eq("id", recordId).maybeSingle();
+  if (readError) return NextResponse.json({ error: "No hemos podido consultar el seguimiento." }, { status: 500 });
+  if (!existing) return NextResponse.json({ error: "La solicitud no existe." }, { status: 404 });
+
   const now = new Date().toISOString();
   const update: Record<string, string | null> = {
     status,
     provider_response_summary: responseSummary || null,
-    alternative_summary: alternativeSummary || null,
-    last_family_update_at: now
+    alternative_summary: alternativeSummary || null
   };
-  if (body?.providerNotified) update.provider_notified_at = now;
-  if (["responded", "declined"].includes(status)) update.first_response_at = now;
-  if (status === "closed") update.closed_at = now;
+  const familyVisibleChange = existing.status !== status || (existing.provider_response_summary || "") !== responseSummary || (existing.alternative_summary || "") !== alternativeSummary;
+  if (familyVisibleChange) update.last_family_update_at = now;
+  if (body?.providerNotified && !existing.provider_notified_at) update.provider_notified_at = now;
+  if (["responded", "declined"].includes(status) && !existing.first_response_at) update.first_response_at = now;
+  if (status === "closed" && !existing.closed_at) update.closed_at = now;
 
   const { data, error } = await supabase.from("connection_requests").update(update).eq("id", recordId).select("id").maybeSingle();
   if (error) return NextResponse.json({ error: "No hemos podido guardar el seguimiento." }, { status: 500 });

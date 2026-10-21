@@ -470,8 +470,8 @@ Propiedades recomendadas: `search_id`, categoría, municipio, zona, número de r
 - [x] `contact_form_completed`
 - [x] `request_created`
 - [x] `request_failed`
-- [ ] `provider_notified`
-- [ ] `provider_response_received`
+- [x] `provider_notified` (marca de primera notificación inmutable en backend).
+- [x] `provider_response_received` (primera respuesta inmutable y estado auditable en backend).
 - [x] `family_viewed_response` (una vez por solicitud y sesión al entrar la respuesta en viewport; el ID se usa solo en `sessionStorage` y no se envía a GA4).
 - [x] `connection_marked_useful`
 - [x] `outcome_reported`
@@ -483,13 +483,13 @@ Propiedades recomendadas: `request_id`, proveedor, categoría, municipio, posici
 - [x] `provider_landing_viewed`
 - [x] `claim_started`
 - [x] `claim_submitted`
-- [ ] `claim_approved`
-- [ ] `claim_rejected`
+- [x] `claim_approved` (derivado del historial administrativo de estados, sin enviarlo a GA4).
+- [x] `claim_rejected` (derivado del historial administrativo de estados, sin enviarlo a GA4).
 - [x] `profile_edit_started`
 - [ ] `profile_section_completed`
 - [x] `profile_submitted`
 - [ ] `profile_published`
-- [ ] `verification_requested`
+- [x] `verification_requested` (equivalente al envío trazable de `claim_submitted`).
 - [ ] `verification_approved`
 - [ ] `provider_request_viewed`
 - [ ] `provider_request_responded`
