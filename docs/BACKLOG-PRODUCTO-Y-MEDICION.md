@@ -187,7 +187,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   - [x] preparar en el esquema motivo de inactividad o rechazo.
 - [x] Añadir historial de cambios y responsable de cada modificación. La migración `0017_admin_queue_status_history.sql` registra automáticamente cada cambio; el 16/10/2026 se validaron dos transiciones reversibles con responsable y fecha en `/admin`.
 - [ ] Definir reglas RLS y permisos para proveedor, familia, moderación y administración.
-- [ ] Crear copias de seguridad y procedimiento de recuperación.
+- [ ] Crear copias de seguridad y procedimiento de recuperación. El procedimiento, frecuencia, retención, prueba y criterios de escalado están definidos en `COPIAS-Y-RECUPERACION.md`; falta ejecutar la primera copia y una restauración aislada.
 
 ## P0. Flujo para reclamar y enriquecer una ficha
 
@@ -424,7 +424,7 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 - [x] Unificar el envío de publicaciones en una ruta autenticada con validación en servidor, alta en la cola, aviso operativo y confirmación a la cuenta; retirar el endpoint de email público que no estaba conectado al formulario.
 - [ ] Definir política de retención para cuentas inactivas, solicitudes, búsquedas y consentimientos.
 - [ ] Completar el procedimiento administrativo de acceso, rectificación y eliminación. La portabilidad básica ya está disponible mediante una exportación JSON privada; la baja se registra una sola vez como solicitud revisable y genera aviso operativo y confirmación. Falta ejecutar y documentar el cierre efectivo de una baja real.
-- [ ] Preparar copias de seguridad y restauración antes de almacenar información real.
+- [ ] Preparar copias de seguridad y restauración antes de almacenar información real. El runbook está documentado en `COPIAS-Y-RECUPERACION.md`; falta generar la primera copia cifrada y demostrar su restauración en un destino aislado.
 - [ ] Revisar privacidad y seguridad antes de incorporar un CRM, plataforma de emailing o nuevo conector.
 
 ### CRM y campañas futuras
