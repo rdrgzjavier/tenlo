@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { findListing } from "@/lib/mock-data";
-import { ADMIN_EMAIL, rows, sendMail, tenloEmailShell } from "@/lib/mail";
+import { loadDirectorySnapshot } from "@/lib/directory-repository";
+import { ADMIN_EMAIL, escapeHtml, rows, sendMail, tenloEmailShell } from "@/lib/mail";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const contactPreferences = new Set(["tenlo", "email", "phone"]);
@@ -15,7 +15,8 @@ export async function POST(request: Request) {
   if (message.length < 10 || message.length > 1500) return NextResponse.json({ error: "El mensaje debe tener entre 10 y 1.500 caracteres." }, { status: 400 });
   if (!contactPreferences.has(contactPreference)) return NextResponse.json({ error: "Selecciona un canal de contacto válido." }, { status: 400 });
 
-  const listing = findListing(targetId);
+  const { listings } = await loadDirectorySnapshot();
+  const listing = listings.find((item) => item.id === targetId || item.slug === targetId);
   if (!listing) return NextResponse.json({ error: "La ficha indicada no existe." }, { status: 404 });
 
   const supabase = await createSupabaseServerClient();
@@ -58,7 +59,7 @@ export async function POST(request: Request) {
   try {
     const adminResult = await sendMail({ to: ADMIN_EMAIL, subject: `NUEVA SOLICITUD + ${listing.title}`, html: adminHtml, replyTo: familyEmail || undefined });
     if (familyEmail) {
-      const userHtml = tenloEmailShell("Solicitud recibida", `<p style="margin:0 0 14px;line-height:1.6">Hemos registrado tu solicitud para <strong>${listing.title}</strong>.</p><p style="margin:0;line-height:1.6">Puedes seguir su estado y consultar la respuesta desde <a href="https://tenlo.es/solicitudes">Mis solicitudes</a>. Nuestro objetivo durante el piloto es responder u ofrecer una alternativa en un máximo de 48 horas.</p>`);
+      const userHtml = tenloEmailShell("Solicitud recibida", `<p style="margin:0 0 14px;line-height:1.6">Hemos registrado tu solicitud para <strong>${escapeHtml(listing.title)}</strong>.</p><p style="margin:0;line-height:1.6">Puedes seguir su estado y consultar la respuesta desde <a href="https://tenlo.es/solicitudes">Mis solicitudes</a>. Nuestro objetivo durante el piloto es responder u ofrecer una alternativa en un máximo de 48 horas.</p>`);
       await sendMail({ to: familyEmail, subject: "Hemos recibido tu solicitud en Tenlo", html: userHtml });
     }
     emailSent = adminResult.sent;

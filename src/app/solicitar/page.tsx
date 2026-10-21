@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ContactRequestForm from "@/components/ContactRequestForm";
-import { findListing } from "@/lib/mock-data";
+import { loadDirectorySnapshot } from "@/lib/directory-repository";
 
 export const metadata: Metadata = {
   title: "Solicitar información | Tenlo",
@@ -11,7 +11,8 @@ export const metadata: Metadata = {
 
 export default async function ContactRequestPage({ searchParams }: { searchParams: Promise<{ item?: string }> }) {
   const resolvedSearchParams = await searchParams;
-  const listing = resolvedSearchParams.item ? findListing(resolvedSearchParams.item) : undefined;
+  const { listings } = await loadDirectorySnapshot();
+  const listing = resolvedSearchParams.item ? listings.find((item) => item.id === resolvedSearchParams.item || item.slug === resolvedSearchParams.item) : undefined;
   if (!listing) notFound();
 
   return (

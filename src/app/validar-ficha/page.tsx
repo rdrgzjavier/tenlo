@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ClaimProfileForm from "@/components/ClaimProfileForm";
-import { findCenter, findProvider } from "@/lib/mock-data";
+import { loadDirectorySnapshot } from "@/lib/directory-repository";
 
 export const metadata: Metadata = {
   title: "Gestionar ficha | Tenlo",
@@ -11,7 +11,11 @@ export const metadata: Metadata = {
 export default async function ClaimProfilePage({ searchParams }: { searchParams: Promise<{ tipo?: string; id?: string }> }) {
   const resolvedSearchParams = await searchParams;
   const type = resolvedSearchParams.tipo === "centro" ? "center" : "provider";
-  const entity = type === "center" ? findCenter(resolvedSearchParams.id || "") : findProvider(resolvedSearchParams.id || "");
+  const snapshot = await loadDirectorySnapshot();
+  const identifier = resolvedSearchParams.id || "";
+  const entity = type === "center"
+    ? snapshot.centers.find((item) => item.id === identifier || item.slug === identifier)
+    : snapshot.providers.find((item) => item.id === identifier || item.userId === identifier);
 
   if (!entity) {
     return (
