@@ -2,10 +2,9 @@
 
 import { type FormEvent, useState } from "react";
 import { categories, centers, municipalities } from "@/lib/mock-data";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { pushTrackingEvent } from "@/lib/analytics";
 
 export default function PublishForm() {
-  const supabase = createSupabaseBrowserClient();
   const [ok, setOk] = useState(false);
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -20,19 +19,11 @@ export default function PublishForm() {
       return;
     }
 
-    const { data: authData } = await supabase.auth.getUser();
-    const user = authData.user;
-
-    if (!user) {
-      setError("Debes iniciar sesión para publicar una oferta o recurso.");
-      return;
-    }
-
     const form = new FormData(event.currentTarget);
     const field = (name: string) => String(form.get(name) || "");
     const submissionType = field("publicationType") || "publicacion";
     const payload = {
-      publication_type: submissionType,
+      publicationType: submissionType,
       category: field("category"),
       municipality: field("municipality"),
       title: field("title"),
@@ -41,22 +32,21 @@ export default function PublishForm() {
       recommended_age: field("recommendedAge"),
       price: field("price"),
       contact: field("contact"),
-      source: field("source")
+      source: field("source"),
+      adultConfirmation: ok
     };
 
     setLoading(true);
-    const { error: insertError } = await supabase.from("submissions").insert({
-      user_id: user.id,
-      submission_type: submissionType,
-      payload
-    });
+    const response = await fetch("/api/submission", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+    const result = (await response.json()) as { error?: string };
     setLoading(false);
 
-    if (insertError) {
-      setError(insertError.message);
+    if (!response.ok) {
+      setError(result.error || "No hemos podido enviar la publicación.");
       return;
     }
 
+    pushTrackingEvent("publish", { publication_type: submissionType, category: field("category"), municipality: field("municipality") });
     setSent(true);
   }
 

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ADMIN_EMAIL, rows, sendMail, tenloEmailShell } from "@/lib/mail";
+import { ADMIN_EMAIL, escapeHtml, rows, sendMail, tenloEmailShell } from "@/lib/mail";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
   }));
 
   const userHtml = tenloEmailShell("Hemos recibido tu solicitud", `
-    <p style="margin:0 0 14px;line-height:1.6">Gracias. Hemos recibido tu solicitud para validar la ficha de <strong>${payload.entity_name}</strong>.</p>
+    <p style="margin:0 0 14px;line-height:1.6">Gracias. Hemos recibido tu solicitud para validar la ficha de <strong>${escapeHtml(payload.entity_name)}</strong>.</p>
     <p style="margin:0;line-height:1.6">El equipo de Tenlo revisará la información y verificará tu relación con la ficha antes de publicar cambios visibles. No necesitas crear una cuenta para iniciar la solicitud; te indicaremos por email el siguiente paso.</p>
   `);
 
