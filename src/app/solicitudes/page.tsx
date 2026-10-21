@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { ClipboardCheck } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import RequestOutcomeFeedback from "@/components/RequestOutcomeFeedback";
+import ResponseViewedTracker from "@/components/ResponseViewedTracker";
 import { listings } from "@/lib/mock-data";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
@@ -64,6 +65,7 @@ export default async function RequestsPage() {
             const canReportOutcome = ["responded", "declined", "alternative_offered", "closed"].includes(request.status);
             return (
               <article key={request.id} className="card p-5">
+                {request.provider_response_summary || request.alternative_summary ? <ResponseViewedTracker requestId={request.id} status={request.status} hasResponse={Boolean(request.provider_response_summary)} hasAlternative={Boolean(request.alternative_summary)} /> : null}
                 <span className="chip">{statusLabels[request.status] ?? request.status}</span>
                 <h2 className="mt-4 text-lg font-bold text-slatecopy">{listing?.title ?? "Solicitud de información"}</h2>
                 <p className="mt-2 text-sm text-muted">{request.municipality ?? listing?.municipality ?? "Zona pendiente"}</p>

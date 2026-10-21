@@ -20,8 +20,8 @@ export default function RequestOutcomeFeedback({ requestId, initialUseful, initi
     const response = await fetch("/api/connection-feedback", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ requestId, useful, outcome }) });
     const data = (await response.json()) as { error?: string }; setPending(false);
     if (!response.ok) { setMessage(data.error || "No se pudo guardar."); return; }
-    pushTrackingEvent("connection_marked_useful", { request_id: requestId, useful });
-    pushTrackingEvent("outcome_reported", { request_id: requestId, outcome });
+    pushTrackingEvent("connection_marked_useful", { useful });
+    pushTrackingEvent("outcome_reported", { outcome });
     setMessage("Gracias. Tu valoración se ha guardado.");
   }
 

@@ -420,6 +420,7 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 - [x] No exponer claves de servicio de Supabase en el cliente.
 - [x] Separar PII de tablas de eventos y utilizar IDs internos seudónimos para análisis.
 - [x] Restringir exportaciones y accesos administrativos; registrar quién descarga datos, el ámbito, la fecha y el número de registros, sin duplicar el contenido exportado en el historial.
+- [x] Retirar endpoints públicos de correo sin consumidores (`/api/register` y `/api/contact`) para evitar abuso del proveedor de email; el registro usa Supabase Auth y el soporte utiliza la cola moderada de feedback o el correo oficial.
 - [ ] Definir política de retención para cuentas inactivas, solicitudes, búsquedas y consentimientos.
 - [ ] Completar el procedimiento administrativo de acceso, rectificación y eliminación. La portabilidad básica ya está disponible mediante una exportación JSON privada y la baja se registra como solicitud revisable.
 - [ ] Preparar copias de seguridad y restauración antes de almacenar información real.
@@ -470,7 +471,7 @@ Propiedades recomendadas: `search_id`, categoría, municipio, zona, número de r
 - [x] `request_failed`
 - [ ] `provider_notified`
 - [ ] `provider_response_received`
-- [ ] `family_viewed_response`
+- [x] `family_viewed_response` (una vez por solicitud y sesión al entrar la respuesta en viewport; el ID se usa solo en `sessionStorage` y no se envía a GA4).
 - [x] `connection_marked_useful`
 - [x] `outcome_reported`
 

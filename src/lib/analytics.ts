@@ -37,7 +37,8 @@ export type TrackingAction =
   | "registration_failed"
   | "map_directions_clicked"
   | "connection_marked_useful"
-  | "outcome_reported";
+  | "outcome_reported"
+  | "family_viewed_response";
 
 export const analyticsSchemaVersion = "1.0";
 
@@ -60,8 +61,11 @@ const protectedTrackingKeys = new Set([
   "notes",
   "phone",
   "query",
+  "request_id",
   "search_term",
-  "text"
+  "text",
+  "user_id",
+  "family_id"
 ]);
 
 const emailPattern = /\b[^\s@]+@[^\s@]+\.[^\s@]+\b/i;

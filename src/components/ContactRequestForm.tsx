@@ -40,7 +40,7 @@ export default function ContactRequestForm({ targetId, title, categoryId, munici
     const message = String(formData.get("message") || "").trim();
     const contactPreference = String(formData.get("contactPreference") || "tenlo");
     const eventId = window.crypto.randomUUID();
-    const { data, error: insertError } = await supabase
+    const { error: insertError } = await supabase
       .from("connection_requests")
       .insert({
         event_id: eventId,
@@ -54,9 +54,7 @@ export default function ContactRequestForm({ targetId, title, categoryId, munici
         contact_preference: contactPreference,
         adult_confirmation: true,
         status: "submitted"
-      })
-      .select("id")
-      .single();
+      });
 
     if (insertError) {
       pushTrackingEvent("request_failed", { item: targetId, category: categoryId });
@@ -66,7 +64,7 @@ export default function ContactRequestForm({ targetId, title, categoryId, munici
     }
 
     pushTrackingEvent("contact_form_completed", { event_id: eventId, item: targetId, type: "listing", category: categoryId, municipality });
-    pushTrackingEvent("request_created", { event_id: eventId, request_id: data.id, item: targetId, type: "listing", category: categoryId, municipality });
+    pushTrackingEvent("request_created", { event_id: eventId, item: targetId, type: "listing", category: categoryId, municipality });
     form.reset();
     setStatus("sent");
   }
