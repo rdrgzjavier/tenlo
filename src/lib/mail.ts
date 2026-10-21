@@ -15,6 +15,15 @@ type Mail = {
   replyTo?: string;
 };
 
+export function escapeHtml(value: unknown) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 export function tenloEmailShell(title: string, body: string) {
   return `
   <div style="margin:0;background:${BRAND.soft};padding:28px;font-family:Arial,sans-serif;color:${BRAND.ink}">
@@ -35,7 +44,7 @@ export function tenloEmailShell(title: string, body: string) {
 }
 
 export function rows(data: Record<string, unknown>) {
-  return Object.entries(data).map(([key, value]) => `<p style="margin:0 0 10px"><strong>${key}:</strong> ${String(value || "No indicado")}</p>`).join("");
+  return Object.entries(data).map(([key, value]) => `<p style="margin:0 0 10px"><strong>${escapeHtml(key)}:</strong> ${escapeHtml(value || "No indicado")}</p>`).join("");
 }
 
 export async function sendMail(mail: Mail) {

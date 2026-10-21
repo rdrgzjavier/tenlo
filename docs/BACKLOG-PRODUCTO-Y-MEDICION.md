@@ -261,7 +261,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] Si no hay respuesta, recordar al proveedor y ofrecer alternativas a la familia.
 - [x] Guardar la petición y la alternativa ofrecida en Supabase como estado y seguimiento operativo, no solo como email.
 - [x] Crear una bandeja administrativa con avisos de solicitudes sin respuesta, alternativas pendientes y conversaciones que requieren intervención.
-- [ ] Enviar además una notificación al correo operativo configurable mediante `ADMIN_EMAIL`. Dirección propuesta cuando el dominio esté activo: `solicitudes@tenlo.es`.
+- [x] Enviar además una notificación al correo operativo configurable mediante `ADMIN_EMAIL`, junto con confirmación operativa a la familia cuando haya email de cuenta. Dirección prevista: `solicitudes@tenlo.es`.
 - [x] Preguntar a la familia si la conexión fue útil cuando ya existe respuesta, alternativa o cierre. Falta habilitar la valoración equivalente del proveedor.
 - [x] Preguntar a la familia si avanzó a información, conversación, propuesta, reserva o contratación.
 - [ ] Evitar que email, teléfono y web externos sean la única fuente de contacto si se necesita medir resultados.

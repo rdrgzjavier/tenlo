@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useState } from "react";
 import { pushTrackingEvent } from "@/lib/analytics";
-import { createSupabaseBrowserClient, hasSupabaseBrowserConfig } from "@/lib/supabase/client";
 
 type ContactRequestFormProps = {
   targetId: string;
@@ -20,51 +19,26 @@ export default function ContactRequestForm({ targetId, title, categoryId, munici
     event.preventDefault();
     setError("");
 
-    if (!hasSupabaseBrowserConfig()) {
-      setStatus("error");
-      setError("Las solicitudes no están disponibles temporalmente.");
-      return;
-    }
-
     setStatus("sending");
     const form = event.currentTarget;
     const formData = new FormData(form);
-    const supabase = createSupabaseBrowserClient();
-    const { data: authData } = await supabase.auth.getUser();
-
-    if (!authData.user) {
+    const message = String(formData.get("message") || "").trim();
+    const contactPreference = String(formData.get("contactPreference") || "tenlo");
+    const response = await fetch("/api/connection-request", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ targetId, message, contactPreference, adultConfirmation: formData.get("adultConfirmation") === "on" }) });
+    const result = (await response.json()) as { eventId?: string; error?: string };
+    if (response.status === 401) {
       setStatus("login");
       return;
     }
-
-    const message = String(formData.get("message") || "").trim();
-    const contactPreference = String(formData.get("contactPreference") || "tenlo");
-    const eventId = window.crypto.randomUUID();
-    const { error: insertError } = await supabase
-      .from("connection_requests")
-      .insert({
-        event_id: eventId,
-        schema_version: "1.0",
-        family_id: authData.user.id,
-        target_type: "listing",
-        target_id: targetId,
-        category_id: categoryId,
-        municipality,
-        message,
-        contact_preference: contactPreference,
-        adult_confirmation: true,
-        status: "submitted"
-      });
-
-    if (insertError) {
+    if (!response.ok || !result.eventId) {
       pushTrackingEvent("request_failed", { item: targetId, category: categoryId });
       setStatus("error");
-      setError("No hemos podido enviar la solicitud. Inténtalo de nuevo.");
+      setError(result.error || "No hemos podido enviar la solicitud. Inténtalo de nuevo.");
       return;
     }
 
-    pushTrackingEvent("contact_form_completed", { event_id: eventId, item: targetId, type: "listing", category: categoryId, municipality });
-    pushTrackingEvent("request_created", { event_id: eventId, item: targetId, type: "listing", category: categoryId, municipality });
+    pushTrackingEvent("contact_form_completed", { event_id: result.eventId, item: targetId, type: "listing", category: categoryId, municipality });
+    pushTrackingEvent("request_created", { event_id: result.eventId, item: targetId, type: "listing", category: categoryId, municipality });
     form.reset();
     setStatus("sent");
   }
