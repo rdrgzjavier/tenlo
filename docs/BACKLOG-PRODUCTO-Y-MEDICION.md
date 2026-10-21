@@ -202,11 +202,11 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   5. aportar evidencias de verificación;
   6. revisar y enviar.
 - [ ] Evitar pedir todos los datos antes de mostrar la ficha actual y el beneficio de actualizarla.
-- [ ] Confirmar por email la recepción y explicar el siguiente paso y plazo.
+- [x] Confirmar por email la recepción y explicar el siguiente paso y plazo.
 - [ ] Completar acciones para aprobar, pedir información o rechazar reclamaciones. La cola privada de lectura y priorización ya está disponible para `tenlo_admin`.
 - [ ] Notificar al proveedor cuando la ficha se publique o necesite cambios.
-- [ ] Permitir que el proveedor solicite baja o retirada.
-- [ ] Registrar cada estado y tiempo del flujo para poder medirlo.
+- [x] Permitir que el proveedor solicite baja o retirada mediante el formulario contextual de mantenimiento, siempre sujeto a revisión administrativa.
+- [x] Registrar cada estado y tiempo del flujo para poder medirlo mediante `created_at`, `updated_at` y el historial privado de cambios de estado.
 
 ## P0. Operación manual del piloto
 
@@ -250,7 +250,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   - [x] `Solicitar información` dentro de Tenlo;
   - [x] `Llamar`, con icono y enlace `tel:` mobile first en fichas canónicas con teléfono público;
   - [x] `Visitar web oficial` en fichas canónicas con URL pública;
-- [ ] Medir por separado el inicio y resultado observable de cada vía; una llamada o salida externa no equivale automáticamente a una conexión útil.
+- [x] Medir por separado el inicio de contacto interno, llamada, email y web; la conexión útil solo se confirma mediante feedback posterior de la familia.
 - [x] Recoger solo la información necesaria para que el proveedor decida si puede ayudar.
 - [x] Evitar datos identificativos o sensibles de menores mediante instrucciones explícitas y confirmación de persona adulta.
 - [x] Preparar entidad `connection_requests` con ID, familia, proveedor, categoría, zona, estado y marcas de tiempo.
@@ -268,7 +268,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 
 ## P1. Backoffice mínimo
 
-- [ ] Completar la vista administrativa con fichas y resultados. La bandeja privada ya reúne reclamaciones, solicitudes, publicaciones/bajas e incidencias para el rol `tenlo_admin`; desde el 18/10/2026 muestra mensajes, contactos, referencias, datos aportados y estados comprensibles. Falta incorporar notas internas y el resultado útil posterior a la conexión.
+- [x] Completar la vista administrativa con fichas y resultados. La bandeja privada reúne reclamaciones, solicitudes, publicaciones/bajas e incidencias; muestra contactos, referencias, notas internas, seguimiento, resultados útiles y métricas básicas del piloto.
 - [x] Permitir corregir estados sin editar directamente la base de datos. Interfaz, API restringida e historial validados de extremo a extremo el 16/10/2026; el registro usado en la prueba recuperó su estado original.
 - [x] Crear alertas para reclamaciones pendientes, solicitudes sin respuesta y fichas desactualizadas. `/admin` destaca solicitudes abiertas durante más de 48 horas, moderaciones pendientes durante más de cuatro días laborables y fichas sin revisar durante 180 días.
 - [x] Registrar notas operativas sin exponerlas al proveedor o a la familia. Las notas quedan protegidas por RLS, solo se muestran a `tenlo_admin` y conservan autor y fecha.
@@ -352,7 +352,7 @@ Tenlo debe poder explicar qué buscan las familias y qué rendimiento obtiene ca
 - [x] Medir fuente/medio/campaña, entrada orgánica, referencia, navegación interna y tráfico directo sin guardar la URL completa de referencia ni UTMs que parezcan datos personales.
 - [ ] Medir scroll o consumo de secciones relevantes solo si ayuda a tomar una decisión de producto.
 - [x] Medir guardados, compartidos, clics externos, inicios de contacto y solicitudes completadas, con categoría, vertical, municipio y ficha estables cuando estén disponibles.
-- [ ] Relacionar solicitudes con respuesta, tiempo de respuesta, utilidad y resultado.
+- [x] Relacionar solicitudes con respuesta, tiempo de respuesta, utilidad y resultado mediante `connection_requests` y `connection_feedback`.
 - [ ] Calcular por ficha:
   - [ ] impresiones;
   - [ ] visitas únicas;
@@ -423,7 +423,7 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 - [x] Retirar endpoints públicos de correo sin consumidores (`/api/register` y `/api/contact`) para evitar abuso del proveedor de email; el registro usa Supabase Auth y el soporte utiliza la cola moderada de feedback o el correo oficial.
 - [x] Unificar el envío de publicaciones en una ruta autenticada con validación en servidor, alta en la cola, aviso operativo y confirmación a la cuenta; retirar el endpoint de email público que no estaba conectado al formulario.
 - [ ] Definir política de retención para cuentas inactivas, solicitudes, búsquedas y consentimientos.
-- [ ] Completar el procedimiento administrativo de acceso, rectificación y eliminación. La portabilidad básica ya está disponible mediante una exportación JSON privada y la baja se registra como solicitud revisable.
+- [ ] Completar el procedimiento administrativo de acceso, rectificación y eliminación. La portabilidad básica ya está disponible mediante una exportación JSON privada; la baja se registra una sola vez como solicitud revisable y genera aviso operativo y confirmación. Falta ejecutar y documentar el cierre efectivo de una baja real.
 - [ ] Preparar copias de seguridad y restauración antes de almacenar información real.
 - [ ] Revisar privacidad y seguridad antes de incorporar un CRM, plataforma de emailing o nuevo conector.
 

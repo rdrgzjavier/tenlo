@@ -200,33 +200,18 @@ export default function AccountSettings({ email, displayName, role, status, muni
       return;
     }
 
-    const { data: authData } = await supabase.auth.getUser();
-    const user = authData.user;
-
-    if (!user) {
-      setError("No hemos podido confirmar tu sesión.");
-      return;
-    }
-
     setLoading("delete");
-    const { error: insertError } = await supabase.from("submissions").insert({
-      user_id: user.id,
-      submission_type: "account_deletion",
-      payload: {
-        email,
-        display_name: displayNameValue,
-        requested_from: "datos-cuenta"
-      }
-    });
+    const response = await fetch("/api/account/deletion-request", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ confirmation: deleteConfirm }) });
+    const result = (await response.json()) as { error?: string; alreadyRequested?: boolean };
     setLoading(null);
 
-    if (insertError) {
-      setError(insertError.message);
+    if (!response.ok) {
+      setError(result.error || "No hemos podido registrar la solicitud de baja.");
       return;
     }
 
     setDeleteConfirm("");
-    setMessage("Solicitud de borrado recibida. El equipo de Tenlo la revisará antes de eliminar o anonimizar datos asociados.");
+    setMessage(result.alreadyRequested ? "Ya tienes una solicitud de baja pendiente de revisión." : "Solicitud de borrado recibida. El equipo de Tenlo la revisará antes de eliminar o anonimizar datos asociados.");
   }
 
   async function handleMarketingUpdate(event: FormEvent<HTMLFormElement>) {
