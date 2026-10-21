@@ -201,7 +201,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   4. indicar disponibilidad y solicitudes deseadas;
   5. aportar evidencias de verificación;
   6. revisar y enviar.
-- [ ] Evitar pedir todos los datos antes de mostrar la ficha actual y el beneficio de actualizarla.
+- [x] Evitar pedir todos los datos antes de mostrar la ficha actual y el beneficio de actualizarla mediante un primer paso de confirmación y contexto.
 - [x] Confirmar por email la recepción y explicar el siguiente paso y plazo.
 - [ ] Completar acciones para aprobar, pedir información o rechazar reclamaciones. La cola privada de lectura y priorización ya está disponible para `tenlo_admin`.
 - [ ] Notificar al proveedor cuando la ficha se publique o necesite cambios.
@@ -485,9 +485,9 @@ Propiedades recomendadas: `request_id`, proveedor, categoría, municipio, posici
 - [x] `claim_submitted`
 - [ ] `claim_approved`
 - [ ] `claim_rejected`
-- [ ] `profile_edit_started`
+- [x] `profile_edit_started`
 - [ ] `profile_section_completed`
-- [ ] `profile_submitted`
+- [x] `profile_submitted`
 - [ ] `profile_published`
 - [ ] `verification_requested`
 - [ ] `verification_approved`

@@ -25,6 +25,7 @@ export default async function ClaimProfilePage({ searchParams }: { searchParams:
   }
 
   const entityName = "name" in entity ? entity.name : entity.businessName;
+  const entityHref = type === "center" ? `/centros/${"slug" in entity ? entity.slug : entity.id}` : `/servicios/${entity.id}`;
 
   return (
     <div className="section-shell max-w-4xl">
@@ -33,7 +34,7 @@ export default async function ClaimProfilePage({ searchParams }: { searchParams:
       <p className="lead">
         Si representas este centro, servicio o entidad, puedes revisar la información pública y solicitar su gestión. Tenlo verificará tu relación con la ficha antes de publicar cambios.
       </p>
-      <ClaimProfileForm entityType={type} entityId={entity.id} entityName={entityName} />
+      <ClaimProfileForm entityType={type} entityId={entity.id} entityName={entityName} entityHref={entityHref} />
     </div>
   );
 }

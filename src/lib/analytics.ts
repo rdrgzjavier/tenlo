@@ -38,7 +38,9 @@ export type TrackingAction =
   | "map_directions_clicked"
   | "connection_marked_useful"
   | "outcome_reported"
-  | "family_viewed_response";
+  | "family_viewed_response"
+  | "profile_edit_started"
+  | "profile_submitted";
 
 export const analyticsSchemaVersion = "1.0";
 

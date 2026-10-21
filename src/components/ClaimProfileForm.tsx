@@ -7,9 +7,11 @@ type ClaimProfileFormProps = {
   entityType: "center" | "provider" | "community";
   entityId: string;
   entityName: string;
+  entityHref: string;
 };
 
-export default function ClaimProfileForm({ entityType, entityId, entityName }: ClaimProfileFormProps) {
+export default function ClaimProfileForm({ entityType, entityId, entityName, entityHref }: ClaimProfileFormProps) {
+  const [step, setStep] = useState<"intro" | "form">("intro");
   const [accepted, setAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -41,6 +43,7 @@ export default function ClaimProfileForm({ entityType, entityId, entityName }: C
     }
 
     pushTrackingEvent("claim_submitted", { event_id: result.eventId, item: entityId, type: entityType });
+    pushTrackingEvent("profile_submitted", { entity_type: entityType });
     setSent(true);
   }
 
@@ -53,8 +56,25 @@ export default function ClaimProfileForm({ entityType, entityId, entityName }: C
     );
   }
 
+  if (step === "intro") {
+    return (
+      <section className="card mt-8 p-5 md:p-8" aria-labelledby="claim-intro-title">
+        <p className="label">Paso 1 de 2</p>
+        <h2 id="claim-intro-title" className="mt-2 text-2xl font-bold text-ink">Confirma que esta es tu ficha</h2>
+        <div className="mt-5 rounded-2xl border border-line bg-soft p-5">
+          <p className="text-xs font-bold uppercase tracking-wide text-muted">Ficha actual</p>
+          <p className="mt-2 text-lg font-bold text-ink">{entityName}</p>
+          <a href={entityHref} target="_blank" rel="noreferrer" className="mt-3 inline-flex min-h-11 items-center font-semibold text-ink underline underline-offset-4">Ver la ficha publicada</a>
+        </div>
+        <p className="mt-5 text-sm leading-6 text-slatecopy">En el siguiente paso confirmarás tu relación con la entidad y podrás indicar las correcciones prioritarias. Tenlo revisará la solicitud antes de cambiar información visible.</p>
+        <button type="button" className="btn-primary mt-6" onClick={() => { pushTrackingEvent("profile_edit_started", { entity_type: entityType }); setStep("form"); }}>Sí, quiero gestionar esta ficha</button>
+      </section>
+    );
+  }
+
   return (
     <form className="card mt-8 grid gap-5 p-5 md:p-8" onSubmit={handleSubmit}>
+      <div><p className="label">Paso 2 de 2</p><h2 className="mt-2 text-2xl font-bold text-ink">Confirma tu relación y los cambios</h2><button type="button" className="mt-2 text-sm font-semibold text-ink underline underline-offset-4" onClick={() => setStep("intro")}>Volver a la ficha</button></div>
       <label className="hidden" aria-hidden="true">
         Empresa
         <input name="company" tabIndex={-1} autoComplete="off" />
