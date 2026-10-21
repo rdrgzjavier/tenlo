@@ -129,7 +129,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Verificar que Cloudflare marque la zona como activa y que la resolución pública use `david.ns.cloudflare.com` y `norah.ns.cloudflare.com`.
 - [x] Sustituir `kiryco.vercel.app` en configuración, metadata, emails, sitemap y enlaces absolutos.
 - [x] Verificar SSL, sitemap, robots, canonical y Open Graph en el dominio definitivo: HTTPS y HSTS activos, rutas públicas con respuesta `200` y metadata generada desde `https://tenlo.es`.
-- [ ] Añadir una comprobación automática en GitHub para `typecheck`, `lint` y `build` en cada cambio. El workflow está preparado localmente, pero la credencial actual de GitHub no dispone del permiso `workflow` para publicarlo.
+- [x] Añadir una comprobación automática en GitHub para `typecheck`, `lint` y `build` en cada cambio mediante `.github/workflows/quality.yml`, con permisos de solo lectura y cancelación de ejecuciones obsoletas.
 - [ ] Decidir si los previews deben permanecer protegidos y mantener producción pública.
 
 ## P0. Veracidad y confianza del contenido actual
