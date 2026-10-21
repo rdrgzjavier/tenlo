@@ -52,9 +52,15 @@ export default function AdminStatusControl({ queue, recordId, currentStatus }: {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ queue, recordId, status })
       });
-      const result = (await response.json()) as { error?: string };
+      const result = (await response.json()) as { error?: string; notificationSent?: boolean | null };
       if (!response.ok) throw new Error(result.error || "No se pudo actualizar el estado.");
-      setFeedback("Estado actualizado.");
+      setFeedback(
+        queue === "claim" && ["approved", "rejected"].includes(status)
+          ? result.notificationSent
+            ? "Estado actualizado y solicitante avisado por email."
+            : "Estado actualizado. Revisa manualmente el aviso por email."
+          : "Estado actualizado."
+      );
       router.refresh();
     } catch (error) {
       setFeedback(error instanceof Error ? error.message : "No se pudo actualizar el estado.");
