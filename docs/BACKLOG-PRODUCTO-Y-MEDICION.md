@@ -152,7 +152,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Elegir Supabase como fuente de verdad definitiva para autenticación, perfiles y operación del marketplace.
 - [x] Aplicar y verificar las migraciones de reclamación anónima, perfiles ampliados, búsquedas y solicitudes de conexión.
 - [x] Crear una capa de acceso a datos para Supabase con retorno seguro a `mock-data.ts` mientras se valida la migración.
-- [ ] Activar la capa de Supabase en las páginas públicas y retirar la dependencia de `mock-data.ts` solo después de validar paridad y reversibilidad.
+- [ ] Activar la capa de Supabase en las páginas públicas y retirar la dependencia de `mock-data.ts` solo después de validar paridad y reversibilidad. `/buscar`, `/anuncios/[id]`, `/favoritos` y `/comparar` ya consumen el repositorio reversible; faltan los directorios y fichas específicas, aplicar el endurecimiento RLS y validar el cambio de entorno.
 - [x] Crear una migración y un generador de importación idempotente para fichas editoriales no reclamadas, sin inventar propietarios ni elevar su confianza por defecto.
 - [x] Auditar el inventario inicial completo y migrar a Supabase todo lo útil del piloto: de 24 centros y 22 proveedores organizativos únicos se admiten 21 centros y 14 proveedores con 16 servicios contrastados; el resto queda clasificado y fuera de publicación hasta disponer de evidencia suficiente. Las tres salas de Hanky Planet pertenecen a un único proveedor y los tres perfiles personales ficticios quedan fuera. Véase `docs/AUDITORIA-LOTE-PROVEEDORES.md`.
   - [x] Importar y verificar el bloque 1 en Supabase: 11 centros, 11 proveedores no reclamados y 13 servicios; cero huérfanos, propietarios ficticios, duplicados o niveles de confianza elevados. Seed repetido sin alterar recuentos el 11-10-2026.
@@ -237,8 +237,8 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] Crear el flujo administrativo que convierta una propuesta revisada en ficha `No verificada`, evitando la publicación automática de datos aportados por usuarios.
 - [x] Permitir comparar un número pequeño de opciones con campos homogéneos. Favoritos permite elegir entre dos y tres fichas y contrasta categoría, municipio, cobertura, edad, precio, disponibilidad, confianza y revisión sin ocultar campos pendientes.
 - [ ] Hacer visibles cobertura, disponibilidad, actualización y confianza.
-- [ ] Revisar el orden de resultados y definir criterios transparentes de ranking.
-- [ ] Separar claramente resultados orgánicos de posiciones patrocinadas.
+- [x] Revisar el orden de resultados y definir criterios transparentes de ranking. El buscador prioriza coincidencias en el nombre cuando hay texto y después usa orden alfabético; la explicación está visible junto al recuento.
+- [x] Separar claramente resultados orgánicos de posiciones patrocinadas. En el piloto no existen posiciones patrocinadas y el buscador declara que ni el plan comercial ni la confianza compran una mejor posición; cualquier producto futuro deberá etiquetarse y mantenerse separado.
 
 ## P1. Solicitud de contacto
 

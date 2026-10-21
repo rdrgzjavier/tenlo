@@ -4,7 +4,7 @@ import ImageWithFallback from "@/components/ImageWithFallback";
 import FavoriteButton from "@/components/FavoriteButton";
 import { trackingAttrs } from "@/lib/analytics";
 import { uniqueDisplayTags } from "@/lib/display-labels";
-import { ageLabel, categories, centers, providers } from "@/lib/mock-data";
+import { ageLabel, categories } from "@/lib/mock-data";
 import type { Listing } from "@/lib/types";
 import { StatusBadge, TrustBadge } from "./Badge";
 
@@ -49,13 +49,6 @@ function fallbackImage(categoryId: string, slug: string) {
   return "/images/cards/servicio-familiar.svg";
 }
 
-function centerTypeLabel(type?: string) {
-  if (type === "publico") return "Centro público";
-  if (type === "concertado") return "Centro concertado";
-  if (type === "privado") return "Centro privado";
-  return "Centro educativo";
-}
-
 function isChildcareListing(listing: Listing) {
   return listing.categoryId === "canguros";
 }
@@ -66,11 +59,10 @@ function categoryDisplayName(listing: Listing, categoryName?: string) {
 
 export default function ListingCard({ listing, searchPosition }: { listing: Listing; searchPosition?: number }) {
   const category = categories.find((item) => item.id === listing.categoryId);
-  const center = centers.find((item) => item.id === listing.centerId);
-  const provider = providers.find((item) => item.userId === listing.userId);
   const primaryCategory = categoryDisplayName(listing, category?.name);
-  const typeLabel = center ? centerTypeLabel(center.type) : isChildcareListing(listing) ? "Perfil de canguro" : provider?.category ?? category?.name ?? "Recurso local";
-  const detailLabel = center ? center.stages.slice(0, 3).join(", ") : listing.availability ?? listing.area;
+  const centerType = listing.categoryId === "centros" ? listing.details.Tipo : undefined;
+  const typeLabel = centerType || (isChildcareListing(listing) ? "Perfil de canguro" : category?.name ?? "Recurso local");
+  const detailLabel = listing.categoryId === "centros" ? listing.details.Etapas || listing.area : listing.availability ?? listing.area;
   const detailHref = `/anuncios/${listing.slug}`;
   const hiddenTags = [
     primaryCategory,

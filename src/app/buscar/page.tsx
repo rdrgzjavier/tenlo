@@ -6,7 +6,8 @@ import LoadMoreGrid from "@/components/LoadMoreGrid";
 import ResponsiveFilterPanel from "@/components/ResponsiveFilterPanel";
 import SearchEventRecorder from "@/components/SearchEventRecorder";
 import ValidatedSearchForm from "@/components/ValidatedSearchForm";
-import { categories, listings, municipalities } from "@/lib/mock-data";
+import { loadDirectorySnapshot } from "@/lib/directory-repository";
+import { categories, municipalities } from "@/lib/mock-data";
 import { trackingAttrs } from "@/lib/analytics";
 
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -66,6 +67,7 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
 
 export default async function SearchPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const resolvedSearchParams = await searchParams;
+  const { listings } = await loadDirectorySnapshot();
   const selected = {
     categoria: value(resolvedSearchParams, "categoria"),
     municipio: value(resolvedSearchParams, "municipio"),
@@ -100,6 +102,16 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     if (selected.precio === "gratis" && (listing.price ?? 0) !== 0 && !listing.priceLabel?.toLowerCase().includes("gratis")) return false;
     if (selected.precio === "25" && listing.price && listing.price > 25) return false;
     return true;
+  }).sort((first, second) => {
+    if (selected.tag) {
+      const term = normalize(selected.tag);
+      const firstTitle = normalize(first.title);
+      const secondTitle = normalize(second.title);
+      const firstScore = firstTitle === term ? 0 : firstTitle.startsWith(term) ? 1 : firstTitle.includes(term) ? 2 : 3;
+      const secondScore = secondTitle === term ? 0 : secondTitle.startsWith(term) ? 1 : secondTitle.includes(term) ? 2 : 3;
+      if (firstScore !== secondScore) return firstScore - secondScore;
+    }
+    return first.title.localeCompare(second.title, "es", { sensitivity: "base" });
   });
   const providerResults = filtered.filter((listing) => listing.publicationType === "proveedor");
   const availableProviderCount = providerResults.filter((listing) => listing.acceptsRequests).length;
@@ -141,6 +153,10 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         <section aria-label="Resultados de búsqueda">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm font-semibold text-slatecopy">{filtered.length} resultado{filtered.length === 1 ? "" : "s"}</p>
+            <details className="text-right text-xs text-muted">
+              <summary className="cursor-pointer font-semibold text-ink underline underline-offset-4">Cómo se ordenan</summary>
+              <p className="mt-2 max-w-md text-left leading-5">Primero se aplican tus filtros. Si escribes un término, aparecen antes las coincidencias en el nombre; después, el orden es alfabético. El plan comercial y el nivel de confianza no compran una mejor posición.</p>
+            </details>
           </div>
           {hasOnlyUnconfirmedProviders ? (
             <div className="mb-4 rounded-2xl border border-line bg-soft p-4 text-sm leading-6 text-slatecopy" role="status">

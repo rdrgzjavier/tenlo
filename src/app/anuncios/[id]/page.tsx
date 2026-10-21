@@ -10,17 +10,20 @@ import InformationTraceability from "@/components/InformationTraceability";
 import LocationCard from "@/components/LocationCard";
 import ShareButton from "@/components/ShareButton";
 import { trackingAttrs } from "@/lib/analytics";
+import { loadDirectorySnapshot } from "@/lib/directory-repository";
 import { uniqueDisplayTags } from "@/lib/display-labels";
-import { ageLabel, categories, centers, findListing, listings, providers } from "@/lib/mock-data";
+import { ageLabel, categories } from "@/lib/mock-data";
 import type { Listing } from "@/lib/types";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const { listings } = await loadDirectorySnapshot();
   return listings.map((listing) => ({ id: listing.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const listing = findListing(id);
+  const { listings } = await loadDirectorySnapshot();
+  const listing = listings.find((item) => item.id === id || item.slug === id);
   return {
     title: listing ? `${listing.title} | Tenlo` : "Recurso | Tenlo",
     description: listing?.description
@@ -76,11 +79,12 @@ function callablePhone(key: string, value: string) {
 
 export default async function ListingDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const listing = findListing(id);
+  const snapshot = await loadDirectorySnapshot();
+  const listing = snapshot.listings.find((item) => item.id === id || item.slug === id);
   if (!listing) notFound();
   const category = categories.find((item) => item.id === listing.categoryId);
-  const center = centers.find((item) => item.id === listing.centerId);
-  const provider = providers.find((item) => item.userId === listing.userId);
+  const center = snapshot.centers.find((item) => item.id === listing.centerId);
+  const provider = snapshot.providers.find((item) => item.userId === listing.userId || item.id === listing.userId);
   const isVerified = listing.trustLevel === "verified" || listing.trustLevel === "official";
   const childcareListing = isChildcareListing(listing.categoryId);
   const categoryLabel = categoryDisplayName(listing.categoryId, category?.name);
