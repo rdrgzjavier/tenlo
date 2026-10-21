@@ -203,7 +203,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   6. revisar y enviar.
 - [x] Evitar pedir todos los datos antes de mostrar la ficha actual y el beneficio de actualizarla mediante un primer paso de confirmación y contexto.
 - [x] Confirmar por email la recepción y explicar el siguiente paso y plazo.
-- [ ] Completar acciones para aprobar, pedir información o rechazar reclamaciones. La cola privada de lectura y priorización ya está disponible para `tenlo_admin`.
+- [x] Completar acciones para aprobar, pedir información o rechazar reclamaciones. La petición de información se envía por email y queda registrada como nota interna; las decisiones evitan envíos duplicados y muestran si el aviso falló.
 - [ ] Notificar al proveedor cuando la ficha se publique o necesite cambios. Las reclamaciones aprobadas o rechazadas ya generan un email de estado y el backoffice avisa si no pudo enviarse; falta vincular la publicación efectiva y una petición de información concreta.
 - [x] Permitir que el proveedor solicite baja o retirada mediante el formulario contextual de mantenimiento, siempre sujeto a revisión administrativa.
 - [x] Registrar cada estado y tiempo del flujo para poder medirlo mediante `created_at`, `updated_at` y el historial privado de cambios de estado.
