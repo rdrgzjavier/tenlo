@@ -3,7 +3,8 @@ import { ADMIN_EMAIL, escapeHtml, rows, sendMail, tenloEmailShell } from "@/lib/
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
-  const data = await request.json();
+  const data = await request.json().catch(() => null) as Record<string, unknown> | null;
+  if (!data) return NextResponse.json({ ok: false, error: "Solicitud no válida." }, { status: 400 });
   const eventId = crypto.randomUUID();
 
   if (data.company) {
@@ -44,7 +45,8 @@ export async function POST(request: Request) {
 
   const { error } = await supabase.from("claim_requests").insert(payload);
   if (error) {
-    return NextResponse.json({ ok: false, error: error.message }, { status: 400 });
+    console.error("No se pudo registrar la reclamación", error.code);
+    return NextResponse.json({ ok: false, error: "No hemos podido registrar la solicitud." }, { status: 400 });
   }
 
   const adminHtml = tenloEmailShell("Solicitud de validación de ficha", rows({

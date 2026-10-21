@@ -93,7 +93,7 @@ export default function FeedbackForm({ context = "general", itemId = "" }: Feedb
       ) : null}
       <label className="field-label">
         {messageLabel}
-        <textarea name="message" required minLength={10} rows={6} className="field min-h-36 resize-y py-3 font-normal placeholder:text-muted" placeholder={messagePlaceholder} />
+        <textarea name="message" required minLength={10} maxLength={5000} rows={6} className="field min-h-36 resize-y py-3 font-normal placeholder:text-muted" placeholder={messagePlaceholder} />
       </label>
       {error ? <p className="rounded-xl border border-coral/30 bg-coral/10 p-3 text-sm font-semibold text-coral">{error}</p> : null}
       {status === "sent" ? (
