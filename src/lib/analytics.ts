@@ -16,6 +16,7 @@ export type TrackingAction =
   | "share"
   | "provider_saved"
   | "provider_unsaved"
+  | "provider_compared"
   | "provider_shared"
   | "search_started"
   | "filter_applied"

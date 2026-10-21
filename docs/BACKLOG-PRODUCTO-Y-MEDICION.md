@@ -235,7 +235,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Registrar visualmente búsquedas sin resultados y crear una salida útil para limpiar filtros o pedir ayuda a Tenlo.
 - [x] Permitir proponer desde una búsqueda sin resultados un proveedor con nombre, web, ubicación y servicio; conservarlo pendiente de revisión antes de crear una ficha `No verificada`.
 - [ ] Crear el flujo administrativo que convierta una propuesta revisada en ficha `No verificada`, evitando la publicación automática de datos aportados por usuarios.
-- [ ] Permitir comparar un número pequeño de opciones con campos homogéneos.
+- [x] Permitir comparar un número pequeño de opciones con campos homogéneos. Favoritos permite elegir entre dos y tres fichas y contrasta categoría, municipio, cobertura, edad, precio, disponibilidad, confianza y revisión sin ocultar campos pendientes.
 - [ ] Hacer visibles cobertura, disponibilidad, actualización y confianza.
 - [ ] Revisar el orden de resultados y definir criterios transparentes de ranking.
 - [ ] Separar claramente resultados orgánicos de posiciones patrocinadas.
@@ -454,7 +454,7 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 - [x] `filter_applied`: se emite al aplicar filtros válidos y registra solo categoría, municipio, cantidad de filtros y presencia de palabra clave.
 - [x] `provider_impression`
 - [x] `provider_profile_viewed`
-- [ ] `provider_compared`
+- [x] `provider_compared`: se emite al abrir una comparación de dos o tres favoritos y registra solo el número de opciones, no el contenido de la selección.
 - [x] `provider_saved`
 - [x] `provider_unsaved`
 - [x] `provider_shared`: disponible en fichas de centro, servicio y anuncio; registra menú nativo completado o copia de enlace, nunca una cancelación.

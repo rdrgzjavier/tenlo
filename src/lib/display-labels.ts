@@ -1,4 +1,11 @@
-import type { Center } from "@/lib/types";
+import type { Center, TrustLevel } from "@/lib/types";
+
+export function trustLevelLabel(level: TrustLevel) {
+  if (level === "managed") return "Gestionada";
+  if (level === "verified") return "Verificada";
+  if (level === "official") return "Oficial";
+  return "No verificada";
+}
 
 export function centerTypeLabel(type?: Center["type"]) {
   if (type === "publico") return "Público";
