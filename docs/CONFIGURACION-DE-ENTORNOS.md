@@ -20,6 +20,7 @@ Referencia para mantener separados el desarrollo local, las previews de Vercel y
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Opcional | Opcional | Opcional | No | Compatibilidad temporal si no se utiliza la publishable key. No configurar ambas sin necesidad. |
 | `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` | URL estable de pruebas si se habilita | `https://tenlo.es` | No | Base de metadata, enlaces absolutos y emails. Si falta, el código usa `https://tenlo.es`. |
 | `NEXT_PUBLIC_GTM_ID` | Vacía salvo pruebas específicas | Contenedor de pruebas o vacía | Contenedor de Tenlo | No | Activa GTM. Si falta, no se carga GTM. Nunca reutilizar producción en preview sin filtros. |
+| `DIRECTORY_DATA_SOURCE` | `mock` o `supabase` durante QA | `supabase` tras validar el lote | `supabase` tras validar paridad | No | El servidor lee solo fichas aprobadas mediante RLS. Si falta, la consulta falla o el directorio queda vacío, usa el fallback editorial. |
 | `NEXT_PUBLIC_COOKIEBOT_ID` | Vacía normalmente | ID de pruebas o de Tenlo según dominio autorizado | ID de Tenlo | No | Activa Cookiebot. Si falta, no se carga el gestor de consentimiento. |
 | `ADMIN_EMAIL` | Email de pruebas | Email de pruebas | `solicitudes@tenlo.es` | No | Destino de avisos operativos. Si falta, el código usa temporalmente `tenlocerca@gmail.com`. |
 | `RESEND_API_KEY` | Clave de pruebas opcional | Clave restringida de pruebas o vacía | Clave de producción | Sí | Permite enviar emails. Si falta, la operación continúa pero el email no se envía. |

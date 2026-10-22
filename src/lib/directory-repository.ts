@@ -2,7 +2,8 @@ import "server-only";
 
 import { centerTypeLabel } from "@/lib/display-labels";
 import { centers as mockCenters, listings as mockListings, providers as mockProviders } from "@/lib/mock-data";
-import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
+import { createSupabasePublicClient } from "@/lib/supabase/public";
+import { hasSupabaseServerConfig } from "@/lib/supabase/server";
 import type { Center, CenterType, Listing, Provider, TrustLevel } from "@/lib/types";
 
 export type DirectorySnapshot = {
@@ -243,7 +244,7 @@ export async function loadDirectorySnapshot(): Promise<DirectorySnapshot> {
   if (process.env.DIRECTORY_DATA_SOURCE !== "supabase") return mockSnapshot("not_enabled");
   if (!hasSupabaseServerConfig()) return mockSnapshot("missing_config");
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabasePublicClient();
   const [centerResult, businessResult, serviceResult] = await Promise.all([
     supabase.from("centers").select("*").eq("status", "approved").order("name"),
     supabase.from("business_profiles").select("*").eq("status", "approved").order("business_name"),
