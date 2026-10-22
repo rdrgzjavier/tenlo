@@ -317,7 +317,7 @@ Arquitectura inicial recomendada:
 - [x] Añadir timestamp de servidor, versión de esquema y `event_id` único a solicitudes y reclamaciones mediante la migración `0015`, reutilizando el mismo ID en el evento de cliente.
 - [ ] Crear entornos de prueba y reglas para excluir tráfico interno.
 - [x] Preparar un procedimiento de QA con GTM Preview, GA4 DebugView y validación en Supabase (`QA-ANALITICA.md`).
-- [ ] Definir retención, acceso, borrado y anonimización de datos.
+- [ ] Definir retención, acceso, borrado y anonimización de datos. La matriz operativa, el flujo de supresión y los requisitos técnicos están documentados en `RETENCION-Y-SUPRESION.md`; faltan validar los plazos jurídicamente, completar la identidad del responsable y probar una baja real con una cuenta de prueba.
 
 ## P0. Informes de búsquedas, fichas y verticales
 
@@ -422,7 +422,7 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 - [x] Restringir exportaciones y accesos administrativos; registrar quién descarga datos, el ámbito, la fecha y el número de registros, sin duplicar el contenido exportado en el historial.
 - [x] Retirar endpoints públicos de correo sin consumidores (`/api/register` y `/api/contact`) para evitar abuso del proveedor de email; el registro usa Supabase Auth y el soporte utiliza la cola moderada de feedback o el correo oficial.
 - [x] Unificar el envío de publicaciones en una ruta autenticada con validación en servidor, alta en la cola, aviso operativo y confirmación a la cuenta; retirar el endpoint de email público que no estaba conectado al formulario.
-- [ ] Definir política de retención para cuentas inactivas, solicitudes, búsquedas y consentimientos.
+- [ ] Definir política de retención para cuentas inactivas, solicitudes, búsquedas y consentimientos. Existe una propuesta concreta en `RETENCION-Y-SUPRESION.md`, pendiente de validación jurídica y de implementar las fechas y automatizaciones necesarias.
 - [ ] Completar el procedimiento administrativo de acceso, rectificación y eliminación. La portabilidad básica ya está disponible mediante una exportación JSON privada; la baja se registra una sola vez como solicitud revisable y genera aviso operativo y confirmación. Falta ejecutar y documentar el cierre efectivo de una baja real.
 - [ ] Preparar copias de seguridad y restauración antes de almacenar información real. El runbook está documentado en `COPIAS-Y-RECUPERACION.md`; falta generar la primera copia cifrada y demostrar su restauración en un destino aislado.
 - [ ] Revisar privacidad y seguridad antes de incorporar un CRM, plataforma de emailing o nuevo conector.
