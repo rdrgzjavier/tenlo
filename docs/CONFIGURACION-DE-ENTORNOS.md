@@ -66,6 +66,14 @@ Referencia para mantener separados el desarrollo local, las previews de Vercel y
 | `RESEND_API_KEY` | Ausente | Ausente | Configurar cuando el dominio remitente esté verificado. |
 | `MAIL_FROM` | Ausente | Ausente | Configurar junto con Resend y la autenticación del dominio. |
 
+## Cambios verificados el 22 de octubre de 2026
+
+- `DIRECTORY_DATA_SOURCE=supabase` está configurada como valor `Config` solo para Production.
+- La capa pública utiliza un cliente anónimo sin cookies y depende de RLS; no utiliza `SUPABASE_SERVICE_ROLE_KEY`.
+- El build local con la fuente activa generó 21 centros, 14 proveedores y 16 servicios, coincidiendo con el lote auditado.
+- Home, centros, servicios, dos fichas representativas, una búsqueda municipal y sitemap respondieron `200` sobre el build de producción local.
+- Cualquier fallo de consulta o directorio vacío mantiene el fallback editorial para evitar una caída pública.
+
 ## Comprobación antes de cada despliegue
 
 - [ ] No hay secretos en variables `NEXT_PUBLIC_`.
