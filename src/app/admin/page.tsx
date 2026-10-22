@@ -119,12 +119,18 @@ export default async function AdminPage() {
     supabase.from("centers").select("id,name,municipality,last_reviewed").or(`last_reviewed.is.null,last_reviewed.lt.${reviewCutoff}`).order("last_reviewed", { ascending: true, nullsFirst: true }).limit(50)
   ]);
 
-  const queryError = claimsResult.error || requestsResult.error || submissionsResult.error || feedbackResult.error || connectionFeedbackResult.error || auditResult.error || exportAuditResult.error || notesResult.error || staleServicesResult.error || staleCentersResult.error;
+  const familyIds = [...new Set((requestsResult.data ?? []).map((request) => request.family_id).filter(Boolean))];
+  const requestProfilesResult = familyIds.length
+    ? await supabase.from("profiles").select("id,public_name,display_name,contact_email,phone").in("id", familyIds)
+    : { data: [], error: null };
+
+  const queryError = claimsResult.error || requestsResult.error || requestProfilesResult.error || submissionsResult.error || feedbackResult.error || connectionFeedbackResult.error || auditResult.error || exportAuditResult.error || notesResult.error || staleServicesResult.error || staleCentersResult.error;
   const claims = claimsResult.data ?? [];
   const requests = requestsResult.data ?? [];
   const submissions = submissionsResult.data ?? [];
   const feedback = feedbackResult.data ?? [];
   const connectionFeedback = new Map((connectionFeedbackResult.data ?? []).map((item) => [item.request_id, item]));
+  const requestProfiles = new Map((requestProfilesResult.data ?? []).map((item) => [item.id, item]));
   const audit = auditResult.data ?? [];
   const exportAudit = exportAuditResult.data ?? [];
   const notes = notesResult.data ?? [];
@@ -156,10 +162,16 @@ export default async function AdminPage() {
       <h1 className="page-title">Operación del piloto</h1>
       <div className="flex flex-col items-start gap-4 md:flex-row md:items-end md:justify-between">
         <p className="lead max-w-4xl">Cola privada para revisar reclamaciones, solicitudes y tareas recibidas. Los datos de contacto se usan solo para gestionar cada petición.</p>
-        <a href="/api/admin/export" className="btn-secondary shrink-0" download>
-          <Download size={18} aria-hidden />
-          Exportar CSV
-        </a>
+        <div className="flex flex-wrap gap-3">
+          <Link href="/admin/demanda" className="btn-secondary shrink-0">
+            <BarChart3 size={18} aria-hidden />
+            Ver demanda
+          </Link>
+          <a href="/api/admin/export" className="btn-secondary shrink-0" download>
+            <Download size={18} aria-hidden />
+            Exportar CSV
+          </a>
+        </div>
       </div>
       <p className="mt-3 max-w-4xl text-sm leading-6 text-muted">La exportación contiene datos operativos y de contacto. Guárdala solo mientras sea necesaria y no la compartas fuera de la gestión del piloto.</p>
       {queryError ? <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">No se ha podido cargar una parte de la cola. Revisa las políticas y vuelve a intentarlo.</p> : null}
@@ -227,6 +239,7 @@ export default async function AdminPage() {
               <p className="mt-3 whitespace-pre-wrap leading-6 text-slatecopy">{request.message || "La familia no añadió un mensaje."}</p>
               <p className="mt-2 text-muted">{request.category_id ?? "Sin categoría"} · {request.municipality ?? "Sin municipio"}</p>
               <p className="mt-1 text-xs text-muted">Canal preferido: {request.contact_preference === "phone" ? "Teléfono" : request.contact_preference === "email" ? "Email" : "A través de Tenlo"}</p>
+              {requestProfiles.get(request.family_id) ? <div className="mt-3 rounded-xl border border-line bg-white p-3"><p className="text-xs font-bold uppercase tracking-wide text-muted">Cuenta familiar</p><p className="mt-1 font-semibold text-ink">{requestProfiles.get(request.family_id)?.public_name || requestProfiles.get(request.family_id)?.display_name || "Familia registrada"}</p><div className="mt-2 flex flex-wrap gap-3 text-xs">{requestProfiles.get(request.family_id)?.contact_email ? <a className="inline-flex items-center gap-1.5 font-semibold text-ink underline" href={`mailto:${requestProfiles.get(request.family_id)?.contact_email}`}><Mail size={14} aria-hidden />{requestProfiles.get(request.family_id)?.contact_email}</a> : null}{requestProfiles.get(request.family_id)?.phone ? <a className="inline-flex items-center gap-1.5 font-semibold text-ink underline" href={`tel:${requestProfiles.get(request.family_id)?.phone?.replace(/[^+\d]/g, "")}`}><Phone size={14} aria-hidden />{requestProfiles.get(request.family_id)?.phone}</a> : null}</div></div> : null}
               {connectionFeedback.get(request.id) ? <div className="mt-3 rounded-xl border border-line bg-white p-3"><p className="text-xs font-bold uppercase tracking-wide text-muted">Valoración de la familia</p><p className="mt-1 font-bold text-ink">{connectionFeedback.get(request.id)?.useful ? "Conexión útil" : "No resultó útil"}</p><p className="mt-1 text-xs text-muted">Resultado: {({ information: "Información obtenida", conversation: "Conversación", proposal: "Propuesta", booking: "Reserva", hired: "Contratación", not_progressed: "No avanzó" } as Record<string, string>)[connectionFeedback.get(request.id)?.outcome ?? ""] ?? "Sin resultado"}</p></div> : null}
               {requestTargetHref(request.target_type, request.target_id) ? <Link href={requestTargetHref(request.target_type, request.target_id)!} target="_blank" rel="noreferrer" className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-xl border border-line bg-white px-4 py-2 font-bold text-ink">Abrir ficha <ExternalLink size={15} aria-hidden /></Link> : null}
               <p className="mt-2 text-xs text-muted">{dateLabel(request.created_at)}</p>

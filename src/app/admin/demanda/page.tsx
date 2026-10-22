@@ -1,0 +1,165 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { ArrowLeft, BarChart3, MapPin, SearchX, TrendingUp } from "lucide-react";
+import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
+import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
+
+export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Demanda del piloto | Tenlo",
+  robots: { index: false, follow: false }
+};
+
+type SearchEvent = {
+  normalized_query: string | null;
+  category_id: string | null;
+  vertical_id: string | null;
+  municipality: string | null;
+  results_count: number;
+  zero_results: boolean;
+  created_at: string;
+};
+
+type RankedValue = {
+  label: string;
+  searches: number;
+  zeroResults: number;
+  averageResults: number;
+};
+
+function dateLabel(value: Date) {
+  return new Intl.DateTimeFormat("es-ES", { dateStyle: "medium" }).format(value);
+}
+
+function percent(part: number, total: number) {
+  return total ? `${Math.round((part / total) * 100)} %` : "Sin datos";
+}
+
+function rankBy(events: SearchEvent[], selector: (event: SearchEvent) => string | null, limit = 8) {
+  const grouped = new Map<string, { searches: number; zeroResults: number; resultSum: number }>();
+
+  for (const event of events) {
+    const rawLabel = selector(event)?.trim();
+    if (!rawLabel) continue;
+    const current = grouped.get(rawLabel) ?? { searches: 0, zeroResults: 0, resultSum: 0 };
+    current.searches += 1;
+    current.zeroResults += event.zero_results ? 1 : 0;
+    current.resultSum += event.results_count;
+    grouped.set(rawLabel, current);
+  }
+
+  return [...grouped.entries()]
+    .map(([label, value]): RankedValue => ({
+      label,
+      searches: value.searches,
+      zeroResults: value.zeroResults,
+      averageResults: value.searches ? value.resultSum / value.searches : 0
+    }))
+    .sort((a, b) => b.searches - a.searches || b.zeroResults - a.zeroResults || a.label.localeCompare(b.label, "es"))
+    .slice(0, limit);
+}
+
+function opportunityRank(events: SearchEvent[], limit = 12) {
+  return rankBy(events, (event) => event.normalized_query, 100)
+    .filter((item) => item.zeroResults > 0)
+    .sort((a, b) => b.zeroResults - a.zeroResults || b.searches - a.searches || a.averageResults - b.averageResults)
+    .slice(0, limit);
+}
+
+function RankingTable({ title, description, items }: { title: string; description: string; items: RankedValue[] }) {
+  return (
+    <section className="card p-5 md:p-6">
+      <h2 className="subsection-title text-ink">{title}</h2>
+      <p className="mt-2 text-sm leading-6 text-muted">{description}</p>
+      {items.length ? (
+        <div className="mt-5 overflow-x-auto">
+          <table className="w-full min-w-[34rem] text-left text-sm">
+            <thead className="border-b border-line text-xs uppercase tracking-wide text-muted">
+              <tr><th className="pb-3 pr-4">Valor</th><th className="pb-3 pr-4 text-right">Búsquedas</th><th className="pb-3 pr-4 text-right">Sin resultados</th><th className="pb-3 text-right">Resultados medios</th></tr>
+            </thead>
+            <tbody>
+              {items.map((item) => (
+                <tr key={item.label} className="border-b border-line last:border-0">
+                  <th scope="row" className="py-3 pr-4 font-semibold text-ink">{item.label}</th>
+                  <td className="py-3 pr-4 text-right text-slatecopy">{item.searches}</td>
+                  <td className="py-3 pr-4 text-right text-slatecopy">{item.zeroResults} ({percent(item.zeroResults, item.searches)})</td>
+                  <td className="py-3 text-right text-slatecopy">{item.averageResults.toFixed(1)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : <p className="mt-5 rounded-2xl border border-line bg-soft p-4 text-sm text-muted">Todavía no hay datos suficientes para este desglose.</p>}
+    </section>
+  );
+}
+
+export default async function AdminDemandPage() {
+  if (!hasSupabaseServerConfig()) return <PrivateAreaUnavailable />;
+
+  const supabase = await createSupabaseServerClient();
+  const { data: authData } = await supabase.auth.getUser();
+  if (!authData.user) redirect("/login?next=/admin/demanda");
+
+  const { data: profile } = await supabase.from("profiles").select("role,status").eq("id", authData.user.id).maybeSingle();
+  if (profile?.role !== "tenlo_admin" || profile.status !== "approved") redirect("/area-personal");
+
+  const periodStart = new Date();
+  periodStart.setDate(periodStart.getDate() - 90);
+  const { data, error } = await supabase
+    .from("search_events")
+    .select("normalized_query,category_id,vertical_id,municipality,results_count,zero_results,created_at")
+    .gte("created_at", periodStart.toISOString())
+    .order("created_at", { ascending: false })
+    .limit(5000);
+
+  const events = (data ?? []) as SearchEvent[];
+  const zeroResults = events.filter((event) => event.zero_results).length;
+  const withFewResults = events.filter((event) => event.results_count > 0 && event.results_count <= 2).length;
+  const averageResults = events.length ? events.reduce((sum, event) => sum + event.results_count, 0) / events.length : null;
+  const terms = rankBy(events, (event) => event.normalized_query);
+  const categories = rankBy(events, (event) => event.category_id);
+  const verticals = rankBy(events, (event) => event.vertical_id);
+  const municipalities = rankBy(events, (event) => event.municipality);
+  const opportunities = opportunityRank(events);
+
+  return (
+    <main className="section-shell">
+      <Link href="/admin" className="inline-flex min-h-11 items-center gap-2 font-bold text-ink underline"><ArrowLeft size={18} aria-hidden />Volver a operación</Link>
+      <p className="label mt-6">Informe interno</p>
+      <h1 className="page-title">Demanda del piloto</h1>
+      <p className="lead max-w-4xl">Qué están buscando las familias y dónde la oferta todavía no responde. Periodo del {dateLabel(periodStart)} al {dateLabel(new Date())}.</p>
+
+      {error ? <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">No se han podido cargar las búsquedas. Comprueba que la migración de acceso administrativo esté aplicada.</p> : null}
+
+      <section className="card mt-6 p-5 md:p-6" aria-labelledby="demand-summary-title">
+        <div className="flex items-center gap-3"><BarChart3 size={22} className="text-ink" aria-hidden /><div><h2 id="demand-summary-title" className="subsection-title text-ink">Resumen de 90 días</h2><p className="mt-1 text-sm text-muted">Solo datos agregados; este informe no muestra usuarios ni sesiones.</p></div></div>
+        <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Búsquedas registradas</dt><dd className="mt-2 text-3xl font-black text-ink">{events.length || "Sin datos"}</dd></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Sin resultados</dt><dd className="mt-2 text-3xl font-black text-ink">{events.length ? `${zeroResults} · ${percent(zeroResults, events.length)}` : "Sin datos"}</dd></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Con oferta escasa</dt><dd className="mt-2 text-3xl font-black text-ink">{events.length ? withFewResults : "Sin datos"}</dd><p className="mt-1 text-xs text-muted">Uno o dos resultados disponibles</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Resultados medios</dt><dd className="mt-2 text-3xl font-black text-ink">{averageResults === null ? "Sin datos" : averageResults.toFixed(1)}</dd></div>
+        </dl>
+      </section>
+
+      <section className="mt-6 rounded-2xl border border-violet/20 bg-violet/5 p-5 md:p-6" aria-labelledby="opportunities-title">
+        <div className="flex items-start gap-3"><TrendingUp size={22} className="mt-1 shrink-0 text-violet" aria-hidden /><div><h2 id="opportunities-title" className="subsection-title text-ink">Oportunidades de oferta</h2><p className="mt-1 text-sm leading-6 text-muted">Términos ordenados por búsquedas sin resultados. Úsalos para priorizar nuevas fichas o captar proveedores; valida antes que no sean errores o datos personales saneados.</p></div></div>
+        {opportunities.length ? <ol className="mt-5 grid gap-3 md:grid-cols-2">{opportunities.map((item, index) => <li key={item.label} className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-white p-4"><span className="font-bold text-ink">{index + 1}. {item.label}</span><span className="chip shrink-0">{item.zeroResults} sin resultado</span></li>)}</ol> : <p className="mt-5 rounded-2xl border border-line bg-white p-4 text-sm text-muted">No hay términos sin resultados en el periodo.</p>}
+      </section>
+
+      <div className="mt-6 grid gap-5 xl:grid-cols-2">
+        <RankingTable title="Términos más buscados" description="Consultas libres saneadas y normalizadas. No se muestran emails ni teléfonos." items={terms} />
+        <RankingTable title="Demanda por categoría" description="Categorías seleccionadas en el buscador, con su presión de oferta." items={categories} />
+        <RankingTable title="Demanda por vertical" description="Agrupación estable para comparar educación, actividades, cuidados y otros ámbitos." items={verticals} />
+        <RankingTable title="Demanda por municipio" description="Zonas donde se busca más y proporción que no encuentra resultados." items={municipalities} />
+      </div>
+
+      <section className="card mt-6 p-5 md:p-6">
+        <div className="flex items-start gap-3"><SearchX size={22} className="mt-1 shrink-0 text-ink" aria-hidden /><div><h2 className="subsection-title text-ink">Cómo tomar decisiones</h2><p className="mt-2 text-sm leading-6 text-muted">Prioriza combinaciones con recurrencia y alta falta de oferta. Una búsqueda aislada no justifica captar un proveedor. Contrasta término, municipio y categoría antes de crear o enriquecer fichas.</p></div></div>
+        <p className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-ink"><MapPin size={17} aria-hidden />Los datos reflejan búsquedas registradas, no población ni demanda total del mercado.</p>
+      </section>
+    </main>
+  );
+}

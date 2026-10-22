@@ -220,24 +220,15 @@ export default function LoginRegistration() {
     }
 
     setUsernameStatus("checking");
-    const { data, error: availabilityError } = await supabase
-      .from("profile_usernames")
-      .select("public_name_normalized")
-      .eq("public_name_normalized", normalized)
-      .maybeSingle();
+    const { data, error: availabilityError } = await supabase.rpc("is_profile_username_available", { candidate: normalized });
 
     if (availabilityError) {
       setUsernameStatus("unknown");
       return true;
     }
 
-    if (data) {
-      setUsernameStatus("taken");
-      return false;
-    }
-
-    setUsernameStatus("available");
-    return true;
+    setUsernameStatus(data ? "available" : "taken");
+    return Boolean(data);
   }
 
   async function createOrUpdateProfile(userId: string) {

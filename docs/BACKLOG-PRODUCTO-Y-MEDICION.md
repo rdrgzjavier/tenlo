@@ -334,15 +334,15 @@ Tenlo debe poder explicar qué buscan las familias y qué rendimiento obtiene ca
 - [x] Registrar qué resultados se renderizaron y en qué posición, vinculados mediante `search_id`.
 - [x] Relacionar búsqueda con ficha vista, guardado, compartido y contacto mediante un `search_id` anónimo activo durante 30 minutos. Respuesta y conexión útil se incorporarán cuando exista el flujo del proveedor.
 - [x] Sanear el texto libre antes de persistirlo, descartar posibles emails o teléfonos y no enviarlo a GA4.
-- [ ] Crear un informe de demanda con:
-  - [ ] términos e intenciones más buscados;
-  - [ ] categorías y verticales con más demanda;
-  - [ ] demanda por municipio y periodo;
+- [ ] Crear un informe de demanda. La primera vista interna de 90 días está implementada en `/admin/demanda`; faltan tendencias, intenciones y conversión completa:
+  - [ ] términos e intenciones más buscados; ya muestra términos saneados, falta clasificar intención;
+  - [x] categorías y verticales con más demanda;
+  - [x] demanda por municipio y periodo inicial de 90 días;
   - [ ] búsquedas emergentes;
-  - [ ] búsquedas sin oferta suficiente;
+  - [x] búsquedas sin oferta suficiente;
   - [ ] búsquedas que terminan en contacto, respuesta y conexión útil;
   - [ ] términos con tráfico pero poca utilidad;
-  - [ ] oportunidades para captar nuevos proveedores o crear nuevas fichas.
+  - [x] oportunidades para captar nuevos proveedores o crear nuevas fichas.
 
 ### Tráfico y rendimiento de cada ficha
 

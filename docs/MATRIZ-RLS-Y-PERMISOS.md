@@ -41,12 +41,14 @@ Referencia: [Row Level Security de Supabase](https://supabase.com/docs/guides/da
 | `connection_feedback` | Sin acceso | La familia lee, crea y actualiza el resultado de su solicitud | Familia: propio | Solo lectura | Correcto; falta feedback equivalente del proveedor cuando exista identidad vinculada. |
 | `data_export_audit` | Sin acceso | Inserta un registro con su propio UUID | Propio al insertar | Lee todos | Correcto para trazabilidad mínima; no almacena el contenido exportado. |
 
-## Cambios obligatorios antes de activar `DIRECTORY_DATA_SOURCE=supabase`
+## Estado de los cambios obligatorios
 
-1. Aplicar `0022_admin_profile_contacts.sql` y verificar que solo un perfil aprobado `tenlo_admin` puede leer contactos familiares en el backoffice.
-2. Sustituir la lectura directa de `profile_usernames` por una función de disponibilidad que devuelva solo `true/false`; revocar `select` a `anon` y limitar la lectura autenticada.
-3. Sustituir la lectura pública directa de `business_profiles` por una vista o función con columnas expresamente públicas y `status = 'approved'`.
-4. Limitar centros públicos a `status = 'approved'` y ocultar `created_by` de la superficie pública.
+Las migraciones `0022` y `0023` se aplicaron en producción el 22 de octubre de 2026. La consulta de control confirmó la existencia de las cinco políticas, ejecución anónima de la comprobación booleana de alias y ausencia de permiso anónimo de lectura sobre `profile_usernames`.
+
+1. [x] Permitir que solo un perfil aprobado `tenlo_admin` lea en el backoffice los contactos necesarios para gestionar solicitudes.
+2. [x] Hacer que la comprobación de alias devuelva solo `true/false`, limitar los centros públicos a aprobados y permitir leer proveedores aprobados desde el directorio.
+3. Valorar una vista de directorio con columnas expresamente públicas antes de introducir campos privados adicionales en `business_profiles` o `centers`.
+4. Evitar añadir a las tablas públicas campos que no deban quedar disponibles mediante la Data API; separar PII nueva en tablas privadas.
 5. Probar que los borradores y estados rechazados no aparecen en centros, servicios, fichas ni comunidad.
 6. Probar que una familia no puede leer perfiles, favoritos, solicitudes, feedback, notas o exportaciones de otra.
 7. Probar que un proveedor no puede autoconcederse rol, estado aprobado, confianza o plan comercial.
