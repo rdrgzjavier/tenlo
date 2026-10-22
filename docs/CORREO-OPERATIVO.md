@@ -4,10 +4,10 @@
 
 Durante el piloto, `solicitudes@tenlo.es` será una dirección de entrada y una identidad operativa, no un buzón independiente.
 
-1. Crear en DonDominio el reenvío `solicitudes@tenlo.es` hacia `tenlocerca@gmail.com`.
-2. Configurar `ADMIN_EMAIL=solicitudes@tenlo.es` en Vercel.
-3. Mantener las solicitudes y sus estados en Supabase y en el futuro backoffice. Gmail solo actúa como aviso y canal de respuesta.
-4. Verificar recepción, respuesta, SPF, DKIM y DMARC antes de utilizar la dirección con proveedores reales.
+1. [x] Crear en Cloudflare Email Routing el reenvío `solicitudes@tenlo.es` hacia `tenlocerca@gmail.com`; no requiere un buzón adicional en DonDominio.
+2. [x] Configurar `ADMIN_EMAIL=solicitudes@tenlo.es` en Vercel.
+3. [x] Mantener las solicitudes y sus estados en Supabase y en el backoffice. Gmail actúa como aviso y canal de respuesta manual.
+4. [x] Verificar recepción, SPF, DKIM y DMARC antes de utilizar la dirección con proveedores reales.
 
 ## Envío
 
@@ -29,8 +29,8 @@ Antes de activarla:
 2. [x] Añadir en Cloudflare los registros DKIM y SPF/CNAME indicados por Resend, todos en modo `Solo DNS`, y una política DMARC inicial de monitorización (`p=none`). Registros publicados y resueltos públicamente el 16/10/2026.
 3. [x] Verificar el dominio en Resend y mantener desactivado el seguimiento de enlaces para no alterar el enlace de confirmación de Supabase. Dominio verificado el 16/10/2026.
 4. [x] Configurar en Supabase Authentication > Emails > SMTP Settings el host, puerto, usuario, contraseña y remitente de Resend. Supabase confirmó el guardado el 16/10/2026.
-5. [ ] Pegar la plantilla, guardar y realizar un alta de prueba en una dirección distinta. La plantilla y el asunto se guardaron el 16/10/2026; falta el alta de prueba.
-6. Verificar remitente, asunto, logotipo, CTA, enlace, versión móvil, carpeta de spam y redirección final.
+5. [x] Pegar la plantilla, guardar y realizar un alta de prueba. La cuenta de prueba recibió el email personalizado y completó la confirmación.
+6. [x] Verificar remitente, asunto, logotipo, CTA, enlace y redirección final. Mantener la revisión móvil y de spam dentro de las pruebas periódicas.
 
 La credencial de producción debe tener solo permiso de envío y quedar restringida a `notificaciones.tenlo.es`. No se guardará en el repositorio. `RESEND_API_KEY` se configura como secreto de Production y `MAIL_FROM=Tenlo <acceso@notificaciones.tenlo.es>` como configuración de Production en Vercel.
 

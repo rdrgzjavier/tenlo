@@ -2,7 +2,7 @@
 
 > Documento vivo para decidir, construir y comprobar el MVP de Tenlo.
 >
-> Última revisión: 16 de octubre de 2026.
+> Última revisión: 22 de octubre de 2026. El avance ponderado y sus criterios están en [`ESTADO-MVP.md`](./ESTADO-MVP.md).
 
 ## Cómo utilizar este documento
 
@@ -50,18 +50,18 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 
 - Repositorio: `rdrgzjavier/tenlo`.
 - Rama de producción: `main`.
-- Último commit de producción validado: `e946003` (`Harden pilot content and record credential rotation`).
+- Commit funcional de referencia: `47796d0` (`Add protected demand reporting`), validado por CI y desplegado correctamente; cada cambio posterior debe volver a superar ambas comprobaciones.
 - Aplicación en Next.js 15, React 18, TypeScript y Tailwind 3.
 - `typecheck` y `lint` pasan correctamente.
-- El contenido público continúa dependiendo de `src/lib/mock-data.ts`, pero ya existe una capa de acceso preparada para leer el directorio desde Supabase con retorno seguro a los datos actuales. El cambio de fuente no está activado.
-- Existen dieciséis migraciones de Supabase. Las migraciones `0006` y `0007` se aplicaron en producción el 5 de octubre de 2026 y se verificaron mediante consulta: `search_events` y `connection_requests` existen, tienen RLS activa y los permisos de inserción previstos. La migración `0009` se aplicó y verificó el 7 de octubre de 2026. Las migraciones `0010`, `0011` y `0012` se aplicaron y verificaron el 11 de octubre: endurecen funciones y formularios públicos y conservan la fecha de retirada del consentimiento comercial. La migración `0013` se aplicó el 11 de octubre y añadió claves externas estables, origen del registro e índices únicos para una importación idempotente, además de permitir fichas editoriales no reclamadas sin propietarios ficticios. La migración `0014` se aplicó y verificó el mismo día para almacenar ubicaciones exactas, aproximadas o por área de servicio con límites válidos de coordenadas. La `0015` se aplicó y verificó el 13 de octubre: solicitudes y reclamaciones críticas tienen ID de evento único, versión de esquema y timestamp de servidor. La `0016` se aplicó el 13 de octubre y limita la bandeja operativa a perfiles aprobados con rol `tenlo_admin`; falta crear o elevar la cuenta de Javier. El Security Advisor pasó de cinco a un aviso; solo queda la protección de contraseñas filtradas.
+- Home, buscadores, listados, fichas, reclamaciones, solicitudes, favoritos, comparación, categorías, zonas y sitemap ya consumen una capa de acceso capaz de usar Supabase con retorno seguro a `mock-data.ts`. El cambio de fuente no se activará hasta validar paridad y reversibilidad en producción.
+- Existen veintitrés migraciones de Supabase. El 22 de octubre se aplicaron `0022` y `0023`: el administrador puede leer los contactos necesarios para operar solicitudes, las fichas públicas se limitan a estados aprobados, los alias no son enumerables por visitantes y el informe de demanda solo es legible por `tenlo_admin`.
 - La base está preparada para una fuente de datos real unificada, pero no se activará hasta auditar e importar un lote pequeño y comparar conteos, relaciones y contenido.
 - La reclamación de ficha ya puede iniciarse sin cuenta; la aprobación y los cambios siguen sujetos a verificación posterior.
 - El formulario de registro ya solicita tipo de usuario, nombre público, email, teléfono, contraseña, municipio y centro opcional. Para proveedores también muestra tipología, web, descripción, zona, modalidad, edades, disponibilidad, credenciales y otros campos.
 - El esquema ya incluye centro relacionado, intereses y consentimiento específico de marketing, pero el formulario de registro aún debe conectarlos al guardado y conservar la evidencia del consentimiento.
-- No existe aún una bandeja administrativa operativa: hay una ruta de revisión de borradores y avisos por email, pero no un centro de solicitudes, alternativas y notificaciones.
-- Los CTAs de contacto no siguen un único flujo: algunos abren web, email o teléfono y el de canguros no crea aún una solicitud operativa.
-- Favoritos mezcla una señal local de sesión con datos de Supabase y todavía no representa un flujo completo.
+- Existe una bandeja administrativa restringida para reclamaciones, solicitudes, publicaciones, bajas, incidencias, notas, estados, alternativas, vencimientos y exportación; incluye un informe agregado de demanda de 90 días.
+- Los CTAs distinguen llamada, email, web y solicitud protegida; todavía falta que el proveedor responda desde un enlace o área propia y automatizar recordatorios y alternativas.
+- Favoritos se guarda por cuenta en Supabase y permite comparar entre dos y tres fichas compatibles.
 - La aplicación carga Cookiebot y Consent Mode con analítica denegada por defecto, y solo descarga GTM tras consentimiento estadístico. Cookiebot, la propiedad GA4 y el contenedor GTM de Tenlo ya están configurados y publicados. La migración analítica `0009` se aplicó y verificó el 07/10/2026; la vista agregada no es legible por `anon` ni `authenticated`. Queda validar la recepción de eventos y parámetros en GA4 y completar la medición persistente del resultado de cada conexión.
 - `typecheck`, `lint` y `build` pasan en local; las rutas privadas ya no bloquean el prerender cuando faltan variables de Supabase.
 - La actualización a Next.js 15 eliminó los avisos críticos conocidos. La auditoría repetida el 18/10/2026 devuelve 0 críticos, 8 altos y 3 moderados; los avisos restantes proceden de dependencias transitivas de Next.js, ESLint y Tailwind y requieren migraciones mayores a Next.js 16 y Tailwind 4. Deben abordarse con pruebas visuales y funcionales antes de captar usuarios reales.
@@ -74,7 +74,7 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - `tenlo.es` y `www.tenlo.es` están conectados a Vercel: la raíz responde en producción y `www` redirige permanentemente (`308`) a `tenlo.es`.
 - La matriz de Vercel fue revisada de nuevo el 16 de octubre de 2026: Supabase está configurado para producción y preview; `ADMIN_EMAIL` y `NEXT_PUBLIC_SITE_URL=https://tenlo.es` están configuradas. `NEXT_PUBLIC_COOKIEBOT_ID` usa el grupo real de Tenlo y `NEXT_PUBLIC_GTM_ID=GTM-KT8CKRPK` está configurada solo en producción. `RESEND_API_KEY` y `MAIL_FROM` ya están configuradas solo en Production. La credencial de Resend se rotó, quedó restringida al envío desde `notificaciones.tenlo.es`, se sustituyó en Supabase y Vercel, y las claves anteriores fueron revocadas. El despliegue final `CsH3pxef5` terminó en estado `Ready`. `SUPABASE_SERVICE_ROLE_KEY` no se añadirá hasta que una función administrativa la necesite. `notificaciones.tenlo.es` está verificado en Resend con DKIM, SPF/CNAME y DMARC publicados; SMTP y la plantilla de confirmación de Tenlo quedaron guardados en Supabase. Falta completar el alta de prueba.
 - La zona gratuita `tenlo.es` está activa en Cloudflare con la raíz `A 216.198.79.1` y `www CNAME 4b8f150f986f3ce8.vercel-dns-017.com`, ambos en modo Solo DNS. La resolución pública utiliza `david.ns.cloudflare.com` y `norah.ns.cloudflare.com` desde el 06/10/2026.
-- DonDominio no tiene creada aún ninguna cuenta ni alias de correo para `tenlo.es`.
+- DonDominio no necesita un buzón adicional para el piloto: Cloudflare Email Routing reenvía `solicitudes@tenlo.es` a `tenlocerca@gmail.com`, mientras Resend gestiona el envío transaccional desde `notificaciones.tenlo.es`.
 
 ---
 
@@ -724,22 +724,22 @@ No desarrollar el sistema completo de cobro antes de demostrar valor repetible.
 
 No iniciar contacto sistemático con proveedores hasta poder marcar:
 
-- [ ] Segmento inicial decidido.
-- [ ] Propuesta de valor y mensaje revisados.
-- [ ] Dominio definitivo operativo.
-- [ ] Dependencias críticas actualizadas.
-- [ ] Build reproducible y variables documentadas.
-- [ ] Fichas iniciales revisadas, con fuente y fecha.
+- [x] Segmento inicial decidido.
+- [x] Propuesta de valor y mensaje revisados.
+- [x] Dominio definitivo operativo.
+- [x] Dependencias críticas actualizadas; no quedan avisos críticos conocidos, aunque las migraciones mayores siguen planificadas.
+- [x] Build reproducible y variables documentadas.
+- [x] Lote inicial admisible revisado, con fuente y fecha; las fichas sin evidencia suficiente permanecen fuera.
 - [ ] Flujo de reclamación probado de extremo a extremo.
 - [x] Cola de moderación operativa con acceso restringido a `tenlo_admin` y exportación básica para seguimiento manual.
-- [ ] Emails de confirmación y seguimiento funcionando. `notificaciones.tenlo.es` está verificado; DKIM, SPF/CNAME y DMARC resuelven; el seguimiento de enlaces no está activado; SMTP, remitente y plantilla de confirmación están guardados; la credencial está rotada y las claves anteriores revocadas; y Vercel tiene las variables de Production desplegadas. Falta completar una prueba real de entrega, confirmación y redirección.
+- [x] Emails de confirmación y seguimiento funcionando. `notificaciones.tenlo.es` está verificado; DKIM, SPF/CNAME y DMARC resuelven; SMTP y la plantilla de confirmación están activos y una cuenta real de prueba recibió y completó la confirmación.
 - [ ] Política de privacidad y condiciones alineadas con los datos recogidos.
 - [ ] Taxonomía de eventos P0 implantada y validada.
 - [x] Dashboard mínimo en administración para ver colas, vencimientos, solicitudes gestionadas, conexiones útiles y mediana de primera respuesta. Las exportaciones incluyen además el seguimiento y el resultado declarado por la familia.
 - [ ] Informe de búsquedas y rendimiento por ficha validado con datos de prueba.
 - [ ] Base de perfiles con RLS, consentimiento de marketing y proceso de baja probados.
-- [ ] Proceso de corrección, retirada y soporte definido.
-- [ ] Responsable del piloto y tiempos de respuesta definidos.
+- [x] Proceso de corrección, retirada y soporte definido.
+- [x] Responsable del piloto y tiempos de respuesta definidos.
 
 ---
 
