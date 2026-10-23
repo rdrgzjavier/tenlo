@@ -1,11 +1,11 @@
 # Estado del MVP de Tenlo
 
-Fecha de corte: 22 de octubre de 2026.
+Fecha de corte: 23 de octubre de 2026.
 
 ## Progreso global
 
 ```text
-MVP construido  [████████████████░░░░] 79 %
+MVP construido  [█████████████████░░░] 83 %
 ```
 
 El porcentaje mide la capacidad necesaria para ejecutar un piloto pequeño en Madrid noroeste. No incluye monetización, comunidad, expansión geográfica, recomendaciones avanzadas ni automatizaciones propias de fases posteriores.
@@ -17,16 +17,16 @@ Una tarea solo puntúa como terminada cuando existe implementación o procedimie
 | Bloque del MVP | Peso | Avance | Puntos | Evidencia actual | Principal brecha |
 |---|---:|---:|---:|---|---|
 | Segmento, valor y reglas del piloto | 10 % | 100 % | 10,0 | Ámbito, oferta, confianza, conexión útil, SLA y gratuidad inicial decididos | Validar los mensajes con la primera cohorte |
-| Infraestructura, dominio y seguridad | 15 % | 90 % | 13,5 | Dominio, DNS, Vercel, CI, Auth, SMTP, RLS y políticas públicas operativas | Resolver dependencias mayores, protección de contraseñas filtradas y política de previews |
-| Directorio real y calidad de oferta | 15 % | 85 % | 12,8 | Lote real auditado e importado, Supabase activo en producción, paridad de conteos/rutas y fallback reversible | Normalizar cobertura/taxonomía y completar la revisión individual de fichas |
-| Reclamación y activación de proveedores | 15 % | 75 % | 11,3 | Reclamación, cola, aprobación, rechazo y petición de información disponibles | Onboarding progresivo, publicación efectiva y aviso asociado |
+| Infraestructura, dominio y seguridad | 15 % | 93 % | 14,0 | Dominio, DNS, Vercel, CI, Auth, SMTP y migraciones `0024`–`0032` verificadas; superficie pública y campos protegidos comprobados | Completar pruebas cruzadas por rol, dependencias mayores, contraseñas filtradas y política de previews |
+| Directorio real y calidad de oferta | 15 % | 87 % | 13,1 | Lote real auditado, Supabase activo, 21 centros, 14 proveedores y 16 servicios servidos mediante RPC públicos acotados | Normalizar cobertura/taxonomía y completar la revisión individual de fichas |
+| Reclamación y activación de proveedores | 15 % | 82 % | 12,3 | Reclamación, onboarding progresivo, ficha privada persistente, cola, moderación, petición de información y reenvío disponibles | Probar publicación y avisos reales con una cuenta de proveedor |
 | Búsqueda, comparación y conexión familiar | 15 % | 80 % | 12,0 | Buscar, filtrar, proponer, ver ficha, mapa, guardar, comparar, solicitar y valorar resultado | Respuesta segura del proveedor, recordatorio y alternativa automatizados |
-| Cuentas, consentimiento y privacidad | 15 % | 60 % | 9,0 | Registro, confirmación, acceso, perfil, recuperación, marketing opcional, exportación y solicitud de baja | Política legal completa, prueba de supresión, preferencias y actividad de cuenta |
-| Medición e informes | 10 % | 70 % | 7,0 | Cookiebot, GTM, GA4, eventos, búsquedas persistentes, resumen operativo e informe de demanda | Confirmar recepción GA4 y persistir rendimiento histórico por ficha/vertical |
+| Cuentas, consentimiento y privacidad | 15 % | 72 % | 10,8 | Registro, confirmación, perfil persistente, recuperación, atribución saneada, historial de consentimiento, exportación y solicitud de baja | Política legal completa, prueba de supresión, preferencias y actividad posterior al alta |
+| Medición e informes | 10 % | 80 % | 8,0 | Cookiebot, GTM, GA4, búsquedas y eventos propios persistentes, informes privados de demanda, rendimiento y usuarios | Confirmar recepción GA4 y validar informes con actividad real del piloto |
 | Operación y recuperación del piloto | 5 % | 60 % | 3,0 | Responsable, SLA, playbook, backoffice, exportación y runbook de copias | Ejecutar restauración, preparar CRM/contactos y probar recorridos completos |
-| **Total** | **100 %** |  | **78,6** |  |  |
+| **Total** | **100 %** |  | **83,2** |  |  |
 
-El valor mostrado se redondea a **79 %**. Debe actualizarse solo cuando cambie la evidencia de alguno de los ocho bloques, no al añadir tareas futuras al backlog.
+El valor mostrado se redondea a **83 %**. Debe actualizarse solo cuando cambie la evidencia de alguno de los ocho bloques, no al añadir tareas futuras al backlog.
 
 ## Qué falta para considerar el MVP listo para el piloto
 

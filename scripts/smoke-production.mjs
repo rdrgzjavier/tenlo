@@ -21,10 +21,20 @@ for (const [path, expectedTexts] of publicChecks) {
   failed ||= !ok;
 }
 
-const protectedResponse = await fetch(`${baseUrl}/admin/rendimiento`, { redirect: "manual" });
-const protectedOk = [302, 303, 307, 308].includes(protectedResponse.status) && (protectedResponse.headers.get("location") || "").startsWith("/login");
-console.log(`${protectedOk ? "OK" : "FAIL"} ${protectedResponse.status} /admin/rendimiento · acceso privado`);
-failed ||= !protectedOk;
+const protectedPaths = [
+  "/admin",
+  "/admin/rendimiento",
+  "/admin/usuarios",
+  "/mi-ficha-profesional"
+];
+
+for (const path of protectedPaths) {
+  const response = await fetch(`${baseUrl}${path}`, { redirect: "manual" });
+  const location = response.headers.get("location") || "";
+  const ok = [302, 303, 307, 308].includes(response.status) && location.startsWith("/login");
+  console.log(`${ok ? "OK" : "FAIL"} ${response.status} ${path} · acceso privado`);
+  failed ||= !ok;
+}
 
 const invalidAnalyticsResponse = await fetch(`${baseUrl}/api/analytics/directory-event`, {
   method: "POST",
