@@ -70,6 +70,7 @@ function queueLabel(value?: string | null) {
     claim: "Reclamación de ficha",
     connection: "Solicitud de contacto",
     submission: "Publicación",
+    business_profile: "Alta profesional",
     feedback: "Aviso o incidencia"
   };
   return labels[value || ""] || "Tarea administrativa";
@@ -106,10 +107,11 @@ export default async function AdminPage() {
   if (profile?.role !== "tenlo_admin" || profile.status !== "approved") redirect("/area-personal");
 
   const reviewCutoff = staleReviewCutoff();
-  const [claimsResult, requestsResult, submissionsResult, feedbackResult, connectionFeedbackResult, auditResult, exportAuditResult, notesResult, staleServicesResult, staleCentersResult] = await Promise.all([
+  const [claimsResult, requestsResult, submissionsResult, businessProfilesResult, feedbackResult, connectionFeedbackResult, auditResult, exportAuditResult, notesResult, staleServicesResult, staleCentersResult] = await Promise.all([
     supabase.from("claim_requests").select("id,entity_type,entity_id,entity_name,requester_name,requester_email,requester_phone,role_description,corrections,official_website,image_url,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("connection_requests").select("id,family_id,target_type,target_id,category_id,municipality,message,contact_preference,status,provider_notified_at,provider_response_summary,alternative_summary,first_response_at,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("submissions").select("id,user_id,submission_type,payload,review_notes,status,created_at").order("created_at", { ascending: false }).limit(100),
+    supabase.from("business_profiles").select("id,owner_id,business_name,website,municipality,service_area,category,subtype,description,phone,contact_email,status,trust_level,details,created_at").in("status", ["pending_review", "rejected"]).order("created_at", { ascending: false }).limit(100),
     supabase.from("feedback_requests").select("id,context,item_id,name,email,message,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("connection_feedback").select("request_id,useful,outcome,updated_at").order("updated_at", { ascending: false }).limit(500),
     supabase.from("admin_queue_audit").select("id,queue,record_id,previous_status,new_status,changed_by,changed_at").order("changed_at", { ascending: false }).limit(30),
@@ -124,25 +126,27 @@ export default async function AdminPage() {
     ? await supabase.from("profiles").select("id,public_name,display_name,contact_email,phone").in("id", familyIds)
     : { data: [], error: null };
 
-  const queryError = claimsResult.error || requestsResult.error || requestProfilesResult.error || submissionsResult.error || feedbackResult.error || connectionFeedbackResult.error || auditResult.error || exportAuditResult.error || notesResult.error || staleServicesResult.error || staleCentersResult.error;
+  const queryError = claimsResult.error || requestsResult.error || requestProfilesResult.error || submissionsResult.error || businessProfilesResult.error || feedbackResult.error || connectionFeedbackResult.error || auditResult.error || exportAuditResult.error || notesResult.error || staleServicesResult.error || staleCentersResult.error;
   const claims = claimsResult.data ?? [];
   const requests = requestsResult.data ?? [];
   const submissions = submissionsResult.data ?? [];
+  const businessProfiles = businessProfilesResult.data ?? [];
   const feedback = feedbackResult.data ?? [];
   const connectionFeedback = new Map((connectionFeedbackResult.data ?? []).map((item) => [item.request_id, item]));
   const requestProfiles = new Map((requestProfilesResult.data ?? []).map((item) => [item.id, item]));
   const audit = auditResult.data ?? [];
   const exportAudit = exportAuditResult.data ?? [];
   const notes = notesResult.data ?? [];
-  const notesFor = (queue: "claim" | "connection" | "submission" | "feedback", recordId: string) => notes.filter((item) => item.queue === queue && item.record_id === recordId);
+  const notesFor = (queue: "claim" | "connection" | "submission" | "feedback" | "business_profile", recordId: string) => notes.filter((item) => item.queue === queue && item.record_id === recordId);
   const staleServices = staleServicesResult.data ?? [];
   const staleCenters = staleCentersResult.data ?? [];
   const overdueClaims = claims.filter((item) => ["draft", "pending_review"].includes(item.status) && isPastBusinessDaySla(item.created_at, 4));
   const overdueRequests = requests.filter((item) => !["responded", "declined", "closed"].includes(item.status) && isOlderThanHours(item.created_at, 48));
   const overdueSubmissions = submissions.filter((item) => ["draft", "pending_review"].includes(item.status) && isPastBusinessDaySla(item.created_at, 4));
+  const overdueBusinessProfiles = businessProfiles.filter((item) => ["draft", "pending_review"].includes(item.status) && isPastBusinessDaySla(item.created_at, 4));
   const overdueFeedback = feedback.filter((item) => ["draft", "pending_review"].includes(item.status) && isPastBusinessDaySla(item.created_at, 4));
   const staleTotal = staleServices.length + staleCenters.length;
-  const overdueTotal = overdueClaims.length + overdueRequests.length + overdueSubmissions.length + overdueFeedback.length + staleTotal;
+  const overdueTotal = overdueClaims.length + overdueRequests.length + overdueSubmissions.length + overdueBusinessProfiles.length + overdueFeedback.length + staleTotal;
   const completedRequests = requests.filter((item) => ["responded", "declined", "closed"].includes(item.status));
   const usefulConnections = [...connectionFeedback.values()].filter((item) => item.useful).length;
   const responseHours = requests
@@ -251,6 +255,39 @@ export default async function AdminPage() {
               <ConnectionWorkflow recordId={request.id} currentStatus={request.status} providerNotifiedAt={request.provider_notified_at} responseSummary={request.provider_response_summary} alternativeSummary={request.alternative_summary} />
             </article>
           )) : <p className="text-sm text-muted">No hay solicitudes.</p>}
+        </QueueSection>
+
+        <QueueSection title="Altas profesionales" count={businessProfiles.length} Icon={FileCheck2}>
+          <p className="rounded-2xl border border-line bg-white p-4 text-sm leading-6 text-slatecopy">Revisa la identidad profesional, la descripción, la zona y las evidencias declaradas. Aprobar la ficha no eleva por sí solo su nivel de confianza ni crea servicios públicos.</p>
+          {businessProfiles.length ? businessProfiles.map((businessProfile) => {
+            const details = recordPayload(businessProfile.details);
+            return <article key={businessProfile.id} className="rounded-2xl border border-line bg-soft p-4 text-sm">
+              <div className="flex flex-wrap items-center justify-between gap-2"><strong className="text-ink">{businessProfile.business_name}</strong><span className="chip">{moderationStatusLabel(businessProfile.status)}</span></div>
+              <div className="mt-2"><PriorityFlag visible={overdueBusinessProfiles.some((item) => item.id === businessProfile.id)} label="Más de 4 días laborables" /></div>
+              <p className="mt-3 whitespace-pre-wrap leading-6 text-slatecopy">{businessProfile.description || "No se añadió una descripción."}</p>
+              <p className="mt-2 text-muted">{businessProfile.category}{businessProfile.subtype ? ` · ${businessProfile.subtype}` : ""} · {businessProfile.municipality || "Municipio no indicado"}</p>
+              <div className="mt-2 flex flex-wrap gap-3">
+                {businessProfile.contact_email ? <a className="inline-flex items-center gap-1.5 font-semibold text-ink underline" href={`mailto:${businessProfile.contact_email}`}><Mail size={15} aria-hidden />{businessProfile.contact_email}</a> : null}
+                {businessProfile.phone ? <a className="inline-flex items-center gap-1.5 font-semibold text-ink underline" href={`tel:${businessProfile.phone.replace(/[^+\d]/g, "")}`}><Phone size={15} aria-hidden />{businessProfile.phone}</a> : null}
+              </div>
+              <details className="mt-4 rounded-xl border border-line bg-white p-3">
+                <summary className="cursor-pointer font-bold text-ink">Ver información profesional</summary>
+                <dl className="mt-3 grid gap-2 text-xs text-muted">
+                  <div><dt className="inline font-bold text-ink">Zona: </dt><dd className="inline">{businessProfile.service_area || "No indicada"}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Web: </dt><dd className="inline break-all">{businessProfile.website ? <a href={businessProfile.website} target="_blank" rel="noreferrer" className="underline">{businessProfile.website} <ExternalLink className="inline" size={13} aria-hidden /></a> : "No indicada"}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Modalidad: </dt><dd className="inline">{payloadText(details, "modality")}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Edades: </dt><dd className="inline">{payloadText(details, "age_range")}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Disponibilidad: </dt><dd className="inline">{payloadText(details, "availability")}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Credencial declarada: </dt><dd className="inline">{payloadText(details, "credential")}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Verificación declarada: </dt><dd className="inline">{payloadText(details, "verification_info")}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Confianza actual: </dt><dd className="inline">{businessProfile.trust_level === "collected" ? "No verificada" : businessProfile.trust_level}</dd></div>
+                </dl>
+              </details>
+              <p className="mt-2 text-xs text-muted">Recibida: {dateLabel(businessProfile.created_at)}</p>
+              <AdminNotes queue="business_profile" recordId={businessProfile.id} notes={notesFor("business_profile", businessProfile.id)} />
+              <AdminStatusControl queue="business_profile" recordId={businessProfile.id} currentStatus={businessProfile.status} />
+            </article>;
+          }) : <p className="text-sm text-muted">No hay altas profesionales pendientes.</p>}
         </QueueSection>
 
         <QueueSection title="Publicaciones y bajas" count={submissions.length} Icon={Inbox}>

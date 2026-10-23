@@ -23,7 +23,7 @@ Referencia: [Row Level Security de Supabase](https://supabase.com/docs/guides/da
 |---|---|---|---|---|---|
 | `profiles` | Sin acceso | Lee su fila; inserta solo rol público y estado inicial válido; actualiza solo columnas de cuenta autorizadas | Igual | Lectura mediante `0022` | `0026` está preparada para impedir la autoasignación de `tenlo_admin`, aprobación, revisión o estado; falta aplicarla y verificar privilegios. |
 | `profile_usernames` | Sin lectura; solo RPC booleano | Lee solo el alias propio | Gestiona la propia | Sin excepción necesaria | Aplicado en `0023`; el cliente no puede enumerar alias ni UUID. |
-| `business_profiles` | RPC público seguro previsto | Lee las propias y edita solo contenido permitido | Gestiona las propias | Lectura administrativa | `0025` limita la lectura pública y `0027` impide cambiar confianza, moderación, origen, plan, reclamación o titularidad; falta aplicarlas. |
+| `business_profiles` | RPC público seguro previsto | Lee las propias y edita solo contenido permitido | Gestiona las propias | Lectura administrativa | El alta profesional crea una ficha privada pendiente tras confirmar el email. `0025` limita la lectura pública y `0027` impide cambiar confianza, moderación, origen, plan, reclamación o titularidad; falta aplicarlas. |
 | `centers` | RPC público seguro previsto | Lee propuestas propias | — | Lectura administrativa | `0025` está preparada para ocultar `created_by`, origen y campos internos; falta aplicarla. |
 | `services` | RPC público seguro previsto | Lee los propios y edita solo contenido permitido | Gestiona los propios | Lectura administrativa | `0025` oculta relaciones internas y `0027` impide autoaprobar, autoverificar o falsear el origen; falta aplicarlas. |
 | `listings` | Retirada directa prevista | Lee los propios y edita solo contenido permitido | Gestiona los propios | Sin excepción específica | `0025` retira la lectura pública y `0027` protege moderación, confianza y procedencia. Antes de reactivar publicaciones públicas se necesita un RPC seguro equivalente. |
@@ -46,7 +46,7 @@ Referencia: [Row Level Security de Supabase](https://supabase.com/docs/guides/da
 
 Las migraciones `0022` y `0023` se aplicaron en producción el 22 de octubre de 2026. La consulta de control confirmó la existencia de las cinco políticas, ejecución anónima de la comprobación booleana de alias y ausencia de permiso anónimo de lectura sobre `profile_usernames`.
 
-Las migraciones `0024`, `0025`, `0026` y `0027` están preparadas y comprobadas en código, pero no se consideran aplicadas hasta ejecutar y verificar el SQL en Supabase.
+Las migraciones `0024`, `0025`, `0026`, `0027` y `0028` están preparadas y comprobadas en código, pero no se consideran aplicadas hasta ejecutar y verificar el SQL en Supabase. `0028` añade un RPC administrativo específico para moderar altas profesionales sin devolver permiso directo sobre `status` a los titulares.
 
 1. [x] Permitir que solo un perfil aprobado `tenlo_admin` lea en el backoffice los contactos necesarios para gestionar solicitudes.
 2. [x] Hacer que la comprobación de alias devuelva solo `true/false`, limitar los centros públicos a aprobados y permitir leer proveedores aprobados desde el directorio.

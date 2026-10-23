@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-type QueueType = "claim" | "connection" | "submission" | "feedback";
+type QueueType = "claim" | "connection" | "submission" | "feedback" | "business_profile";
 
 const statusOptions: Record<QueueType, Array<{ value: string; label: string }>> = {
   claim: [
@@ -33,6 +33,12 @@ const statusOptions: Record<QueueType, Array<{ value: string; label: string }>> 
     { value: "approved", label: "Resuelta" },
     { value: "rejected", label: "Descartada" },
     { value: "archived", label: "Archivada" }
+  ],
+  business_profile: [
+    { value: "pending_review", label: "Pendiente" },
+    { value: "approved", label: "Aprobada" },
+    { value: "rejected", label: "Rechazada" },
+    { value: "archived", label: "Archivada" }
   ]
 };
 
@@ -58,7 +64,7 @@ export default function AdminStatusControl({ queue, recordId, currentStatus }: {
       const result = (await response.json()) as { error?: string; notificationSent?: boolean | null };
       if (!response.ok) throw new Error(result.error || "No se pudo actualizar el estado.");
       setFeedback(
-        queue === "claim" && ["approved", "rejected"].includes(status)
+        ["claim", "business_profile"].includes(queue) && ["approved", "rejected"].includes(status)
           ? result.notificationSent
             ? "Estado actualizado y solicitante avisado por email."
             : "Estado actualizado. Revisa manualmente el aviso por email."

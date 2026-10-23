@@ -203,14 +203,15 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   6. revisar y enviar.
 - [x] Evitar pedir todos los datos antes de mostrar la ficha actual y el beneficio de actualizarla mediante un primer paso de confirmación y contexto.
 - [x] Confirmar por email la recepción y explicar el siguiente paso y plazo.
+- [x] Conservar los datos profesionales introducidos durante el alta. Tras confirmar el email se crea, una sola vez, una ficha privada `pending_review` y `No verificada`; web, descripción, zona, modalidad, disponibilidad y evidencias declaradas dejan de ser campos de formulario sin persistencia.
 - [x] Completar acciones para aprobar, pedir información o rechazar reclamaciones. La petición de información se envía por email y queda registrada como nota interna; las decisiones evitan envíos duplicados y muestran si el aviso falló.
-- [ ] Notificar al proveedor cuando la ficha se publique o necesite cambios. Las reclamaciones aprobadas o rechazadas ya generan un email de estado y el backoffice avisa si no pudo enviarse; falta vincular la publicación efectiva y una petición de información concreta.
+- [ ] Notificar al proveedor cuando la ficha se publique o necesite cambios. Las reclamaciones y las nuevas fichas profesionales aprobadas o rechazadas generan un email de estado y el backoffice avisa si no pudo enviarse; la cola de altas profesionales, su historial y sus notas están preparadas en `0028`. Falta aplicar y validar la migración y añadir una petición de información concreta desde esta nueva cola.
 - [x] Permitir que el proveedor solicite baja o retirada mediante el formulario contextual de mantenimiento, siempre sujeto a revisión administrativa.
 - [x] Registrar cada estado y tiempo del flujo para poder medirlo mediante `created_at`, `updated_at` y el historial privado de cambios de estado.
 
 ## P0. Operación manual del piloto
 
-- [ ] Preparar una hoja/CRM inicial de proveedores contactables, con base jurídica y origen del dato.
+- [ ] Preparar una hoja/CRM inicial de proveedores contactables, con base jurídica y origen del dato. La exportación administrativa ya incorpora fichas profesionales, contacto, estado, confianza, plan, origen y fuente; falta validar y registrar la base jurídica antes de utilizarla para prospección.
 - [x] Definir estados de outreach: identificado, preparado, contactado, abierto, interesado, reclamado, publicado, activo, descartado.
 - [x] Preparar email inicial, recordatorio y cierre sin urgencia artificial.
 - [ ] Utilizar demanda real únicamente; no afirmar que hay familias esperando si no se ha observado.
@@ -385,6 +386,7 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 
 - [x] Permitir recuperar una contraseña olvidada mediante enlace seguro de Supabase Auth y establecer una nueva contraseña sin intervención manual.
 - [x] Mantener un modelo `profiles` separado de `auth.users` y unido mediante el UUID de la cuenta.
+- [x] Conservar teléfono, municipio, centro relacionado y consentimiento al materializar el perfil después de confirmar el email; antes se perdían en el recorrido de confirmación.
 - [ ] Revisar y completar los campos del registro:
   - [x] nombre de usuario o nombre público;
   - [x] email verificado mediante Supabase Auth;
@@ -431,8 +433,8 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 
 ### CRM y campañas futuras
 
-- [ ] Decidir si el primer CRM será una vista operativa sobre Supabase o una herramienta externa.
-- [ ] Mantener Supabase como fuente maestra y sincronizar al CRM solo los campos necesarios.
+- [x] Decidir si el primer CRM será una vista operativa sobre Supabase o una herramienta externa. Para el piloto se usará el backoffice de Tenlo y su CSV controlado; una herramienta externa solo se evaluará cuando el volumen justifique sincronización y gobierno adicional.
+- [x] Mantener Supabase como fuente maestra y sincronizar al CRM solo los campos necesarios. No existe todavía sincronización externa; la exportación administrativa es manual, privada, trazada y contiene únicamente campos operativos definidos.
 - [ ] Sincronizar únicamente contactos con base válida para la finalidad correspondiente.
 - [ ] Crear segmentos útiles, no sensibles:
   - [ ] familias por municipio e intereses declarados;

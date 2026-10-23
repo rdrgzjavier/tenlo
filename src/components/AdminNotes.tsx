@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 type Note = { id: string; note: string; created_at: string };
 
-export default function AdminNotes({ queue, recordId, notes }: { queue: "claim" | "connection" | "submission" | "feedback"; recordId: string; notes: Note[] }) {
+export default function AdminNotes({ queue, recordId, notes }: { queue: "claim" | "connection" | "submission" | "feedback" | "business_profile"; recordId: string; notes: Note[] }) {
   const router = useRouter();
   const [value, setValue] = useState("");
   const [pending, setPending] = useState(false);

@@ -86,6 +86,84 @@ type ServiceRow = {
   updated_at: string;
 };
 
+type BusinessProfileRow = {
+  id: string;
+  owner_id: string;
+  business_name: string;
+  legal_name: string | null;
+  website: string | null;
+  address: string | null;
+  municipality: string | null;
+  service_area: string | null;
+  category: string;
+  subtype: string | null;
+  trust_level: TrustLevel;
+  status: ModerationStatus;
+  source_name: string | null;
+  source_url: string | null;
+  last_reviewed: string | null;
+  details: Json;
+  claim_status: string;
+  commercial_plan: string;
+  completeness_percent: number;
+  accepts_requests: boolean;
+  contact_preferences: string[];
+  inactive_reason: string | null;
+  external_key: string | null;
+  description: string | null;
+  phone: string | null;
+  contact_email: string | null;
+  tags: string[];
+  image_url: string | null;
+  record_origin: string;
+  latitude: number | null;
+  longitude: number | null;
+  location_visibility: string;
+  service_municipalities: string[];
+  location_verified_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+type BusinessProfileInsert = {
+  id?: string;
+  owner_id: string;
+  business_name: string;
+  legal_name?: string | null;
+  website?: string | null;
+  address?: string | null;
+  municipality?: string | null;
+  service_area?: string | null;
+  category: string;
+  subtype?: string | null;
+  trust_level?: TrustLevel;
+  status?: ModerationStatus;
+  source_name?: string | null;
+  source_url?: string | null;
+  last_reviewed?: string | null;
+  details?: Json;
+  claim_status?: string;
+  commercial_plan?: string;
+  completeness_percent?: number;
+  accepts_requests?: boolean;
+  contact_preferences?: string[];
+  inactive_reason?: string | null;
+  external_key?: string | null;
+  description?: string | null;
+  phone?: string | null;
+  contact_email?: string | null;
+  tags?: string[];
+  image_url?: string | null;
+  record_origin?: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  location_visibility?: string;
+  service_municipalities?: string[];
+  location_verified_at?: string | null;
+  created_at?: string;
+  updated_at?: string;
+};
+
 type ServiceInsert = {
   id?: string;
   owner_id?: string | null;
@@ -164,7 +242,7 @@ type FeedbackRequestInsert = {
 
 type AdminQueueNoteRow = {
   id: string;
-  queue: "claim" | "connection" | "submission" | "feedback";
+  queue: "claim" | "connection" | "submission" | "feedback" | "business_profile";
   record_id: string;
   note: string;
   created_by: string | null;
@@ -197,6 +275,12 @@ export type Database = {
         Row: ProfileRow;
         Insert: ProfileInsert;
         Update: Partial<ProfileRow>;
+        Relationships: [];
+      };
+      business_profiles: {
+        Row: BusinessProfileRow;
+        Insert: BusinessProfileInsert;
+        Update: Partial<BusinessProfileRow>;
         Relationships: [];
       };
       services: {

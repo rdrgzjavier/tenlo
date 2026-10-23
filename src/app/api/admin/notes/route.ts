@@ -3,7 +3,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
-const queues = new Set(["claim", "connection", "submission", "feedback"]);
+const queues = new Set(["claim", "connection", "submission", "feedback", "business_profile"]);
 
 export async function POST(request: Request) {
   if (!request.headers.get("content-type")?.includes("application/json")) {
@@ -28,7 +28,7 @@ export async function POST(request: Request) {
   }
 
   const { error } = await supabase.from("admin_queue_notes").insert({
-    queue: queue as "claim" | "connection" | "submission" | "feedback",
+    queue: queue as "claim" | "connection" | "submission" | "feedback" | "business_profile",
     record_id: recordId,
     note,
     created_by: authData.user.id

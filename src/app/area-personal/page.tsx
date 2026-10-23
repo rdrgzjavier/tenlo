@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Bookmark, ClipboardCheck, ClipboardList, FilePlus2, LayoutDashboard, Settings, ShieldCheck } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
+import { ensurePendingBusinessProfile } from "@/lib/provider-registration";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -104,9 +105,26 @@ async function ensureProfile() {
         { onConflict: "profile_id" }
       );
 
-      return { user, profile: updatedProfile ?? existingProfile };
+      const activeProfile = updatedProfile ?? existingProfile;
+      await ensurePendingBusinessProfile(
+        supabase,
+        user,
+        activeProfile.role,
+        activeProfile.display_name,
+        activeProfile.phone,
+        activeProfile.municipality
+      );
+      return { user, profile: activeProfile };
     }
 
+    await ensurePendingBusinessProfile(
+      supabase,
+      user,
+      existingProfile.role,
+      existingProfile.display_name,
+      existingProfile.phone,
+      existingProfile.municipality
+    );
     return { user, profile: existingProfile };
   }
 
@@ -146,6 +164,17 @@ async function ensureProfile() {
     },
     { onConflict: "profile_id" }
   );
+
+  if (profile) {
+    await ensurePendingBusinessProfile(
+      supabase,
+      user,
+      profile.role,
+      profile.display_name,
+      profile.phone,
+      profile.municipality
+    );
+  }
 
   return { user, profile };
 }

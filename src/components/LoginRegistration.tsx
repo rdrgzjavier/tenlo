@@ -21,8 +21,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { type FormEvent, useMemo, useState } from "react";
 import { centers, municipalities } from "@/lib/mock-data";
 import { pushTrackingEvent } from "@/lib/analytics";
+import { ensurePendingBusinessProfile } from "@/lib/provider-registration";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import type { ProfileRole } from "@/lib/supabase/types";
+import type { User } from "@supabase/supabase-js";
 
 type UserTypeId =
   | "familia"
@@ -185,6 +187,21 @@ export default function LoginRegistration() {
   const [phone, setPhone] = useState("");
   const [municipality, setMunicipality] = useState("");
   const [relatedCenter, setRelatedCenter] = useState("");
+  const [businessWebsite, setBusinessWebsite] = useState("");
+  const [businessDescription, setBusinessDescription] = useState("");
+  const [businessServiceArea, setBusinessServiceArea] = useState("");
+  const [businessModality, setBusinessModality] = useState("");
+  const [ageRange, setAgeRange] = useState("");
+  const [availability, setAvailability] = useState("");
+  const [schedule, setSchedule] = useState("");
+  const [hourlyRate, setHourlyRate] = useState("");
+  const [confirmationNotice, setConfirmationNotice] = useState("");
+  const [careType, setCareType] = useState("");
+  const [verificationInfo, setVerificationInfo] = useState("");
+  const [experience, setExperience] = useState("");
+  const [credential, setCredential] = useState("");
+  const [insurance, setInsurance] = useState("");
+  const [characteristics, setCharacteristics] = useState("");
   const [marketingConsent, setMarketingConsent] = useState(false);
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
@@ -231,14 +248,14 @@ export default function LoginRegistration() {
     return Boolean(data);
   }
 
-  async function createOrUpdateProfile(userId: string) {
+  async function createOrUpdateProfile(user: User) {
     const role = profileRoleForSelection(userType, subtype);
     const status = role === "family" ? "approved" : "pending_review";
     const fallbackName = registerEmail.split("@")[0] || loginEmail.split("@")[0] || "Usuario Tenlo";
 
     const { error: profileError } = await supabase.from("profiles").insert(
       {
-        id: userId,
+        id: user.id,
         role,
         display_name: displayName || fallbackName,
         public_name: displayName || fallbackName,
@@ -259,18 +276,29 @@ export default function LoginRegistration() {
     const normalizedName = normalizePublicName(displayName || fallbackName);
     await supabase.from("profile_usernames").upsert(
       {
-        profile_id: userId,
+        profile_id: user.id,
         public_name_normalized: normalizedName
       },
       { onConflict: "profile_id" }
     );
+
+    await ensurePendingBusinessProfile(
+      supabase,
+      user,
+      role,
+      displayName || fallbackName,
+      phone || null,
+      municipality || null
+    );
   }
 
-  async function ensureProfileAfterLogin(user: { id: string; email?: string; user_metadata?: Record<string, unknown> }) {
-    const { data } = await supabase.from("profiles").select("id").eq("id", user.id).maybeSingle();
-    if (data) return;
-
-    const role = safeProfileRole(user.user_metadata?.role);
+  async function ensureProfileAfterLogin(user: User) {
+    const { data } = await supabase
+      .from("profiles")
+      .select("id,role,display_name,phone,municipality")
+      .eq("id", user.id)
+      .maybeSingle();
+    const role = data?.role ?? safeProfileRole(user.user_metadata?.role);
     const fallbackName = typeof user.user_metadata?.display_name === "string" && user.user_metadata.display_name.length > 0
       ? user.user_metadata.display_name
       : user.email?.split("@")[0] || "Usuario Tenlo";
@@ -279,30 +307,41 @@ export default function LoginRegistration() {
     const metadataCenter = metadataText(user.user_metadata?.related_center_name, 180);
     const metadataMarketingConsent = user.user_metadata?.marketing_consent === true;
     const metadataMarketingConsentAt = metadataMarketingConsent ? metadataText(user.user_metadata?.marketing_consent_at, 40) || new Date().toISOString() : null;
-    const { error: profileError } = await supabase.from("profiles").insert({
-      id: user.id,
+    if (!data) {
+      const { error: profileError } = await supabase.from("profiles").insert({
+        id: user.id,
+        role,
+        display_name: fallbackName,
+        public_name: fallbackName,
+        contact_email: user.email ?? null,
+        phone: metadataPhone || null,
+        municipality: metadataMunicipality || null,
+        related_center_name: metadataCenter || null,
+        marketing_consent: metadataMarketingConsent,
+        marketing_consent_at: metadataMarketingConsentAt,
+        marketing_consent_source: metadataMarketingConsent ? "registration" : null,
+        marketing_consent_withdrawn_at: null,
+        status: role === "family" ? "approved" : "pending_review"
+      });
+
+      if (profileError) throw profileError;
+
+      await supabase.from("profile_usernames").upsert(
+        {
+          profile_id: user.id,
+          public_name_normalized: normalizePublicName(fallbackName)
+        },
+        { onConflict: "profile_id" }
+      );
+    }
+
+    await ensurePendingBusinessProfile(
+      supabase,
+      user,
       role,
-      display_name: fallbackName,
-      public_name: fallbackName,
-      contact_email: user.email ?? null,
-      phone: metadataPhone || null,
-      municipality: metadataMunicipality || null,
-      related_center_name: metadataCenter || null,
-      marketing_consent: metadataMarketingConsent,
-      marketing_consent_at: metadataMarketingConsentAt,
-      marketing_consent_source: metadataMarketingConsent ? "registration" : null,
-      marketing_consent_withdrawn_at: null,
-      status: role === "family" ? "approved" : "pending_review"
-    });
-
-    if (profileError) throw profileError;
-
-    await supabase.from("profile_usernames").upsert(
-      {
-        profile_id: user.id,
-        public_name_normalized: normalizePublicName(fallbackName)
-      },
-      { onConflict: "profile_id" }
+      data?.display_name ?? fallbackName,
+      data?.phone ?? (metadataPhone || null),
+      data?.municipality ?? (metadataMunicipality || null)
     );
   }
 
@@ -369,7 +408,26 @@ export default function LoginRegistration() {
             municipality,
             related_center_name: relatedCenter || null,
             marketing_consent: marketingConsent,
-            marketing_consent_at: marketingConsent ? new Date().toISOString() : null
+            marketing_consent_at: marketingConsent ? new Date().toISOString() : null,
+            provider_profile: showBusinessFields ? {
+              category: current.label,
+              subtype,
+              website: businessWebsite,
+              description: businessDescription,
+              service_area: businessServiceArea,
+              modality: businessModality,
+              age_range: ageRange,
+              availability,
+              schedule,
+              hourly_rate: hourlyRate,
+              confirmation_notice: confirmationNotice,
+              care_type: careType,
+              verification_info: verificationInfo,
+              experience,
+              credential,
+              insurance,
+              characteristics
+            } : null
           }
         }
       });
@@ -377,7 +435,7 @@ export default function LoginRegistration() {
       if (signUpError) throw signUpError;
       if (data.user && data.session) {
         failureStage = "profile_creation";
-        await createOrUpdateProfile(data.user.id);
+        await createOrUpdateProfile(data.user);
         pushTrackingEvent("registration_completed", { account_type: userType, confirmation_required: false, marketing_consent: marketingConsent });
         router.push(redirectTo);
         router.refresh();
@@ -435,6 +493,11 @@ export default function LoginRegistration() {
               <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-muted">
                 Si no lo encuentras, revisa las carpetas de spam o promociones. El correo puede tardar unos minutos.
               </p>
+              {showBusinessFields ? (
+                <p className="mx-auto mt-3 max-w-xl rounded-xl border border-line bg-white p-3 text-sm font-semibold leading-6 text-slatecopy">
+                  Cuando confirmes el email, guardaremos la información profesional como ficha pendiente. Tenlo la revisará antes de publicarla y no la marcará como verificada automáticamente.
+                </p>
+              ) : null}
               <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
                 <Link href="/" className="btn-primary justify-center">Volver al inicio</Link>
                 <button type="button" className="btn-secondary justify-center" onClick={() => setRegistrationComplete(false)}>Entrar en Tenlo</button>
@@ -573,33 +636,33 @@ export default function LoginRegistration() {
                     {subtypeOptions.map((option) => <option key={option}>{option}</option>)}
                   </select>
                 </label>
-                <label className="field-label">Web o enlace público<input className="field font-normal placeholder:text-muted" placeholder="https://" /></label>
-                <label className="field-label md:col-span-2">Descripción breve<textarea required className="field min-h-28 py-3 font-normal placeholder:text-muted" placeholder={showChildcareFields ? "Preséntate en primera persona: cómo trabajas, qué rutinas acompañas y en qué zona puedes ayudar." : "Cuenta qué ofreces, para quién y en qué zona trabajas."} /></label>
-                <label className="field-label">Dirección o zona de servicio<input className="field font-normal placeholder:text-muted" placeholder="Ej. Majadahonda y alrededores" /></label>
-                <label className="field-label">Modalidad<select className="field" defaultValue=""><option value="">Selecciona modalidad</option><option>Presencial</option><option>Online</option><option>Presencial y online</option><option>A domicilio</option></select></label>
+                <label className="field-label">Web o enlace público<input className="field font-normal placeholder:text-muted" type="url" maxLength={500} placeholder="https://" value={businessWebsite} onChange={(event) => setBusinessWebsite(event.target.value)} /></label>
+                <label className="field-label md:col-span-2">Descripción breve<textarea required className="field min-h-28 py-3 font-normal placeholder:text-muted" maxLength={2000} value={businessDescription} onChange={(event) => setBusinessDescription(event.target.value)} placeholder={showChildcareFields ? "Preséntate en primera persona: cómo trabajas, qué rutinas acompañas y en qué zona puedes ayudar." : "Cuenta qué ofreces, para quién y en qué zona trabajas."} /></label>
+                <label className="field-label">Dirección o zona de servicio<input className="field font-normal placeholder:text-muted" maxLength={500} placeholder="Ej. Majadahonda y alrededores" value={businessServiceArea} onChange={(event) => setBusinessServiceArea(event.target.value)} /></label>
+                <label className="field-label">Modalidad<select className="field" value={businessModality} onChange={(event) => setBusinessModality(event.target.value)}><option value="">Selecciona modalidad</option><option>Presencial</option><option>Online</option><option>Presencial y online</option><option>A domicilio</option></select></label>
                 {showAgeAndAvailability && (
                   <>
-                    <label className="field-label">Edades orientativas<input className="field font-normal placeholder:text-muted" placeholder={showChildcareFields ? "Ej. Infantil y Primaria, 3-12 años" : "Ej. 6-12 años, familias, adultos"} /></label>
-                    <label className="field-label">Disponibilidad<input className="field font-normal placeholder:text-muted" placeholder={showChildcareFields ? "Ej. tardes entre semana, noches puntuales" : "Ej. tardes, fines de semana, vacaciones"} /></label>
-                    <label className="field-label md:col-span-2">Horarios o franjas<textarea className="field min-h-24 py-3 font-normal placeholder:text-muted" placeholder={showChildcareFields ? "Ej. Lu tarde; Ma tarde; Mi consultar; Ju tarde; Vi noche; Sa mañana; Do sin servicio." : "Indica horarios de apertura, clases, turnos o disponibilidad sin incluir horarios personales de menores."} /></label>
+                    <label className="field-label">Edades orientativas<input className="field font-normal placeholder:text-muted" maxLength={160} value={ageRange} onChange={(event) => setAgeRange(event.target.value)} placeholder={showChildcareFields ? "Ej. Infantil y Primaria, 3-12 años" : "Ej. 6-12 años, familias, adultos"} /></label>
+                    <label className="field-label">Disponibilidad<input className="field font-normal placeholder:text-muted" maxLength={300} value={availability} onChange={(event) => setAvailability(event.target.value)} placeholder={showChildcareFields ? "Ej. tardes entre semana, noches puntuales" : "Ej. tardes, fines de semana, vacaciones"} /></label>
+                    <label className="field-label md:col-span-2">Horarios o franjas<textarea className="field min-h-24 py-3 font-normal placeholder:text-muted" maxLength={1000} value={schedule} onChange={(event) => setSchedule(event.target.value)} placeholder={showChildcareFields ? "Ej. Lu tarde; Ma tarde; Mi consultar; Ju tarde; Vi noche; Sa mañana; Do sin servicio." : "Indica horarios de apertura, clases, turnos o disponibilidad sin incluir horarios personales de menores."} /></label>
                   </>
                 )}
                 {showChildcareFields && (
                   <>
-                    <label className="field-label">Tarifa por hora<input className="field font-normal placeholder:text-muted" placeholder="Ej. 12 €/hora" /></label>
-                    <label className="field-label">Preaviso para confirmar<input className="field font-normal placeholder:text-muted" placeholder="Ej. 24 h, 48 h" /></label>
-                    <label className="field-label">Tipo de cuidado<select className="field" defaultValue=""><option value="">Selecciona tipo</option><option>Ocasional</option><option>Regular</option><option>Después del colegio</option><option>Noches puntuales</option><option>Fines de semana</option></select></label>
-                    <label className="field-label">Verificaciones disponibles<select className="field" defaultValue=""><option value="">Pendiente de validar</option><option>Identidad verificable</option><option>Referencias disponibles</option><option>Formación relacionada</option><option>Certificado aportable</option></select></label>
-                    <label className="field-label md:col-span-2">Experiencia, referencias y preferencias<textarea className="field min-h-24 py-3 font-normal placeholder:text-muted" placeholder="Años de experiencia, edades con las que trabajas, idiomas, apoyo con deberes, rutinas y referencias que podrás aportar." /></label>
+                    <label className="field-label">Tarifa por hora<input className="field font-normal placeholder:text-muted" maxLength={120} value={hourlyRate} onChange={(event) => setHourlyRate(event.target.value)} placeholder="Ej. 12 €/hora" /></label>
+                    <label className="field-label">Preaviso para confirmar<input className="field font-normal placeholder:text-muted" maxLength={120} value={confirmationNotice} onChange={(event) => setConfirmationNotice(event.target.value)} placeholder="Ej. 24 h, 48 h" /></label>
+                    <label className="field-label">Tipo de cuidado<select className="field" value={careType} onChange={(event) => setCareType(event.target.value)}><option value="">Selecciona tipo</option><option>Ocasional</option><option>Regular</option><option>Después del colegio</option><option>Noches puntuales</option><option>Fines de semana</option></select></label>
+                    <label className="field-label">Verificaciones disponibles<select className="field" value={verificationInfo} onChange={(event) => setVerificationInfo(event.target.value)}><option value="">Pendiente de validar</option><option>Identidad verificable</option><option>Referencias disponibles</option><option>Formación relacionada</option><option>Certificado aportable</option></select></label>
+                    <label className="field-label md:col-span-2">Experiencia, referencias y preferencias<textarea className="field min-h-24 py-3 font-normal placeholder:text-muted" maxLength={1500} value={experience} onChange={(event) => setExperience(event.target.value)} placeholder="Años de experiencia, edades con las que trabajas, idiomas, apoyo con deberes, rutinas y referencias que podrás aportar." /></label>
                   </>
                 )}
                 {showCredentials && (
                   <>
-                    <label className="field-label">Licencia, colegiación o autorización aplicable<input className="field font-normal placeholder:text-muted" placeholder="Ej. nº colegiado, autorización, licencia municipal" /></label>
-                    <label className="field-label">Seguro o responsable del servicio<input className="field font-normal placeholder:text-muted" placeholder="Ej. entidad responsable, póliza, titular del servicio" /></label>
+                    <label className="field-label">Licencia, colegiación o autorización aplicable<input className="field font-normal placeholder:text-muted" maxLength={300} value={credential} onChange={(event) => setCredential(event.target.value)} placeholder="Ej. nº colegiado, autorización, licencia municipal" /></label>
+                    <label className="field-label">Seguro o responsable del servicio<input className="field font-normal placeholder:text-muted" maxLength={300} value={insurance} onChange={(event) => setInsurance(event.target.value)} placeholder="Ej. entidad responsable, póliza, titular del servicio" /></label>
                   </>
                 )}
-                <label className="field-label md:col-span-2">Características relevantes<textarea className="field min-h-24 py-3 font-normal placeholder:text-muted" placeholder="Idiomas, grupos reducidos, recogida, necesidades especiales, materiales, ratios, etc." /></label>
+                <label className="field-label md:col-span-2">Características relevantes<textarea className="field min-h-24 py-3 font-normal placeholder:text-muted" maxLength={1500} value={characteristics} onChange={(event) => setCharacteristics(event.target.value)} placeholder="Idiomas, grupos reducidos, recogida, necesidades especiales, materiales, ratios, etc." /></label>
               </section>
             )}
 

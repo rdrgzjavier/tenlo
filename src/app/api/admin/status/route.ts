@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 const moderationStatuses = new Set(["pending_review", "approved", "rejected", "archived"]);
 const connectionStatuses = new Set(["submitted", "delivered", "viewed", "responded", "declined", "alternative_requested", "alternative_offered", "closed"]);
 
-type QueueType = "claim" | "connection" | "submission" | "feedback";
+type QueueType = "claim" | "connection" | "submission" | "feedback" | "business_profile";
 
 function validStatus(queue: QueueType, status: string) {
   return queue === "connection" ? connectionStatuses.has(status) : moderationStatuses.has(status);
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
   }
 
   const body = (await request.json().catch(() => null)) as { queue?: QueueType; recordId?: string; status?: string } | null;
-  if (!body?.queue || !["claim", "connection", "submission", "feedback"].includes(body.queue) || !body.recordId || !body.status || !validStatus(body.queue, body.status)) {
+  if (!body?.queue || !["claim", "connection", "submission", "feedback", "business_profile"].includes(body.queue) || !body.recordId || !body.status || !validStatus(body.queue, body.status)) {
     return NextResponse.json({ error: "Datos de actualización no válidos." }, { status: 400 });
   }
 
@@ -33,6 +33,7 @@ export async function POST(request: Request) {
   }
 
   let claimBeforeUpdate: { entity_name: string; requester_email: string; status: string } | null = null;
+  let businessBeforeUpdate: { business_name: string; contact_email: string | null; owner_id: string; status: string } | null = null;
   if (body.queue === "claim") {
     const { data, error } = await supabase
       .from("claim_requests")
@@ -45,11 +46,35 @@ export async function POST(request: Request) {
     }
     claimBeforeUpdate = data;
   }
+  if (body.queue === "business_profile") {
+    const { data, error } = await supabase
+      .from("business_profiles")
+      .select("business_name,contact_email,owner_id,status")
+      .eq("id", body.recordId)
+      .maybeSingle();
+    if (error) {
+      console.error("No se pudo consultar la ficha profesional antes de actualizarla", error);
+      return NextResponse.json({ error: "No hemos podido consultar la ficha profesional." }, { status: 500 });
+    }
+    businessBeforeUpdate = data;
+    if (businessBeforeUpdate && !businessBeforeUpdate.contact_email) {
+      const { data: ownerProfile } = await supabase
+        .from("profiles")
+        .select("contact_email")
+        .eq("id", businessBeforeUpdate.owner_id)
+        .maybeSingle();
+      businessBeforeUpdate.contact_email = ownerProfile?.contact_email ?? null;
+    }
+  }
 
   let result;
   if (body.queue === "claim") result = await supabase.from("claim_requests").update({ status: body.status }).eq("id", body.recordId).select("id").maybeSingle();
   else if (body.queue === "connection") result = await supabase.from("connection_requests").update({ status: body.status }).eq("id", body.recordId).select("id").maybeSingle();
   else if (body.queue === "submission") result = await supabase.from("submissions").update({ status: body.status }).eq("id", body.recordId).select("id").maybeSingle();
+  else if (body.queue === "business_profile") {
+    const rpcResult = await supabase.rpc("moderate_business_profile", { target_id: body.recordId, next_status: body.status });
+    result = { data: rpcResult.data ? { id: body.recordId } : null, error: rpcResult.error };
+  }
   else result = await supabase.from("feedback_requests").update({ status: body.status }).eq("id", body.recordId).select("id").maybeSingle();
 
   if (result.error) {
@@ -86,6 +111,37 @@ export async function POST(request: Request) {
     } catch (error) {
       notificationSent = false;
       console.error("El estado se actualizó, pero no se pudo avisar al solicitante", error);
+    }
+  }
+
+  if (
+    body.queue === "business_profile" &&
+    businessBeforeUpdate &&
+    businessBeforeUpdate.contact_email &&
+    businessBeforeUpdate.status !== body.status &&
+    ["approved", "rejected"].includes(body.status)
+  ) {
+    const approved = body.status === "approved";
+    const businessName = escapeHtml(businessBeforeUpdate.business_name);
+    const subject = approved ? "Tu ficha profesional de Tenlo ha sido aprobada" : "Actualización sobre tu ficha profesional en Tenlo";
+    const html = tenloEmailShell(
+      approved ? "Ficha profesional aprobada" : "Tu ficha necesita una nueva revisión",
+      approved
+        ? `<p style="margin:0 0 14px;line-height:1.6">Hemos aprobado la ficha profesional de <strong>${businessName}</strong>.</p><p style="margin:0;line-height:1.6">La confianza y la verificación se revisan por separado. Si todavía falta definir algún servicio antes de publicarlo, el equipo de Tenlo contactará contigo.</p>`
+        : `<p style="margin:0 0 14px;line-height:1.6">No hemos podido aprobar por ahora la ficha profesional de <strong>${businessName}</strong>.</p><p style="margin:0;line-height:1.6">Responde a este email si quieres aportar información o corregir los datos para que podamos revisarla de nuevo.</p>`
+    );
+
+    try {
+      const notification = await sendMail({
+        to: businessBeforeUpdate.contact_email,
+        subject,
+        html,
+        replyTo: ADMIN_EMAIL
+      });
+      notificationSent = notification.sent;
+    } catch (error) {
+      notificationSent = false;
+      console.error("El estado de la ficha se actualizó, pero no se pudo avisar al titular", error);
     }
   }
 

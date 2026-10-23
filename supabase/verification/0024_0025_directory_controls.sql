@@ -44,3 +44,10 @@ select
 -- Debe ser false: las propuestas no se editan tras enviarse.
 select has_table_privilege('authenticated', 'public.submissions', 'update')
   as authenticated_can_update_submissions;
+
+-- Debe ser true: el RPC ejecuta solo después de validar tenlo_admin.
+select has_function_privilege(
+  'authenticated',
+  'public.moderate_business_profile(uuid,public.moderation_status)',
+  'execute'
+) as admin_business_moderation_rpc_available;

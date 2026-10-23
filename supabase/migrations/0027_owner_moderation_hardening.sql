@@ -2,6 +2,14 @@
 -- moderación, origen o plan comercial. Los campos protegidos se gestionan
 -- mediante procesos administrativos con privilegios elevados.
 
+create index if not exists business_profiles_owner_idx on public.business_profiles (owner_id);
+create index if not exists business_profiles_status_created_idx on public.business_profiles (status, created_at desc);
+create index if not exists services_owner_idx on public.services (owner_id);
+create index if not exists services_business_profile_idx on public.services (business_profile_id);
+create index if not exists listings_owner_idx on public.listings (owner_id);
+create index if not exists community_posts_owner_idx on public.community_posts (owner_id);
+create index if not exists submissions_user_idx on public.submissions (user_id, created_at desc);
+
 -- Fichas de proveedor -------------------------------------------------------
 
 drop policy if exists "Users can manage own business profile" on public.business_profiles;
@@ -50,6 +58,7 @@ grant update (
   accepts_requests,
   contact_preferences,
   inactive_reason,
+  details,
   latitude,
   longitude,
   location_visibility,
