@@ -45,6 +45,11 @@ create index if not exists directory_events_search_idx
 
 alter table public.directory_events enable row level security;
 
+-- No dependemos de los privilegios por defecto del proyecto. El navegador
+-- solo puede insertar eventos válidos; lectura, edición y borrado quedan fuera
+-- de la superficie pública.
+revoke all on public.directory_events from anon, authenticated;
+
 create policy "Anyone can record privacy-safe directory events"
   on public.directory_events for insert to anon, authenticated
   with check (

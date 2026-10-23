@@ -10,6 +10,7 @@
     "directory:seed": "tsc -p tsconfig.seed.json && node .tmp/directory-seed/scripts/build-directory-seed.js",
     "directory:seed:write": "tsc -p tsconfig.seed.json && node .tmp/directory-seed/scripts/build-directory-seed.js --write supabase/seeds/0001_pilot_directory.sql",
     "directory:seed:check": "tsc -p tsconfig.seed.json && node .tmp/directory-seed/scripts/build-directory-seed.js --summary",
+    "verify:migrations": "node scripts/verify-migrations.mjs",
     "verify:production": "node scripts/smoke-production.mjs"
   },
   "dependencies": {

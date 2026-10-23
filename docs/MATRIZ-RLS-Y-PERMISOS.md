@@ -47,7 +47,7 @@ Referencia: [Row Level Security de Supabase](https://supabase.com/docs/guides/da
 
 Las migraciones `0022` y `0023` se aplicaron en producción el 22 de octubre de 2026. La consulta de control confirmó la existencia de las cinco políticas, ejecución anónima de la comprobación booleana de alias y ausencia de permiso anónimo de lectura sobre `profile_usernames`.
 
-Las migraciones `0024` a `0029` están preparadas y comprobadas en código, pero no se consideran aplicadas hasta ejecutar y verificar el SQL en Supabase. `0028` añade un RPC administrativo específico para moderar altas profesionales sin devolver permiso directo sobre `status` a los titulares; `0029` registra cambios futuros de consentimiento sin reconstruir retroactivamente evidencias que no existen.
+Las migraciones `0024` a `0030` están preparadas y comprobadas en código, pero no se consideran aplicadas hasta ejecutar y verificar el SQL en Supabase. `0028` añade un RPC administrativo específico para moderar altas profesionales sin devolver permiso directo sobre `status` a los titulares; `0029` registra cambios futuros de consentimiento sin reconstruir retroactivamente evidencias que no existen; `0030` fija un `search_path` vacío en las dos funciones administrativas heredadas. El procedimiento reproducible está en `APLICACION-MIGRACIONES-0024-0030.md`.
 
 1. [x] Permitir que solo un perfil aprobado `tenlo_admin` lea en el backoffice los contactos necesarios para gestionar solicitudes.
 2. [x] Hacer que la comprobación de alias devuelva solo `true/false`, limitar los centros públicos a aprobados y permitir leer proveedores aprobados desde el directorio.

@@ -16,6 +16,11 @@ create index if not exists consent_history_user_purpose_idx
 
 alter table public.consent_history enable row level security;
 
+-- El historial lo escribe únicamente el trigger con privilegios elevados.
+-- Una cuenta autenticada puede leer sus propias filas mediante RLS, pero no
+-- reconstruir, modificar ni borrar evidencias de consentimiento.
+revoke all on public.consent_history from anon, authenticated;
+
 create policy "Users can read own consent history"
   on public.consent_history for select to authenticated
   using ((select auth.uid()) = user_id);

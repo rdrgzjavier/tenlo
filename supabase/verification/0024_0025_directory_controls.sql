@@ -1,5 +1,9 @@
 select
   to_regclass('public.directory_events') is not null as directory_events_exists,
+  has_table_privilege('anon', 'public.directory_events', 'insert') as anon_can_insert_directory_events,
+  has_table_privilege('anon', 'public.directory_events', 'select') as anon_can_read_directory_events,
+  has_table_privilege('anon', 'public.directory_events', 'update') as anon_can_update_directory_events,
+  has_table_privilege('anon', 'public.directory_events', 'delete') as anon_can_delete_directory_events,
   has_function_privilege('anon', 'public.get_public_centers()', 'execute') as anon_can_read_public_centers,
   has_function_privilege('anon', 'public.get_public_business_profiles()', 'execute') as anon_can_read_public_providers,
   has_function_privilege('anon', 'public.get_public_services()', 'execute') as anon_can_read_public_services,
@@ -63,6 +67,8 @@ select
   to_regclass('public.consent_history') is not null as consent_history_exists,
   has_table_privilege('anon', 'public.consent_history', 'select') as anon_can_read_consent_history,
   has_table_privilege('authenticated', 'public.consent_history', 'insert') as authenticated_can_insert_consent_history,
+  has_table_privilege('authenticated', 'public.consent_history', 'update') as authenticated_can_update_consent_history,
+  has_table_privilege('authenticated', 'public.consent_history', 'delete') as authenticated_can_delete_consent_history,
   exists (
     select 1 from pg_policies
     where schemaname = 'public'
@@ -75,3 +81,13 @@ select
       and tablename = 'search_events'
       and policyname = 'Users can read own search history'
   ) as own_search_history_policy;
+
+-- Deben devolver una lista de configuración que contenga search_path="".
+select
+  procedure.proname,
+  procedure.proconfig
+from pg_proc as procedure
+join pg_namespace as namespace on namespace.oid = procedure.pronamespace
+where namespace.nspname = 'public'
+  and procedure.proname in ('is_tenlo_admin', 'audit_admin_queue_status')
+order by procedure.proname;

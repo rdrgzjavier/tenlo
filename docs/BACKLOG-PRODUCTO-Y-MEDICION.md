@@ -2,7 +2,7 @@
 
 > Documento vivo para decidir, construir y comprobar el MVP de Tenlo.
 >
-> Última revisión: 22 de octubre de 2026. El avance ponderado y sus criterios están en [`ESTADO-MVP.md`](./ESTADO-MVP.md).
+> Última revisión: 23 de octubre de 2026. El avance ponderado y sus criterios están en [`ESTADO-MVP.md`](./ESTADO-MVP.md).
 
 ## Cómo utilizar este documento
 
@@ -186,7 +186,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   - [x] preparar en el esquema preferencias de contacto;
   - [x] preparar en el esquema motivo de inactividad o rechazo.
 - [x] Añadir historial de cambios y responsable de cada modificación. La migración `0017_admin_queue_status_history.sql` registra automáticamente cada cambio; el 16/10/2026 se validaron dos transiciones reversibles con responsable y fecha en `/admin`.
-- [ ] Definir reglas RLS y permisos para proveedor, familia, moderación y administración. La matriz y los casos de prueba están auditados en `MATRIZ-RLS-Y-PERMISOS.md`; la disponibilidad de alias ya se resuelve mediante un RPC booleano. Las migraciones `0025`, `0026` y `0027` están preparadas para limitar las columnas públicas del directorio, bloquear la autoasignación de rol/estado y evitar que un titular cambie moderación, confianza, origen o plan comercial; falta aplicarlas y completar la prueba cruzada de los cuatro roles en producción.
+- [ ] Definir reglas RLS y permisos para proveedor, familia, moderación y administración. La matriz y los casos de prueba están auditados en `MATRIZ-RLS-Y-PERMISOS.md`; la disponibilidad de alias ya se resuelve mediante un RPC booleano. Las migraciones `0025`, `0026`, `0027` y `0030` están preparadas para limitar las columnas públicas del directorio, bloquear la autoasignación de rol/estado, evitar que un titular cambie moderación, confianza, origen o plan comercial y cerrar los `search_path` administrativos heredados; falta aplicarlas y completar la prueba cruzada de los cuatro roles en producción.
 - [ ] Crear copias de seguridad y procedimiento de recuperación. El procedimiento, frecuencia, retención, prueba y criterios de escalado están definidos en `COPIAS-Y-RECUPERACION.md`; falta ejecutar la primera copia y una restauración aislada.
 
 ## P0. Flujo para reclamar y enriquecer una ficha
