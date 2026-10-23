@@ -85,7 +85,7 @@ El nombre, la web, la ubicación exacta, las notas y los datos de contacto aport
 | `claim_started` | Se inicia la gestión de una ficha | tipo de entidad, identificador | GA4 |
 | `claim_submitted` | La solicitud queda registrada | identificador de reclamación, tipo | GA4 + Supabase |
 | `claim_approved` | Tenlo aprueba la relación | identificador, tiempo de revisión | Supabase |
-| `profile_section_completed` | Se completa una sección | sección, porcentaje de completitud | GA4 + Supabase |
+| `profile_section_completed` | El titular guarda una sección válida de su ficha | sección y estado previo normalizado | GA4; Supabase conserva la ficha actual |
 | `profile_published` | La ficha queda publicada | `provider_id`, categoría, municipio, confianza | Supabase |
 
 ## Conversiones iniciales en GA4

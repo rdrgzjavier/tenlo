@@ -10,6 +10,39 @@ create index if not exists listings_owner_idx on public.listings (owner_id);
 create index if not exists community_posts_owner_idx on public.community_posts (owner_id);
 create index if not exists submissions_user_idx on public.submissions (user_id, created_at desc);
 
+create or replace function public.calculate_business_profile_completeness()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  new.completeness_percent :=
+    (case when nullif(btrim(new.business_name), '') is not null then 15 else 0 end) +
+    (case when nullif(btrim(new.category), '') is not null then 15 else 0 end) +
+    (case when nullif(btrim(new.description), '') is not null then 20 else 0 end) +
+    (case when nullif(btrim(new.municipality), '') is not null then 10 else 0 end) +
+    (case when nullif(btrim(new.service_area), '') is not null then 10 else 0 end) +
+    (case when nullif(btrim(new.contact_email), '') is not null or nullif(btrim(new.phone), '') is not null then 10 else 0 end) +
+    (case when nullif(btrim(new.website), '') is not null then 5 else 0 end) +
+    (case when nullif(btrim(new.subtype), '') is not null then 5 else 0 end) +
+    (case when new.details <> '{}'::jsonb then 10 else 0 end);
+  return new;
+end;
+$$;
+
+revoke all on function public.calculate_business_profile_completeness() from public;
+
+drop trigger if exists calculate_business_profile_completeness_insert on public.business_profiles;
+create trigger calculate_business_profile_completeness_insert
+  before insert on public.business_profiles
+  for each row execute function public.calculate_business_profile_completeness();
+
+drop trigger if exists calculate_business_profile_completeness_update on public.business_profiles;
+create trigger calculate_business_profile_completeness_update
+  before update of business_name, category, description, municipality, service_area, contact_email, phone, website, subtype, details
+  on public.business_profiles
+  for each row execute function public.calculate_business_profile_completeness();
+
 -- Fichas de proveedor -------------------------------------------------------
 
 drop policy if exists "Users can manage own business profile" on public.business_profiles;
@@ -26,7 +59,6 @@ create policy "Owners can create pending business profiles"
     and status = 'pending_review'
     and claim_status = 'unclaimed'
     and commercial_plan = 'free'
-    and completeness_percent = 0
     and record_origin = 'user_submitted'
     and external_key is null
     and source_name is null
@@ -37,8 +69,14 @@ create policy "Owners can create pending business profiles"
 
 create policy "Owners can edit own business content"
   on public.business_profiles for update to authenticated
-  using ((select auth.uid()) = owner_id)
-  with check ((select auth.uid()) = owner_id);
+  using (
+    (select auth.uid()) = owner_id
+    and status in ('draft', 'pending_review', 'rejected')
+  )
+  with check (
+    (select auth.uid()) = owner_id
+    and status in ('draft', 'pending_review', 'rejected')
+  );
 
 revoke update on public.business_profiles from authenticated;
 grant update (
@@ -98,9 +136,13 @@ create policy "Owners can create pending services"
 
 create policy "Owners can edit own service content"
   on public.services for update to authenticated
-  using ((select auth.uid()) = owner_id)
+  using (
+    (select auth.uid()) = owner_id
+    and status in ('draft', 'pending_review', 'rejected')
+  )
   with check (
     (select auth.uid()) = owner_id
+    and status in ('draft', 'pending_review', 'rejected')
     and (
       business_profile_id is null
       or exists (
@@ -164,8 +206,14 @@ create policy "Owners can create pending listings"
 
 create policy "Owners can edit own listing content"
   on public.listings for update to authenticated
-  using ((select auth.uid()) = owner_id)
-  with check ((select auth.uid()) = owner_id);
+  using (
+    (select auth.uid()) = owner_id
+    and status in ('draft', 'pending_review', 'rejected')
+  )
+  with check (
+    (select auth.uid()) = owner_id
+    and status in ('draft', 'pending_review', 'rejected')
+  );
 
 revoke update on public.listings from authenticated;
 grant update (
@@ -208,8 +256,14 @@ create policy "Owners can create pending community posts"
 
 create policy "Owners can edit own community content"
   on public.community_posts for update to authenticated
-  using ((select auth.uid()) = owner_id)
-  with check ((select auth.uid()) = owner_id);
+  using (
+    (select auth.uid()) = owner_id
+    and status in ('draft', 'pending_review', 'rejected')
+  )
+  with check (
+    (select auth.uid()) = owner_id
+    and status in ('draft', 'pending_review', 'rejected')
+  );
 
 revoke update on public.community_posts from authenticated;
 grant update (

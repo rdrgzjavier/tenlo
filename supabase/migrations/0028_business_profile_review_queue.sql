@@ -44,6 +44,27 @@ $$;
 revoke all on function public.moderate_business_profile(uuid, public.moderation_status) from public;
 grant execute on function public.moderate_business_profile(uuid, public.moderation_status) to authenticated;
 
+create or replace function public.resubmit_business_profile(target_id uuid)
+returns boolean
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  update public.business_profiles
+  set status = 'pending_review',
+      last_reviewed = null
+  where id = target_id
+    and owner_id = auth.uid()
+    and status = 'rejected';
+
+  return found;
+end;
+$$;
+
+revoke all on function public.resubmit_business_profile(uuid) from public;
+grant execute on function public.resubmit_business_profile(uuid) to authenticated;
+
 drop trigger if exists audit_business_profile_status on public.business_profiles;
 create trigger audit_business_profile_status
   after update of status on public.business_profiles

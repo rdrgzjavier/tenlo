@@ -36,7 +36,7 @@ export default async function MyPublicationsPage() {
       .order("created_at", { ascending: false }),
     supabase
       .from("business_profiles")
-      .select("id,business_name,category,subtype,municipality,service_area,description,status,trust_level,created_at")
+      .select("id,business_name,category,subtype,municipality,service_area,description,status,trust_level,completeness_percent,created_at")
       .eq("owner_id", user.id)
       .order("created_at", { ascending: false })
   ]);
@@ -64,8 +64,10 @@ export default async function MyPublicationsPage() {
                 </div>
                 <p className="mt-4 text-sm leading-6 text-slatecopy">{businessProfile.description || "La descripción está pendiente de completar."}</p>
                 <p className="mt-3 text-sm text-muted">{businessProfile.service_area || businessProfile.municipality || "Zona pendiente"}</p>
+                <p className="mt-2 text-sm font-semibold text-ink">Ficha completada al {businessProfile.completeness_percent}%</p>
                 {businessProfile.status === "pending_review" ? <p className="mt-4 rounded-2xl border border-sage/30 bg-sage/10 p-4 text-sm leading-6 text-slatecopy">Tenlo está revisando esta información. El plazo operativo del piloto es de hasta cuatro días laborables.</p> : null}
                 {businessProfile.status === "rejected" ? <p className="mt-4 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm leading-6 text-slatecopy">La ficha necesita cambios antes de volver a revisarse. Responde al email de Tenlo o contacta con el equipo para aportar la información necesaria.</p> : null}
+                {["pending_review", "rejected", "draft"].includes(businessProfile.status) ? <Link href="/mi-ficha-profesional" className="btn-secondary mt-4 w-fit">Completar o corregir</Link> : null}
               </article>
             ))}
             {submissions?.map((submission) => {

@@ -111,7 +111,7 @@ export default async function AdminPage() {
     supabase.from("claim_requests").select("id,entity_type,entity_id,entity_name,requester_name,requester_email,requester_phone,role_description,corrections,official_website,image_url,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("connection_requests").select("id,family_id,target_type,target_id,category_id,municipality,message,contact_preference,status,provider_notified_at,provider_response_summary,alternative_summary,first_response_at,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("submissions").select("id,user_id,submission_type,payload,review_notes,status,created_at").order("created_at", { ascending: false }).limit(100),
-    supabase.from("business_profiles").select("id,owner_id,business_name,website,municipality,service_area,category,subtype,description,phone,contact_email,status,trust_level,details,created_at").in("status", ["pending_review", "rejected"]).order("created_at", { ascending: false }).limit(100),
+    supabase.from("business_profiles").select("id,owner_id,business_name,website,municipality,service_area,category,subtype,description,phone,contact_email,status,trust_level,completeness_percent,details,created_at").in("status", ["pending_review", "rejected"]).order("created_at", { ascending: false }).limit(100),
     supabase.from("feedback_requests").select("id,context,item_id,name,email,message,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("connection_feedback").select("request_id,useful,outcome,updated_at").order("updated_at", { ascending: false }).limit(500),
     supabase.from("admin_queue_audit").select("id,queue,record_id,previous_status,new_status,changed_by,changed_at").order("changed_at", { ascending: false }).limit(30),
@@ -281,6 +281,7 @@ export default async function AdminPage() {
                   <div><dt className="inline font-bold text-ink">Credencial declarada: </dt><dd className="inline">{payloadText(details, "credential")}</dd></div>
                   <div><dt className="inline font-bold text-ink">Verificación declarada: </dt><dd className="inline">{payloadText(details, "verification_info")}</dd></div>
                   <div><dt className="inline font-bold text-ink">Confianza actual: </dt><dd className="inline">{businessProfile.trust_level === "collected" ? "No verificada" : businessProfile.trust_level}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Completitud: </dt><dd className="inline">{businessProfile.completeness_percent}%</dd></div>
                 </dl>
               </details>
               <p className="mt-2 text-xs text-muted">Recibida: {dateLabel(businessProfile.created_at)}</p>

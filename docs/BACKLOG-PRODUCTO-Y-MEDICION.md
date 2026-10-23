@@ -180,7 +180,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   - [x] preparar en el esquema plan comercial independiente;
   - [x] fecha de última revisión visible en la trazabilidad de centros, proveedores y anuncios;
   - [x] fuente y URL de la fuente visibles y enlazadas cuando existe una fuente pública;
-  - [x] preparar en el esquema porcentaje de ficha completa;
+  - [x] preparar en el esquema porcentaje de ficha completa; `0027` lo recalcula en servidor al crear o editar una ficha sin conceder esa columna al titular;
   - [x] preparar en el esquema disponibilidad para recibir solicitudes;
   - [ ] categorías y zonas aceptadas;
   - [x] preparar en el esquema preferencias de contacto;
@@ -201,6 +201,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   4. indicar disponibilidad y solicitudes deseadas;
   5. aportar evidencias de verificación;
   6. revisar y enviar.
+- [x] Permitir que una cuenta profesional complete y reenvíe su ficha pendiente o rechazada desde `/mi-ficha-profesional`. Los cambios de una ficha ya aprobada quedan bloqueados y vuelven al flujo de corrección revisada para evitar publicaciones sin moderación.
 - [x] Evitar pedir todos los datos antes de mostrar la ficha actual y el beneficio de actualizarla mediante un primer paso de confirmación y contexto.
 - [x] Confirmar por email la recepción y explicar el siguiente paso y plazo.
 - [x] Conservar los datos profesionales introducidos durante el alta. Tras confirmar el email se crea, una sola vez, una ficha privada `pending_review` y `No verificada`; web, descripción, zona, modalidad, disponibilidad y evidencias declaradas dejan de ser campos de formulario sin persistencia.
@@ -490,7 +491,7 @@ Propiedades recomendadas: `request_id`, proveedor, categoría, municipio, posici
 - [x] `claim_approved` (derivado del historial administrativo de estados, sin enviarlo a GA4).
 - [x] `claim_rejected` (derivado del historial administrativo de estados, sin enviarlo a GA4).
 - [x] `profile_edit_started`
-- [ ] `profile_section_completed`
+- [x] `profile_section_completed`
 - [x] `profile_submitted`
 - [ ] `profile_published`
 - [x] `verification_requested` (equivalente al envío trazable de `claim_submitted`).

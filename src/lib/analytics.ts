@@ -41,6 +41,7 @@ export type TrackingAction =
   | "outcome_reported"
   | "family_viewed_response"
   | "profile_edit_started"
+  | "profile_section_completed"
   | "profile_submitted";
 
 export const analyticsSchemaVersion = "1.0";

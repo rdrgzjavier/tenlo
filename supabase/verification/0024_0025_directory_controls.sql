@@ -52,6 +52,12 @@ select has_function_privilege(
   'execute'
 ) as admin_business_moderation_rpc_available;
 
+select has_function_privilege(
+  'authenticated',
+  'public.resubmit_business_profile(uuid)',
+  'execute'
+) as owner_business_resubmission_rpc_available;
+
 -- Historial de consentimiento: lectura solo del titular o admin; sin escritura directa.
 select
   to_regclass('public.consent_history') is not null as consent_history_exists,

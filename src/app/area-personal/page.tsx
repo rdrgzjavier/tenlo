@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Bookmark, ClipboardCheck, ClipboardList, FilePlus2, LayoutDashboard, Settings, ShieldCheck } from "lucide-react";
+import { Bookmark, BriefcaseBusiness, ClipboardCheck, ClipboardList, FilePlus2, LayoutDashboard, Settings, ShieldCheck } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import { ensurePendingBusinessProfile } from "@/lib/provider-registration";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
@@ -45,6 +45,13 @@ const accountActions = [
     Icon: Settings
   }
 ];
+
+const providerProfileAction = {
+  title: "Mi ficha profesional",
+  text: "Completa la información que Tenlo revisará antes de publicarla.",
+  href: "/mi-ficha-profesional",
+  Icon: BriefcaseBusiness
+};
 
 function metadataName(value: unknown) {
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
@@ -187,7 +194,9 @@ export default async function PersonalAreaPage() {
   const displayName = profile?.public_name ?? profile?.display_name ?? user.email?.split("@")[0] ?? "Tenlo";
   const visibleActions = profile?.role === "tenlo_admin"
     ? [...accountActions, { title: "Operación del piloto", text: "Revisa reclamaciones, solicitudes, publicaciones, bajas e incidencias.", href: "/admin", Icon: LayoutDashboard }]
-    : accountActions;
+    : profile?.role && profile.role !== "family"
+      ? [providerProfileAction, ...accountActions]
+      : accountActions;
 
   return (
     <div className="section-shell">
