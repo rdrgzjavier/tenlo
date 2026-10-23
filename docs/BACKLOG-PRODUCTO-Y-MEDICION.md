@@ -54,7 +54,7 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - Aplicación en Next.js 15, React 18, TypeScript y Tailwind 3.
 - `typecheck` y `lint` pasan correctamente.
 - Home, buscadores, listados, fichas, reclamaciones, solicitudes, favoritos, comparación, categorías, zonas y sitemap ya consumen una capa de acceso capaz de usar Supabase con retorno seguro a `mock-data.ts`. El cambio de fuente no se activará hasta validar paridad y reversibilidad en producción.
-- Existen veintitrés migraciones de Supabase. El 22 de octubre se aplicaron `0022` y `0023`: el administrador puede leer los contactos necesarios para operar solicitudes, las fichas públicas se limitan a estados aprobados, los alias no son enumerables por visitantes y el informe de demanda solo es legible por `tenlo_admin`.
+- Existen treinta y dos migraciones de Supabase. El 23 de octubre se aplicaron y verificaron `0024`–`0032`: medición propia del directorio, RPC públicos explícitos, privilegios mínimos de perfil y contenido, moderación profesional, historial de consentimiento, funciones administrativas endurecidas, atribución de registro y propuestas inmutables. La comprobación de catálogo devolvió 21 centros, 14 proveedores y 16 servicios públicos.
 - La base está preparada para una fuente de datos real unificada, pero no se activará hasta auditar e importar un lote pequeño y comparar conteos, relaciones y contenido.
 - La reclamación de ficha ya puede iniciarse sin cuenta; la aprobación y los cambios siguen sujetos a verificación posterior.
 - El formulario de registro ya solicita tipo de usuario, nombre público, email, teléfono, contraseña, municipio y centro opcional. Para proveedores también muestra tipología, web, descripción, zona, modalidad, edades, disponibilidad, credenciales y otros campos.
@@ -410,7 +410,7 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 
 - [ ] Separar aceptación de condiciones, privacidad, comunicaciones operativas y marketing.
 - [x] Añadir consentimiento de marketing explícito, opcional y no premarcado en newsletter y registro; falta ampliar preferencias si se crean finalidades comerciales distintas.
-- [ ] Guardar para cada consentimiento: finalidad, versión del texto, fecha, origen y estado actual. La migración `0029` prepara un historial inmutable de marketing, sin IP ni datos de navegación, que registra alta, ausencia inicial y retirada; falta aplicarla y comprobar una concesión y retirada reales.
+- [ ] Guardar para cada consentimiento: finalidad, versión del texto, fecha, origen y estado actual. La migración `0029` ya está aplicada y crea el historial inmutable de marketing sin IP ni datos de navegación; falta comprobar una concesión y retirada reales antes de cerrar la tarea.
 - [x] Permitir retirar el consentimiento desde Datos de cuenta y conservar la fecha de retirada mediante la migración `0012`.
 - [ ] No enviar campañas comerciales a personas que solo aceptaron comunicaciones necesarias para prestar el servicio.
 - [ ] Definir finalidades concretas antes de añadir nuevos campos al registro.
@@ -594,7 +594,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 - [ ] **Monetización:** pricing, activación del plan, ingresos y churn cuando exista producto de pago.
 - [ ] **Demanda y buscador:** términos, intenciones, verticales, municipios, cero resultados, reformulaciones y conversión hasta conexión útil.
 - [ ] **Rendimiento de fichas y verticales:** impresiones, visitas, CTR, contactos, respuestas y conexiones útiles por proveedor, categoría y vertical.
-- [ ] **Usuarios y consentimiento:** registros, activación, perfiles completos, centros/intereses declarados, origen de adquisición y base activable para marketing. `/admin/usuarios` ya presenta altas, roles, onboarding, canal, municipio, campaña y consentimiento de forma agregada; falta aplicar `0031`, validar datos reales de prueba y añadir intereses cuando exista una finalidad definida.
+- [ ] **Usuarios y consentimiento:** registros, activación, perfiles completos, centros/intereses declarados, origen de adquisición y base activable para marketing. `/admin/usuarios` ya presenta altas, roles, onboarding, canal, municipio, campaña y consentimiento de forma agregada; `0031` está aplicada y faltan datos reales de prueba e intereses cuando exista una finalidad definida.
 
 ## Reglas para Looker Studio u otra herramienta
 

@@ -86,7 +86,7 @@ Referencia para mantener separados el desarrollo local, las previews de Vercel y
 - [ ] Se ejecutan `npm run typecheck`, `npm run lint` y `npm run build`.
 - [ ] Se prueba una ruta pública y una ruta autenticada con datos no personales.
 
-Cuando el despliegue incluya cambios de base de datos, ejecutar además `npm run verify:migrations` y seguir `APLICACION-MIGRACIONES-0024-0031.md`. La aplicación que consume una tabla o un RPC nuevo no debe publicarse antes de que su migración esté aplicada y verificada.
+Cuando el despliegue incluya cambios de base de datos, ejecutar además `npm run verify:migrations` y seguir `APLICACION-MIGRACIONES-0024-0031.md` (migraciones 0024–0032). La aplicación que consume una tabla o un RPC nuevo no debe publicarse antes de que su migración esté aplicada y verificada.
 
 Después del despliegue, ejecutar `npm run verify:production`. La prueba comprueba rutas públicas del lote real, sitemap, protección del informe administrativo y rechazo de una carga analítica vacía sin escribir datos.
 

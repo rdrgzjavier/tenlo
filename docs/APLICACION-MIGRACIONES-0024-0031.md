@@ -1,10 +1,10 @@
-# Aplicación segura de las migraciones 0024–0031
+# Aplicación segura de las migraciones 0024–0032
 
 Procedimiento para activar medición propia, directorio público acotado, permisos por rol, moderación de altas profesionales, historial de consentimiento y atribución de registros. Preparado el 23 de octubre de 2026.
 
 ## Regla de despliegue
 
-No publicar los commits de aplicación que consumen estas estructuras antes de aplicar y verificar las ocho migraciones. El código nuevo depende de `directory_events`, los RPC públicos, `moderate_business_profile`, `resubmit_business_profile`, `consent_history` y los campos de atribución del perfil.
+No publicar los commits de aplicación que consumen estas estructuras antes de aplicar y verificar las nueve migraciones. El código nuevo depende de `directory_events`, los RPC públicos, `moderate_business_profile`, `resubmit_business_profile`, `consent_history` y los campos de atribución del perfil. `0032` retira además un permiso de actualización general heredado sobre propuestas.
 
 ## Antes de empezar
 
@@ -26,12 +26,13 @@ Ejecutar cada archivo completo y esperar confirmación antes de pasar al siguien
 6. `0029_marketing_consent_history.sql`
 7. `0030_harden_admin_function_search_paths.sql`
 8. `0031_profile_acquisition_and_onboarding.sql`
+9. `0032_submission_content_immutability.sql`
 
 No agruparlos en una edición manual ni cambiar su orden. Si una ejecución falla, detenerse, guardar el error exacto y no publicar la aplicación.
 
 ## Verificación en base de datos
 
-Después de aplicar las ocho migraciones, ejecutar completo `supabase/verification/0024_0025_directory_controls.sql`.
+Después de aplicar las nueve migraciones, ejecutar completo `supabase/verification/0024_0025_directory_controls.sql`.
 
 Resultados esperados:
 
@@ -41,7 +42,8 @@ Resultados esperados:
 - Conteos de referencia del lote auditado: 21 centros, 14 proveedores y 16 servicios. Una diferencia obliga a revisar datos, no a cambiar el valor esperado sin explicación.
 - Una cuenta autenticada puede actualizar `display_name`, pero no `role` ni `status`.
 - Los campos de contenido autorizados devuelven `true`; estado, confianza, plan y demás campos protegidos devuelven `false`.
-- `authenticated_can_update_submissions`: `false`.
+- `authenticated_can_update_submissions`, actualización de `payload` y de `review_notes`: `false`.
+- Actualización de `status`, política administrativa y retirada de la antigua política del titular: `true`. RLS reserva el cambio de estado a `tenlo_admin`.
 - Los RPC de moderación y reenvío profesional: `true` en disponibilidad de ejecución. Su autorización real se decide dentro de cada función.
 - `consent_history_exists` y las dos políticas propias: `true`.
 - Lectura anónima y escritura directa autenticada en `consent_history`: `false`.
@@ -67,6 +69,12 @@ Con cuentas de prueba y sin datos personales reales:
 4. Probar en `tenlo.es` las rutas `/admin`, `/admin/rendimiento`, `/mi-ficha-profesional` y una ficha pública.
 5. Revisar Security Advisor de Supabase y conservar los avisos que requieran plan de pago o decisión posterior como pendientes documentados.
 6. Solo entonces actualizar el porcentaje de `ESTADO-MVP.md` y marcar como terminadas las tareas correspondientes.
+
+## Ejecución de producción
+
+El 23 de octubre de 2026 se aplicaron en orden `0024`–`0032` al proyecto `khwymwnswbemgtpggvpg`. La verificación de catálogo confirmó 21 centros, 14 proveedores y 16 servicios públicos; RPC públicos disponibles; tablas base sin lectura anónima; moderación y consentimiento protegidos; funciones administrativas con `search_path` vacío; nueve campos de atribución presentes; y propuestas con contenido inmutable y solo `status` actualizable bajo la política administrativa.
+
+Esta comprobación valida estructura y privilegios. Las pruebas de recorrido con las cuatro identidades y la restauración siguen siendo necesarias antes de cerrar seguridad y recuperación.
 
 ## Si algo falla
 

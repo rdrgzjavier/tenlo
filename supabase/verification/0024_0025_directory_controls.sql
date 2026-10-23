@@ -45,9 +45,29 @@ select
   has_column_privilege('authenticated', 'public.community_posts', 'status', 'update') as can_update_post_status,
   has_column_privilege('authenticated', 'public.community_posts', 'title', 'update') as can_update_post_title;
 
--- Debe ser false: las propuestas no se editan tras enviarse.
-select has_table_privilege('authenticated', 'public.submissions', 'update')
-  as authenticated_can_update_submissions;
+-- El permiso general debe ser false. Solo status queda actualizable y RLS lo
+-- limita al administrador; payload y notas de revision permanecen inmutables.
+select
+  has_table_privilege('authenticated', 'public.submissions', 'update')
+    as authenticated_can_update_submissions,
+  has_column_privilege('authenticated', 'public.submissions', 'status', 'update')
+    as authenticated_can_update_submission_status,
+  has_column_privilege('authenticated', 'public.submissions', 'payload', 'update')
+    as authenticated_can_update_submission_payload,
+  has_column_privilege('authenticated', 'public.submissions', 'review_notes', 'update')
+    as authenticated_can_update_submission_review_notes,
+  exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'submissions'
+      and policyname = 'Admins can update submissions'
+  ) as admin_submission_update_policy,
+  not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'submissions'
+      and policyname = 'Users can manage own submissions'
+  ) as owner_submission_update_removed;
 
 -- Debe ser true: el RPC ejecuta solo después de validar tenlo_admin.
 select has_function_privilege(

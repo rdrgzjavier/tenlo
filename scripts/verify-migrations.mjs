@@ -31,7 +31,7 @@ numbers.forEach((number, index) => {
   assert(number === index + 1, `Falta la migración ${String(index + 1).padStart(4, "0")}.`);
 });
 
-const [m24, m25, m26, m27, m28, m29, m30, m31, repository, registration, verification] = await Promise.all([
+const [m24, m25, m26, m27, m28, m29, m30, m31, m32, repository, registration, verification] = await Promise.all([
   text("supabase/migrations/0024_directory_performance_events.sql"),
   text("supabase/migrations/0025_public_directory_rpc.sql"),
   text("supabase/migrations/0026_profile_role_hardening.sql"),
@@ -40,6 +40,7 @@ const [m24, m25, m26, m27, m28, m29, m30, m31, repository, registration, verific
   text("supabase/migrations/0029_marketing_consent_history.sql"),
   text("supabase/migrations/0030_harden_admin_function_search_paths.sql"),
   text("supabase/migrations/0031_profile_acquisition_and_onboarding.sql"),
+  text("supabase/migrations/0032_submission_content_immutability.sql"),
   text("src/lib/directory-repository.ts"),
   text("src/components/LoginRegistration.tsx"),
   text("supabase/verification/0024_0025_directory_controls.sql")
@@ -102,6 +103,12 @@ for (const column of ["registration_channel", "acquisition_entry_channel", "acqu
 }
 assert(!m31.includes("referrer_host"), "El perfil no debe persistir el host de referencia completo.");
 assert(registration.includes("acquisition_context: acquisitionContext"), "El registro no conserva el contexto de adquisición saneado.");
+
+assert(/revoke update on public\.submissions from authenticated/i.test(m32), "0032 debe retirar la actualización general de submissions.");
+assert(/grant update \(status\) on public\.submissions to authenticated/i.test(m32), "0032 debe conservar únicamente la actualización de status.");
+for (const protectedColumn of ["payload", "review_notes"]) {
+  assert(verification.includes(`'public.submissions', '${protectedColumn}', 'update'`), `La verificación no comprueba ${protectedColumn} en submissions.`);
+}
 
 console.log(`Migraciones verificadas: ${migrationFiles.length} archivos, secuencia 0001-${String(numbers.at(-1)).padStart(4, "0")}.`);
 console.log("Contratos comprobados: directorio público, permisos por columna, moderación, consentimiento y search_path.");
