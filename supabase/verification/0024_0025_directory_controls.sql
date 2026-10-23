@@ -15,3 +15,14 @@ select
       and tablename = 'directory_events'
       and policyname = 'Admins can analyze directory events'
   ) as admin_directory_reporting_policy;
+
+select
+  has_column_privilege('authenticated', 'public.profiles', 'role', 'update') as authenticated_can_update_role,
+  has_column_privilege('authenticated', 'public.profiles', 'status', 'update') as authenticated_can_update_status,
+  has_column_privilege('authenticated', 'public.profiles', 'display_name', 'update') as authenticated_can_update_display_name,
+  exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'profiles'
+      and policyname = 'Users can create safe own profile'
+  ) as safe_profile_insert_policy;

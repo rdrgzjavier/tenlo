@@ -49,8 +49,14 @@ function metadataName(value: unknown) {
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 }
 
+const publicProfileRoles = new Set([
+  "family", "school", "nursery", "shop", "sports_center", "activity_provider",
+  "technology_provider", "transport_provider", "event_provider", "teacher",
+  "childcare", "health_wellness", "camp_provider", "community_org"
+]);
+
 function metadataRole(value: unknown) {
-  return typeof value === "string" && value.trim().length > 0 ? value : "family";
+  return typeof value === "string" && publicProfileRoles.has(value) ? value : "family";
 }
 
 function metadataStatus(role: string) {

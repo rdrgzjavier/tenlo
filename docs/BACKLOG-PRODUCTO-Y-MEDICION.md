@@ -186,7 +186,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   - [x] preparar en el esquema preferencias de contacto;
   - [x] preparar en el esquema motivo de inactividad o rechazo.
 - [x] Añadir historial de cambios y responsable de cada modificación. La migración `0017_admin_queue_status_history.sql` registra automáticamente cada cambio; el 16/10/2026 se validaron dos transiciones reversibles con responsable y fecha en `/admin`.
-- [ ] Definir reglas RLS y permisos para proveedor, familia, moderación y administración. La matriz y los casos de prueba están auditados en `MATRIZ-RLS-Y-PERMISOS.md`; ya están limitados a aprobados los centros y perfiles de proveedor públicos, y la disponibilidad de alias se resuelve mediante un RPC booleano sin enumeración. Falta completar la prueba cruzada de los cuatro roles en producción antes de cerrar.
+- [ ] Definir reglas RLS y permisos para proveedor, familia, moderación y administración. La matriz y los casos de prueba están auditados en `MATRIZ-RLS-Y-PERMISOS.md`; la disponibilidad de alias ya se resuelve mediante un RPC booleano. Las migraciones `0025` y `0026` están preparadas para limitar las columnas públicas del directorio y bloquear la autoasignación de rol/estado; falta aplicarlas y completar la prueba cruzada de los cuatro roles en producción.
 - [ ] Crear copias de seguridad y procedimiento de recuperación. El procedimiento, frecuencia, retención, prueba y criterios de escalado están definidos en `COPIAS-Y-RECUPERACION.md`; falta ejecutar la primera copia y una restauración aislada.
 
 ## P0. Flujo para reclamar y enriquecer una ficha

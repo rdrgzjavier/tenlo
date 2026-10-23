@@ -236,7 +236,7 @@ export default function LoginRegistration() {
     const status = role === "family" ? "approved" : "pending_review";
     const fallbackName = registerEmail.split("@")[0] || loginEmail.split("@")[0] || "Usuario Tenlo";
 
-    const { error: profileError } = await supabase.from("profiles").upsert(
+    const { error: profileError } = await supabase.from("profiles").insert(
       {
         id: userId,
         role,
@@ -251,8 +251,7 @@ export default function LoginRegistration() {
         marketing_consent_source: marketingConsent ? "registration" : null,
         marketing_consent_withdrawn_at: null,
         status
-      },
-      { onConflict: "id" }
+      }
     );
 
     if (profileError) throw profileError;
