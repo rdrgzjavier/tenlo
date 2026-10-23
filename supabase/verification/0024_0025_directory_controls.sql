@@ -91,3 +91,20 @@ join pg_namespace as namespace on namespace.oid = procedure.pronamespace
 where namespace.nspname = 'public'
   and procedure.proname in ('is_tenlo_admin', 'audit_admin_queue_status')
 order by procedure.proname;
+
+-- Debe devolver 9: todos los campos de atribución y activación están presentes.
+select count(*) as profile_acquisition_columns
+from information_schema.columns
+where table_schema = 'public'
+  and table_name = 'profiles'
+  and column_name in (
+    'registration_channel',
+    'acquisition_entry_channel',
+    'acquisition_source',
+    'acquisition_medium',
+    'acquisition_campaign',
+    'acquisition_content',
+    'acquisition_landing_path',
+    'onboarding_status',
+    'last_significant_activity_at'
+  );

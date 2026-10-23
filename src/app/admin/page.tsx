@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Activity, AlertTriangle, ArrowRight, BarChart3, CheckCircle2, ClipboardCheck, Download, ExternalLink, FileCheck2, Flag, History, Inbox, Mail, Phone } from "lucide-react";
+import { Activity, AlertTriangle, ArrowRight, BarChart3, CheckCircle2, ClipboardCheck, Download, ExternalLink, FileCheck2, Flag, History, Inbox, Mail, Phone, UsersRound } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import AdminStatusControl from "@/components/AdminStatusControl";
 import AdminNotes from "@/components/AdminNotes";
@@ -194,6 +194,10 @@ export default async function AdminPage() {
           <Link href="/admin/demanda" className="btn-secondary shrink-0">
             <BarChart3 size={18} aria-hidden />
             Ver demanda
+          </Link>
+          <Link href="/admin/usuarios" className="btn-secondary shrink-0">
+            <UsersRound size={18} aria-hidden />
+            Ver usuarios
           </Link>
           <a href="/api/admin/export" className="btn-secondary shrink-0" download>
             <Download size={18} aria-hidden />

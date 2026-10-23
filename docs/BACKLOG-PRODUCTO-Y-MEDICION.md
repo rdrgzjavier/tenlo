@@ -396,9 +396,9 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
   - [x] centro relacionado opcional;
   - [ ] categorías o necesidades de interés, opcionales;
   - [ ] idioma y preferencias de comunicación;
-  - [ ] fecha y canal de registro;
-  - [ ] fuente, medio, campaña y landing de adquisición;
-  - [ ] estado de onboarding;
+  - [x] fecha y canal de registro; `created_at` conserva la fecha y `0031` añade canal de email, Google o desconocido;
+  - [x] fuente, medio, campaña y landing de adquisición; `0031` los persiste desde valores saneados, sin query string, término buscado ni referrer completo;
+  - [x] estado de onboarding; `0031` separa activación operativa de la moderación de la cuenta;
   - [ ] fecha de última actividad significativa;
   - [ ] estado de cuenta, baja y solicitud de eliminación.
 - [x] Permitir que la persona consulte sus datos, corrija municipio, contraseña y consentimiento, descargue una copia privada en JSON y solicite su eliminación. La exportación `1.1` incluye perfil, fichas profesionales, favoritos, publicaciones, solicitudes, reclamaciones, historial de consentimiento y búsquedas asociadas a la cuenta. La ejecución administrativa de borrado/anonimización sigue el procedimiento pendiente de gobierno del dato.
@@ -594,7 +594,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 - [ ] **Monetización:** pricing, activación del plan, ingresos y churn cuando exista producto de pago.
 - [ ] **Demanda y buscador:** términos, intenciones, verticales, municipios, cero resultados, reformulaciones y conversión hasta conexión útil.
 - [ ] **Rendimiento de fichas y verticales:** impresiones, visitas, CTR, contactos, respuestas y conexiones útiles por proveedor, categoría y vertical.
-- [ ] **Usuarios y consentimiento:** registros, activación, perfiles completos, centros/intereses declarados, origen de adquisición y base activable para marketing.
+- [ ] **Usuarios y consentimiento:** registros, activación, perfiles completos, centros/intereses declarados, origen de adquisición y base activable para marketing. `/admin/usuarios` ya presenta altas, roles, onboarding, canal, municipio, campaña y consentimiento de forma agregada; falta aplicar `0031`, validar datos reales de prueba y añadir intereses cuando exista una finalidad definida.
 
 ## Reglas para Looker Studio u otra herramienta
 

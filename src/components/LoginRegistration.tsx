@@ -21,6 +21,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { type FormEvent, useMemo, useState } from "react";
 import { centers, municipalities } from "@/lib/mock-data";
 import { pushTrackingEvent } from "@/lib/analytics";
+import { currentAcquisitionContext } from "@/lib/acquisition";
+import { acquisitionProfileFields } from "@/lib/profile-acquisition";
 import { ensurePendingBusinessProfile } from "@/lib/provider-registration";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import type { ProfileRole } from "@/lib/supabase/types";
@@ -267,6 +269,7 @@ export default function LoginRegistration() {
         marketing_consent_at: marketingConsent ? new Date().toISOString() : null,
         marketing_consent_source: marketingConsent ? "registration" : null,
         marketing_consent_withdrawn_at: null,
+        ...acquisitionProfileFields(user),
         status
       }
     );
@@ -321,6 +324,7 @@ export default function LoginRegistration() {
         marketing_consent_at: metadataMarketingConsentAt,
         marketing_consent_source: metadataMarketingConsent ? "registration" : null,
         marketing_consent_withdrawn_at: null,
+        ...acquisitionProfileFields(user),
         status: role === "family" ? "approved" : "pending_review"
       });
 
@@ -396,6 +400,7 @@ export default function LoginRegistration() {
     let failureStage = "auth_signup";
 
     try {
+      const acquisitionContext = currentAcquisitionContext();
       const { data, error: signUpError } = await supabase.auth.signUp({
         email: registerEmail,
         password,
@@ -409,6 +414,7 @@ export default function LoginRegistration() {
             related_center_name: relatedCenter || null,
             marketing_consent: marketingConsent,
             marketing_consent_at: marketingConsent ? new Date().toISOString() : null,
+            acquisition_context: acquisitionContext,
             provider_profile: showBusinessFields ? {
               category: current.label,
               subtype,

@@ -1,10 +1,10 @@
-# Aplicación segura de las migraciones 0024–0030
+# Aplicación segura de las migraciones 0024–0031
 
-Procedimiento para activar medición propia, directorio público acotado, permisos por rol, moderación de altas profesionales e historial de consentimiento. Preparado el 23 de octubre de 2026.
+Procedimiento para activar medición propia, directorio público acotado, permisos por rol, moderación de altas profesionales, historial de consentimiento y atribución de registros. Preparado el 23 de octubre de 2026.
 
 ## Regla de despliegue
 
-No publicar los commits de aplicación que consumen estas estructuras antes de aplicar y verificar las siete migraciones. El código nuevo depende de `directory_events`, los RPC públicos, `moderate_business_profile`, `resubmit_business_profile` y `consent_history`.
+No publicar los commits de aplicación que consumen estas estructuras antes de aplicar y verificar las ocho migraciones. El código nuevo depende de `directory_events`, los RPC públicos, `moderate_business_profile`, `resubmit_business_profile`, `consent_history` y los campos de atribución del perfil.
 
 ## Antes de empezar
 
@@ -25,12 +25,13 @@ Ejecutar cada archivo completo y esperar confirmación antes de pasar al siguien
 5. `0028_business_profile_review_queue.sql`
 6. `0029_marketing_consent_history.sql`
 7. `0030_harden_admin_function_search_paths.sql`
+8. `0031_profile_acquisition_and_onboarding.sql`
 
 No agruparlos en una edición manual ni cambiar su orden. Si una ejecución falla, detenerse, guardar el error exacto y no publicar la aplicación.
 
 ## Verificación en base de datos
 
-Después de aplicar las siete migraciones, ejecutar completo `supabase/verification/0024_0025_directory_controls.sql`.
+Después de aplicar las ocho migraciones, ejecutar completo `supabase/verification/0024_0025_directory_controls.sql`.
 
 Resultados esperados:
 
@@ -45,6 +46,7 @@ Resultados esperados:
 - `consent_history_exists` y las dos políticas propias: `true`.
 - Lectura anónima y escritura directa autenticada en `consent_history`: `false`.
 - `proconfig` de `is_tenlo_admin` y `audit_admin_queue_status` contiene un `search_path` vacío.
+- `profile_acquisition_columns`: `9`.
 
 ## Pruebas funcionales antes de publicar
 

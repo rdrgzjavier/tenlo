@@ -5,6 +5,7 @@ export type AcquisitionContext = {
   traffic_medium?: string;
   traffic_campaign?: string;
   traffic_content?: string;
+  landing_path?: string;
 };
 
 const searchHosts = ["google.", "bing.com", "duckduckgo.com", "yahoo.", "ecosia.org"];
@@ -56,7 +57,8 @@ export function currentAcquisitionContext(): AcquisitionContext {
     traffic_source: source,
     traffic_medium: medium,
     traffic_campaign: campaign,
-    traffic_content: content
+    traffic_content: content,
+    landing_path: window.location.pathname.startsWith("/") ? window.location.pathname.slice(0, 200) : "/"
   };
 
   try {

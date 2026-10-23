@@ -31,7 +31,7 @@ numbers.forEach((number, index) => {
   assert(number === index + 1, `Falta la migración ${String(index + 1).padStart(4, "0")}.`);
 });
 
-const [m24, m25, m26, m27, m28, m29, m30, repository, verification] = await Promise.all([
+const [m24, m25, m26, m27, m28, m29, m30, m31, repository, registration, verification] = await Promise.all([
   text("supabase/migrations/0024_directory_performance_events.sql"),
   text("supabase/migrations/0025_public_directory_rpc.sql"),
   text("supabase/migrations/0026_profile_role_hardening.sql"),
@@ -39,7 +39,9 @@ const [m24, m25, m26, m27, m28, m29, m30, repository, verification] = await Prom
   text("supabase/migrations/0028_business_profile_review_queue.sql"),
   text("supabase/migrations/0029_marketing_consent_history.sql"),
   text("supabase/migrations/0030_harden_admin_function_search_paths.sql"),
+  text("supabase/migrations/0031_profile_acquisition_and_onboarding.sql"),
   text("src/lib/directory-repository.ts"),
+  text("src/components/LoginRegistration.tsx"),
   text("supabase/verification/0024_0025_directory_controls.sql")
 ]);
 
@@ -94,6 +96,12 @@ for (const functionName of ["is_tenlo_admin", "audit_admin_queue_status"]) {
   assert(m30.includes(`alter function public.${functionName}()`), `0030 no endurece ${functionName}.`);
   assert(m30.includes("set search_path = ''"), "0030 debe fijar un search_path vacío.");
 }
+
+for (const column of ["registration_channel", "acquisition_entry_channel", "acquisition_source", "acquisition_medium", "acquisition_campaign", "acquisition_content", "acquisition_landing_path", "onboarding_status", "last_significant_activity_at"]) {
+  assert(m31.includes(column), `0031 no prepara ${column}.`);
+}
+assert(!m31.includes("referrer_host"), "El perfil no debe persistir el host de referencia completo.");
+assert(registration.includes("acquisition_context: acquisitionContext"), "El registro no conserva el contexto de adquisición saneado.");
 
 console.log(`Migraciones verificadas: ${migrationFiles.length} archivos, secuencia 0001-${String(numbers.at(-1)).padStart(4, "0")}.`);
 console.log("Contratos comprobados: directorio público, permisos por columna, moderación, consentimiento y search_path.");

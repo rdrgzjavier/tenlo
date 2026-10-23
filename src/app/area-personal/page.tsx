@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { Bookmark, BriefcaseBusiness, ClipboardCheck, ClipboardList, FilePlus2, LayoutDashboard, Settings, ShieldCheck } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import { ensurePendingBusinessProfile } from "@/lib/provider-registration";
+import { acquisitionProfileFields } from "@/lib/profile-acquisition";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -159,6 +160,7 @@ async function ensureProfile() {
       marketing_consent_at: marketingConsentAt,
       marketing_consent_source: marketingConsent ? "registration" : null,
       marketing_consent_withdrawn_at: null,
+      ...acquisitionProfileFields(user),
       status: metadataStatus(role)
     })
     .select("*")
