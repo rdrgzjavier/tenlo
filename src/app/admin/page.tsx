@@ -58,6 +58,26 @@ function payloadText(payload: Record<string, unknown>, key: string, fallback = "
   return typeof value === "string" && value.trim() ? value : fallback;
 }
 
+function listLabel(value: unknown, fallback = "No indicado") {
+  return Array.isArray(value) && value.every((item) => typeof item === "string") && value.length
+    ? value.join(", ")
+    : fallback;
+}
+
+function locationVisibilityLabel(value?: string | null) {
+  const labels: Record<string, string> = {
+    exact: "Dirección exacta con coordenadas verificadas",
+    approximate: "Ubicación aproximada",
+    service_area: "Solo zona de servicio",
+    hidden: "Ubicación oculta"
+  };
+  return labels[value || ""] || "No indicada";
+}
+
+function contactPreferenceLabel(value: string) {
+  return ({ tenlo: "Solicitud en Tenlo", phone: "Llamada", email: "Email", website: "Web oficial" } as Record<string, string>)[value] || value;
+}
+
 function requestTargetHref(type?: string | null, id?: string | null) {
   if (!id) return null;
   if (type === "center") return `/centros/${encodeURIComponent(id)}`;
@@ -111,7 +131,7 @@ export default async function AdminPage() {
     supabase.from("claim_requests").select("id,entity_type,entity_id,entity_name,requester_name,requester_email,requester_phone,role_description,corrections,official_website,image_url,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("connection_requests").select("id,family_id,target_type,target_id,category_id,municipality,message,contact_preference,status,provider_notified_at,provider_response_summary,alternative_summary,first_response_at,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("submissions").select("id,user_id,submission_type,payload,review_notes,status,created_at").order("created_at", { ascending: false }).limit(100),
-    supabase.from("business_profiles").select("id,owner_id,business_name,website,municipality,service_area,category,subtype,description,phone,contact_email,status,trust_level,completeness_percent,details,created_at").in("status", ["pending_review", "rejected"]).order("created_at", { ascending: false }).limit(100),
+    supabase.from("business_profiles").select("id,owner_id,business_name,website,address,municipality,service_area,category,subtype,description,phone,contact_email,status,trust_level,completeness_percent,details,latitude,longitude,location_visibility,service_municipalities,accepts_requests,contact_preferences,created_at").in("status", ["pending_review", "rejected"]).order("created_at", { ascending: false }).limit(100),
     supabase.from("feedback_requests").select("id,context,item_id,name,email,message,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("connection_feedback").select("request_id,useful,outcome,updated_at").order("updated_at", { ascending: false }).limit(500),
     supabase.from("admin_queue_audit").select("id,queue,record_id,previous_status,new_status,changed_by,changed_at").order("changed_at", { ascending: false }).limit(30),
@@ -274,12 +294,19 @@ export default async function AdminPage() {
                 <summary className="cursor-pointer font-bold text-ink">Ver información profesional</summary>
                 <dl className="mt-3 grid gap-2 text-xs text-muted">
                   <div><dt className="inline font-bold text-ink">Zona: </dt><dd className="inline">{businessProfile.service_area || "No indicada"}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Municipios de servicio: </dt><dd className="inline">{listLabel(businessProfile.service_municipalities)}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Dirección declarada: </dt><dd className="inline">{businessProfile.address || "No indicada"}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Visibilidad solicitada: </dt><dd className="inline">{locationVisibilityLabel(businessProfile.location_visibility)}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Coordenadas: </dt><dd className="inline">{businessProfile.latitude !== null && businessProfile.longitude !== null ? `${businessProfile.latitude}, ${businessProfile.longitude}` : "Pendientes de verificar"}</dd></div>
                   <div><dt className="inline font-bold text-ink">Web: </dt><dd className="inline break-all">{businessProfile.website ? <a href={businessProfile.website} target="_blank" rel="noreferrer" className="underline">{businessProfile.website} <ExternalLink className="inline" size={13} aria-hidden /></a> : "No indicada"}</dd></div>
                   <div><dt className="inline font-bold text-ink">Modalidad: </dt><dd className="inline">{payloadText(details, "modality")}</dd></div>
                   <div><dt className="inline font-bold text-ink">Edades: </dt><dd className="inline">{payloadText(details, "age_range")}</dd></div>
                   <div><dt className="inline font-bold text-ink">Disponibilidad: </dt><dd className="inline">{payloadText(details, "availability")}</dd></div>
                   <div><dt className="inline font-bold text-ink">Credencial declarada: </dt><dd className="inline">{payloadText(details, "credential")}</dd></div>
                   <div><dt className="inline font-bold text-ink">Verificación declarada: </dt><dd className="inline">{payloadText(details, "verification_info")}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Relación confirmada: </dt><dd className="inline">{details.relationship_confirmed === true ? `Sí${payloadText(details, "relationship_confirmation_at", "") ? ` · ${dateLabel(payloadText(details, "relationship_confirmation_at"))}` : ""}` : "No consta"}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Acepta solicitudes: </dt><dd className="inline">{businessProfile.accepts_requests ? "Sí" : "No"}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Vías de contacto: </dt><dd className="inline">{businessProfile.contact_preferences?.length ? businessProfile.contact_preferences.map(contactPreferenceLabel).join(", ") : "No indicadas"}</dd></div>
                   <div><dt className="inline font-bold text-ink">Confianza actual: </dt><dd className="inline">{businessProfile.trust_level === "collected" ? "No verificada" : businessProfile.trust_level}</dd></div>
                   <div><dt className="inline font-bold text-ink">Completitud: </dt><dd className="inline">{businessProfile.completeness_percent}%</dd></div>
                 </dl>

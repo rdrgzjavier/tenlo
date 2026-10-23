@@ -15,6 +15,7 @@ const columns = [
   "category_id",
   "municipality",
   "service_area",
+  "service_municipalities",
   "account_id",
   "provider_id",
   "service_id",
@@ -22,6 +23,9 @@ const columns = [
   "contact_email",
   "contact_phone",
   "website",
+  "accepts_requests",
+  "contact_preferences",
+  "completeness_percent",
   "trust_level",
   "claim_status",
   "commercial_plan",
@@ -93,7 +97,7 @@ export async function GET() {
       .limit(1000),
     supabase
       .from("business_profiles")
-      .select("id,owner_id,business_name,category,municipality,service_area,contact_email,phone,website,status,trust_level,claim_status,commercial_plan,record_origin,source_name,source_url,last_reviewed,created_at,updated_at")
+      .select("id,owner_id,business_name,category,municipality,service_area,service_municipalities,contact_email,phone,website,accepts_requests,contact_preferences,completeness_percent,status,trust_level,claim_status,commercial_plan,record_origin,source_name,source_url,last_reviewed,created_at,updated_at")
       .order("created_at", { ascending: false })
       .limit(1000),
     supabase
@@ -168,11 +172,15 @@ export async function GET() {
       category_id: item.category,
       municipality: item.municipality,
       service_area: item.service_area,
+      service_municipalities: item.service_municipalities.join(" | "),
       account_id: item.owner_id,
       provider_id: item.id,
       contact_email: item.contact_email,
       contact_phone: item.phone,
       website: item.website,
+      accepts_requests: String(item.accepts_requests),
+      contact_preferences: item.contact_preferences.join(" | "),
+      completeness_percent: String(item.completeness_percent),
       trust_level: item.trust_level,
       claim_status: item.claim_status,
       commercial_plan: item.commercial_plan,

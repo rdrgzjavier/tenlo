@@ -182,7 +182,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   - [x] fuente y URL de la fuente visibles y enlazadas cuando existe una fuente pública;
   - [x] preparar en el esquema porcentaje de ficha completa; `0027` lo recalcula en servidor al crear o editar una ficha sin conceder esa columna al titular;
   - [x] preparar en el esquema disponibilidad para recibir solicitudes;
-  - [ ] categorías y zonas aceptadas;
+  - [ ] categorías y zonas aceptadas; el área profesional ya permite confirmar municipio principal, varios municipios de servicio y zona libre, pero el modelo de categorías múltiples sigue pendiente de estabilizar;
   - [x] preparar en el esquema preferencias de contacto;
   - [x] preparar en el esquema motivo de inactividad o rechazo.
 - [x] Añadir historial de cambios y responsable de cada modificación. La migración `0017_admin_queue_status_history.sql` registra automáticamente cada cambio; el 16/10/2026 se validaron dos transiciones reversibles con responsable y fecha en `/admin`.
@@ -194,7 +194,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Crear una landing específica para proveedores que explique valor antes de pedir esfuerzo.
 - [x] Cambiar el CTA principal de `Validar ficha` a una opción más clara según el estado: `¿Es tu negocio?` o `Gestionar esta ficha`.
 - [x] Permitir localizar la ficha desde la landing del proveedor mediante el CTA `Buscar mi ficha` hacia el directorio de servicios.
-- [ ] Diseñar onboarding progresivo:
+- [x] Diseñar onboarding progresivo, implementado en `/mi-ficha-profesional` como seis bloques guiados con completitud visible, datos opcionales y validaciones antes del envío:
   1. confirmar relación con el negocio;
   2. corregir datos esenciales;
   3. definir servicios y zona;
@@ -230,7 +230,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Incorporar en `/buscar` un módulo visible de búsqueda por palabra, zona y categoría, también en móvil.
 - [x] Añadir `Ver mapa y cómo llegar` para centros y negocios mediante una búsqueda externa sin coste de API, sin mostrar ubicaciones exactas de profesionales particulares.
 - [x] Aplicar y verificar en Supabase el modelo de dirección profesional, coordenadas verificadas, visibilidad de ubicación y municipios de servicio mediante la migración `0014`, distinguiendo negocios físicos de profesionales móviles.
-- [ ] Permitir al proveedor confirmar o corregir dirección, coordenadas, visibilidad y municipios al reclamar su ficha.
+- [ ] Permitir al proveedor confirmar o corregir dirección, coordenadas, visibilidad y municipios al reclamar su ficha. El área profesional ya permite dirección, varios municipios y nivel de visibilidad; las coordenadas existentes se muestran al administrador y solo habilitan ubicación exacta si fueron verificadas, pero falta un flujo seguro de corrección/geocodificación.
 - [ ] Sustituir la búsqueda aproximada por un mapa embebido solo cuando existan coordenadas verificadas, consentimiento/cookies y una estimación de coste aceptada.
 - [ ] Sustituir filtros genéricos por los atributos que realmente permiten decidir en el segmento inicial. Los filtros visibles de confianza, precio y disponibilidad ya aplican valores reales y no aproximaciones silenciosas; falta validar con familias qué atributos por vertical cambian una decisión.
 - [x] Mostrar el número de resultados sin sugerir que más siempre es mejor.

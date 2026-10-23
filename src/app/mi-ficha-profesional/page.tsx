@@ -26,7 +26,7 @@ export default async function ProviderProfilePage() {
 
   const { data: profiles, error } = await supabase
     .from("business_profiles")
-    .select("id,business_name,website,municipality,service_area,category,subtype,description,phone,contact_email,details,status")
+    .select("id,business_name,website,address,municipality,service_area,category,subtype,description,phone,contact_email,details,status,latitude,longitude,location_visibility,service_municipalities,accepts_requests,contact_preferences,completeness_percent")
     .eq("owner_id", authData.user.id)
     .order("created_at", { ascending: false });
 
