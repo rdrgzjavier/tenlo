@@ -86,7 +86,7 @@ export default function AdminStatusControl({ queue, recordId, currentStatus }: {
     setMessagePending(true);
     setMessageFeedback("");
     try {
-      const response = await fetch("/api/admin/claim-message", {
+      const response = await fetch(queue === "business_profile" ? "/api/admin/business-profile-message" : "/api/admin/claim-message", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ recordId, message })
@@ -116,10 +116,10 @@ export default function AdminStatusControl({ queue, recordId, currentStatus }: {
         </button>
       </div>
       {feedback ? <p className="mt-2 text-xs text-muted" role="status">{feedback}</p> : null}
-      {queue === "claim" ? (
+      {["claim", "business_profile"].includes(queue) ? (
         <details className="mt-3 rounded-xl border border-line bg-white p-3">
           <summary className="cursor-pointer font-bold text-ink">Solicitar información</summary>
-          <p className="mt-2 text-xs leading-5 text-muted">El texto se enviará por email al solicitante y quedará guardado como nota interna.</p>
+          <p className="mt-2 text-xs leading-5 text-muted">El texto se enviará por email al titular y quedará guardado como nota interna.</p>
           <form className="mt-3 grid gap-2" onSubmit={requestInformation}>
             <label className="text-xs font-bold text-ink" htmlFor={`claim-message-${recordId}`}>Información necesaria</label>
             <textarea
@@ -130,7 +130,7 @@ export default function AdminStatusControl({ queue, recordId, currentStatus }: {
               minLength={10}
               maxLength={2000}
               rows={4}
-              placeholder="Ej. Necesitamos un documento que acredite tu relación con la entidad y la dirección pública que debe aparecer en la ficha."
+              placeholder={queue === "business_profile" ? "Ej. Necesitamos confirmar la zona de servicio y el enlace público donde aparece la actividad profesional." : "Ej. Necesitamos un documento que acredite tu relación con la entidad y la dirección pública que debe aparecer en la ficha."}
             />
             <button className="btn-secondary min-h-11 px-4 py-2 text-sm sm:w-fit" disabled={messagePending || informationRequest.trim().length < 10}>
               {messagePending ? "Enviando…" : "Enviar petición"}

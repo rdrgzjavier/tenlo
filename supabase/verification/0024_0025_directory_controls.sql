@@ -51,3 +51,21 @@ select has_function_privilege(
   'public.moderate_business_profile(uuid,public.moderation_status)',
   'execute'
 ) as admin_business_moderation_rpc_available;
+
+-- Historial de consentimiento: lectura solo del titular o admin; sin escritura directa.
+select
+  to_regclass('public.consent_history') is not null as consent_history_exists,
+  has_table_privilege('anon', 'public.consent_history', 'select') as anon_can_read_consent_history,
+  has_table_privilege('authenticated', 'public.consent_history', 'insert') as authenticated_can_insert_consent_history,
+  exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'consent_history'
+      and policyname = 'Users can read own consent history'
+  ) as own_consent_history_policy,
+  exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'search_events'
+      and policyname = 'Users can read own search history'
+  ) as own_search_history_policy;

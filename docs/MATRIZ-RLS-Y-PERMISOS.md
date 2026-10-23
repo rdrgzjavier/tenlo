@@ -41,12 +41,13 @@ Referencia: [Row Level Security de Supabase](https://supabase.com/docs/guides/da
 | `admin_queue_notes` | Sin acceso | Sin acceso salvo admin | — | Lee e inserta | Correcto; nunca se muestra a familias o proveedores. |
 | `connection_feedback` | Sin acceso | La familia lee, crea y actualiza el resultado de su solicitud | Familia: propio | Solo lectura | Correcto; falta feedback equivalente del proveedor cuando exista identidad vinculada. |
 | `data_export_audit` | Sin acceso | Inserta un registro con su propio UUID | Propio al insertar | Lee todos | Correcto para trazabilidad mínima; no almacena el contenido exportado. |
+| `consent_history` | Sin acceso | Lee solo su historial; no escribe directamente | Igual | Lectura administrativa | `0029` crea un historial automático e inmutable por finalidad, versión, origen y fecha; falta aplicarla y validar concesión/retirada. |
 
 ## Estado de los cambios obligatorios
 
 Las migraciones `0022` y `0023` se aplicaron en producción el 22 de octubre de 2026. La consulta de control confirmó la existencia de las cinco políticas, ejecución anónima de la comprobación booleana de alias y ausencia de permiso anónimo de lectura sobre `profile_usernames`.
 
-Las migraciones `0024`, `0025`, `0026`, `0027` y `0028` están preparadas y comprobadas en código, pero no se consideran aplicadas hasta ejecutar y verificar el SQL en Supabase. `0028` añade un RPC administrativo específico para moderar altas profesionales sin devolver permiso directo sobre `status` a los titulares.
+Las migraciones `0024` a `0029` están preparadas y comprobadas en código, pero no se consideran aplicadas hasta ejecutar y verificar el SQL en Supabase. `0028` añade un RPC administrativo específico para moderar altas profesionales sin devolver permiso directo sobre `status` a los titulares; `0029` registra cambios futuros de consentimiento sin reconstruir retroactivamente evidencias que no existen.
 
 1. [x] Permitir que solo un perfil aprobado `tenlo_admin` lea en el backoffice los contactos necesarios para gestionar solicitudes.
 2. [x] Hacer que la comprobación de alias devuelva solo `true/false`, limitar los centros públicos a aprobados y permitir leer proveedores aprobados desde el directorio.

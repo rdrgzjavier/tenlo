@@ -205,7 +205,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Confirmar por email la recepción y explicar el siguiente paso y plazo.
 - [x] Conservar los datos profesionales introducidos durante el alta. Tras confirmar el email se crea, una sola vez, una ficha privada `pending_review` y `No verificada`; web, descripción, zona, modalidad, disponibilidad y evidencias declaradas dejan de ser campos de formulario sin persistencia.
 - [x] Completar acciones para aprobar, pedir información o rechazar reclamaciones. La petición de información se envía por email y queda registrada como nota interna; las decisiones evitan envíos duplicados y muestran si el aviso falló.
-- [ ] Notificar al proveedor cuando la ficha se publique o necesite cambios. Las reclamaciones y las nuevas fichas profesionales aprobadas o rechazadas generan un email de estado y el backoffice avisa si no pudo enviarse; la cola de altas profesionales, su historial y sus notas están preparadas en `0028`. Falta aplicar y validar la migración y añadir una petición de información concreta desde esta nueva cola.
+- [ ] Notificar al proveedor cuando la ficha se publique o necesite cambios. Las reclamaciones y las nuevas fichas profesionales aprobadas o rechazadas generan un email de estado; la cola permite solicitar información concreta por email y conserva el texto como nota interna. La cola, el historial y sus permisos están preparados en `0028`; falta aplicar y validar la migración y los envíos reales.
 - [x] Permitir que el proveedor solicite baja o retirada mediante el formulario contextual de mantenimiento, siempre sujeto a revisión administrativa.
 - [x] Registrar cada estado y tiempo del flujo para poder medirlo mediante `created_at`, `updated_at` y el historial privado de cambios de estado.
 
@@ -400,7 +400,7 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
   - [ ] estado de onboarding;
   - [ ] fecha de última actividad significativa;
   - [ ] estado de cuenta, baja y solicitud de eliminación.
-- [x] Permitir que la persona consulte sus datos, corrija municipio, contraseña y consentimiento, descargue una copia privada en JSON y solicite su eliminación. La ejecución administrativa de borrado/anonimización sigue el procedimiento pendiente de gobierno del dato.
+- [x] Permitir que la persona consulte sus datos, corrija municipio, contraseña y consentimiento, descargue una copia privada en JSON y solicite su eliminación. La exportación `1.1` incluye perfil, fichas profesionales, favoritos, publicaciones, solicitudes, reclamaciones, historial de consentimiento y búsquedas asociadas a la cuenta. La ejecución administrativa de borrado/anonimización sigue el procedimiento pendiente de gobierno del dato.
 - [x] Evitar recoger nombres de menores, clase, horarios, fecha de nacimiento u otros datos sensibles en el registro.
 - [x] No hacer público el centro, email, municipio o intereses de una familia por defecto; `profiles` solo es legible por su titular.
 - [x] No duplicar contraseñas, tokens o datos gestionados por Supabase Auth en tablas propias.
@@ -409,7 +409,7 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 
 - [ ] Separar aceptación de condiciones, privacidad, comunicaciones operativas y marketing.
 - [x] Añadir consentimiento de marketing explícito, opcional y no premarcado en newsletter y registro; falta ampliar preferencias si se crean finalidades comerciales distintas.
-- [ ] Guardar para cada consentimiento: finalidad, versión del texto, fecha, origen y estado actual.
+- [ ] Guardar para cada consentimiento: finalidad, versión del texto, fecha, origen y estado actual. La migración `0029` prepara un historial inmutable de marketing, sin IP ni datos de navegación, que registra alta, ausencia inicial y retirada; falta aplicarla y comprobar una concesión y retirada reales.
 - [x] Permitir retirar el consentimiento desde Datos de cuenta y conservar la fecha de retirada mediante la migración `0012`.
 - [ ] No enviar campañas comerciales a personas que solo aceptaron comunicaciones necesarias para prestar el servicio.
 - [ ] Definir finalidades concretas antes de añadir nuevos campos al registro.
