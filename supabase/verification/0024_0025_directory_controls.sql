@@ -26,3 +26,21 @@ select
       and tablename = 'profiles'
       and policyname = 'Users can create safe own profile'
   ) as safe_profile_insert_policy;
+
+-- Deben ser false en los campos protegidos y true en los de contenido.
+select
+  has_column_privilege('authenticated', 'public.business_profiles', 'status', 'update') as can_update_business_status,
+  has_column_privilege('authenticated', 'public.business_profiles', 'trust_level', 'update') as can_update_business_trust,
+  has_column_privilege('authenticated', 'public.business_profiles', 'commercial_plan', 'update') as can_update_business_plan,
+  has_column_privilege('authenticated', 'public.business_profiles', 'business_name', 'update') as can_update_business_name,
+  has_column_privilege('authenticated', 'public.services', 'status', 'update') as can_update_service_status,
+  has_column_privilege('authenticated', 'public.services', 'trust_level', 'update') as can_update_service_trust,
+  has_column_privilege('authenticated', 'public.services', 'title', 'update') as can_update_service_title,
+  has_column_privilege('authenticated', 'public.listings', 'status', 'update') as can_update_listing_status,
+  has_column_privilege('authenticated', 'public.listings', 'title', 'update') as can_update_listing_title,
+  has_column_privilege('authenticated', 'public.community_posts', 'status', 'update') as can_update_post_status,
+  has_column_privilege('authenticated', 'public.community_posts', 'title', 'update') as can_update_post_title;
+
+-- Debe ser false: las propuestas no se editan tras enviarse.
+select has_table_privilege('authenticated', 'public.submissions', 'update')
+  as authenticated_can_update_submissions;
