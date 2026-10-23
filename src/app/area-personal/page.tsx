@@ -49,6 +49,12 @@ function metadataName(value: unknown) {
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 }
 
+function metadataText(value: unknown, maxLength: number) {
+  return typeof value === "string" && value.trim().length > 0
+    ? value.trim().slice(0, maxLength)
+    : null;
+}
+
 const publicProfileRoles = new Set([
   "family", "school", "nursery", "shop", "sports_center", "activity_provider",
   "technology_provider", "transport_provider", "event_provider", "teacher",
@@ -106,6 +112,13 @@ async function ensureProfile() {
 
   const role = metadataRole(user.user_metadata?.role);
   const fallbackName = metadataName(user.user_metadata?.display_name) ?? user.email?.split("@")[0] ?? "Usuario Tenlo";
+  const phone = metadataText(user.user_metadata?.phone, 40);
+  const municipality = metadataText(user.user_metadata?.municipality, 120);
+  const relatedCenterName = metadataText(user.user_metadata?.related_center_name, 180);
+  const marketingConsent = user.user_metadata?.marketing_consent === true;
+  const marketingConsentAt = marketingConsent
+    ? metadataText(user.user_metadata?.marketing_consent_at, 40) ?? new Date().toISOString()
+    : null;
   const { data: profile } = await supabase
     .from("profiles")
     .insert({
@@ -114,6 +127,13 @@ async function ensureProfile() {
       display_name: fallbackName,
       public_name: fallbackName,
       contact_email: user.email ?? null,
+      phone,
+      municipality,
+      related_center_name: relatedCenterName,
+      marketing_consent: marketingConsent,
+      marketing_consent_at: marketingConsentAt,
+      marketing_consent_source: marketingConsent ? "registration" : null,
+      marketing_consent_withdrawn_at: null,
       status: metadataStatus(role)
     })
     .select("*")
