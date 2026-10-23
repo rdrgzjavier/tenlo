@@ -15,7 +15,7 @@ export type DirectorySnapshot = {
 };
 
 type CenterRow = {
-  id: string;
+  public_id: string;
   external_key: string | null;
   slug: string;
   name: string;
@@ -39,7 +39,7 @@ type CenterRow = {
 };
 
 type BusinessRow = {
-  id: string;
+  public_id: string;
   external_key: string | null;
   business_name: string;
   category: string;
@@ -53,16 +53,16 @@ type BusinessRow = {
   source_url: string | null;
   last_reviewed: string | null;
   trust_level: TrustLevel;
-  commercial_plan: Provider["plan"];
+  commercial_plan: string;
   accepts_requests: boolean;
   tags: string[];
   image_url: string | null;
 };
 
 type ServiceRow = {
-  id: string;
+  public_id: string;
   external_key: string | null;
-  business_profile_id: string | null;
+  business_public_id: string | null;
   slug: string;
   title: string;
   category_id: string;
@@ -119,7 +119,7 @@ function isVerifiedTrust(level: TrustLevel) {
 function mapCenter(row: CenterRow): Center {
   const type = isCenterType(row.center_type) ? row.center_type : "privado";
   return {
-    id: row.external_key ?? row.id,
+    id: row.public_id,
     slug: row.slug,
     name: row.name,
     type,
@@ -147,8 +147,8 @@ function mapCenter(row: CenterRow): Center {
 
 function mapProvider(row: BusinessRow): Provider {
   return {
-    id: row.external_key ?? row.id,
-    userId: row.external_key ?? row.id,
+    id: row.public_id,
+    userId: row.public_id,
     businessName: row.business_name,
     category: row.category,
     description: row.description ?? "",
@@ -165,7 +165,7 @@ function mapProvider(row: BusinessRow): Provider {
     isPublicInformation: Boolean(row.source_url),
     verified: isVerifiedTrust(row.trust_level),
     trustLevel: row.trust_level,
-    plan: row.commercial_plan,
+    plan: row.commercial_plan === "premium" ? "premium" : row.commercial_plan === "featured" || row.commercial_plan === "destacado" ? "destacado" : "gratuito",
     tags: row.tags,
     image: row.image_url ?? undefined,
   };
@@ -205,9 +205,9 @@ function centerListing(center: Center): Listing {
 }
 
 function mapService(row: ServiceRow, providerById: Map<string, Provider>): Listing {
-  const provider = row.business_profile_id ? providerById.get(row.business_profile_id) : undefined;
+  const provider = row.business_public_id ? providerById.get(row.business_public_id) : undefined;
   return {
-    id: row.external_key ?? row.id,
+    id: row.public_id,
     slug: row.slug,
     userId: provider?.id ?? "tenlo",
     categoryId: row.category_id,
@@ -246,9 +246,9 @@ export async function loadDirectorySnapshot(): Promise<DirectorySnapshot> {
 
   const supabase = createSupabasePublicClient();
   const [centerResult, businessResult, serviceResult] = await Promise.all([
-    supabase.from("centers").select("*").eq("status", "approved").order("name"),
-    supabase.from("business_profiles").select("*").eq("status", "approved").order("business_name"),
-    supabase.from("services").select("*").eq("status", "approved").order("title"),
+    supabase.rpc("get_public_centers"),
+    supabase.rpc("get_public_business_profiles"),
+    supabase.rpc("get_public_services"),
   ]);
 
   if (centerResult.error || businessResult.error || serviceResult.error) return mockSnapshot("query_failed");
@@ -259,10 +259,10 @@ export async function loadDirectorySnapshot(): Promise<DirectorySnapshot> {
   const centers = (centerResult.data as CenterRow[]).map(mapCenter);
   const businesses = businessResult.data as BusinessRow[];
   const providers = businesses.map(mapProvider);
-  const providerByDatabaseId = new Map(businesses.map((row, index) => [row.id, providers[index]]));
+  const providerByPublicId = new Map(businesses.map((row, index) => [row.public_id, providers[index]]));
   const listings = [
     ...centers.map(centerListing),
-    ...(serviceResult.data as ServiceRow[]).map((row) => mapService(row, providerByDatabaseId)),
+    ...(serviceResult.data as ServiceRow[]).map((row) => mapService(row, providerByPublicId)),
   ];
 
   return { centers, providers, listings, source: "supabase" };

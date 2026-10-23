@@ -152,7 +152,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Elegir Supabase como fuente de verdad definitiva para autenticación, perfiles y operación del marketplace.
 - [x] Aplicar y verificar las migraciones de reclamación anónima, perfiles ampliados, búsquedas y solicitudes de conexión.
 - [x] Crear una capa de acceso a datos para Supabase con retorno seguro a `mock-data.ts` mientras se valida la migración.
-- [ ] Activar la capa de Supabase en las páginas públicas y retirar la dependencia de `mock-data.ts` solo después de validar paridad y reversibilidad. La variable de Production está configurada, RLS está endurecida y el build con Supabase reproduce 21 centros, 14 proveedores y 16 servicios; falta comprobar el nuevo despliegue público antes de cerrar. Comunidad y alguna taxonomía estática seguirán como contenido editorial.
+- [x] Activar la capa de Supabase en las páginas públicas y validar paridad y reversibilidad. Production usa `DIRECTORY_DATA_SOURCE=supabase`; el despliegue público reproduce 21 centros, 14 proveedores y 16 servicios, sirve las rutas nuevas y mantiene un fallback editorial si la consulta falla. Comunidad y alguna taxonomía estática siguen siendo contenido editorial por diseño.
 - [x] Crear una migración y un generador de importación idempotente para fichas editoriales no reclamadas, sin inventar propietarios ni elevar su confianza por defecto.
 - [x] Auditar el inventario inicial completo y migrar a Supabase todo lo útil del piloto: de 24 centros y 22 proveedores organizativos únicos se admiten 21 centros y 14 proveedores con 16 servicios contrastados; el resto queda clasificado y fuera de publicación hasta disponer de evidencia suficiente. Las tres salas de Hanky Planet pertenecen a un único proveedor y los tres perfiles personales ficticios quedan fuera. Véase `docs/AUDITORIA-LOTE-PROVEEDORES.md`.
   - [x] Importar y verificar el bloque 1 en Supabase: 11 centros, 11 proveedores no reclamados y 13 servicios; cero huérfanos, propietarios ficticios, duplicados o niveles de confianza elevados. Seed repetido sin alterar recuentos el 11-10-2026.
@@ -163,7 +163,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   - [x] Contrastar y preparar Pulso Música, The Magic Forest y Centro Cultural Volturno con fuentes oficiales específicas.
   - [x] Importar y verificar el lote de Pulso Música, The Magic Forest y Centro Cultural Volturno: 14 proveedores y 16 servicios; segunda ejecución sin duplicados y contadores de integridad a cero el 13-10-2026.
   - [x] Contrastar los 8 proveedores organizativos restantes: seis registros didácticos o no sostenibles excluidos y dos polideportivos retenidos mientras continúan en obras.
-- [ ] Normalizar proveedores, servicios, categorías, municipios y zonas de cobertura.
+- [ ] Normalizar proveedores, servicios, categorías, municipios y zonas de cobertura. Los cuatro municipios y las tres categorías pobladas están auditados y son canónicos; `business_profiles.category` queda documentado como especialidad visible, no como dimensión analítica. Falta que los proveedores confirmen cobertura y poblar `service_municipalities`; véase `AUDITORIA-TAXONOMIA-PILOTO.md`.
 - [x] Definir plantillas iniciales por vertical manteniendo una estructura estable dentro de cada tipo:
   - [x] actividades y extraescolares;
   - [x] deporte;
@@ -186,7 +186,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   - [x] preparar en el esquema preferencias de contacto;
   - [x] preparar en el esquema motivo de inactividad o rechazo.
 - [x] Añadir historial de cambios y responsable de cada modificación. La migración `0017_admin_queue_status_history.sql` registra automáticamente cada cambio; el 16/10/2026 se validaron dos transiciones reversibles con responsable y fecha en `/admin`.
-- [ ] Definir reglas RLS y permisos para proveedor, familia, moderación y administración. La matriz y los casos de prueba están auditados en `MATRIZ-RLS-Y-PERMISOS.md`; antes de cerrar faltan limitar centros a aprobados, crear una superficie pública segura para proveedores, ocultar la enumeración de alias y validar los cuatro roles en producción.
+- [ ] Definir reglas RLS y permisos para proveedor, familia, moderación y administración. La matriz y los casos de prueba están auditados en `MATRIZ-RLS-Y-PERMISOS.md`; ya están limitados a aprobados los centros y perfiles de proveedor públicos, y la disponibilidad de alias se resuelve mediante un RPC booleano sin enumeración. Falta completar la prueba cruzada de los cuatro roles en producción antes de cerrar.
 - [ ] Crear copias de seguridad y procedimiento de recuperación. El procedimiento, frecuencia, retención, prueba y criterios de escalado están definidos en `COPIAS-Y-RECUPERACION.md`; falta ejecutar la primera copia y una restauración aislada.
 
 ## P0. Flujo para reclamar y enriquecer una ficha
@@ -345,6 +345,8 @@ Tenlo debe poder explicar qué buscan las familias y qué rendimiento obtiene ca
   - [x] oportunidades para captar nuevos proveedores o crear nuevas fichas.
 
 ### Tráfico y rendimiento de cada ficha
+
+La persistencia propia y el informe privado están implementados en código y documentados en `MEDICION-RENDIMIENTO-FICHAS.md`. Antes de marcar como terminadas las métricas calculadas falta aplicar la migración `0024`, desplegar y validar eventos consentidos reales.
 
 - [x] Medir impresiones renderizadas de la ficha en resultados de búsqueda.
 - [x] Medir posición y búsqueda de origen mediante un `search_id` compartido; falta extenderlo a otros tipos de listado.

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { AlertTriangle, ArrowRight, BarChart3, CheckCircle2, ClipboardCheck, Download, ExternalLink, FileCheck2, Flag, History, Inbox, Mail, Phone } from "lucide-react";
+import { Activity, AlertTriangle, ArrowRight, BarChart3, CheckCircle2, ClipboardCheck, Download, ExternalLink, FileCheck2, Flag, History, Inbox, Mail, Phone } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import AdminStatusControl from "@/components/AdminStatusControl";
 import AdminNotes from "@/components/AdminNotes";
@@ -163,6 +163,10 @@ export default async function AdminPage() {
       <div className="flex flex-col items-start gap-4 md:flex-row md:items-end md:justify-between">
         <p className="lead max-w-4xl">Cola privada para revisar reclamaciones, solicitudes y tareas recibidas. Los datos de contacto se usan solo para gestionar cada petición.</p>
         <div className="flex flex-wrap gap-3">
+          <Link href="/admin/rendimiento" className="btn-secondary shrink-0">
+            <Activity size={18} aria-hidden />
+            Ver fichas
+          </Link>
           <Link href="/admin/demanda" className="btn-secondary shrink-0">
             <BarChart3 size={18} aria-hidden />
             Ver demanda

@@ -75,6 +75,7 @@ const emailPattern = /\b[^\s@]+@[^\s@]+\.[^\s@]+\b/i;
 const phonePattern = /(?:\+?34)?[\s.-]*\d(?:[\s.-]*\d){7,}/;
 
 const activeSearchContextKey = "tenlo_active_search_context_v1";
+const analyticsSessionKey = "tenlo_directory_session_id_v1";
 
 type ActiveSearchContext = {
   search_id: string;
@@ -94,6 +95,23 @@ const searchLinkedActions = new Set<TrackingAction>([
   "contact_web_clicked",
   "contact_form_completed",
   "request_created"
+]);
+
+const persistedDirectoryActions = new Set<TrackingAction>([
+  "provider_impression",
+  "result_opened",
+  "provider_profile_viewed",
+  "center_profile_viewed",
+  "contact_started",
+  "contact_form_completed",
+  "request_created",
+  "contact_email_clicked",
+  "contact_phone_clicked",
+  "contact_web_clicked",
+  "map_directions_clicked",
+  "provider_saved",
+  "provider_unsaved",
+  "provider_shared"
 ]);
 
 export function shouldAttachSearchContext(action: unknown): action is TrackingAction {
@@ -165,22 +183,79 @@ export function toDataLayerEvent(element: HTMLElement) {
 }
 
 export function sendTrackingPayload(payload: Record<string, unknown>) {
-  if (!hasAnalyticsConsent() || !window.dataLayer) return;
+  if (!hasAnalyticsConsent()) return;
   if (typeof payload.event !== "string") return;
   const { event, event_id, event_timestamp, schema_version, ...params } = payload;
-  window.dataLayer.push({
+  window.dataLayer?.push({
     event,
     event_id,
     event_timestamp,
     schema_version,
     ...Object.fromEntries(sanitizeTrackingEntries(Object.entries(params)))
   });
+
+  if (event !== "provider_impression") persistDirectoryEvents([payload]);
 }
 
 export function pushTrackingEvent(action: TrackingAction, params: Record<string, TrackingValue>) {
-  if (typeof window === "undefined" || !hasAnalyticsConsent()) return;
+  if (typeof window === "undefined" || !hasAnalyticsConsent()) return null;
   const searchContext = shouldAttachSearchContext(action) ? getActiveSearchContext() : null;
-  sendTrackingPayload({ event: action, ...eventEnvelope(), ...withStableDimensions(params), ...searchContext });
+  const payload = { event: action, ...eventEnvelope(), ...withStableDimensions(params), ...searchContext };
+  sendTrackingPayload(payload);
+  return payload;
+}
+
+function directorySessionId() {
+  try {
+    const existing = window.sessionStorage.getItem(analyticsSessionKey);
+    if (existing) return existing;
+    const created = window.crypto.randomUUID();
+    window.sessionStorage.setItem(analyticsSessionKey, created);
+    return created;
+  } catch {
+    return window.crypto.randomUUID();
+  }
+}
+
+function directoryEvent(payload: Record<string, unknown>) {
+  const eventName = typeof payload.event === "string" ? payload.event as TrackingAction : null;
+  const profileId = typeof payload.profile_id === "string" ? payload.profile_id : null;
+  if (!eventName || !persistedDirectoryActions.has(eventName) || !profileId) return null;
+
+  const separator = profileId.indexOf(":");
+  if (separator < 1) return null;
+  const entityType = profileId.slice(0, separator);
+  const entityId = profileId.slice(separator + 1);
+  if (!entityId || !["center", "provider", "listing"].includes(entityType)) return null;
+
+  return {
+    event_id: payload.event_id,
+    anonymous_session_id: directorySessionId(),
+    event_name: eventName,
+    entity_type: entityType,
+    entity_id: entityId,
+    category_id: payload.category_id,
+    vertical_id: payload.vertical_id,
+    municipality: payload.municipality,
+    search_id: payload.search_id,
+    result_position: payload.position,
+    schema_version: analyticsSchemaVersion
+  };
+}
+
+export function persistDirectoryEvents(payloads: Record<string, unknown>[]) {
+  if (typeof window === "undefined" || !hasAnalyticsConsent()) return;
+  const events = payloads.map(directoryEvent).filter(Boolean);
+  if (!events.length) return;
+
+  void fetch("/api/analytics/directory-event", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ events }),
+    keepalive: true
+  }).catch(() => {
+    // La persistencia operativa nunca debe bloquear la navegación.
+  });
 }
 
 export function setActiveSearchContext(searchId: string) {

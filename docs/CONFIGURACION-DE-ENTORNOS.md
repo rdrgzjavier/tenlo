@@ -73,6 +73,7 @@ Referencia para mantener separados el desarrollo local, las previews de Vercel y
 - El build local con la fuente activa generó 21 centros, 14 proveedores y 16 servicios, coincidiendo con el lote auditado.
 - Home, centros, servicios, dos fichas representativas, una búsqueda municipal y sitemap respondieron `200` sobre el build de producción local.
 - Cualquier fallo de consulta o directorio vacío mantiene el fallback editorial para evitar una caída pública.
+- El despliegue `020439f` pasó CI y Vercel; las siete rutas críticas respondieron `200` en `tenlo.es`, incluidas fichas exclusivas del lote de Supabase. La Home mostró 21 centros y 37 recursos publicados.
 
 ## Comprobación antes de cada despliegue
 
@@ -84,6 +85,8 @@ Referencia para mantener separados el desarrollo local, las previews de Vercel y
 - [ ] El remitente de email está verificado antes de enviar.
 - [ ] Se ejecutan `npm run typecheck`, `npm run lint` y `npm run build`.
 - [ ] Se prueba una ruta pública y una ruta autenticada con datos no personales.
+
+Después del despliegue, ejecutar `npm run verify:production`. La prueba comprueba rutas públicas del lote real, sitemap, protección del informe administrativo y rechazo de una carga analítica vacía sin escribir datos.
 
 ## Rotación y respuesta ante exposición
 

@@ -79,6 +79,7 @@ export default function ListingCard({ listing, searchPosition }: { listing: List
   const visibleTags = uniqueDisplayTags(listing.tags, hiddenTags).slice(0, 4);
   const resultTracking = trackingAttrs("result_opened", {
     item: listing.id,
+    type: listing.categoryId === "centros" ? "center" : "listing",
     category: listing.categoryId,
     municipality: listing.municipality,
     position: searchPosition,

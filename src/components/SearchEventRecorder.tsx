@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { createSupabaseBrowserClient, hasSupabaseBrowserConfig } from "@/lib/supabase/client";
-import { hasAnalyticsConsent, pushTrackingEvent, setActiveSearchContext } from "@/lib/analytics";
+import { hasAnalyticsConsent, persistDirectoryEvents, pushTrackingEvent, setActiveSearchContext } from "@/lib/analytics";
 import { verticalIdForCategory } from "@/lib/verticals";
 
 type SearchEventRecorderProps = {
@@ -133,15 +133,19 @@ export default function SearchEventRecorder({ query, category, municipality, fil
           result_count: resultsCount
         });
       }
+      const impressionEvents: Record<string, unknown>[] = [];
       parsedResults.forEach((result, index) => {
-        pushTrackingEvent("provider_impression", {
+        const impressionEvent = pushTrackingEvent("provider_impression", {
           search_id: resolvedSearchId,
           item: result.id,
+          type: result.isProvider ? "listing" : "center",
           category: result.category,
           municipality: result.municipality,
           position: index + 1
         });
+        if (impressionEvent) impressionEvents.push(impressionEvent);
       });
+      persistDirectoryEvents(impressionEvents);
 
       if (!hasSupabaseBrowserConfig()) return;
 
