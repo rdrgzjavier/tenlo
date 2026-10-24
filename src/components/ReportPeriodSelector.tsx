@@ -8,14 +8,22 @@ export function resolveReportPeriod(value: string | undefined): ReportPeriod {
   return reportPeriods.includes(parsed as ReportPeriod) ? parsed as ReportPeriod : 90;
 }
 
-export default function ReportPeriodSelector({ activePeriod, pathname }: { activePeriod: ReportPeriod; pathname: string }) {
+function periodHref(pathname: string, period: ReportPeriod, preservedParams: Record<string, string>) {
+  const params = new URLSearchParams({ period: String(period) });
+  Object.entries(preservedParams).forEach(([key, value]) => {
+    if (value) params.set(key, value);
+  });
+  return `${pathname}?${params.toString()}`;
+}
+
+export default function ReportPeriodSelector({ activePeriod, pathname, preservedParams = {} }: { activePeriod: ReportPeriod; pathname: string; preservedParams?: Record<string, string> }) {
   return (
     <nav className="mt-5 flex flex-wrap items-center gap-2" aria-label="Periodo del informe">
       <span className="mr-1 text-sm font-semibold text-muted">Periodo:</span>
       {reportPeriods.map((period) => (
         <Link
           key={period}
-          href={`${pathname}?period=${period}`}
+          href={periodHref(pathname, period, preservedParams)}
           aria-current={period === activePeriod ? "page" : undefined}
           className={period === activePeriod ? "chip border-primary bg-violet/10 text-primary" : "chip hover:border-primary hover:text-primary"}
         >

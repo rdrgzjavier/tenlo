@@ -336,10 +336,10 @@ Tenlo debe poder explicar qué buscan las familias y qué rendimiento obtiene ca
 - [x] Registrar qué resultados se renderizaron y en qué posición, vinculados mediante `search_id`.
 - [x] Relacionar búsqueda con ficha vista, guardado, compartido y contacto mediante un `search_id` anónimo activo durante 30 minutos. Respuesta y conexión útil se incorporarán cuando exista el flujo del proveedor.
 - [x] Sanear el texto libre antes de persistirlo, descartar posibles emails o teléfonos y no enviarlo a GA4.
-- [ ] Crear un informe de demanda. La primera vista interna de 90 días está implementada en `/admin/demanda`; faltan tendencias, intenciones y conversión completa:
+- [ ] Crear un informe de demanda. La vista interna `/admin/demanda` permite comparar 30, 90 y 180 días y filtrar por categoría y municipio; faltan tendencias, intenciones y conversión completa:
   - [ ] términos e intenciones más buscados; ya muestra términos saneados, falta clasificar intención;
   - [x] categorías y verticales con más demanda;
-  - [x] demanda por municipio y periodo inicial de 90 días;
+  - [x] demanda por municipio y periodos comparables de 30, 90 y 180 días;
   - [ ] búsquedas emergentes;
   - [x] búsquedas sin oferta suficiente;
   - [ ] búsquedas que terminan en contacto, respuesta y conexión útil;
@@ -348,7 +348,7 @@ Tenlo debe poder explicar qué buscan las familias y qué rendimiento obtiene ca
 
 ### Tráfico y rendimiento de cada ficha
 
-La persistencia propia y el informe privado están implementados en código y documentados en `MEDICION-RENDIMIENTO-FICHAS.md`. Antes de marcar como terminadas las métricas calculadas falta aplicar la migración `0024`, desplegar y validar eventos consentidos reales.
+La persistencia propia, la migración `0024` y el informe privado están desplegados y documentados en `MEDICION-RENDIMIENTO-FICHAS.md`. El informe permite comparar 30, 90 y 180 días y filtrar visibilidad y detalle por categoría y municipio; falta validar volumen suficiente de eventos consentidos reales antes de cerrar todas las métricas.
 
 - [x] Medir impresiones renderizadas de la ficha en resultados de búsqueda.
 - [x] Medir posición y búsqueda de origen mediante un `search_id` compartido; falta extenderlo a otros tipos de listado.
@@ -602,7 +602,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 - [x] Crear una primera capa de datos estable: taxonomía `dataLayer` versionada y migración `0009` con dimensiones de búsqueda y vista agregada diaria sin PII.
 - [x] Aplicar y verificar la migración `0009_analytics_foundations.sql` en Supabase antes de desplegar el código que escribe sus nuevas columnas.
 - [x] Documentar para cada KPI: definición, fórmula, fuente, frecuencia, propietario y limitaciones en `CATALOGO-DE-KPIS-Y-REPORTING.md`.
-- [ ] Mostrar intervalos comparables y filtros por categoría, municipio, estado de ficha, plan y canal. Demanda, rendimiento, usuarios y consentimiento ya permiten comparar ventanas comunes de 30, 90 y 180 días; faltan los filtros de segmentación.
+- [ ] Mostrar intervalos comparables y filtros por categoría, municipio, estado de ficha, plan y canal. Demanda y rendimiento ya permiten filtrar por categoría y municipio, y demanda, rendimiento, usuarios y consentimiento comparan ventanas comunes de 30, 90 y 180 días; faltan estado de ficha, plan y canal donde sean aplicables.
 - [ ] No comparar poblaciones distintas sin explicar la unidad.
 - [ ] Diferenciar `0`, `sin dato` y `no aplicable`.
 - [ ] Añadir notas cuando cambie una definición o implementación.

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { ArrowLeft, BarChart3, Clock3, Eye, Handshake, MousePointerClick, UsersRound } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import ReportPeriodSelector, { resolveReportPeriod } from "@/components/ReportPeriodSelector";
+import ReportSegmentFilters from "@/components/ReportSegmentFilters";
 import { loadDirectorySnapshot } from "@/lib/directory-repository";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
@@ -81,10 +82,10 @@ function reportingKey(entityType: DirectoryEvent["entity_type"], entityId: strin
   return `resource:${entityId}`;
 }
 
-export default async function AdminDirectoryPerformancePage({ searchParams }: { searchParams: Promise<{ period?: string }> }) {
+export default async function AdminDirectoryPerformancePage({ searchParams }: { searchParams: Promise<{ period?: string; category?: string; municipality?: string }> }) {
   if (!hasSupabaseServerConfig()) return <PrivateAreaUnavailable />;
 
-  const { period: rawPeriod } = await searchParams;
+  const { period: rawPeriod, category: rawCategory, municipality: rawMunicipality } = await searchParams;
   const period = resolveReportPeriod(rawPeriod);
 
   const supabase = await createSupabaseServerClient();
@@ -128,7 +129,15 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
     labels.set(listing.categoryId === "centros" ? reportingKey("center", listing.id) : `resource:${listing.id}`, { title: listing.title, href });
   });
 
-  const events = (data ?? []) as DirectoryEvent[];
+  const allEvents = (data ?? []) as DirectoryEvent[];
+  const categoryOptions = [...new Set(allEvents.flatMap((event) => event.category_id ? [event.category_id] : []))].sort((a, b) => a.localeCompare(b, "es"));
+  const municipalityOptions = [...new Set(allEvents.flatMap((event) => event.municipality ? [event.municipality] : []))].sort((a, b) => a.localeCompare(b, "es"));
+  const activeCategory = rawCategory && categoryOptions.includes(rawCategory) ? rawCategory : "";
+  const activeMunicipality = rawMunicipality && municipalityOptions.includes(rawMunicipality) ? rawMunicipality : "";
+  const events = allEvents.filter((event) => (
+    (!activeCategory || event.category_id === activeCategory)
+    && (!activeMunicipality || event.municipality === activeMunicipality)
+  ));
   const grouped = new Map<string, PerformanceRow>();
   for (const event of events) {
     const key = reportingKey(event.entity_type, event.entity_id);
@@ -180,13 +189,14 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
       <p className="label mt-6">Informe interno</p>
       <h1 className="page-title">Rendimiento de fichas</h1>
       <p className="lead max-w-4xl">Visibilidad e intención registrada con consentimiento estadístico. Periodo del {dateLabel(periodStart)} al {dateLabel(new Date())}.</p>
-      <ReportPeriodSelector activePeriod={period} pathname="/admin/rendimiento" />
+      <ReportPeriodSelector activePeriod={period} pathname="/admin/rendimiento" preservedParams={{ category: activeCategory, municipality: activeMunicipality }} />
+      <ReportSegmentFilters activeCategory={activeCategory} activeMunicipality={activeMunicipality} activePeriod={period} categoryOptions={categoryOptions} municipalityOptions={municipalityOptions} pathname="/admin/rendimiento" />
 
       {error ? <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">Todavía no se puede consultar el histórico por ficha. Comprueba que la migración de rendimiento esté aplicada.</p> : null}
       {operationalError ? <p className="mt-3 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">No se ha podido cargar una parte del embudo de conexiones. Comprueba los permisos administrativos.</p> : null}
 
       <section className="card mt-6 p-5 md:p-6" aria-labelledby="performance-summary-title">
-        <div className="flex items-center gap-3"><BarChart3 size={22} className="text-ink" aria-hidden /><div><h2 id="performance-summary-title" className="subsection-title text-ink">Resumen de {period} días</h2><p className="mt-1 text-sm text-muted">No contiene nombres, emails, teléfonos, mensajes ni identificadores de cuenta.</p></div></div>
+        <div className="flex items-center gap-3"><BarChart3 size={22} className="text-ink" aria-hidden /><div><h2 id="performance-summary-title" className="subsection-title text-ink">Resumen de {period} días</h2><p className="mt-1 text-sm text-muted">No contiene nombres, emails, teléfonos, mensajes ni identificadores de cuenta.{activeCategory || activeMunicipality ? " Visibilidad y detalle filtrados por el segmento seleccionado." : ""}</p></div></div>
         <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Eye size={16} aria-hidden />Impresiones</dt><dd className="mt-2 text-3xl font-black text-ink">{events.length ? totalImpressions : "Sin datos"}</dd></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><MousePointerClick size={16} aria-hidden />Visitas de ficha</dt><dd className="mt-2 text-3xl font-black text-ink">{events.length ? totalViews : "Sin datos"}</dd></div>
@@ -196,7 +206,7 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
       </section>
 
       <section className="card mt-6 p-5 md:p-6" aria-labelledby="connection-summary-title">
-        <div className="flex items-center gap-3"><Handshake size={22} className="text-ink" aria-hidden /><div><h2 id="connection-summary-title" className="subsection-title text-ink">Conexiones y resultados</h2><p className="mt-1 text-sm text-muted">Solicitudes y feedback agregado. La North Star usa 30 días; el resto del embudo, {period} días.</p></div></div>
+        <div className="flex items-center gap-3"><Handshake size={22} className="text-ink" aria-hidden /><div><h2 id="connection-summary-title" className="subsection-title text-ink">Conexiones y resultados</h2><p className="mt-1 text-sm text-muted">Solicitudes y feedback agregado del conjunto del piloto, sin aplicar los filtros de ficha. La North Star usa 30 días; el resto del embudo, {period} días.</p></div></div>
         <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Solicitudes creadas</dt><dd className="mt-2 text-3xl font-black text-ink">{requests.length || "Sin datos"}</dd><p className="mt-1 text-xs text-muted">Últimos {period} días</p></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Con respuesta o alternativa</dt><dd className="mt-2 text-3xl font-black text-ink">{requests.length ? respondedRequests : "Sin datos"}</dd><p className="mt-1 text-xs text-muted">{requests.length ? `${percent(respondedRequests, requests.length)} de las solicitudes` : "Sin tasa calculable"}</p></div>
