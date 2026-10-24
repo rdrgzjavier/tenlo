@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowLeft, BarChart3, Eye, MapPin, MessageCircle, SearchX, Send, TrendingUp } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
+import ReportPeriodSelector, { resolveReportPeriod } from "@/components/ReportPeriodSelector";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -114,8 +115,11 @@ function RankingTable({ title, description, items }: { title: string; descriptio
   );
 }
 
-export default async function AdminDemandPage() {
+export default async function AdminDemandPage({ searchParams }: { searchParams: Promise<{ period?: string }> }) {
   if (!hasSupabaseServerConfig()) return <PrivateAreaUnavailable />;
+
+  const { period: rawPeriod } = await searchParams;
+  const period = resolveReportPeriod(rawPeriod);
 
   const supabase = await createSupabaseServerClient();
   const { data: authData } = await supabase.auth.getUser();
@@ -125,7 +129,7 @@ export default async function AdminDemandPage() {
   if (profile?.role !== "tenlo_admin" || profile.status !== "approved") redirect("/area-personal");
 
   const periodStart = new Date();
-  periodStart.setDate(periodStart.getDate() - 90);
+  periodStart.setDate(periodStart.getDate() - period);
   const [searchResult, journeyResult] = await Promise.all([
     supabase
       .from("search_events")
@@ -173,11 +177,12 @@ export default async function AdminDemandPage() {
       <p className="label mt-6">Informe interno</p>
       <h1 className="page-title">Demanda del piloto</h1>
       <p className="lead max-w-4xl">Qué están buscando las familias y dónde la oferta todavía no responde. Periodo del {dateLabel(periodStart)} al {dateLabel(new Date())}.</p>
+      <ReportPeriodSelector activePeriod={period} pathname="/admin/demanda" />
 
       {searchResult.error || journeyResult.error ? <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">No se ha podido cargar una parte del embudo de búsqueda. Comprueba que las migraciones de acceso administrativo estén aplicadas.</p> : null}
 
       <section className="card mt-6 p-5 md:p-6" aria-labelledby="demand-summary-title">
-        <div className="flex items-center gap-3"><BarChart3 size={22} className="text-ink" aria-hidden /><div><h2 id="demand-summary-title" className="subsection-title text-ink">Resumen de 90 días</h2><p className="mt-1 text-sm text-muted">Solo datos agregados; este informe no muestra usuarios ni sesiones.</p></div></div>
+        <div className="flex items-center gap-3"><BarChart3 size={22} className="text-ink" aria-hidden /><div><h2 id="demand-summary-title" className="subsection-title text-ink">Resumen de {period} días</h2><p className="mt-1 text-sm text-muted">Solo datos agregados; este informe no muestra usuarios ni sesiones.</p></div></div>
         <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Búsquedas registradas</dt><dd className="mt-2 text-3xl font-black text-ink">{events.length || "Sin datos"}</dd></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Sin resultados</dt><dd className="mt-2 text-3xl font-black text-ink">{events.length ? `${zeroResults} · ${percent(zeroResults, events.length)}` : "Sin datos"}</dd></div>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowLeft, BarChart3, Clock3, Eye, Handshake, MousePointerClick, UsersRound } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
+import ReportPeriodSelector, { resolveReportPeriod } from "@/components/ReportPeriodSelector";
 import { loadDirectorySnapshot } from "@/lib/directory-repository";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
@@ -80,8 +81,11 @@ function reportingKey(entityType: DirectoryEvent["entity_type"], entityId: strin
   return `resource:${entityId}`;
 }
 
-export default async function AdminDirectoryPerformancePage() {
+export default async function AdminDirectoryPerformancePage({ searchParams }: { searchParams: Promise<{ period?: string }> }) {
   if (!hasSupabaseServerConfig()) return <PrivateAreaUnavailable />;
+
+  const { period: rawPeriod } = await searchParams;
+  const period = resolveReportPeriod(rawPeriod);
 
   const supabase = await createSupabaseServerClient();
   const { data: authData } = await supabase.auth.getUser();
@@ -91,7 +95,7 @@ export default async function AdminDirectoryPerformancePage() {
   if (profile?.role !== "tenlo_admin" || profile.status !== "approved") redirect("/area-personal");
 
   const periodStart = new Date();
-  periodStart.setDate(periodStart.getDate() - 90);
+  periodStart.setDate(periodStart.getDate() - period);
   const monthStart = new Date();
   monthStart.setDate(monthStart.getDate() - 30);
   const [{ data, error }, directory, requestsResult, feedbackResult] = await Promise.all([
@@ -166,7 +170,7 @@ export default async function AdminDirectoryPerformancePage() {
     : []
   ).filter((duration) => duration >= 0);
   const confirmedOutcomes = feedback.filter((item) => item.outcome !== "not_progressed").length;
-  const usefulConnections90 = feedback.filter((item) => item.useful).length;
+  const usefulConnectionsPeriod = feedback.filter((item) => item.useful).length;
   const usefulConnections30 = feedback.filter((item) => item.useful && new Date(item.created_at) >= monthStart).length;
   const operationalError = requestsResult.error || feedbackResult.error;
 
@@ -176,12 +180,13 @@ export default async function AdminDirectoryPerformancePage() {
       <p className="label mt-6">Informe interno</p>
       <h1 className="page-title">Rendimiento de fichas</h1>
       <p className="lead max-w-4xl">Visibilidad e intención registrada con consentimiento estadístico. Periodo del {dateLabel(periodStart)} al {dateLabel(new Date())}.</p>
+      <ReportPeriodSelector activePeriod={period} pathname="/admin/rendimiento" />
 
       {error ? <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">Todavía no se puede consultar el histórico por ficha. Comprueba que la migración de rendimiento esté aplicada.</p> : null}
       {operationalError ? <p className="mt-3 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">No se ha podido cargar una parte del embudo de conexiones. Comprueba los permisos administrativos.</p> : null}
 
       <section className="card mt-6 p-5 md:p-6" aria-labelledby="performance-summary-title">
-        <div className="flex items-center gap-3"><BarChart3 size={22} className="text-ink" aria-hidden /><div><h2 id="performance-summary-title" className="subsection-title text-ink">Resumen de 90 días</h2><p className="mt-1 text-sm text-muted">No contiene nombres, emails, teléfonos, mensajes ni identificadores de cuenta.</p></div></div>
+        <div className="flex items-center gap-3"><BarChart3 size={22} className="text-ink" aria-hidden /><div><h2 id="performance-summary-title" className="subsection-title text-ink">Resumen de {period} días</h2><p className="mt-1 text-sm text-muted">No contiene nombres, emails, teléfonos, mensajes ni identificadores de cuenta.</p></div></div>
         <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Eye size={16} aria-hidden />Impresiones</dt><dd className="mt-2 text-3xl font-black text-ink">{events.length ? totalImpressions : "Sin datos"}</dd></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><MousePointerClick size={16} aria-hidden />Visitas de ficha</dt><dd className="mt-2 text-3xl font-black text-ink">{events.length ? totalViews : "Sin datos"}</dd></div>
@@ -191,13 +196,13 @@ export default async function AdminDirectoryPerformancePage() {
       </section>
 
       <section className="card mt-6 p-5 md:p-6" aria-labelledby="connection-summary-title">
-        <div className="flex items-center gap-3"><Handshake size={22} className="text-ink" aria-hidden /><div><h2 id="connection-summary-title" className="subsection-title text-ink">Conexiones y resultados</h2><p className="mt-1 text-sm text-muted">Solicitudes y feedback agregado. La North Star usa 30 días; el resto del embudo, 90 días.</p></div></div>
+        <div className="flex items-center gap-3"><Handshake size={22} className="text-ink" aria-hidden /><div><h2 id="connection-summary-title" className="subsection-title text-ink">Conexiones y resultados</h2><p className="mt-1 text-sm text-muted">Solicitudes y feedback agregado. La North Star usa 30 días; el resto del embudo, {period} días.</p></div></div>
         <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Solicitudes creadas</dt><dd className="mt-2 text-3xl font-black text-ink">{requests.length || "Sin datos"}</dd><p className="mt-1 text-xs text-muted">Últimos 90 días</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Solicitudes creadas</dt><dd className="mt-2 text-3xl font-black text-ink">{requests.length || "Sin datos"}</dd><p className="mt-1 text-xs text-muted">Últimos {period} días</p></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Con respuesta o alternativa</dt><dd className="mt-2 text-3xl font-black text-ink">{requests.length ? respondedRequests : "Sin datos"}</dd><p className="mt-1 text-xs text-muted">{requests.length ? `${percent(respondedRequests, requests.length)} de las solicitudes` : "Sin tasa calculable"}</p></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Clock3 size={16} aria-hidden />Tiempo mediano de respuesta</dt><dd className="mt-2 text-3xl font-black text-ink">{durationLabel(median(responseTimes))}</dd><p className="mt-1 text-xs text-muted">Solo primeras respuestas registradas</p></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Resultados confirmados</dt><dd className="mt-2 text-3xl font-black text-ink">{feedback.length ? confirmedOutcomes : "Sin datos"}</dd><p className="mt-1 text-xs text-muted">{feedback.length ? `${percent(confirmedOutcomes, feedback.length)} del feedback recibido` : "Últimos 90 días"}</p></div>
-          <div className="rounded-2xl border border-violet/25 bg-violet/5 p-4"><dt className="text-sm font-semibold text-muted">Conexiones útiles mensuales</dt><dd className="mt-2 text-3xl font-black text-ink">{usefulConnections30}</dd><p className="mt-1 text-xs text-muted">North Star · {usefulConnections90} útiles en 90 días</p></div>
+          <div className="rounded-2xl border border-violet/25 bg-violet/5 p-4"><dt className="text-sm font-semibold text-muted">Conexiones útiles mensuales</dt><dd className="mt-2 text-3xl font-black text-ink">{usefulConnections30}</dd><p className="mt-1 text-xs text-muted">North Star · {usefulConnectionsPeriod} útiles en {period} días</p></div>
         </dl>
         <p className="mt-4 text-xs leading-5 text-muted">Una respuesta o alternativa no se considera útil por sí sola: la conexión útil requiere valoración de la familia. No se muestran rankings ni comparaciones si la muestra es insuficiente.</p>
       </section>
