@@ -84,6 +84,9 @@ export default function FavoriteButton({ category, className = "icon-button", la
       return;
     }
 
+    const { error: activityError } = await supabase.rpc("record_profile_activity", { next_onboarding_status: null });
+    if (activityError) console.error("No se pudo registrar la actividad de favoritos", activityError.code);
+
     const nextSaved = !saved;
     setSaved(nextSaved);
     setNotice(nextSaved ? "Guardado en tus favoritos." : "Eliminado de tus favoritos.");

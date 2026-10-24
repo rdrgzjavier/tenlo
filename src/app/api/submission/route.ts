@@ -45,6 +45,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "No hemos podido enviar la publicación a revisión." }, { status: 400 });
   }
 
+  const { error: activityError } = await supabase.rpc("record_profile_activity", { next_onboarding_status: null });
+  if (activityError) console.error("No se pudo registrar la actividad de la publicación", activityError.code);
+
   const adminHtml = tenloEmailShell("Nueva publicación pendiente", rows({
     Tipo: submissionType,
     Categoría: category,

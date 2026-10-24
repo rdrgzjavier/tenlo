@@ -180,6 +180,11 @@ export default function ProviderProfileEditor({ profile }: ProviderProfileEditor
       }
     }
 
+    const { error: activityError } = await supabase.rpc("record_profile_activity", {
+      next_onboarding_status: completeness >= 75 ? "profile_complete" : "profile_started"
+    });
+    if (activityError) console.error("No se pudo registrar el avance del perfil", activityError.code);
+
     pushTrackingEvent("profile_section_completed", { section: "business_profile", status_before: profile.status });
     pushTrackingEvent("profile_submitted", { entity_type: "provider", submission_mode: profile.status === "rejected" ? "resubmission" : "update" });
     setLoading(false);

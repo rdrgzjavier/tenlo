@@ -77,7 +77,7 @@ export default async function AdminUsersPage() {
   if (adminProfile?.role !== "tenlo_admin" || adminProfile.status !== "approved") redirect("/area-personal");
 
   const [profilesResult, consentResult] = await Promise.all([
-    supabase.from("profiles").select("role,municipality,marketing_consent,registration_channel,acquisition_entry_channel,acquisition_source,acquisition_medium,acquisition_campaign,onboarding_status,created_at").order("created_at", { ascending: false }).limit(5000),
+    supabase.from("profiles").select("role,municipality,marketing_consent,registration_channel,acquisition_entry_channel,acquisition_source,acquisition_medium,acquisition_campaign,onboarding_status,last_significant_activity_at,created_at").order("created_at", { ascending: false }).limit(5000),
     supabase.from("consent_history").select("decision,recorded_at").eq("purpose", "marketing_email").order("recorded_at", { ascending: false }).limit(5000)
   ]);
 
@@ -86,6 +86,7 @@ export default async function AdminUsersPage() {
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - 30);
   const recentProfiles = profiles.filter((profile) => new Date(profile.created_at) >= cutoff);
+  const recentlyActiveProfiles = profiles.filter((profile) => profile.last_significant_activity_at && new Date(profile.last_significant_activity_at) >= cutoff);
   const marketingActive = profiles.filter((profile) => profile.marketing_consent).length;
   const providerProfiles = profiles.filter((profile) => !["family", "tenlo_admin"].includes(profile.role)).length;
   const recentConsentEvents = consentEvents.filter((event) => new Date(event.recorded_at) >= cutoff);
@@ -102,9 +103,10 @@ export default async function AdminUsersPage() {
 
       {profilesResult.error || consentResult.error ? <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">No se ha podido cargar una parte del informe. Comprueba las migraciones y permisos.</p> : null}
 
-      <section className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Resumen de usuarios">
+      <section className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-5" aria-label="Resumen de usuarios">
         <div className="card p-5"><UsersRound className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Cuentas totales</p><p className="mt-1 text-3xl font-black text-ink">{profiles.length}</p></div>
         <div className="card p-5"><UserCheck className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Altas en 30 días</p><p className="mt-1 text-3xl font-black text-ink">{recentProfiles.length}</p></div>
+        <div className="card p-5"><UserCheck className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Actividad en 30 días</p><p className="mt-1 text-3xl font-black text-ink">{recentlyActiveProfiles.length}</p><p className="mt-1 text-xs text-muted">Usuarios con alguna acción significativa</p></div>
         <div className="card p-5"><ShieldCheck className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Marketing activo</p><p className="mt-1 text-3xl font-black text-ink">{marketingActive}</p><p className="mt-1 text-xs text-muted">{percentage(marketingActive, profiles.length)} del total</p></div>
         <div className="card p-5"><UsersRound className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Cuentas proveedoras</p><p className="mt-1 text-3xl font-black text-ink">{providerProfiles}</p><p className="mt-1 text-xs text-muted">Excluye familias y administración</p></div>
       </section>

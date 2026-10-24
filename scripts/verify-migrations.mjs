@@ -31,7 +31,7 @@ numbers.forEach((number, index) => {
   assert(number === index + 1, `Falta la migración ${String(index + 1).padStart(4, "0")}.`);
 });
 
-const [m24, m25, m26, m27, m28, m29, m30, m31, m32, repository, registration, verification] = await Promise.all([
+const [m24, m25, m26, m27, m28, m29, m30, m31, m32, m33, repository, registration, verification] = await Promise.all([
   text("supabase/migrations/0024_directory_performance_events.sql"),
   text("supabase/migrations/0025_public_directory_rpc.sql"),
   text("supabase/migrations/0026_profile_role_hardening.sql"),
@@ -41,6 +41,7 @@ const [m24, m25, m26, m27, m28, m29, m30, m31, m32, repository, registration, ve
   text("supabase/migrations/0030_harden_admin_function_search_paths.sql"),
   text("supabase/migrations/0031_profile_acquisition_and_onboarding.sql"),
   text("supabase/migrations/0032_submission_content_immutability.sql"),
+  text("supabase/migrations/0033_profile_activity_tracking.sql"),
   text("src/lib/directory-repository.ts"),
   text("src/components/LoginRegistration.tsx"),
   text("supabase/verification/0024_0025_directory_controls.sql")
@@ -109,6 +110,10 @@ assert(/grant update \(status\) on public\.submissions to authenticated/i.test(m
 for (const protectedColumn of ["payload", "review_notes"]) {
   assert(verification.includes(`'public.submissions', '${protectedColumn}', 'update'`), `La verificación no comprueba ${protectedColumn} en submissions.`);
 }
+
+assert(/security definer[\s\S]*set search_path = ''/i.test(m33), "0033 debe aislar la función de actividad con search_path vacío.");
+assert(/where id = \(select auth\.uid\(\)\)/i.test(m33), "0033 debe limitar la actividad al perfil autenticado.");
+assert(!m33.includes("'active' then"), "0033 no debe permitir al cliente autodeclararse activo.");
 
 console.log(`Migraciones verificadas: ${migrationFiles.length} archivos, secuencia 0001-${String(numbers.at(-1)).padStart(4, "0")}.`);
 console.log("Contratos comprobados: directorio público, permisos por columna, moderación, consentimiento y search_path.");

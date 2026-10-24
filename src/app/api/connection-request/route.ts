@@ -42,6 +42,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "No hemos podido enviar la solicitud. Inténtalo de nuevo." }, { status: 400 });
   }
 
+  const { error: activityError } = await supabase.rpc("record_profile_activity", { next_onboarding_status: null });
+  if (activityError) console.error("No se pudo registrar la actividad de la solicitud", activityError.code);
+
   const { data: profile } = await supabase.from("profiles").select("public_name,display_name,contact_email,phone").eq("id", authData.user.id).maybeSingle();
   const familyEmail = profile?.contact_email || authData.user.email || null;
   const adminHtml = tenloEmailShell("Nueva solicitud protegida", rows({

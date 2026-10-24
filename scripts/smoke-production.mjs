@@ -7,7 +7,9 @@ const publicChecks = [
   ["/servicios", ["Servicios para familias"]],
   ["/servicios/centro-cultural-volturno-pozuelo", ["Centro Cultural Volturno"]],
   ["/buscar?municipio=Majadahonda", ["Majadahonda"]],
-  ["/sitemap.xml", ["/centros/ceip-agora-boadilla", "/servicios/centro-cultural-volturno-pozuelo"]]
+  ["/sitemap.xml", ["/centros/ceip-agora-boadilla", "/servicios/centro-cultural-volturno-pozuelo"]],
+  ["/robots.txt", ["Sitemap: https://tenlo.es/sitemap.xml", "Disallow: /admin/"]],
+  ["/llms.txt", ["# Tenlo", "[Buscar en Tenlo](https://tenlo.es/buscar)", "## Límites de uso"]]
 ];
 
 let failed = false;

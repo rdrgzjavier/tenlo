@@ -21,7 +21,7 @@ Referencia: [Row Level Security de Supabase](https://supabase.com/docs/guides/da
 
 | Entidad | Anónimo | Usuario autenticado | Titular | `tenlo_admin` | Estado / observación |
 |---|---|---|---|---|---|
-| `profiles` | Sin acceso | Lee su fila; inserta solo rol público y estado inicial válido; actualiza solo columnas de cuenta autorizadas | Igual | Lectura mediante `0022` | `0026` aplicada: el catálogo confirma que una cuenta autenticada no puede actualizar `role` ni `status`, pero sí `display_name`. |
+| `profiles` | Sin acceso | Lee su fila; inserta solo rol público y estado inicial válido; actualiza solo columnas de cuenta autorizadas | Igual | Lectura mediante `0022` | `0026` protege rol y estado. `0033` permite registrar solo la actividad significativa propia mediante un RPC acotado; no expone perfiles ajenos. |
 | `profile_usernames` | Sin lectura; solo RPC booleano | Lee solo el alias propio | Gestiona la propia | Sin excepción necesaria | Aplicado en `0023`; el cliente no puede enumerar alias ni UUID. |
 | `business_profiles` | RPC público seguro | Lee las propias y edita solo contenido permitido | Gestiona las propias | Lectura administrativa | El alta profesional crea una ficha privada pendiente tras confirmar el email. `0025` y `0027` aplicadas: la superficie pública es explícita y confianza, moderación, origen, plan, reclamación y titularidad están protegidos. |
 | `centers` | RPC público seguro | Lee propuestas propias | — | Lectura administrativa | `0025` aplicada: el RPC público omite `created_by`, origen y campos internos; la tabla base no tiene lectura anónima. |
@@ -47,7 +47,7 @@ Referencia: [Row Level Security de Supabase](https://supabase.com/docs/guides/da
 
 Las migraciones `0022` y `0023` se aplicaron en producción el 22 de octubre de 2026. La consulta de control confirmó la existencia de las cinco políticas, ejecución anónima de la comprobación booleana de alias y ausencia de permiso anónimo de lectura sobre `profile_usernames`.
 
-Las migraciones `0024` a `0032` se aplicaron y verificaron en producción el 23 de octubre de 2026. La consulta de catálogo confirmó RPC públicos con 21 centros, 14 proveedores y 16 servicios, tablas base sin lectura anónima, campos de moderación protegidos, historial de consentimiento sin escritura directa, funciones administrativas con `search_path` vacío, nueve campos de atribución y propuestas con contenido inmutable. El procedimiento y la evidencia esperada están en `APLICACION-MIGRACIONES-0024-0031.md`.
+Las migraciones `0024` a `0033` se aplicaron y verificaron en producción el 23 de octubre de 2026. La consulta de catálogo confirmó RPC públicos con 21 centros, 14 proveedores y 16 servicios, tablas base sin lectura anónima, campos de moderación protegidos, historial de consentimiento sin escritura directa, funciones administrativas con `search_path` vacío, nueve campos de atribución, propuestas con contenido inmutable y registro acotado de la actividad propia. El procedimiento y la evidencia esperada están en `APLICACION-MIGRACIONES-0024-0031.md`.
 
 1. [x] Permitir que solo un perfil aprobado `tenlo_admin` lea en el backoffice los contactos necesarios para gestionar solicitudes.
 2. [x] Hacer que la comprobación de alias devuelva solo `true/false`, limitar los centros públicos a aprobados y permitir leer proveedores aprobados desde el directorio.

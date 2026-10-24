@@ -101,6 +101,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="es">
       <head>
+        <link rel="describedby" href={absoluteUrl("/llms.txt")} type="text/markdown" />
         {gtmId ? (
           <Script id="gtm-consent-default" strategy="beforeInteractive">
             {`window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){window.dataLayer.push(arguments);};window.gtag('consent','default',{'ad_storage':'denied','ad_user_data':'denied','ad_personalization':'denied','analytics_storage':'denied','functionality_storage':'granted','security_storage':'granted'});`}

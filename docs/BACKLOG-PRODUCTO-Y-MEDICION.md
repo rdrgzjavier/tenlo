@@ -399,12 +399,13 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
   - [x] fecha y canal de registro; `created_at` conserva la fecha y `0031` añade canal de email, Google o desconocido;
   - [x] fuente, medio, campaña y landing de adquisición; `0031` los persiste desde valores saneados, sin query string, término buscado ni referrer completo;
   - [x] estado de onboarding; `0031` separa activación operativa de la moderación de la cuenta;
-  - [ ] fecha de última actividad significativa;
+  - [x] fecha de última actividad significativa; `0033` la actualiza sin conceder escritura directa al guardar una ficha profesional, gestionar favoritos, enviar una publicación o solicitar contacto;
   - [ ] estado de cuenta, baja y solicitud de eliminación.
 - [x] Permitir que la persona consulte sus datos, corrija municipio, contraseña y consentimiento, descargue una copia privada en JSON y solicite su eliminación. La exportación `1.1` incluye perfil, fichas profesionales, favoritos, publicaciones, solicitudes, reclamaciones, historial de consentimiento y búsquedas asociadas a la cuenta. La ejecución administrativa de borrado/anonimización sigue el procedimiento pendiente de gobierno del dato.
 - [x] Evitar recoger nombres de menores, clase, horarios, fecha de nacimiento u otros datos sensibles en el registro.
 - [x] No hacer público el centro, email, municipio o intereses de una familia por defecto; `profiles` solo es legible por su titular.
 - [x] No duplicar contraseñas, tokens o datos gestionados por Supabase Auth en tablas propias.
+- [x] Mostrar en el informe privado de usuarios las cuentas con actividad significativa en los últimos 30 días, sin exponer identidades ni textos libres.
 
 ### Consentimientos
 
@@ -656,7 +657,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 - [ ] Probar invitación de proveedores por otros proveedores sin crear incentivos al spam.
 - [ ] Evaluar contenido local/SEO derivado de necesidades reales y datos verificados.
 - [ ] Integrar comunidad solo si mejora una necesidad central y no dispersa el marketplace.
-- [ ] Preparar más adelante superficies legibles por LLMs: datos estructurados, Schema.org, Markdown/`llms.txt`, APIs y posibles herramientas MCP, sin exponer datos privados ni saltarse permisos.
+- [ ] Completar superficies legibles por LLMs sin exponer datos privados ni saltarse permisos. Base implementada: HTML semántico, Schema.org, `robots.txt`, sitemap, `llms.txt` y relación `describedby`; criterios documentados en `DESCUBRIBILIDAD-IA-Y-LLMS.md`. Pendiente: decidir la política específica de GPTBot, validar plantillas con datos estructurados y evaluar Markdown por ficha, API o MCP solo después del MVP.
 
 ---
 

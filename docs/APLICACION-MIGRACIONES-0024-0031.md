@@ -1,10 +1,10 @@
-# Aplicación segura de las migraciones 0024–0032
+# Aplicación segura de las migraciones 0024–0033
 
 Procedimiento para activar medición propia, directorio público acotado, permisos por rol, moderación de altas profesionales, historial de consentimiento y atribución de registros. Preparado el 23 de octubre de 2026.
 
 ## Regla de despliegue
 
-No publicar los commits de aplicación que consumen estas estructuras antes de aplicar y verificar las nueve migraciones. El código nuevo depende de `directory_events`, los RPC públicos, `moderate_business_profile`, `resubmit_business_profile`, `consent_history` y los campos de atribución del perfil. `0032` retira además un permiso de actualización general heredado sobre propuestas.
+No publicar los commits de aplicación que consumen estas estructuras antes de aplicar y verificar las diez migraciones. El código nuevo depende de `directory_events`, los RPC públicos, `moderate_business_profile`, `resubmit_business_profile`, `record_profile_activity`, `consent_history` y los campos de atribución del perfil. `0032` retira un permiso de actualización general heredado sobre propuestas y `0033` registra actividad significativa sin conceder acceso a perfiles ajenos.
 
 ## Antes de empezar
 
@@ -27,12 +27,13 @@ Ejecutar cada archivo completo y esperar confirmación antes de pasar al siguien
 7. `0030_harden_admin_function_search_paths.sql`
 8. `0031_profile_acquisition_and_onboarding.sql`
 9. `0032_submission_content_immutability.sql`
+10. `0033_profile_activity_tracking.sql`
 
 No agruparlos en una edición manual ni cambiar su orden. Si una ejecución falla, detenerse, guardar el error exacto y no publicar la aplicación.
 
 ## Verificación en base de datos
 
-Después de aplicar las nueve migraciones, ejecutar completo `supabase/verification/0024_0025_directory_controls.sql`.
+Después de aplicar las diez migraciones, ejecutar completo `supabase/verification/0024_0025_directory_controls.sql`.
 
 Resultados esperados:
 
@@ -49,6 +50,7 @@ Resultados esperados:
 - Lectura anónima y escritura directa autenticada en `consent_history`: `false`.
 - `proconfig` de `is_tenlo_admin` y `audit_admin_queue_status` contiene un `search_path` vacío.
 - `profile_acquisition_columns`: `9`.
+- `record_profile_activity` permite ejecución solo a `authenticated`, nunca a `anon`, y su configuración contiene un `search_path` vacío.
 
 ## Pruebas funcionales antes de publicar
 
@@ -72,7 +74,7 @@ Con cuentas de prueba y sin datos personales reales:
 
 ## Ejecución de producción
 
-El 23 de octubre de 2026 se aplicaron en orden `0024`–`0032` al proyecto `khwymwnswbemgtpggvpg`. La verificación de catálogo confirmó 21 centros, 14 proveedores y 16 servicios públicos; RPC públicos disponibles; tablas base sin lectura anónima; moderación y consentimiento protegidos; funciones administrativas con `search_path` vacío; nueve campos de atribución presentes; y propuestas con contenido inmutable y solo `status` actualizable bajo la política administrativa.
+El 23 de octubre de 2026 se aplicaron en orden `0024`–`0033` al proyecto `khwymwnswbemgtpggvpg`. La verificación de catálogo confirmó 21 centros, 14 proveedores y 16 servicios públicos; RPC públicos disponibles; tablas base sin lectura anónima; moderación y consentimiento protegidos; funciones administrativas con `search_path` vacío; nueve campos de atribución presentes; propuestas con contenido inmutable y solo `status` actualizable bajo la política administrativa; y registro de actividad propia disponible solo para usuarios autenticados.
 
 Esta comprobación valida estructura y privilegios. Las pruebas de recorrido con las cuatro identidades y la restauración siguen siendo necesarias antes de cerrar seguridad y recuperación.
 

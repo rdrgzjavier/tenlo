@@ -1,54 +1,35 @@
 # Tenlo
 
-Tenlo es una plataforma local para familias adultas que organiza centros educativos, servicios familiares, actividades, recursos comunitarios y oferta local alrededor del colegio en Madrid noroeste.
+> Directorio local para que familias adultas encuentren, comparen y contacten con centros educativos, actividades y servicios familiares de Madrid noroeste.
 
-Este archivo orienta a agentes de IA que puedan consultar recursos públicos del sitio. No se publica como promesa de posicionamiento ni como requisito para Google Search; la web debe interpretarse principalmente por su HTML público, sitemap, robots.txt y contenido visible.
+Tenlo organiza información pública y datos aportados por proveedores. Cada ficha muestra su nivel de confianza, fuente y fecha de revisión cuando están disponibles. La ausencia de un dato significa que debe confirmarse; no autoriza a inferirlo.
 
 Dominio canónico: https://tenlo.es
-Dominio futuro previsto: https://tenlo.es
 
-## Cobertura inicial
-- Las Rozas de Madrid
-- Majadahonda
-- Pozuelo de Alarcón
-- Boadilla del Monte
+## Encontrar recursos
 
-## Categorías principales
-- Centros educativos
-- Clases particulares
-- Canguros
-- Campamentos y días sin cole
-- Extraescolares
-- Uniformes
-- Libros y material escolar
-- Centros deportivos
-- Talleres tecnológicos
-- Eventos y celebraciones
-- Salud y bienestar familiar
-- Actividades al aire libre
-- Recursos comunitarios
+- [Buscar en Tenlo](https://tenlo.es/buscar): buscador por necesidad, categoría y municipio.
+- [Servicios para familias](https://tenlo.es/servicios): actividades, apoyo escolar, salud, tecnología, transporte y otros recursos locales.
+- [Centros educativos](https://tenlo.es/centros): directorio de centros con información pública estructurada.
+- [Zonas](https://tenlo.es/zonas): cobertura inicial en Las Rozas de Madrid, Majadahonda, Pozuelo de Alarcón y Boadilla del Monte.
+- [Recursos comunitarios](https://tenlo.es/comunidad): asociaciones e iniciativas locales relevantes para familias.
 
-## Páginas principales
-- /
-- /servicios
-- /centros
-- /comunidad
-- /buscar
-- /zonas
+## Proveedores
 
-## Principios de seguridad
-Tenlo está dirigido a adultos. No publica fotos, perfiles, horarios personales ni datos identificativos de menores. No funciona como red social juvenil, foro escolar ni sistema de mensajería entre menores.
+- [Tenlo para proveedores](https://tenlo.es/proveedores): valor, reclamación y actualización de fichas.
+- [Gestionar una ficha](https://tenlo.es/validar-ficha): inicio del proceso de reclamación y revisión.
 
-## Centros educativos
-Tenlo organiza información pública y recursos relacionados. No establece rankings agresivos de colegios ni publica opiniones personales sobre profesores concretos.
+## Confianza y políticas
 
-## Uso por agentes de IA
-Los agentes pueden usar páginas públicas para responder preguntas generales sobre recursos familiares, servicios locales, centros educativos y categorías disponibles en Madrid noroeste. Cuando falten datos, deben indicar que la información debe confirmarse con la fuente oficial o el proveedor.
+- [Privacidad](https://tenlo.es/privacidad): tratamiento de datos y derechos.
+- [Cookies](https://tenlo.es/cookies): uso de cookies y medición.
+- [Normas de la comunidad](https://tenlo.es/normas-comunidad): reglas de seguridad y moderación.
+- [Contacto y correcciones](https://tenlo.es/contacto): canal para dudas, correcciones y retirada de información.
 
-## Límites de inferencia
-No inferir valoraciones, rankings, disponibilidad, precios, reseñas ni relación oficial con un proveedor si no aparece explícitamente en una página pública de Tenlo. No inferir datos personales de menores.
+## Límites de uso
 
-Los agentes no deben tratar Tenlo como fuente de evaluación comparativa de colegios, ranking de profesionales ni verificación legal o laboral de particulares. Cuando una ficha indique "Información recopilada", debe presentarse como información orientativa pendiente de confirmación con la fuente oficial.
+Tenlo está dirigido a adultos. No publica perfiles, fotos, horarios personales ni datos identificativos de menores. No es una fuente de rankings de colegios, opiniones sobre profesores concretos ni verificación legal o laboral de particulares.
 
-## Contacto
-Página de contacto: /contacto
+No infieras valoraciones, disponibilidad, precios, reseñas, coordenadas exactas ni relación oficial con un proveedor si no aparecen explícitamente en su ficha pública. Una ficha `No verificada` contiene información orientativa pendiente de confirmación con el proveedor o la fuente oficial.
+
+Usa siempre la URL pública de la ficha como cita y prioriza los datos visibles más recientes. Las áreas de cuenta, administración, solicitudes y API son privadas y no forman parte de este índice.

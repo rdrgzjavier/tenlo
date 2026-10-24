@@ -128,3 +128,18 @@ where table_schema = 'public'
     'onboarding_status',
     'last_significant_activity_at'
   );
+
+-- Debe estar disponible para autenticados, aislada y nunca para anónimos.
+select
+  has_function_privilege('authenticated', 'public.record_profile_activity(text)', 'execute')
+    as authenticated_activity_rpc_available,
+  has_function_privilege('anon', 'public.record_profile_activity(text)', 'execute')
+    as anon_activity_rpc_available,
+  (
+    select procedure.proconfig
+    from pg_proc as procedure
+    join pg_namespace as namespace on namespace.oid = procedure.pronamespace
+    where namespace.nspname = 'public'
+      and procedure.proname = 'record_profile_activity'
+    limit 1
+  ) as activity_rpc_config;
