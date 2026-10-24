@@ -543,11 +543,11 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 - [ ] Proveedores identificados, contactados y que visitan la landing.
 - [ ] Tasa de inicio y envío de reclamación.
 - [ ] Tiempo hasta aprobación.
-- [ ] Tasa de perfil suficientemente completo.
+- [x] Tasa de perfil suficientemente completo, con umbral operativo del 75 % y desglose por categoría y municipio en `/admin/proveedores`.
 - [ ] Tiempo hasta publicación.
 - [ ] Tiempo hasta primera solicitud.
-- [ ] Tasa de primera respuesta.
-- [ ] Proveedores activos a 7, 30 y 90 días.
+- [x] Tasa de primera respuesta y mediana de tiempo sobre las solicitudes asignables del periodo, manteniendo visible el denominador.
+- [x] Proveedores activos a 7, 30 y 90 días según `last_significant_activity_at`, sin confundir aprobación con actividad.
 - [ ] Relevancia percibida de las solicitudes.
 - [ ] Motivos de rechazo, inactividad y abandono.
 - [ ] Conversión de gratuito a plan de pago cuando exista.
@@ -588,7 +588,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 - [ ] **Dirección / NSM:** conexiones útiles, solicitudes, respuesta, cobertura, oferta activa y principales riesgos.
 - [ ] **Adquisición:** canales, campañas, búsquedas, landing de proveedores y coste cuando exista inversión.
 - [ ] **Familias:** búsqueda, comparación, contacto, respuesta, utilidad y resultado.
-- [ ] **Proveedores:** outreach, reclamación, completitud, publicación, primera solicitud, respuesta, actividad y abandono.
+- [ ] **Proveedores:** `/admin/proveedores` ya agrega oferta actual, altas, reclamaciones, completitud, aprobaciones, solicitudes, respuesta y actividad a 7/30/90 días, con periodos 30/90/180 y filtros de categoría y municipio; faltan outreach, visitas a la landing, tiempos completos y motivos de abandono.
 - [ ] **Liquidez:** oferta y demanda por categoría/municipio, cobertura, tiempos y concentración.
 - [ ] **Ficha del proveedor:** visibilidad, impresiones, aperturas, guardados, solicitudes, respuesta y resultados, sin confundir tráfico con clientes.
 - [ ] **Calidad y confianza:** frescura, verificación, incidencias, relevancia y privacidad.

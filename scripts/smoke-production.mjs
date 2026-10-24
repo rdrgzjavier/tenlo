@@ -31,6 +31,8 @@ const protectedPaths = [
   "/admin/rendimiento",
   "/admin/rendimiento?period=180",
   "/admin/rendimiento?period=90&category=centros&municipality=Las%20Rozas%20de%20Madrid",
+  "/admin/proveedores",
+  "/admin/proveedores?period=90&category=actividades&municipality=Majadahonda",
   "/admin/usuarios",
   "/admin/usuarios?period=90",
   "/mi-ficha-profesional"
