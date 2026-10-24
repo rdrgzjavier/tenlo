@@ -340,7 +340,7 @@ Tenlo debe poder explicar qué buscan las familias y qué rendimiento obtiene ca
   - [ ] términos e intenciones más buscados; ya muestra términos saneados, falta clasificar intención;
   - [x] categorías y verticales con más demanda;
   - [x] demanda por municipio y periodos comparables de 30, 90 y 180 días;
-  - [ ] búsquedas emergentes;
+  - [x] búsquedas emergentes frente al periodo anterior equivalente, con un umbral mínimo de tres búsquedas actuales;
   - [x] búsquedas sin oferta suficiente;
   - [ ] búsquedas que terminan en contacto, respuesta y conexión útil;
   - [ ] términos con tráfico pero poca utilidad;

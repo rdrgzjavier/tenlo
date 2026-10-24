@@ -38,6 +38,13 @@ type RankedValue = {
   averageResults: number;
 };
 
+type TrendValue = {
+  label: string;
+  current: number;
+  previous: number;
+  change: number;
+};
+
 function dateLabel(value: Date) {
   return new Intl.DateTimeFormat("es-ES", { dateStyle: "medium" }).format(value);
 }
@@ -88,6 +95,25 @@ function opportunityRank(events: SearchEvent[], limit = 12) {
     .slice(0, limit);
 }
 
+function emergingTrends(currentEvents: SearchEvent[], previousEvents: SearchEvent[], limit = 8) {
+  const countTerms = (items: SearchEvent[]) => {
+    const counts = new Map<string, number>();
+    items.forEach((event) => {
+      const term = event.normalized_query?.trim();
+      if (term) counts.set(term, (counts.get(term) ?? 0) + 1);
+    });
+    return counts;
+  };
+  const currentCounts = countTerms(currentEvents);
+  const previousCounts = countTerms(previousEvents);
+
+  return [...currentCounts.entries()]
+    .map(([label, current]): TrendValue => ({ label, current, previous: previousCounts.get(label) ?? 0, change: current - (previousCounts.get(label) ?? 0) }))
+    .filter((item) => item.current >= 3 && item.change > 0)
+    .sort((a, b) => b.change - a.change || b.current - a.current || a.label.localeCompare(b.label, "es"))
+    .slice(0, limit);
+}
+
 function RankingTable({ title, description, items }: { title: string; description: string; items: RankedValue[] }) {
   return (
     <section className="card p-5 md:p-6">
@@ -131,13 +157,15 @@ export default async function AdminDemandPage({ searchParams }: { searchParams: 
 
   const periodStart = new Date();
   periodStart.setDate(periodStart.getDate() - period);
+  const comparisonStart = new Date();
+  comparisonStart.setDate(comparisonStart.getDate() - period * 2);
   const [searchResult, journeyResult] = await Promise.all([
     supabase
       .from("search_events")
       .select("search_id,normalized_query,category_id,vertical_id,municipality,results_count,zero_results,created_at")
-      .gte("created_at", periodStart.toISOString())
+      .gte("created_at", comparisonStart.toISOString())
       .order("created_at", { ascending: false })
-      .limit(5000),
+      .limit(10000),
     supabase
       .from("directory_events")
       .select("search_id,event_name,created_at")
@@ -146,15 +174,18 @@ export default async function AdminDemandPage({ searchParams }: { searchParams: 
       .limit(10000)
   ]);
 
-  const allEvents = (searchResult.data ?? []) as SearchEvent[];
-  const categoryOptions = [...new Set(allEvents.flatMap((event) => event.category_id ? [event.category_id] : []))].sort((a, b) => a.localeCompare(b, "es"));
-  const municipalityOptions = [...new Set(allEvents.flatMap((event) => event.municipality ? [event.municipality] : []))].sort((a, b) => a.localeCompare(b, "es"));
+  const comparisonEvents = (searchResult.data ?? []) as SearchEvent[];
+  const currentPeriodEvents = comparisonEvents.filter((event) => new Date(event.created_at) >= periodStart);
+  const categoryOptions = [...new Set(currentPeriodEvents.flatMap((event) => event.category_id ? [event.category_id] : []))].sort((a, b) => a.localeCompare(b, "es"));
+  const municipalityOptions = [...new Set(currentPeriodEvents.flatMap((event) => event.municipality ? [event.municipality] : []))].sort((a, b) => a.localeCompare(b, "es"));
   const activeCategory = rawCategory && categoryOptions.includes(rawCategory) ? rawCategory : "";
   const activeMunicipality = rawMunicipality && municipalityOptions.includes(rawMunicipality) ? rawMunicipality : "";
-  const events = allEvents.filter((event) => (
+  const matchesSegment = (event: SearchEvent) => (
     (!activeCategory || event.category_id === activeCategory)
     && (!activeMunicipality || event.municipality === activeMunicipality)
-  ));
+  );
+  const events = currentPeriodEvents.filter(matchesSegment);
+  const previousEvents = comparisonEvents.filter((event) => new Date(event.created_at) < periodStart && matchesSegment(event));
   const filteredSearchIds = new Set(events.flatMap((event) => event.search_id ? [event.search_id] : []));
   const journeyEvents = ((journeyResult.data ?? []) as SearchJourneyEvent[]).filter((event) => event.search_id && filteredSearchIds.has(event.search_id));
   const zeroResults = events.filter((event) => event.zero_results).length;
@@ -166,6 +197,7 @@ export default async function AdminDemandPage({ searchParams }: { searchParams: 
   const verticals = rankBy(events, (event) => event.vertical_id);
   const municipalities = rankBy(events, (event) => event.municipality);
   const opportunities = opportunityRank(events);
+  const trends = emergingTrends(events, previousEvents);
   const completedSearchIds = new Set(events.flatMap((event) => event.search_id ? [event.search_id] : []));
   const viewedAt = firstEventAt(journeyEvents, new Set(["provider_profile_viewed", "center_profile_viewed"]));
   const contactedAt = firstEventAt(journeyEvents, new Set(["contact_started", "contact_email_clicked", "contact_phone_clicked", "contact_web_clicked"]));
@@ -217,6 +249,18 @@ export default async function AdminDemandPage({ searchParams }: { searchParams: 
       <section className="mt-6 rounded-2xl border border-violet/20 bg-violet/5 p-5 md:p-6" aria-labelledby="opportunities-title">
         <div className="flex items-start gap-3"><TrendingUp size={22} className="mt-1 shrink-0 text-violet" aria-hidden /><div><h2 id="opportunities-title" className="subsection-title text-ink">Oportunidades de oferta</h2><p className="mt-1 text-sm leading-6 text-muted">Términos ordenados por búsquedas sin resultados. Úsalos para priorizar nuevas fichas o captar proveedores; valida antes que no sean errores o datos personales saneados.</p></div></div>
         {opportunities.length ? <ol className="mt-5 grid gap-3 md:grid-cols-2">{opportunities.map((item, index) => <li key={item.label} className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-white p-4"><span className="font-bold text-ink">{index + 1}. {item.label}</span><span className="chip shrink-0">{item.zeroResults} sin resultado</span></li>)}</ol> : <p className="mt-5 rounded-2xl border border-line bg-white p-4 text-sm text-muted">No hay términos sin resultados en el periodo.</p>}
+      </section>
+
+      <section className="card mt-6 p-5 md:p-6" aria-labelledby="emerging-searches-title">
+        <div className="flex items-start gap-3"><TrendingUp size={22} className="mt-1 shrink-0 text-ink" aria-hidden /><div><h2 id="emerging-searches-title" className="subsection-title text-ink">Búsquedas emergentes</h2><p className="mt-1 text-sm leading-6 text-muted">Términos que crecen frente a los {period} días anteriores. Solo aparecen con al menos tres búsquedas actuales y no deben interpretarse como tendencia de mercado.</p></div></div>
+        {trends.length ? (
+          <div className="mt-5 overflow-x-auto">
+            <table className="w-full min-w-[34rem] text-left text-sm">
+              <thead className="border-b border-line text-xs uppercase tracking-wide text-muted"><tr><th className="pb-3 pr-4">Término</th><th className="pb-3 pr-4 text-right">Periodo actual</th><th className="pb-3 pr-4 text-right">Periodo anterior</th><th className="pb-3 text-right">Variación</th></tr></thead>
+              <tbody>{trends.map((trend) => <tr key={trend.label} className="border-b border-line last:border-0"><th scope="row" className="py-3 pr-4 font-semibold text-ink">{trend.label}</th><td className="py-3 pr-4 text-right text-slatecopy">{trend.current}</td><td className="py-3 pr-4 text-right text-slatecopy">{trend.previous}</td><td className="py-3 text-right font-semibold text-ink">+{trend.change}</td></tr>)}</tbody>
+            </table>
+          </div>
+        ) : <p className="mt-5 rounded-2xl border border-line bg-soft p-4 text-sm text-muted">Aún no hay términos con muestra suficiente y crecimiento frente al periodo anterior.</p>}
       </section>
 
       <div className="mt-6 grid gap-5 xl:grid-cols-2">
