@@ -527,11 +527,11 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 
 ### Funnel de familias
 
-- [ ] Búsquedas iniciadas y completadas.
-- [ ] Porcentaje de búsquedas con resultados.
-- [ ] Resultados y fichas vistas por búsqueda.
-- [ ] Tasa de ficha vista a contacto iniciado.
-- [ ] Tasa de contacto iniciado a solicitud enviada.
+- [ ] Búsquedas iniciadas y completadas. El informe privado ya muestra búsquedas completadas persistidas; falta confirmar en GA4 los inicios consentidos para comparar ambas poblaciones.
+- [x] Porcentaje de búsquedas con resultados, con volumen y denominador visibles en el informe privado de demanda.
+- [x] Resultados medios y fichas vistas por búsqueda, enlazados mediante `search_id` anónimo y sin contar tráfico directo.
+- [x] Tasa de ficha vista a contacto iniciado, calculada sobre búsquedas únicas con ficha vista.
+- [x] Tasa de contacto iniciado a solicitud enviada, calculada sobre búsquedas únicas con intención de contacto.
 - [x] Tasa de solicitudes con respuesta o alternativa, calculada sobre solicitudes creadas en el periodo de 90 días.
 - [ ] Mediana y percentiles de tiempo de respuesta. La mediana ya se muestra en el informe privado; faltan percentiles cuando haya muestra suficiente.
 - [x] Volumen y tasa de conexiones útiles sobre el feedback familiar recibido; la North Star se muestra además en ventana de 30 días.

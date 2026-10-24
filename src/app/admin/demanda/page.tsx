@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowLeft, BarChart3, MapPin, SearchX, TrendingUp } from "lucide-react";
+import { ArrowLeft, BarChart3, Eye, MapPin, MessageCircle, SearchX, Send, TrendingUp } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
@@ -13,12 +13,19 @@ export const metadata: Metadata = {
 };
 
 type SearchEvent = {
+  search_id: string | null;
   normalized_query: string | null;
   category_id: string | null;
   vertical_id: string | null;
   municipality: string | null;
   results_count: number;
   zero_results: boolean;
+  created_at: string;
+};
+
+type SearchJourneyEvent = {
+  search_id: string | null;
+  event_name: string;
   created_at: string;
 };
 
@@ -35,6 +42,17 @@ function dateLabel(value: Date) {
 
 function percent(part: number, total: number) {
   return total ? `${Math.round((part / total) * 100)} %` : "Sin datos";
+}
+
+function firstEventAt(events: SearchJourneyEvent[], names: Set<string>) {
+  const timestamps = new Map<string, number>();
+  events.forEach((event) => {
+    if (!event.search_id || !names.has(event.event_name)) return;
+    const occurredAt = new Date(event.created_at).getTime();
+    const current = timestamps.get(event.search_id);
+    if (current === undefined || occurredAt < current) timestamps.set(event.search_id, occurredAt);
+  });
+  return timestamps;
 }
 
 function rankBy(events: SearchEvent[], selector: (event: SearchEvent) => string | null, limit = 8) {
@@ -108,15 +126,25 @@ export default async function AdminDemandPage() {
 
   const periodStart = new Date();
   periodStart.setDate(periodStart.getDate() - 90);
-  const { data, error } = await supabase
-    .from("search_events")
-    .select("normalized_query,category_id,vertical_id,municipality,results_count,zero_results,created_at")
-    .gte("created_at", periodStart.toISOString())
-    .order("created_at", { ascending: false })
-    .limit(5000);
+  const [searchResult, journeyResult] = await Promise.all([
+    supabase
+      .from("search_events")
+      .select("search_id,normalized_query,category_id,vertical_id,municipality,results_count,zero_results,created_at")
+      .gte("created_at", periodStart.toISOString())
+      .order("created_at", { ascending: false })
+      .limit(5000),
+    supabase
+      .from("directory_events")
+      .select("search_id,event_name,created_at")
+      .not("search_id", "is", null)
+      .gte("created_at", periodStart.toISOString())
+      .limit(10000)
+  ]);
 
-  const events = (data ?? []) as SearchEvent[];
+  const events = (searchResult.data ?? []) as SearchEvent[];
+  const journeyEvents = (journeyResult.data ?? []) as SearchJourneyEvent[];
   const zeroResults = events.filter((event) => event.zero_results).length;
+  const searchesWithResults = events.length - zeroResults;
   const withFewResults = events.filter((event) => event.results_count > 0 && event.results_count <= 2).length;
   const averageResults = events.length ? events.reduce((sum, event) => sum + event.results_count, 0) / events.length : null;
   const terms = rankBy(events, (event) => event.normalized_query);
@@ -124,6 +152,20 @@ export default async function AdminDemandPage() {
   const verticals = rankBy(events, (event) => event.vertical_id);
   const municipalities = rankBy(events, (event) => event.municipality);
   const opportunities = opportunityRank(events);
+  const completedSearchIds = new Set(events.flatMap((event) => event.search_id ? [event.search_id] : []));
+  const viewedAt = firstEventAt(journeyEvents, new Set(["provider_profile_viewed", "center_profile_viewed"]));
+  const contactedAt = firstEventAt(journeyEvents, new Set(["contact_started", "contact_email_clicked", "contact_phone_clicked", "contact_web_clicked"]));
+  const requestedAt = firstEventAt(journeyEvents, new Set(["request_created"]));
+  const viewedSearchIds = new Set(viewedAt.keys());
+  const contactedAfterViewIds = new Set([...contactedAt].flatMap(([searchId, occurredAt]) => {
+    const viewedTimestamp = viewedAt.get(searchId);
+    return viewedTimestamp !== undefined && occurredAt >= viewedTimestamp ? [searchId] : [];
+  }));
+  const requestedAfterContactIds = new Set([...requestedAt].flatMap(([searchId, occurredAt]) => {
+    const contactedTimestamp = contactedAt.get(searchId);
+    return contactedTimestamp !== undefined && occurredAt >= contactedTimestamp ? [searchId] : [];
+  }));
+  const profileViewsFromSearch = journeyEvents.filter((event) => event.search_id && ["provider_profile_viewed", "center_profile_viewed"].includes(event.event_name)).length;
 
   return (
     <main className="section-shell">
@@ -132,7 +174,7 @@ export default async function AdminDemandPage() {
       <h1 className="page-title">Demanda del piloto</h1>
       <p className="lead max-w-4xl">Qué están buscando las familias y dónde la oferta todavía no responde. Periodo del {dateLabel(periodStart)} al {dateLabel(new Date())}.</p>
 
-      {error ? <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">No se han podido cargar las búsquedas. Comprueba que la migración de acceso administrativo esté aplicada.</p> : null}
+      {searchResult.error || journeyResult.error ? <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">No se ha podido cargar una parte del embudo de búsqueda. Comprueba que las migraciones de acceso administrativo estén aplicadas.</p> : null}
 
       <section className="card mt-6 p-5 md:p-6" aria-labelledby="demand-summary-title">
         <div className="flex items-center gap-3"><BarChart3 size={22} className="text-ink" aria-hidden /><div><h2 id="demand-summary-title" className="subsection-title text-ink">Resumen de 90 días</h2><p className="mt-1 text-sm text-muted">Solo datos agregados; este informe no muestra usuarios ni sesiones.</p></div></div>
@@ -142,6 +184,18 @@ export default async function AdminDemandPage() {
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Con oferta escasa</dt><dd className="mt-2 text-3xl font-black text-ink">{events.length ? withFewResults : "Sin datos"}</dd><p className="mt-1 text-xs text-muted">Uno o dos resultados disponibles</p></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Resultados medios</dt><dd className="mt-2 text-3xl font-black text-ink">{averageResults === null ? "Sin datos" : averageResults.toFixed(1)}</dd></div>
         </dl>
+      </section>
+
+      <section className="card mt-6 p-5 md:p-6" aria-labelledby="search-funnel-title">
+        <div className="flex items-center gap-3"><TrendingUp size={22} className="text-ink" aria-hidden /><div><h2 id="search-funnel-title" className="subsection-title text-ink">Embudo del buscador</h2><p className="mt-1 text-sm text-muted">Recorridos unidos mediante un identificador anónimo de búsqueda. Excluye visitas directas a fichas.</p></div></div>
+        <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Búsquedas completadas</dt><dd className="mt-2 text-3xl font-black text-ink">{events.length || "Sin datos"}</dd><p className="mt-1 text-xs text-muted">{completedSearchIds.size} con ID de recorrido</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Con resultados</dt><dd className="mt-2 text-3xl font-black text-ink">{events.length ? searchesWithResults : "Sin datos"}</dd><p className="mt-1 text-xs text-muted">{events.length ? percent(searchesWithResults, events.length) : "Sin tasa calculable"}</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Eye size={16} aria-hidden />Llegan a una ficha</dt><dd className="mt-2 text-3xl font-black text-ink">{completedSearchIds.size ? viewedSearchIds.size : "Sin datos"}</dd><p className="mt-1 text-xs text-muted">{completedSearchIds.size ? `${percent(viewedSearchIds.size, completedSearchIds.size)} · ${(profileViewsFromSearch / completedSearchIds.size).toFixed(1)} visitas/búsqueda` : "Sin tasa calculable"}</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><MessageCircle size={16} aria-hidden />De ficha a contacto</dt><dd className="mt-2 text-3xl font-black text-ink">{viewedSearchIds.size ? percent(contactedAfterViewIds.size, viewedSearchIds.size) : "Sin datos"}</dd><p className="mt-1 text-xs text-muted">{contactedAfterViewIds.size} recorridos avanzan</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Send size={16} aria-hidden />De contacto a solicitud</dt><dd className="mt-2 text-3xl font-black text-ink">{contactedAt.size ? percent(requestedAfterContactIds.size, contactedAt.size) : "Sin datos"}</dd><p className="mt-1 text-xs text-muted">{requestedAfterContactIds.size} recorridos envían solicitud</p></div>
+        </dl>
+        <p className="mt-4 text-xs leading-5 text-muted">Las tasas se calculan sobre búsquedas únicas, no sobre clics. El inicio del formulario se mide en GA4 y quedará fuera de este informe hasta confirmar la recepción consentida.</p>
       </section>
 
       <section className="mt-6 rounded-2xl border border-violet/20 bg-violet/5 p-5 md:p-6" aria-labelledby="opportunities-title">
