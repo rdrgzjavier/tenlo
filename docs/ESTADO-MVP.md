@@ -1,11 +1,11 @@
 # Estado del MVP de Tenlo
 
-Fecha de corte: 23 de octubre de 2026.
+Fecha de corte: 24 de octubre de 2026.
 
 ## Progreso global
 
 ```text
-MVP construido  [█████████████████░░░] 83 %
+MVP construido  [█████████████████░░░] 84 %
 ```
 
 El porcentaje mide la capacidad necesaria para ejecutar un piloto pequeño en Madrid noroeste. No incluye monetización, comunidad, expansión geográfica, recomendaciones avanzadas ni automatizaciones propias de fases posteriores.
@@ -22,11 +22,11 @@ Una tarea solo puntúa como terminada cuando existe implementación o procedimie
 | Reclamación y activación de proveedores | 15 % | 82 % | 12,3 | Reclamación, onboarding progresivo, ficha privada persistente, cola, moderación, petición de información y reenvío disponibles | Probar publicación y avisos reales con una cuenta de proveedor |
 | Búsqueda, comparación y conexión familiar | 15 % | 80 % | 12,0 | Buscar, filtrar, proponer, ver ficha, mapa, guardar, comparar, solicitar y valorar resultado | Respuesta segura del proveedor, recordatorio y alternativa automatizados |
 | Cuentas, consentimiento y privacidad | 15 % | 72 % | 10,8 | Registro, confirmación, perfil persistente, recuperación, atribución saneada, historial de consentimiento, actividad significativa, exportación y solicitud de baja | Política legal completa, prueba de supresión y preferencias de comunicación |
-| Medición e informes | 10 % | 80 % | 8,0 | Cookiebot, GTM, GA4, búsquedas y eventos propios persistentes, e informes privados de demanda, rendimiento, usuarios y actividad | Confirmar recepción GA4 y validar informes con actividad real del piloto |
+| Medición e informes | 10 % | 85 % | 8,5 | Cookiebot, GTM, GA4, búsquedas y eventos propios persistentes; embudos privados de búsqueda y conexión, North Star, actividad de usuarios y ventanas comparables de 30, 90 y 180 días | Confirmar recepción GA4 y validar informes con actividad real del piloto |
 | Operación y recuperación del piloto | 5 % | 60 % | 3,0 | Responsable, SLA, playbook, backoffice, exportación y runbook de copias | Ejecutar restauración, preparar CRM/contactos y probar recorridos completos |
-| **Total** | **100 %** |  | **83,2** |  |  |
+| **Total** | **100 %** |  | **83,7** |  |  |
 
-El valor mostrado se redondea a **83 %**. Debe actualizarse solo cuando cambie la evidencia de alguno de los ocho bloques, no al añadir tareas futuras al backlog.
+El valor mostrado se redondea a **84 %**. Debe actualizarse solo cuando cambie la evidencia de alguno de los ocho bloques, no al añadir tareas futuras al backlog.
 
 ## Qué falta para considerar el MVP listo para el piloto
 
