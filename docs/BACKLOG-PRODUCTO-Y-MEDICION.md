@@ -366,7 +366,7 @@ La persistencia propia, la migración `0024` y el informe privado están despleg
   - [ ] tasa de respuesta dentro del SLA;
   - [ ] conexiones útiles;
   - [ ] datos de calidad y frescura de la ficha.
-- [ ] No mostrar tasas o rankings cuando la muestra sea demasiado pequeña.
+- [x] No mostrar tasas o rankings cuando la muestra sea demasiado pequeña: las tasas comparativas por ficha se ocultan con menos de 20 impresiones y los rankings de texto libre requieren al menos tres búsquedas.
 
 ### Rendimiento por vertical
 
@@ -606,8 +606,8 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 - [ ] No comparar poblaciones distintas sin explicar la unidad.
 - [ ] Diferenciar `0`, `sin dato` y `no aplicable`.
 - [ ] Añadir notas cuando cambie una definición o implementación.
-- [ ] Evitar rankings con muestras pequeñas.
-- [ ] Establecer umbrales mínimos de privacidad antes de mostrar segmentos.
+- [x] Evitar rankings con muestras pequeñas: consultas y oportunidades exigen tres búsquedas; las tasas de rendimiento por ficha exigen 20 impresiones.
+- [ ] Establecer umbrales mínimos de privacidad antes de mostrar segmentos. Ya se aplican tres búsquedas para texto libre y 20 impresiones para tasas por ficha; falta validar jurídicamente y extender la regla a futuros informes exportables.
 - [ ] Preparar exportación a BigQuery cuando el volumen o la unión GA4/backend lo justifique.
 
 ---

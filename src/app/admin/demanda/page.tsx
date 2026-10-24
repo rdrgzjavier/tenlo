@@ -90,7 +90,7 @@ function rankBy(events: SearchEvent[], selector: (event: SearchEvent) => string 
 
 function opportunityRank(events: SearchEvent[], limit = 12) {
   return rankBy(events, (event) => event.normalized_query, 100)
-    .filter((item) => item.zeroResults > 0)
+    .filter((item) => item.searches >= 3 && item.zeroResults > 0)
     .sort((a, b) => b.zeroResults - a.zeroResults || b.searches - a.searches || a.averageResults - b.averageResults)
     .slice(0, limit);
 }
@@ -192,7 +192,7 @@ export default async function AdminDemandPage({ searchParams }: { searchParams: 
   const searchesWithResults = events.length - zeroResults;
   const withFewResults = events.filter((event) => event.results_count > 0 && event.results_count <= 2).length;
   const averageResults = events.length ? events.reduce((sum, event) => sum + event.results_count, 0) / events.length : null;
-  const terms = rankBy(events, (event) => event.normalized_query);
+  const terms = rankBy(events, (event) => event.normalized_query, 100).filter((item) => item.searches >= 3).slice(0, 8);
   const categories = rankBy(events, (event) => event.category_id);
   const verticals = rankBy(events, (event) => event.vertical_id);
   const municipalities = rankBy(events, (event) => event.municipality);
@@ -247,7 +247,7 @@ export default async function AdminDemandPage({ searchParams }: { searchParams: 
       </section>
 
       <section className="mt-6 rounded-2xl border border-violet/20 bg-violet/5 p-5 md:p-6" aria-labelledby="opportunities-title">
-        <div className="flex items-start gap-3"><TrendingUp size={22} className="mt-1 shrink-0 text-violet" aria-hidden /><div><h2 id="opportunities-title" className="subsection-title text-ink">Oportunidades de oferta</h2><p className="mt-1 text-sm leading-6 text-muted">Términos ordenados por búsquedas sin resultados. Úsalos para priorizar nuevas fichas o captar proveedores; valida antes que no sean errores o datos personales saneados.</p></div></div>
+        <div className="flex items-start gap-3"><TrendingUp size={22} className="mt-1 shrink-0 text-violet" aria-hidden /><div><h2 id="opportunities-title" className="subsection-title text-ink">Oportunidades de oferta</h2><p className="mt-1 text-sm leading-6 text-muted">Términos con al menos tres búsquedas, ordenados por búsquedas sin resultados. Úsalos para priorizar nuevas fichas o captar proveedores; valida antes que no sean errores o datos personales saneados.</p></div></div>
         {opportunities.length ? <ol className="mt-5 grid gap-3 md:grid-cols-2">{opportunities.map((item, index) => <li key={item.label} className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-white p-4"><span className="font-bold text-ink">{index + 1}. {item.label}</span><span className="chip shrink-0">{item.zeroResults} sin resultado</span></li>)}</ol> : <p className="mt-5 rounded-2xl border border-line bg-white p-4 text-sm text-muted">No hay términos sin resultados en el periodo.</p>}
       </section>
 
@@ -264,7 +264,7 @@ export default async function AdminDemandPage({ searchParams }: { searchParams: 
       </section>
 
       <div className="mt-6 grid gap-5 xl:grid-cols-2">
-        <RankingTable title="Términos más buscados" description="Consultas libres saneadas y normalizadas. No se muestran emails ni teléfonos." items={terms} />
+        <RankingTable title="Términos más buscados" description="Consultas libres saneadas y normalizadas con al menos tres búsquedas. No se muestran emails ni teléfonos." items={terms} />
         <RankingTable title="Demanda por categoría" description="Categorías seleccionadas en el buscador, con su presión de oferta." items={categories} />
         <RankingTable title="Demanda por vertical" description="Agrupación estable para comparar educación, actividades, cuidados y otros ámbitos." items={verticals} />
         <RankingTable title="Demanda por municipio" description="Zonas donde se busca más y proporción que no encuentra resultados." items={municipalities} />
