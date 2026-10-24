@@ -523,7 +523,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 ### North Star Metric
 
 - [x] **Conexiones útiles mensuales**: solicitudes respondidas o con alternativa que la familia valora como útiles; se conserva además el resultado declarado. La relevancia del proveedor y el cumplimiento de SLA se muestran como dimensiones separadas hasta disponer de muestra suficiente.
-- [ ] Mostrar por separado volumen, porcentaje y tiempo; no mezclar poblaciones distintas en una única puntuación.
+- [x] Mostrar por separado volumen, porcentaje y tiempo; el informe privado de rendimiento separa solicitudes, tasa de respuesta o alternativa, tiempo mediano, resultados confirmados y conexiones útiles, sin combinarlos en una puntuación.
 
 ### Funnel de familias
 
@@ -532,10 +532,10 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 - [ ] Resultados y fichas vistas por búsqueda.
 - [ ] Tasa de ficha vista a contacto iniciado.
 - [ ] Tasa de contacto iniciado a solicitud enviada.
-- [ ] Tasa de solicitudes con respuesta.
-- [ ] Mediana y percentiles de tiempo de respuesta.
-- [ ] Tasa de conexiones útiles.
-- [ ] Tasa de resultado confirmado.
+- [x] Tasa de solicitudes con respuesta o alternativa, calculada sobre solicitudes creadas en el periodo de 90 días.
+- [ ] Mediana y percentiles de tiempo de respuesta. La mediana ya se muestra en el informe privado; faltan percentiles cuando haya muestra suficiente.
+- [x] Volumen y tasa de conexiones útiles sobre el feedback familiar recibido; la North Star se muestra además en ventana de 30 días.
+- [x] Tasa de resultado confirmado sobre el feedback recibido, manteniendo el denominador visible.
 - [ ] Recuperación de búsquedas guardadas y retorno cuando reaparece una necesidad.
 
 ### Funnel de proveedores
