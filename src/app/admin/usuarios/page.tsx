@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck, UserCheck, UsersRound } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
+import ReportPeriodSelector, { resolveReportPeriod } from "@/components/ReportPeriodSelector";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -66,8 +67,11 @@ const onboardingLabels: Record<string, string> = {
   active: "Activo"
 };
 
-export default async function AdminUsersPage() {
+export default async function AdminUsersPage({ searchParams }: { searchParams: Promise<{ period?: string }> }) {
   if (!hasSupabaseServerConfig()) return <PrivateAreaUnavailable />;
+
+  const { period: rawPeriod } = await searchParams;
+  const period = resolveReportPeriod(rawPeriod);
 
   const supabase = await createSupabaseServerClient();
   const { data: authData } = await supabase.auth.getUser();
@@ -84,7 +88,7 @@ export default async function AdminUsersPage() {
   const profiles = profilesResult.data ?? [];
   const consentEvents = consentResult.data ?? [];
   const cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() - 30);
+  cutoff.setDate(cutoff.getDate() - period);
   const recentProfiles = profiles.filter((profile) => new Date(profile.created_at) >= cutoff);
   const recentlyActiveProfiles = profiles.filter((profile) => profile.last_significant_activity_at && new Date(profile.last_significant_activity_at) >= cutoff);
   const marketingActive = profiles.filter((profile) => profile.marketing_consent).length;
@@ -100,19 +104,20 @@ export default async function AdminUsersPage() {
       <p className="label mt-6">Informe privado</p>
       <h1 className="page-title">Usuarios y consentimiento</h1>
       <p className="lead max-w-4xl">Lectura agregada de registros, activación y procedencia. No muestra nombres, emails, teléfonos ni textos libres.</p>
+      <ReportPeriodSelector activePeriod={period} pathname="/admin/usuarios" />
 
       {profilesResult.error || consentResult.error ? <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">No se ha podido cargar una parte del informe. Comprueba las migraciones y permisos.</p> : null}
 
       <section className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-5" aria-label="Resumen de usuarios">
         <div className="card p-5"><UsersRound className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Cuentas totales</p><p className="mt-1 text-3xl font-black text-ink">{profiles.length}</p></div>
-        <div className="card p-5"><UserCheck className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Altas en 30 días</p><p className="mt-1 text-3xl font-black text-ink">{recentProfiles.length}</p></div>
-        <div className="card p-5"><UserCheck className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Actividad en 30 días</p><p className="mt-1 text-3xl font-black text-ink">{recentlyActiveProfiles.length}</p><p className="mt-1 text-xs text-muted">Usuarios con alguna acción significativa</p></div>
+        <div className="card p-5"><UserCheck className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Altas en {period} días</p><p className="mt-1 text-3xl font-black text-ink">{recentProfiles.length}</p></div>
+        <div className="card p-5"><UserCheck className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Actividad en {period} días</p><p className="mt-1 text-3xl font-black text-ink">{recentlyActiveProfiles.length}</p><p className="mt-1 text-xs text-muted">Usuarios con alguna acción significativa</p></div>
         <div className="card p-5"><ShieldCheck className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Marketing activo</p><p className="mt-1 text-3xl font-black text-ink">{marketingActive}</p><p className="mt-1 text-xs text-muted">{percentage(marketingActive, profiles.length)} del total</p></div>
         <div className="card p-5"><UsersRound className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Cuentas proveedoras</p><p className="mt-1 text-3xl font-black text-ink">{providerProfiles}</p><p className="mt-1 text-xs text-muted">Excluye familias y administración</p></div>
       </section>
 
       <section className="card mt-5 p-5 md:p-6">
-        <h2 className="subsection-title text-ink">Cambios de consentimiento en 30 días</h2>
+        <h2 className="subsection-title text-ink">Cambios de consentimiento en {period} días</h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-2"><div className="rounded-2xl border border-line bg-soft p-4"><p className="text-sm text-muted">Concesiones registradas</p><p className="mt-1 text-2xl font-black text-ink">{recentGranted}</p></div><div className="rounded-2xl border border-line bg-soft p-4"><p className="text-sm text-muted">Retiradas registradas</p><p className="mt-1 text-2xl font-black text-ink">{recentWithdrawn}</p></div></div>
         <p className="mt-4 text-xs leading-5 text-muted">Son eventos, no usuarios únicos. Nunca deben sumarse para calcular la base activable; esa base es el estado actual mostrado arriba.</p>
       </section>

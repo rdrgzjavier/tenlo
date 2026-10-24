@@ -26,8 +26,11 @@ for (const [path, expectedTexts] of publicChecks) {
 
 const protectedPaths = [
   "/admin",
+  "/admin/demanda?period=30",
   "/admin/rendimiento",
+  "/admin/rendimiento?period=180",
   "/admin/usuarios",
+  "/admin/usuarios?period=90",
   "/mi-ficha-profesional"
 ];
 
