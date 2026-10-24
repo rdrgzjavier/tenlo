@@ -2,7 +2,7 @@
 
 > Documento vivo para decidir, construir y comprobar el MVP de Tenlo.
 >
-> Última revisión: 23 de octubre de 2026. El avance ponderado y sus criterios están en [`ESTADO-MVP.md`](./ESTADO-MVP.md).
+> Última revisión: 24 de octubre de 2026. El avance ponderado y sus criterios están en [`ESTADO-MVP.md`](./ESTADO-MVP.md).
 
 ## Cómo utilizar este documento
 
@@ -54,8 +54,8 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - Aplicación en Next.js 15, React 18, TypeScript y Tailwind 3.
 - `typecheck` y `lint` pasan correctamente.
 - Home, buscadores, listados, fichas, reclamaciones, solicitudes, favoritos, comparación, categorías, zonas y sitemap ya consumen una capa de acceso capaz de usar Supabase con retorno seguro a `mock-data.ts`. El cambio de fuente no se activará hasta validar paridad y reversibilidad en producción.
-- Existen treinta y dos migraciones de Supabase. El 23 de octubre se aplicaron y verificaron `0024`–`0032`: medición propia del directorio, RPC públicos explícitos, privilegios mínimos de perfil y contenido, moderación profesional, historial de consentimiento, funciones administrativas endurecidas, atribución de registro y propuestas inmutables. La comprobación de catálogo devolvió 21 centros, 14 proveedores y 16 servicios públicos.
-- La base está preparada para una fuente de datos real unificada, pero no se activará hasta auditar e importar un lote pequeño y comparar conteos, relaciones y contenido.
+- Existen treinta y tres migraciones de Supabase. El 23 de octubre se aplicaron y verificaron `0024`–`0033`: medición propia del directorio, RPC públicos explícitos, privilegios mínimos de perfil y contenido, moderación profesional, historial de consentimiento, funciones administrativas endurecidas, atribución de registro, propuestas inmutables y actividad significativa propia. La comprobación de catálogo devolvió 21 centros, 14 proveedores y 16 servicios públicos.
+- Supabase está activo como fuente del directorio público con RPC de columnas explícitas y fallback editorial. El lote publicado se auditó y los conteos, relaciones y contenido se compararon antes de activarlo.
 - La reclamación de ficha ya puede iniciarse sin cuenta; la aprobación y los cambios siguen sujetos a verificación posterior.
 - El formulario de registro ya solicita tipo de usuario, nombre público, email, teléfono, contraseña, municipio y centro opcional. Para proveedores también muestra tipología, web, descripción, zona, modalidad, edades, disponibilidad, credenciales y otros campos.
 - El esquema ya incluye centro relacionado, intereses y consentimiento específico de marketing, pero el formulario de registro aún debe conectarlos al guardado y conservar la evidencia del consentimiento.

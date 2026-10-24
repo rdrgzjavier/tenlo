@@ -18,8 +18,10 @@ Tenlo tratará la descubribilidad para IA como una extensión del contenido púb
 - `sitemap.xml` incluye las rutas editoriales y fichas públicas.
 - La web publica JSON-LD para la organización, el buscador, listados y fichas.
 - `/llms.txt` utiliza Markdown, URLs absolutas, contexto, rutas prioritarias y límites de interpretación.
+- `/llms.txt` se entrega como `text/markdown; charset=utf-8`.
 - Las páginas enlazan el índice mediante `rel="describedby"`.
 - La prueba de producción comprueba `robots.txt`, sitemap y `llms.txt`.
+- El sitemap no inventa una fecha de modificación nueva para todas las URLs en cada despliegue; solo deberá publicar fechas cuando procedan de datos canónicos fiables.
 
 ## Política de rastreadores
 

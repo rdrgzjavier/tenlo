@@ -18,8 +18,9 @@ for (const [path, expectedTexts] of publicChecks) {
   const response = await fetch(`${baseUrl}${path}`, { headers: { "User-Agent": "Tenlo production smoke check" } });
   const body = await response.text();
   const missing = expectedTexts.filter((text) => !body.includes(text));
-  const ok = response.status === 200 && missing.length === 0;
-  console.log(`${ok ? "OK" : "FAIL"} ${response.status} ${path}${missing.length ? ` · faltan: ${missing.join(", ")}` : ""}`);
+  const contentTypeOk = path !== "/llms.txt" || response.headers.get("content-type")?.includes("text/markdown");
+  const ok = response.status === 200 && missing.length === 0 && contentTypeOk;
+  console.log(`${ok ? "OK" : "FAIL"} ${response.status} ${path}${missing.length ? ` · faltan: ${missing.join(", ")}` : ""}${contentTypeOk ? "" : " · Content-Type no es text/markdown"}`);
   failed ||= !ok;
 }
 
