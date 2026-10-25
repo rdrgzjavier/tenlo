@@ -40,6 +40,10 @@ export type TrackingAction =
   | "connection_marked_useful"
   | "outcome_reported"
   | "family_viewed_response"
+  | "provider_request_viewed"
+  | "provider_request_responded"
+  | "provider_request_declined"
+  | "provider_request_response_failed"
   | "profile_edit_started"
   | "profile_section_completed"
   | "profile_submitted";

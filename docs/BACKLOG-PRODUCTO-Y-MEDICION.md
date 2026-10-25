@@ -238,7 +238,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Permitir proponer desde una búsqueda sin resultados un proveedor con nombre, web, ubicación y servicio; conservarlo pendiente de revisión antes de crear una ficha `No verificada`.
 - [ ] Crear el flujo administrativo que convierta una propuesta revisada en ficha `No verificada`, evitando la publicación automática de datos aportados por usuarios.
 - [x] Permitir comparar un número pequeño de opciones con campos homogéneos. Favoritos permite elegir entre dos y tres fichas y contrasta categoría, municipio, cobertura, edad, precio, disponibilidad, confianza y revisión sin ocultar campos pendientes.
-- [ ] Hacer visibles cobertura, disponibilidad, actualización y confianza.
+- [x] Hacer visibles cobertura, disponibilidad, actualización y confianza. Las fichas muestran zona o ubicación según el tipo de proveedor, campos homogéneos de disponibilidad, nivel de confianza y un bloque de origen, última revisión y control de la ficha; los datos ausentes se declaran pendientes.
 - [x] Revisar el orden de resultados y definir criterios transparentes de ranking. El buscador prioriza coincidencias en el nombre cuando hay texto y después usa orden alfabético; la explicación está visible junto al recuento.
 - [x] Separar claramente resultados orgánicos de posiciones patrocinadas. En el piloto no existen posiciones patrocinadas y el buscador declara que ni el plan comercial ni la confianza compran una mejor posición; cualquier producto futuro deberá etiquetarse y mantenerse separado.
 
@@ -248,7 +248,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Activar `Guardar favorito` para dirigir a registro/inicio de sesión o al área de favoritos según el estado local de sesión.
 - [x] Persistir el guardado real de favoritos por usuario en Supabase y permitir añadir/quitar una ficha desde el propio CTA y desde `/favoritos`.
 - [x] Diseñar un único flujo de solicitud dentro de Tenlo para el piloto, con formulario asociado a la ficha y consulta posterior en `Mis solicitudes`.
-- [ ] Mantener en la ficha tres vías diferenciadas cuando estén disponibles:
+- [x] Mantener en la ficha tres vías diferenciadas cuando estén disponibles:
   - [x] `Solicitar información` dentro de Tenlo;
   - [x] `Llamar`, con icono y enlace `tel:` mobile first en fichas canónicas con teléfono público;
   - [x] `Visitar web oficial` en fichas canónicas con URL pública;
@@ -257,8 +257,9 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Evitar datos identificativos o sensibles de menores mediante instrucciones explícitas y confirmación de persona adulta.
 - [x] Preparar entidad `connection_requests` con ID, familia, proveedor, categoría, zona, estado y marcas de tiempo.
 - [x] Confirmar a la familia que la solicitud ha sido enviada y comunicar el objetivo operativo de respuesta o alternativa en un máximo de 48 horas.
-- [ ] Notificar al proveedor con un enlace seguro para responder.
+- [ ] Notificar al proveedor con un enlace seguro para responder. El backoffice ya sustituye la antigua casilla manual por un envío real al titular, enlaza `/solicitudes-profesionales` y solo registra el aviso tras aceptar el email. `0034` se aplicó y verificó el 25/10/2026; falta validar un envío real con una cuenta proveedora.
 - [x] Permitir registrar respuesta, rechazo, falta de disponibilidad y una actualización visible para la familia desde el backoffice.
+- [ ] Permitir que el titular responda desde una bandeja profesional sin ver la identidad ni los datos de contacto de la familia. `/solicitudes-profesionales`, los RPC restringidos y la asignación automática están implementados; `0034_provider_connection_flow.sql` se aplicó y verificó el 25/10/2026 con ejecución anónima denegada. Falta probar el recorrido completo con una cuenta proveedora real.
 - [x] Registrar aviso al proveedor, primera respuesta, cierre y última actualización comunicada a la familia. Falta estructurar los motivos de rechazo cuando haya volumen suficiente.
 - [ ] Si no hay respuesta, recordar al proveedor y ofrecer alternativas a la familia.
 - [x] Guardar la petición y la alternativa ofrecida en Supabase como estado y seguimiento operativo, no solo como email.
@@ -497,9 +498,9 @@ Propiedades recomendadas: `request_id`, proveedor, categoría, municipio, posici
 - [ ] `profile_published`
 - [x] `verification_requested` (equivalente al envío trazable de `claim_submitted`).
 - [ ] `verification_approved`
-- [ ] `provider_request_viewed`
-- [ ] `provider_request_responded`
-- [ ] `provider_request_declined`
+- [ ] `provider_request_viewed` (instrumentado y con `0034` aplicada; pendiente de validar el recorrido real).
+- [ ] `provider_request_responded` (instrumentado y con `0034` aplicada; pendiente de validar el recorrido real).
+- [ ] `provider_request_declined` (instrumentado y con `0034` aplicada; pendiente de validar el recorrido real).
 - [ ] `lead_relevance_reported`
 - [ ] `provider_reactivated`
 
@@ -619,7 +620,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 `Demanda real -> reclamar ficha -> mejorar información -> recibir solicitudes relevantes -> responder -> percibir valor -> mantener ficha activa`
 
 - [ ] Mostrar demanda real del segmento sin exagerarla.
-- [ ] Crear informe periódico de presencia, interés, solicitudes, respuesta y resultado.
+- [ ] Crear informe periódico de presencia, interés, solicitudes, respuesta y resultado. `/admin/proveedores` ya ofrece el agregado interno por periodo, categoría y municipio; falta una versión individual segura y comprensible para cada proveedor.
 - [ ] Recomendar un máximo de tres mejoras conectadas con datos observados.
 - [ ] Recordar actualizar disponibilidad y servicios.
 - [ ] Reactivar proveedores solo cuando exista una oportunidad o razón útil.

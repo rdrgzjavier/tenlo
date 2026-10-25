@@ -24,6 +24,15 @@ for (const [path, expectedTexts] of publicChecks) {
   failed ||= !ok;
 }
 
+const intentionallyAbsentPublicPaths = ["/llms-full.txt"];
+
+for (const path of intentionallyAbsentPublicPaths) {
+  const response = await fetch(`${baseUrl}${path}`, { redirect: "manual" });
+  const ok = response.status === 404;
+  console.log(`${ok ? "OK" : "FAIL"} ${response.status} ${path} · exportación masiva no publicada`);
+  failed ||= !ok;
+}
+
 const protectedPaths = [
   "/admin",
   "/admin/demanda?period=30",
@@ -35,7 +44,8 @@ const protectedPaths = [
   "/admin/proveedores?period=90&category=actividades&municipality=Majadahonda",
   "/admin/usuarios",
   "/admin/usuarios?period=90",
-  "/mi-ficha-profesional"
+  "/mi-ficha-profesional",
+  "/solicitudes-profesionales"
 ];
 
 for (const path of protectedPaths) {

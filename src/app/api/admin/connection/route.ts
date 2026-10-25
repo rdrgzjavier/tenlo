@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 const statuses = new Set(["submitted", "delivered", "viewed", "responded", "declined", "alternative_requested", "alternative_offered", "closed"]);
 
 export async function POST(request: Request) {
-  const body = (await request.json().catch(() => null)) as { recordId?: string; status?: string; providerNotified?: boolean; responseSummary?: string; alternativeSummary?: string } | null;
+  const body = (await request.json().catch(() => null)) as { recordId?: string; status?: string; responseSummary?: string; alternativeSummary?: string } | null;
   const recordId = String(body?.recordId || "");
   const status = String(body?.status || "");
   const responseSummary = String(body?.responseSummary || "").trim();
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
   const { data: profile } = await supabase.from("profiles").select("role,status").eq("id", authData.user.id).maybeSingle();
   if (profile?.role !== "tenlo_admin" || profile.status !== "approved") return NextResponse.json({ error: "No tienes permiso para actualizar solicitudes." }, { status: 403 });
 
-  const { data: existing, error: readError } = await supabase.from("connection_requests").select("status,provider_notified_at,provider_response_summary,alternative_summary,first_response_at,closed_at").eq("id", recordId).maybeSingle();
+  const { data: existing, error: readError } = await supabase.from("connection_requests").select("status,provider_response_summary,alternative_summary,first_response_at,closed_at").eq("id", recordId).maybeSingle();
   if (readError) return NextResponse.json({ error: "No hemos podido consultar el seguimiento." }, { status: 500 });
   if (!existing) return NextResponse.json({ error: "La solicitud no existe." }, { status: 404 });
 
@@ -33,7 +33,6 @@ export async function POST(request: Request) {
   };
   const familyVisibleChange = existing.status !== status || (existing.provider_response_summary || "") !== responseSummary || (existing.alternative_summary || "") !== alternativeSummary;
   if (familyVisibleChange) update.last_family_update_at = now;
-  if (body?.providerNotified && !existing.provider_notified_at) update.provider_notified_at = now;
   if (["responded", "declined"].includes(status) && !existing.first_response_at) update.first_response_at = now;
   if (status === "closed" && !existing.closed_at) update.closed_at = now;
 

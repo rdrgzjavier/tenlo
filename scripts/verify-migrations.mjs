@@ -31,7 +31,7 @@ numbers.forEach((number, index) => {
   assert(number === index + 1, `Falta la migración ${String(index + 1).padStart(4, "0")}.`);
 });
 
-const [m24, m25, m26, m27, m28, m29, m30, m31, m32, m33, repository, registration, verification] = await Promise.all([
+const [m24, m25, m26, m27, m28, m29, m30, m31, m32, m33, m34, repository, registration, verification, providerVerification] = await Promise.all([
   text("supabase/migrations/0024_directory_performance_events.sql"),
   text("supabase/migrations/0025_public_directory_rpc.sql"),
   text("supabase/migrations/0026_profile_role_hardening.sql"),
@@ -42,9 +42,11 @@ const [m24, m25, m26, m27, m28, m29, m30, m31, m32, m33, repository, registratio
   text("supabase/migrations/0031_profile_acquisition_and_onboarding.sql"),
   text("supabase/migrations/0032_submission_content_immutability.sql"),
   text("supabase/migrations/0033_profile_activity_tracking.sql"),
+  text("supabase/migrations/0034_provider_connection_flow.sql"),
   text("src/lib/directory-repository.ts"),
   text("src/components/LoginRegistration.tsx"),
-  text("supabase/verification/0024_0025_directory_controls.sql")
+  text("supabase/verification/0024_0025_directory_controls.sql"),
+  text("supabase/verification/0034_provider_connection_flow.sql")
 ]);
 
 assert(/revoke all on public\.directory_events from anon, authenticated/i.test(m24), "directory_events debe retirar privilegios heredados.");
@@ -114,6 +116,25 @@ for (const protectedColumn of ["payload", "review_notes"]) {
 assert(/security definer[\s\S]*set search_path = ''/i.test(m33), "0033 debe aislar la función de actividad con search_path vacío.");
 assert(/where id = \(select auth\.uid\(\)\)/i.test(m33), "0033 debe limitar la actividad al perfil autenticado.");
 assert(!m33.includes("'active' then"), "0033 no debe permitir al cliente autodeclararse activo.");
+
+for (const functionName of ["get_provider_connection_requests", "mark_provider_request_viewed", "respond_to_connection_request"]) {
+  assert(m34.includes(`function public.${functionName}`), `0034 debe definir ${functionName}.`);
+}
+const providerRequestShape = m34.match(/get_provider_connection_requests\(\)\s+returns table \(([\s\S]*?)\)\s+language/i)?.[1] ?? "";
+for (const privateColumn of ["family_id", "email", "phone"]) {
+  assert(!providerRequestShape.includes(privateColumn), `La bandeja del proveedor expone por error ${privateColumn}.`);
+}
+assert(/get_provider_connection_requests\(\)[\s\S]*profile\.owner_id = \(select auth\.uid\(\)\)/i.test(m34), "La bandeja del proveedor debe limitarse al titular autenticado.");
+assert(/begin\s+--[^]*new\.provider_id := null;/i.test(m34), "La asignación debe descartar cualquier provider_id aportado por el cliente.");
+assert(/before insert or update of target_type, target_id on public\.connection_requests/i.test(m34), "La asignación debe ejecutarse en altas y cambios de destino.");
+assert(/respond_to_connection_request[\s\S]*next_status not in \('responded', 'declined'\)/i.test(m34), "La respuesta del proveedor solo puede responder o rechazar.");
+assert(/revoke all on function public\.get_provider_connection_requests\(\) from public, anon, authenticated/i.test(m34), "El RPC de solicitudes debe retirar la ejecución heredada.");
+assert(/security definer[\s\S]*set search_path = ''/i.test(m34), "0034 debe aislar las funciones privilegiadas con search_path vacío.");
+for (const functionName of ["get_provider_connection_requests", "mark_provider_request_viewed", "respond_to_connection_request"]) {
+  assert(providerVerification.includes(`public.${functionName}`), `La verificación post-despliegue no comprueba ${functionName}.`);
+}
+assert(providerVerification.includes("connection_requests_provider_created_idx"), "La verificación post-despliegue no comprueba el índice del proveedor.");
+assert(providerVerification.includes("assign_connection_request_provider"), "La verificación post-despliegue no comprueba el trigger de asignación.");
 
 console.log(`Migraciones verificadas: ${migrationFiles.length} archivos, secuencia 0001-${String(numbers.at(-1)).padStart(4, "0")}.`);
 console.log("Contratos comprobados: directorio público, permisos por columna, moderación, consentimiento y search_path.");
