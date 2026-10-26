@@ -367,7 +367,7 @@ La persistencia propia, la migración `0024` y el informe privado están despleg
   - [x] tasa de contacto completado como solicitud sobre intención de contacto;
   - [x] tasa de respuesta dentro del SLA de 48 horas, oculta con menos de cinco solicitudes;
   - [x] conexiones útiles atribuidas a la ficha desde el feedback familiar;
-  - [ ] datos de calidad y frescura de la ficha.
+  - [x] datos de calidad y frescura mediante nivel de confianza y fecha de última revisión, separados del plan comercial.
 - [x] No mostrar tasas o rankings cuando la muestra sea demasiado pequeña: las tasas comparativas por ficha se ocultan con menos de 20 impresiones y los rankings de texto libre requieren al menos tres búsquedas.
 
 ### Rendimiento por vertical

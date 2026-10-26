@@ -6,6 +6,7 @@ import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import ReportPeriodSelector, { resolveReportPeriod } from "@/components/ReportPeriodSelector";
 import ReportSegmentFilters from "@/components/ReportSegmentFilters";
 import { loadDirectorySnapshot } from "@/lib/directory-repository";
+import { trustLevelLabel } from "@/lib/display-labels";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -31,6 +32,8 @@ type PerformanceRow = {
   href: string | null;
   category: string;
   municipality: string;
+  trustLevel: string;
+  lastReviewed: string;
   impressions: number;
   views: number;
   opens: number;
@@ -127,14 +130,14 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
       .limit(5000)
   ]);
 
-  const labels = new Map<string, { title: string; href: string }>();
+  const labels = new Map<string, { title: string; href: string; trustLevel: string; lastReviewed: string }>();
   directory.centers.forEach((center) => {
-    labels.set(`center:${center.id}`, { title: center.name, href: `/centros/${center.slug}` });
+    labels.set(`center:${center.id}`, { title: center.name, href: `/centros/${center.slug}`, trustLevel: trustLevelLabel(center.trustLevel), lastReviewed: center.lastReviewed || "Sin dato" });
   });
-  directory.providers.forEach((provider) => labels.set(`resource:${provider.id}`, { title: provider.businessName, href: `/servicios/${provider.id}` }));
+  directory.providers.forEach((provider) => labels.set(`resource:${provider.id}`, { title: provider.businessName, href: `/servicios/${provider.id}`, trustLevel: trustLevelLabel(provider.trustLevel), lastReviewed: provider.lastReviewed || "Sin dato" }));
   directory.listings.forEach((listing) => {
     const href = listing.categoryId === "centros" ? `/centros/${listing.slug}` : `/servicios/${listing.id}`;
-    labels.set(listing.categoryId === "centros" ? reportingKey("center", listing.id) : `resource:${listing.id}`, { title: listing.title, href });
+    labels.set(listing.categoryId === "centros" ? reportingKey("center", listing.id) : `resource:${listing.id}`, { title: listing.title, href, trustLevel: trustLevelLabel(listing.trustLevel), lastReviewed: listing.lastReviewed || "Sin dato" });
   });
 
   const allEvents = (data ?? []) as DirectoryEvent[];
@@ -155,6 +158,8 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
       href: label?.href ?? null,
       category: category ?? "Sin categoría",
       municipality: municipality ?? "Sin municipio",
+      trustLevel: label?.trustLevel ?? "Sin dato",
+      lastReviewed: label?.lastReviewed ?? "Sin dato",
       impressions: 0,
       views: 0,
       opens: 0,
@@ -257,9 +262,9 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
         <p className="mt-2 text-sm leading-6 text-muted">Las tasas se muestran como orientación operativa. Con menos de 20 impresiones la muestra se marca como insuficiente; las tasas de solicitud y SLA se ocultan con menos de cinco oportunidades. Solicitudes, respuestas y utilidad proceden del backend y no dependen del consentimiento analítico.</p>
         {rows.length ? (
           <div className="mt-5 overflow-x-auto">
-            <table className="w-full min-w-[96rem] text-left text-sm">
+            <table className="w-full min-w-[108rem] text-left text-sm">
               <thead className="border-b border-line text-xs uppercase tracking-wide text-muted">
-                <tr><th className="pb-3 pr-4">Ficha</th><th className="pb-3 pr-4 text-right">Sesiones</th><th className="pb-3 pr-4 text-right">Impresiones</th><th className="pb-3 pr-4 text-right">Aperturas</th><th className="pb-3 pr-4 text-right">Visitas</th><th className="pb-3 pr-4 text-right">CTR</th><th className="pb-3 pr-4 text-right">Contactos</th><th className="pb-3 pr-4 text-right">Contacto / visita</th><th className="pb-3 pr-4 text-right">Solicitudes</th><th className="pb-3 pr-4 text-right">Solicitud / contacto</th><th className="pb-3 pr-4 text-right">Respuestas</th><th className="pb-3 pr-4 text-right">≤ 48 h</th><th className="pb-3 pr-4 text-right">Útiles</th><th className="pb-3 text-right">Guardados</th></tr>
+                <tr><th className="pb-3 pr-4">Ficha</th><th className="pb-3 pr-4">Confianza</th><th className="pb-3 pr-4">Última revisión</th><th className="pb-3 pr-4 text-right">Sesiones</th><th className="pb-3 pr-4 text-right">Impresiones</th><th className="pb-3 pr-4 text-right">Aperturas</th><th className="pb-3 pr-4 text-right">Visitas</th><th className="pb-3 pr-4 text-right">CTR</th><th className="pb-3 pr-4 text-right">Contactos</th><th className="pb-3 pr-4 text-right">Contacto / visita</th><th className="pb-3 pr-4 text-right">Solicitudes</th><th className="pb-3 pr-4 text-right">Solicitud / contacto</th><th className="pb-3 pr-4 text-right">Respuestas</th><th className="pb-3 pr-4 text-right">≤ 48 h</th><th className="pb-3 pr-4 text-right">Útiles</th><th className="pb-3 text-right">Guardados</th></tr>
               </thead>
               <tbody>
                 {rows.map((row) => {
@@ -267,6 +272,8 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
                   return (
                     <tr key={row.key} className="border-b border-line align-top last:border-0">
                       <th scope="row" className="py-4 pr-4"><div className="font-semibold text-ink">{row.href ? <Link href={row.href} target="_blank" className="underline">{row.title}</Link> : row.title}</div><div className="mt-1 text-xs font-normal text-muted">{row.category} · {row.municipality}</div>{lowSample ? <span className="mt-2 inline-flex rounded-full bg-soft px-2 py-1 text-[11px] font-bold text-muted">Muestra insuficiente</span> : null}</th>
+                      <td className="py-4 pr-4 text-slatecopy">{row.trustLevel}</td>
+                      <td className="py-4 pr-4 text-slatecopy">{row.lastReviewed}</td>
                       <td className="py-4 pr-4 text-right text-slatecopy">{row.sessions.size}</td>
                       <td className="py-4 pr-4 text-right text-slatecopy">{row.impressions}</td>
                       <td className="py-4 pr-4 text-right text-slatecopy">{row.opens}</td>
