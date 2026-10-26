@@ -188,6 +188,7 @@ export default async function AdminDemandPage({ searchParams }: { searchParams: 
     supabase
       .from("connection_requests")
       .select("id,event_id,status,first_response_at")
+      .eq("is_test", false)
       .gte("created_at", periodStart.toISOString())
       .limit(5000),
     supabase

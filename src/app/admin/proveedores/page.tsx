@@ -135,10 +135,10 @@ export default async function AdminProvidersPage({ searchParams }: { searchParam
   const periodStart = new Date();
   periodStart.setDate(periodStart.getDate() - period);
   const [businessResult, profilesResult, claimsResult, connectionsResult, servicesResult, approvalsResult] = await Promise.all([
-    supabase.from("business_profiles").select("id,external_key,owner_id,category,municipality,status,completeness_percent,accepts_requests,created_at").limit(5000),
-    supabase.from("profiles").select("id,role,onboarding_status,last_significant_activity_at,created_at").limit(5000),
+    supabase.from("business_profiles").select("id,external_key,owner_id,category,municipality,status,completeness_percent,accepts_requests,created_at").eq("is_test", false).limit(5000),
+    supabase.from("profiles").select("id,role,onboarding_status,last_significant_activity_at,created_at").eq("is_test", false).limit(5000),
     supabase.from("claim_requests").select("entity_type,entity_id,status,created_at").gte("created_at", periodStart.toISOString()).limit(5000),
-    supabase.from("connection_requests").select("provider_id,target_id,status,relevance,first_response_at,created_at").limit(5000),
+    supabase.from("connection_requests").select("provider_id,target_id,status,relevance,first_response_at,created_at").eq("is_test", false).limit(5000),
     supabase.from("services").select("id,external_key,business_profile_id").limit(5000),
     supabase.from("admin_queue_audit").select("record_id,changed_at").eq("queue", "business_profile").eq("new_status", "approved").gte("changed_at", periodStart.toISOString()).limit(5000)
   ]);

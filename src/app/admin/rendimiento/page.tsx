@@ -121,6 +121,7 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
     supabase
       .from("connection_requests")
       .select("id,target_id,category_id,municipality,status,first_response_at,alternative_summary,created_at")
+      .eq("is_test", false)
       .gte("created_at", periodStart.toISOString())
       .limit(5000),
     supabase

@@ -55,6 +55,7 @@ type ProfileRow = {
   acquisition_landing_path: string | null;
   onboarding_status: "registered" | "email_confirmed" | "profile_started" | "profile_complete" | "active";
   last_significant_activity_at: string | null;
+  is_test: boolean;
   status: ModerationStatus;
   review_notes: string | null;
   created_at: string;
@@ -84,6 +85,7 @@ type ProfileInsert = {
   acquisition_landing_path?: string | null;
   onboarding_status?: "registered" | "email_confirmed" | "profile_started" | "profile_complete" | "active";
   last_significant_activity_at?: string | null;
+  is_test?: boolean;
   status?: ModerationStatus;
   review_notes?: string | null;
   created_at?: string;
@@ -139,6 +141,7 @@ type BusinessProfileRow = {
   location_visibility: string;
   service_municipalities: string[];
   location_verified_at: string | null;
+  is_test: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -178,6 +181,7 @@ type BusinessProfileInsert = {
   location_visibility?: string;
   service_municipalities?: string[];
   location_verified_at?: string | null;
+  is_test?: boolean;
   created_at?: string;
   updated_at?: string;
 };

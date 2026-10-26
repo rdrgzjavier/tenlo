@@ -81,7 +81,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
   if (adminProfile?.role !== "tenlo_admin" || adminProfile.status !== "approved") redirect("/area-personal");
 
   const [profilesResult, consentResult] = await Promise.all([
-    supabase.from("profiles").select("role,municipality,marketing_consent,registration_channel,acquisition_entry_channel,acquisition_source,acquisition_medium,acquisition_campaign,onboarding_status,last_significant_activity_at,created_at").order("created_at", { ascending: false }).limit(5000),
+    supabase.from("profiles").select("role,municipality,marketing_consent,registration_channel,acquisition_entry_channel,acquisition_source,acquisition_medium,acquisition_campaign,onboarding_status,last_significant_activity_at,created_at").eq("is_test", false).order("created_at", { ascending: false }).limit(5000),
     supabase.from("consent_history").select("decision,recorded_at").eq("purpose", "marketing_email").order("recorded_at", { ascending: false }).limit(5000)
   ]);
 
