@@ -360,13 +360,13 @@ La persistencia propia, la migración `0024` y el informe privado están despleg
 - [x] Medir guardados, compartidos, clics externos, inicios de contacto y solicitudes completadas, con categoría, vertical, municipio y ficha estables cuando estén disponibles.
 - [x] Relacionar solicitudes con respuesta, tiempo de respuesta, utilidad y resultado mediante `connection_requests` y `connection_feedback`.
 - [ ] Calcular por ficha:
-  - [ ] impresiones;
-  - [ ] visitas únicas;
-  - [ ] CTR desde resultados;
-  - [ ] tasa de visita a contacto;
-  - [ ] tasa de contacto completado;
-  - [ ] tasa de respuesta dentro del SLA;
-  - [ ] conexiones útiles;
+  - [x] impresiones;
+  - [x] visitas únicas por sesión del navegador;
+  - [x] CTR desde resultados;
+  - [x] tasa de visita a contacto;
+  - [x] tasa de contacto completado como solicitud sobre intención de contacto;
+  - [x] tasa de respuesta dentro del SLA de 48 horas, oculta con menos de cinco solicitudes;
+  - [x] conexiones útiles atribuidas a la ficha desde el feedback familiar;
   - [ ] datos de calidad y frescura de la ficha.
 - [x] No mostrar tasas o rankings cuando la muestra sea demasiado pequeña: las tasas comparativas por ficha se ocultan con menos de 20 impresiones y los rankings de texto libre requieren al menos tres búsquedas.
 

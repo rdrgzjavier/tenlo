@@ -36,11 +36,18 @@ type PerformanceRow = {
   opens: number;
   contacts: number;
   requests: number;
+  responses: number;
+  responsesWithinSla: number;
+  usefulConnections: number;
   saves: number;
   sessions: Set<string>;
 };
 
 type ConnectionRequestMetric = {
+  id: string;
+  target_id: string | null;
+  category_id: string | null;
+  municipality: string | null;
   status: string;
   first_response_at: string | null;
   alternative_summary: string | null;
@@ -48,6 +55,7 @@ type ConnectionRequestMetric = {
 };
 
 type ConnectionFeedbackMetric = {
+  request_id: string;
   useful: boolean;
   outcome: string;
   created_at: string;
@@ -109,12 +117,12 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
     loadDirectorySnapshot(),
     supabase
       .from("connection_requests")
-      .select("status,first_response_at,alternative_summary,created_at")
+      .select("id,target_id,category_id,municipality,status,first_response_at,alternative_summary,created_at")
       .gte("created_at", periodStart.toISOString())
       .limit(5000),
     supabase
       .from("connection_feedback")
-      .select("useful,outcome,created_at")
+      .select("request_id,useful,outcome,created_at")
       .gte("created_at", periodStart.toISOString())
       .limit(5000)
   ]);
@@ -139,40 +147,67 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
     && (!activeMunicipality || event.municipality === activeMunicipality)
   ));
   const grouped = new Map<string, PerformanceRow>();
-  for (const event of events) {
-    const key = reportingKey(event.entity_type, event.entity_id);
+  const rowFor = (key: string, category: string | null, municipality: string | null) => {
     const label = labels.get(key);
     const row = grouped.get(key) ?? {
       key,
       title: label?.title ?? "Ficha sin título disponible",
       href: label?.href ?? null,
-      category: event.category_id ?? "Sin categoría",
-      municipality: event.municipality ?? "Sin municipio",
+      category: category ?? "Sin categoría",
+      municipality: municipality ?? "Sin municipio",
       impressions: 0,
       views: 0,
       opens: 0,
       contacts: 0,
       requests: 0,
+      responses: 0,
+      responsesWithinSla: 0,
+      usefulConnections: 0,
       saves: 0,
       sessions: new Set<string>()
     };
+    grouped.set(key, row);
+    return row;
+  };
+  for (const event of events) {
+    const key = reportingKey(event.entity_type, event.entity_id);
+    const row = rowFor(key, event.category_id, event.municipality);
     row.sessions.add(event.anonymous_session_id);
     if (event.event_name === "provider_impression") row.impressions += 1;
     if (["provider_profile_viewed", "center_profile_viewed"].includes(event.event_name)) row.views += 1;
     if (event.event_name === "result_opened") row.opens += 1;
     if (contactEvents.has(event.event_name)) row.contacts += 1;
-    if (event.event_name === "request_created") row.requests += 1;
     if (event.event_name === "provider_saved") row.saves += 1;
-    grouped.set(key, row);
   }
 
+  const requests = (requestsResult.data ?? []) as ConnectionRequestMetric[];
+  const feedback = (feedbackResult.data ?? []) as ConnectionFeedbackMetric[];
+  const requestRowKeys = new Map<string, string>();
+  requests.forEach((request) => {
+    if (!request.target_id) return;
+    const centerKey = reportingKey("center", request.target_id);
+    const resourceKey = `resource:${request.target_id}`;
+    const key = labels.has(centerKey) ? centerKey : resourceKey;
+    const row = rowFor(key, request.category_id, request.municipality);
+    row.requests += 1;
+    requestRowKeys.set(request.id, key);
+    const responseAt = request.first_response_at ? new Date(request.first_response_at).getTime() : null;
+    if (responseAt !== null || request.alternative_summary || ["responded", "declined", "alternative_offered", "closed"].includes(request.status)) row.responses += 1;
+    if (responseAt !== null) {
+      const responseTime = responseAt - new Date(request.created_at).getTime();
+      if (responseTime >= 0 && responseTime <= 48 * 3_600_000) row.responsesWithinSla += 1;
+    }
+  });
+  feedback.forEach((item) => {
+    if (!item.useful) return;
+    const key = requestRowKeys.get(item.request_id);
+    if (key) grouped.get(key)!.usefulConnections += 1;
+  });
   const rows = [...grouped.values()].sort((a, b) => b.views + b.opens - (a.views + a.opens) || b.impressions - a.impressions);
   const totalImpressions = rows.reduce((sum, row) => sum + row.impressions, 0);
   const totalViews = rows.reduce((sum, row) => sum + row.views, 0);
   const totalContacts = rows.reduce((sum, row) => sum + row.contacts, 0);
   const totalSessions = new Set(events.map((event) => event.anonymous_session_id)).size;
-  const requests = (requestsResult.data ?? []) as ConnectionRequestMetric[];
-  const feedback = (feedbackResult.data ?? []) as ConnectionFeedbackMetric[];
   const respondedRequests = requests.filter((request) => request.first_response_at || request.alternative_summary).length;
   const responseTimes = requests.flatMap((request) => request.first_response_at
     ? [new Date(request.first_response_at).getTime() - new Date(request.created_at).getTime()]
@@ -219,12 +254,12 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
 
       <section className="card mt-6 p-5 md:p-6">
         <h2 className="subsection-title text-ink">Detalle por ficha</h2>
-        <p className="mt-2 text-sm leading-6 text-muted">Las tasas se muestran como orientación operativa. Con menos de 20 impresiones la muestra se marca como insuficiente y no debe usarse para comparar proveedores.</p>
+        <p className="mt-2 text-sm leading-6 text-muted">Las tasas se muestran como orientación operativa. Con menos de 20 impresiones la muestra se marca como insuficiente; las tasas de solicitud y SLA se ocultan con menos de cinco oportunidades. Solicitudes, respuestas y utilidad proceden del backend y no dependen del consentimiento analítico.</p>
         {rows.length ? (
           <div className="mt-5 overflow-x-auto">
-            <table className="w-full min-w-[74rem] text-left text-sm">
+            <table className="w-full min-w-[96rem] text-left text-sm">
               <thead className="border-b border-line text-xs uppercase tracking-wide text-muted">
-                <tr><th className="pb-3 pr-4">Ficha</th><th className="pb-3 pr-4 text-right">Sesiones</th><th className="pb-3 pr-4 text-right">Impresiones</th><th className="pb-3 pr-4 text-right">Aperturas</th><th className="pb-3 pr-4 text-right">Visitas</th><th className="pb-3 pr-4 text-right">CTR</th><th className="pb-3 pr-4 text-right">Contactos</th><th className="pb-3 pr-4 text-right">Contacto / visita</th><th className="pb-3 pr-4 text-right">Solicitudes</th><th className="pb-3 text-right">Guardados</th></tr>
+                <tr><th className="pb-3 pr-4">Ficha</th><th className="pb-3 pr-4 text-right">Sesiones</th><th className="pb-3 pr-4 text-right">Impresiones</th><th className="pb-3 pr-4 text-right">Aperturas</th><th className="pb-3 pr-4 text-right">Visitas</th><th className="pb-3 pr-4 text-right">CTR</th><th className="pb-3 pr-4 text-right">Contactos</th><th className="pb-3 pr-4 text-right">Contacto / visita</th><th className="pb-3 pr-4 text-right">Solicitudes</th><th className="pb-3 pr-4 text-right">Solicitud / contacto</th><th className="pb-3 pr-4 text-right">Respuestas</th><th className="pb-3 pr-4 text-right">≤ 48 h</th><th className="pb-3 pr-4 text-right">Útiles</th><th className="pb-3 text-right">Guardados</th></tr>
               </thead>
               <tbody>
                 {rows.map((row) => {
@@ -240,6 +275,10 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
                       <td className="py-4 pr-4 text-right text-slatecopy">{row.contacts}</td>
                       <td className="py-4 pr-4 text-right text-slatecopy">{row.views < 20 ? "—" : percent(row.contacts, row.views)}</td>
                       <td className="py-4 pr-4 text-right text-slatecopy">{row.requests}</td>
+                      <td className="py-4 pr-4 text-right text-slatecopy">{row.contacts < 5 ? "—" : percent(row.requests, row.contacts)}</td>
+                      <td className="py-4 pr-4 text-right text-slatecopy">{row.responses}</td>
+                      <td className="py-4 pr-4 text-right text-slatecopy">{row.requests < 5 ? "—" : percent(row.responsesWithinSla, row.requests)}</td>
+                      <td className="py-4 pr-4 text-right text-slatecopy">{row.usefulConnections}</td>
                       <td className="py-4 text-right text-slatecopy">{row.saves}</td>
                     </tr>
                   );
