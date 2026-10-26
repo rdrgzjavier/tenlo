@@ -34,6 +34,8 @@ Los enlaces de un solo uso no deben apuntar directamente a `{{ .ConfirmationURL 
 | Reset password | `Crea una nueva contraseña de Tenlo` | `recovery` | `/restablecer-contrasena` |
 | Reauthentication | `Tu código de seguridad de Tenlo` | OTP `{{ .Token }}` | flujo que lo solicite |
 
+Las siete notificaciones de seguridad de Supabase (cambios de contraseña, email, teléfono, métodos de acceso y MFA) permanecen desactivadas. No se activarán hasta revisar su contenido, el volumen esperado y el procedimiento de respuesta ante cambios no reconocidos; mientras estén desactivadas no generan comunicaciones sin personalizar.
+
 La plantilla de referencia para confirmación está en `docs/PLANTILLA-EMAIL-CONFIRMACION.html`. El enlace de los correos con acción usa esta estructura:
 
 ```text

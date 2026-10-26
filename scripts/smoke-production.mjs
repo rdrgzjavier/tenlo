@@ -7,6 +7,7 @@ const publicChecks = [
   ["/servicios", ["Servicios para familias"]],
   ["/servicios/centro-cultural-volturno-pozuelo", ["Centro Cultural Volturno"]],
   ["/buscar?municipio=Majadahonda", ["Majadahonda"]],
+  ["/auth/confirmar?token_hash=smoke-test&type=recovery&next=/restablecer-contrasena", ["Restablece tu contraseña", "Continuar de forma segura"]],
   ["/sitemap.xml", ["/centros/ceip-agora-boadilla", "/servicios/centro-cultural-volturno-pozuelo"]],
   ["/robots.txt", ["Sitemap: https://tenlo.es/sitemap.xml", "Disallow: /admin/"]],
   ["/llms.txt", ["# Tenlo", "[Buscar en Tenlo](https://tenlo.es/buscar)", "## Límites de uso"]]
@@ -64,5 +65,16 @@ const invalidAnalyticsResponse = await fetch(`${baseUrl}/api/analytics/directory
 const invalidAnalyticsOk = invalidAnalyticsResponse.status === 400 || invalidAnalyticsResponse.status === 404;
 console.log(`${invalidAnalyticsOk ? "OK" : "FAIL"} ${invalidAnalyticsResponse.status} /api/analytics/directory-event · rechazo sin escritura`);
 failed ||= !invalidAnalyticsOk;
+
+const invalidAuthResponse = await fetch(`${baseUrl}/auth/callback`, {
+  method: "POST",
+  headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  body: new URLSearchParams({ token_hash: "invalid", type: "recovery", next: "/restablecer-contrasena" }),
+  redirect: "manual"
+});
+const invalidAuthLocation = invalidAuthResponse.headers.get("location") || "";
+const invalidAuthOk = invalidAuthResponse.status === 303 && invalidAuthLocation.endsWith("/restablecer-contrasena?error=invalid_link");
+console.log(`${invalidAuthOk ? "OK" : "FAIL"} ${invalidAuthResponse.status} /auth/callback · token inválido rechazado`);
+failed ||= !invalidAuthOk;
 
 if (failed) process.exitCode = 1;
