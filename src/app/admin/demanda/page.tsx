@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowLeft, BarChart3, Eye, MapPin, MessageCircle, SearchX, Send, TrendingUp } from "lucide-react";
+import { ArrowLeft, BarChart3, CheckCircle2, Eye, MapPin, MessageCircle, SearchX, Send, Sparkles, TrendingUp } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import ReportPeriodSelector, { resolveReportPeriod } from "@/components/ReportPeriodSelector";
 import ReportSegmentFilters from "@/components/ReportSegmentFilters";
@@ -26,9 +26,22 @@ type SearchEvent = {
 };
 
 type SearchJourneyEvent = {
+  event_id: string;
   search_id: string | null;
   event_name: string;
   created_at: string;
+};
+
+type ConnectionRequest = {
+  id: string;
+  event_id: string;
+  status: string;
+  first_response_at: string | null;
+};
+
+type ConnectionFeedback = {
+  request_id: string;
+  useful: boolean;
 };
 
 type RankedValue = {
@@ -159,7 +172,7 @@ export default async function AdminDemandPage({ searchParams }: { searchParams: 
   periodStart.setDate(periodStart.getDate() - period);
   const comparisonStart = new Date();
   comparisonStart.setDate(comparisonStart.getDate() - period * 2);
-  const [searchResult, journeyResult] = await Promise.all([
+  const [searchResult, journeyResult, connectionResult, feedbackResult] = await Promise.all([
     supabase
       .from("search_events")
       .select("search_id,normalized_query,category_id,vertical_id,municipality,results_count,zero_results,created_at")
@@ -168,10 +181,20 @@ export default async function AdminDemandPage({ searchParams }: { searchParams: 
       .limit(10000),
     supabase
       .from("directory_events")
-      .select("search_id,event_name,created_at")
+      .select("event_id,search_id,event_name,created_at")
       .not("search_id", "is", null)
       .gte("created_at", periodStart.toISOString())
-      .limit(10000)
+      .limit(10000),
+    supabase
+      .from("connection_requests")
+      .select("id,event_id,status,first_response_at")
+      .gte("created_at", periodStart.toISOString())
+      .limit(5000),
+    supabase
+      .from("connection_feedback")
+      .select("request_id,useful")
+      .gte("created_at", periodStart.toISOString())
+      .limit(5000)
   ]);
 
   const comparisonEvents = (searchResult.data ?? []) as SearchEvent[];
@@ -211,6 +234,19 @@ export default async function AdminDemandPage({ searchParams }: { searchParams: 
     const contactedTimestamp = contactedAt.get(searchId);
     return contactedTimestamp !== undefined && occurredAt >= contactedTimestamp ? [searchId] : [];
   }));
+  const requestSearchByEventId = new Map(journeyEvents.flatMap((event) => (
+    event.event_name === "request_created" && event.search_id ? [[event.event_id, event.search_id] as const] : []
+  )));
+  const matchedRequests = ((connectionResult.data ?? []) as ConnectionRequest[]).flatMap((request) => {
+    const searchId = requestSearchByEventId.get(request.event_id);
+    return searchId && filteredSearchIds.has(searchId) ? [{ ...request, searchId }] : [];
+  });
+  const matchedRequestSearchIds = new Set(matchedRequests.map((request) => request.searchId));
+  const respondedSearchIds = new Set(matchedRequests.flatMap((request) => (
+    request.first_response_at || ["responded", "declined", "alternative_offered", "closed"].includes(request.status) ? [request.searchId] : []
+  )));
+  const usefulRequestIds = new Set(((feedbackResult.data ?? []) as ConnectionFeedback[]).flatMap((feedback) => feedback.useful ? [feedback.request_id] : []));
+  const usefulSearchIds = new Set(matchedRequests.flatMap((request) => usefulRequestIds.has(request.id) ? [request.searchId] : []));
   const profileViewsFromSearch = journeyEvents.filter((event) => event.search_id && ["provider_profile_viewed", "center_profile_viewed"].includes(event.event_name)).length;
 
   return (
@@ -222,7 +258,7 @@ export default async function AdminDemandPage({ searchParams }: { searchParams: 
       <ReportPeriodSelector activePeriod={period} pathname="/admin/demanda" preservedParams={{ category: activeCategory, municipality: activeMunicipality }} />
       <ReportSegmentFilters activeCategory={activeCategory} activeMunicipality={activeMunicipality} activePeriod={period} categoryOptions={categoryOptions} municipalityOptions={municipalityOptions} pathname="/admin/demanda" />
 
-      {searchResult.error || journeyResult.error ? <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">No se ha podido cargar una parte del embudo de búsqueda. Comprueba que las migraciones de acceso administrativo estén aplicadas.</p> : null}
+      {searchResult.error || journeyResult.error || connectionResult.error || feedbackResult.error ? <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">No se ha podido cargar una parte del embudo de búsqueda. Comprueba que las migraciones de acceso administrativo estén aplicadas.</p> : null}
 
       <section className="card mt-6 p-5 md:p-6" aria-labelledby="demand-summary-title">
         <div className="flex items-center gap-3"><BarChart3 size={22} className="text-ink" aria-hidden /><div><h2 id="demand-summary-title" className="subsection-title text-ink">Resumen de {period} días</h2><p className="mt-1 text-sm text-muted">Solo datos agregados; este informe no muestra usuarios ni sesiones.{activeCategory || activeMunicipality ? " Resultados filtrados por el segmento seleccionado." : ""}</p></div></div>
@@ -236,14 +272,16 @@ export default async function AdminDemandPage({ searchParams }: { searchParams: 
 
       <section className="card mt-6 p-5 md:p-6" aria-labelledby="search-funnel-title">
         <div className="flex items-center gap-3"><TrendingUp size={22} className="text-ink" aria-hidden /><div><h2 id="search-funnel-title" className="subsection-title text-ink">Embudo del buscador</h2><p className="mt-1 text-sm text-muted">Recorridos unidos mediante un identificador anónimo de búsqueda. Excluye visitas directas a fichas.</p></div></div>
-        <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        <dl className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7">
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Búsquedas completadas</dt><dd className="mt-2 text-3xl font-black text-ink">{events.length || "Sin datos"}</dd><p className="mt-1 text-xs text-muted">{completedSearchIds.size} con ID de recorrido</p></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Con resultados</dt><dd className="mt-2 text-3xl font-black text-ink">{events.length ? searchesWithResults : "Sin datos"}</dd><p className="mt-1 text-xs text-muted">{events.length ? percent(searchesWithResults, events.length) : "Sin tasa calculable"}</p></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Eye size={16} aria-hidden />Llegan a una ficha</dt><dd className="mt-2 text-3xl font-black text-ink">{completedSearchIds.size ? viewedSearchIds.size : "Sin datos"}</dd><p className="mt-1 text-xs text-muted">{completedSearchIds.size ? `${percent(viewedSearchIds.size, completedSearchIds.size)} · ${(profileViewsFromSearch / completedSearchIds.size).toFixed(1)} visitas/búsqueda` : "Sin tasa calculable"}</p></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><MessageCircle size={16} aria-hidden />De ficha a contacto</dt><dd className="mt-2 text-3xl font-black text-ink">{viewedSearchIds.size ? percent(contactedAfterViewIds.size, viewedSearchIds.size) : "Sin datos"}</dd><p className="mt-1 text-xs text-muted">{contactedAfterViewIds.size} recorridos avanzan</p></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Send size={16} aria-hidden />De contacto a solicitud</dt><dd className="mt-2 text-3xl font-black text-ink">{contactedAt.size ? percent(requestedAfterContactIds.size, contactedAt.size) : "Sin datos"}</dd><p className="mt-1 text-xs text-muted">{requestedAfterContactIds.size} recorridos envían solicitud</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><CheckCircle2 size={16} aria-hidden />Solicitud a respuesta</dt><dd className="mt-2 text-3xl font-black text-ink">{matchedRequestSearchIds.size ? percent(respondedSearchIds.size, matchedRequestSearchIds.size) : "Sin datos"}</dd><p className="mt-1 text-xs text-muted">{respondedSearchIds.size} con respuesta o alternativa</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Sparkles size={16} aria-hidden />Conexión útil</dt><dd className="mt-2 text-3xl font-black text-ink">{respondedSearchIds.size ? percent(usefulSearchIds.size, respondedSearchIds.size) : "Sin datos"}</dd><p className="mt-1 text-xs text-muted">{usefulSearchIds.size} recorridos valorados como útiles</p></div>
         </dl>
-        <p className="mt-4 text-xs leading-5 text-muted">Las tasas se calculan sobre búsquedas únicas, no sobre clics. El inicio del formulario se mide en GA4 y quedará fuera de este informe hasta confirmar la recepción consentida.</p>
+        <p className="mt-4 text-xs leading-5 text-muted">Las tasas se calculan sobre búsquedas únicas, no sobre clics. Respuesta y utilidad solo incluyen solicitudes enlazables mediante un `event_id` consentido; los textos y la identidad de la familia permanecen fuera de este informe y de GA4.</p>
       </section>
 
       <section className="mt-6 rounded-2xl border border-violet/20 bg-violet/5 p-5 md:p-6" aria-labelledby="opportunities-title">

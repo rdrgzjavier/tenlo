@@ -338,13 +338,13 @@ Tenlo debe poder explicar qué buscan las familias y qué rendimiento obtiene ca
 - [x] Registrar qué resultados se renderizaron y en qué posición, vinculados mediante `search_id`.
 - [x] Relacionar búsqueda con ficha vista, guardado, compartido y contacto mediante un `search_id` anónimo activo durante 30 minutos. Respuesta y conexión útil se incorporarán cuando exista el flujo del proveedor.
 - [x] Sanear el texto libre antes de persistirlo, descartar posibles emails o teléfonos y no enviarlo a GA4.
-- [ ] Crear un informe de demanda. La vista interna `/admin/demanda` permite comparar 30, 90 y 180 días y filtrar por categoría y municipio; faltan tendencias, intenciones y conversión completa:
+- [ ] Crear un informe de demanda. La vista interna `/admin/demanda` permite comparar 30, 90 y 180 días, filtrar por categoría y municipio, detectar tendencias y seguir el recorrido consentido hasta respuesta y conexión útil; faltan clasificación de intención y utilidad por término:
   - [ ] términos e intenciones más buscados; ya muestra términos saneados, falta clasificar intención;
   - [x] categorías y verticales con más demanda;
   - [x] demanda por municipio y periodos comparables de 30, 90 y 180 días;
   - [x] búsquedas emergentes frente al periodo anterior equivalente, con un umbral mínimo de tres búsquedas actuales;
   - [x] búsquedas sin oferta suficiente;
-  - [ ] búsquedas que terminan en contacto, respuesta y conexión útil;
+  - [x] búsquedas que terminan en contacto, respuesta o alternativa y conexión útil, enlazadas con un `event_id` técnico sin mostrar identidad;
   - [ ] términos con tráfico pero poca utilidad;
   - [x] oportunidades para captar nuevos proveedores o crear nuevas fichas.
 
