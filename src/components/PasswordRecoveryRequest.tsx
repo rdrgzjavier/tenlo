@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { type FormEvent, useState } from "react";
+import { pushTrackingEvent } from "@/lib/analytics";
 import { createSupabaseBrowserClient, hasSupabaseBrowserConfig } from "@/lib/supabase/client";
 
 export default function PasswordRecoveryRequest() {
@@ -16,6 +17,7 @@ export default function PasswordRecoveryRequest() {
     if (!hasSupabaseBrowserConfig()) {
       setStatus("error");
       setError("La recuperación de acceso no está disponible temporalmente.");
+      pushTrackingEvent("password_recovery_request_failed", { failure_reason: "config_missing" });
       return;
     }
 
@@ -28,10 +30,12 @@ export default function PasswordRecoveryRequest() {
     if (recoveryError) {
       setStatus("error");
       setError("No hemos podido iniciar la recuperación. Espera unos minutos e inténtalo de nuevo.");
+      pushTrackingEvent("password_recovery_request_failed", { failure_reason: "provider_error" });
       return;
     }
 
     setStatus("sent");
+    pushTrackingEvent("password_recovery_requested", { delivery_channel: "email" });
   }
 
   return (

@@ -1,10 +1,10 @@
 export const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "tenlocerca@gmail.com";
 export const BRAND = {
   name: "Tenlo",
-  claim: "Todo lo que necesitas alrededor del colegio, filtrado por tu zona y tu centro.",
-  ink: "#0F172A",
-  soft: "#FCF8FA",
-  petrol: "#215B68",
+  claim: "Servicios y recursos para familias, organizados por zona.",
+  ink: "#171717",
+  soft: "#F6F4F1",
+  purple: "#5325E0",
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://tenlo.es"
 };
 
@@ -26,20 +26,27 @@ export function escapeHtml(value: unknown) {
 
 export function tenloEmailShell(title: string, body: string) {
   return `
-  <div style="margin:0;background:${BRAND.soft};padding:28px;font-family:Arial,sans-serif;color:${BRAND.ink}">
-    <div style="max-width:620px;margin:0 auto;background:#fff;border:1px solid #E2E8F0;border-radius:16px;overflow:hidden">
-      <div style="padding:24px;border-bottom:1px solid #E2E8F0">
-        <div style="display:flex;align-items:center;gap:12px">
-          <img src="${BRAND.siteUrl}/brand/tenlo-isotipo-180.png" alt="Tenlo" width="36" height="36" style="display:block;border-radius:8px" />
-          <div style="font-size:24px;font-weight:800;color:${BRAND.ink}">${BRAND.name}</div>
-        </div>
-        <div style="margin-top:8px;color:#475569;font-size:14px;line-height:1.5">${BRAND.claim}</div>
-      </div>
-      <div style="padding:24px">
-        <h1 style="margin:0 0 16px;font-size:22px;line-height:1.25;color:${BRAND.ink}">${title}</h1>
-        ${body}
-      </div>
-    </div>
+  <div style="margin:0;background:${BRAND.soft};padding:28px 16px;font-family:Arial,Helvetica,sans-serif;color:${BRAND.ink}">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+      <tr><td align="center">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:620px;background:#fff;border:1px solid #e7e2dc;border-radius:20px;overflow:hidden">
+          <tr><td style="padding:28px 24px 20px;text-align:center;border-bottom:1px solid #eeeae5">
+            <img src="${BRAND.siteUrl}/brand/tenlo-isotipo-192.png" alt="Tenlo" width="56" height="56" style="display:block;margin:0 auto 12px;border:0" />
+            <div style="font-size:26px;font-weight:800;color:${BRAND.purple}">${BRAND.name}</div>
+            <div style="margin-top:8px;color:#6c6670;font-size:14px;line-height:1.5">${BRAND.claim}</div>
+          </td></tr>
+          <tr><td style="padding:28px 24px">
+            <h1 style="margin:0 0 16px;font-size:24px;line-height:1.25;color:${BRAND.ink}">${escapeHtml(title)}</h1>
+            ${body}
+          </td></tr>
+          <tr><td style="padding:20px 24px;background:#faf9f7;border-top:1px solid #eeeae5;text-align:center;font-size:13px;line-height:1.6;color:#77717a">
+            Tenlo · Servicios y recursos para familias<br />
+            <a href="${BRAND.siteUrl}" style="color:${BRAND.purple};text-decoration:none">tenlo.es</a> ·
+            <a href="mailto:solicitudes@tenlo.es" style="color:${BRAND.purple};text-decoration:none">solicitudes@tenlo.es</a>
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
   </div>`;
 }
 

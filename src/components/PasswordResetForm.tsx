@@ -2,15 +2,21 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
+import { pushTrackingEvent } from "@/lib/analytics";
 import { createSupabaseBrowserClient, hasSupabaseBrowserConfig } from "@/lib/supabase/client";
 
 export default function PasswordResetForm() {
   const searchParams = useSearchParams();
+  const invalidLink = Boolean(searchParams.get("error"));
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">(searchParams.get("error") ? "error" : "idle");
   const [error, setError] = useState(searchParams.get("error") ? "El enlace no es válido o ha caducado. Solicita uno nuevo." : "");
+
+  useEffect(() => {
+    if (invalidLink) pushTrackingEvent("password_reset_failed", { failure_reason: "invalid_link", failure_stage: "verification" });
+  }, [invalidLink]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -19,16 +25,19 @@ export default function PasswordResetForm() {
     if (password.length < 8) {
       setStatus("error");
       setError("La contraseña debe tener al menos 8 caracteres.");
+      pushTrackingEvent("password_reset_failed", { failure_reason: "password_too_short", failure_stage: "validation" });
       return;
     }
     if (password !== confirmation) {
       setStatus("error");
       setError("Las contraseñas no coinciden.");
+      pushTrackingEvent("password_reset_failed", { failure_reason: "password_mismatch", failure_stage: "validation" });
       return;
     }
     if (!hasSupabaseBrowserConfig()) {
       setStatus("error");
       setError("El cambio de contraseña no está disponible temporalmente.");
+      pushTrackingEvent("password_reset_failed", { failure_reason: "config_missing", failure_stage: "update" });
       return;
     }
 
@@ -39,12 +48,14 @@ export default function PasswordResetForm() {
     if (updateError) {
       setStatus("error");
       setError("No hemos podido cambiar la contraseña. El enlace puede haber caducado.");
+      pushTrackingEvent("password_reset_failed", { failure_reason: "provider_error", failure_stage: "update" });
       return;
     }
 
     setPassword("");
     setConfirmation("");
     setStatus("saved");
+    pushTrackingEvent("password_reset_completed", { method: "email_link" });
   }
 
   return (
@@ -54,7 +65,13 @@ export default function PasswordResetForm() {
         <h1 className="detail-title mt-3">Crear nueva contraseña</h1>
         <p className="mt-3 text-sm leading-6 text-muted">Utiliza al menos 8 caracteres y evita reutilizar contraseñas de otros servicios.</p>
 
-        {status === "saved" ? (
+        {invalidLink ? (
+          <div className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-5" role="alert">
+            <h2 className="text-lg font-bold text-coral">Necesitas un enlace nuevo</h2>
+            <p className="mt-2 text-sm leading-6 text-muted">Este enlace no se ha podido validar. Solicita otro y utiliza únicamente el mensaje más reciente.</p>
+            <Link href="/recuperar-contrasena" className="btn-primary mt-5 w-full justify-center sm:w-fit">Solicitar otro enlace</Link>
+          </div>
+        ) : status === "saved" ? (
           <div className="mt-6 rounded-2xl border border-sage/40 bg-sage/10 p-5" role="status">
             <h2 className="text-lg font-bold text-slatecopy">Contraseña actualizada</h2>
             <p className="mt-2 text-sm leading-6 text-muted">Ya puedes volver a tu cuenta con la nueva contraseña.</p>
@@ -75,7 +92,7 @@ export default function PasswordResetForm() {
           </form>
         )}
 
-        {status === "error" ? <Link href="/recuperar-contrasena" className="mt-6 inline-flex min-h-11 items-center text-sm font-semibold text-ink underline decoration-ink/35 underline-offset-4">Solicitar otro enlace</Link> : null}
+        {!invalidLink && status === "error" ? <Link href="/recuperar-contrasena" className="mt-6 inline-flex min-h-11 items-center text-sm font-semibold text-ink underline decoration-ink/35 underline-offset-4">Solicitar otro enlace</Link> : null}
       </div>
     </div>
   );

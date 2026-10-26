@@ -43,3 +43,23 @@ export async function GET(request: Request) {
 
   return NextResponse.redirect(new URL(next, requestUrl.origin));
 }
+
+export async function POST(request: Request) {
+  const requestUrl = new URL(request.url);
+  const formData = await request.formData();
+  const tokenHash = formData.get("token_hash");
+  const type = emailOtpType(typeof formData.get("type") === "string" ? String(formData.get("type")) : null);
+  const next = safeNextPath(typeof formData.get("next") === "string" ? String(formData.get("next")) : null);
+  const destination = new URL(next, requestUrl.origin);
+
+  if (typeof tokenHash !== "string" || !tokenHash || !type) {
+    destination.searchParams.set("error", "invalid_link");
+    return NextResponse.redirect(destination, 303);
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
+
+  if (error) destination.searchParams.set("error", "invalid_link");
+  return NextResponse.redirect(destination, 303);
+}

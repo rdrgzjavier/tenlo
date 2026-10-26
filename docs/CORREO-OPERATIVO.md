@@ -21,7 +21,24 @@ No se almacenarán contraseñas de Gmail, DonDominio, Cloudflare, Supabase ni Ve
 
 Supabase exige SMTP propio para editar las plantillas de autenticación en proyectos gratuitos nuevos. La opción recomendada para el piloto es Resend con un subdominio dedicado, por ejemplo `notificaciones.tenlo.es`, y remitente visible `Tenlo <acceso@notificaciones.tenlo.es>`.
 
-La plantilla preparada para **Confirm sign up** está en `docs/PLANTILLA-EMAIL-CONFIRMACION.html` y utiliza exclusivamente la variable oficial `{{ .ConfirmationURL }}`. Asunto recomendado: `Confirma tu cuenta de Tenlo`.
+Las seis plantillas de autenticación de Supabase deben utilizar la identidad visual de Tenlo, lenguaje claro en español y el remitente `Tenlo <acceso@notificaciones.tenlo.es>`. Las comunicaciones transaccionales enviadas directamente por la aplicación utilizan la misma cabecera, posicionamiento y pie mediante `tenloEmailShell`.
+
+Los enlaces de un solo uso no deben apuntar directamente a `{{ .ConfirmationURL }}` ni ejecutar la validación al recibir un `GET`: los sistemas antispam pueden abrirlos antes que la persona y consumirlos. Tenlo construye los enlaces con `{{ .TokenHash }}` y los envía primero a `/auth/confirmar`; la validación solo se ejecuta cuando la persona pulsa el botón de esa página.
+
+| Plantilla | Asunto | Tipo | Destino tras confirmar |
+|---|---|---|---|
+| Confirm sign up | `Confirma tu cuenta de Tenlo` | `email` | `/area-personal` |
+| Invite user | `Tu invitación a Tenlo` | `invite` | `/completar-invitacion` |
+| Magic link or OTP | `Tu acceso seguro a Tenlo` | `magiclink` | `/area-personal` |
+| Change email address | `Confirma tu nuevo email de Tenlo` | `email_change` | `/area-personal` |
+| Reset password | `Crea una nueva contraseña de Tenlo` | `recovery` | `/restablecer-contrasena` |
+| Reauthentication | `Tu código de seguridad de Tenlo` | OTP `{{ .Token }}` | flujo que lo solicite |
+
+La plantilla de referencia para confirmación está en `docs/PLANTILLA-EMAIL-CONFIRMACION.html`. El enlace de los correos con acción usa esta estructura:
+
+```text
+{{ .SiteURL }}/auth/confirmar?token_hash={{ .TokenHash }}&type=<tipo>&next=<ruta-interna>
+```
 
 Antes de activarla:
 
@@ -29,8 +46,8 @@ Antes de activarla:
 2. [x] Añadir en Cloudflare los registros DKIM y SPF/CNAME indicados por Resend, todos en modo `Solo DNS`, y una política DMARC inicial de monitorización (`p=none`). Registros publicados y resueltos públicamente el 16/10/2026.
 3. [x] Verificar el dominio en Resend y mantener desactivado el seguimiento de enlaces para no alterar el enlace de confirmación de Supabase. Dominio verificado el 16/10/2026.
 4. [x] Configurar en Supabase Authentication > Emails > SMTP Settings el host, puerto, usuario, contraseña y remitente de Resend. Supabase confirmó el guardado el 16/10/2026.
-5. [x] Pegar la plantilla, guardar y realizar un alta de prueba. La cuenta de prueba recibió el email personalizado y completó la confirmación.
-6. [x] Verificar remitente, asunto, logotipo, CTA, enlace y redirección final. Mantener la revisión móvil y de spam dentro de las pruebas periódicas.
+5. [x] Pegar las plantillas de alta e invitación y realizar un alta de prueba.
+6. [ ] Sincronizar las seis plantillas con el recorrido `/auth/confirmar`, verificar remitente, asunto, logotipo, CTA y redirección final, y repetir una recuperación real. Mantener la revisión móvil y de spam dentro de las pruebas periódicas.
 
 La credencial de producción debe tener solo permiso de envío y quedar restringida a `notificaciones.tenlo.es`. No se guardará en el repositorio. `RESEND_API_KEY` se configura como secreto de Production y `MAIL_FROM=Tenlo <acceso@notificaciones.tenlo.es>` como configuración de Production en Vercel.
 
