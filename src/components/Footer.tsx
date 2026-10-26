@@ -88,7 +88,7 @@ function FooterColumn({ title, links }: { title: string; links: string[][] }) {
       <p className="text-sm font-bold text-slatecopy">{title}</p>
       <ul className="mt-3 grid gap-2 text-sm text-muted lg:gap-3">
         {links.map(([label, href]) => (
-          <li key={href}>
+          <li key={`${label}-${href}`}>
             <Link href={href} className="transition-colors hover:text-ink">{label}</Link>
           </li>
         ))}

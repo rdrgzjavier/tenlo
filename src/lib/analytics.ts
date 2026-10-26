@@ -36,6 +36,8 @@ export type TrackingAction =
   | "newsletter_failed"
   | "registration_completed"
   | "registration_failed"
+  | "invitation_setup_completed"
+  | "invitation_setup_failed"
   | "map_directions_clicked"
   | "connection_marked_useful"
   | "outcome_reported"
