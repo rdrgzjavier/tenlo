@@ -544,10 +544,10 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 
 - [ ] Proveedores identificados, contactados y que visitan la landing.
 - [ ] Tasa de inicio y envío de reclamación.
-- [ ] Tiempo hasta aprobación.
+- [x] Tiempo hasta aprobación, calculado como mediana desde la creación de la ficha hasta el cambio administrativo a `approved` dentro del periodo seleccionado.
 - [x] Tasa de perfil suficientemente completo, con umbral operativo del 75 % y desglose por categoría y municipio en `/admin/proveedores`.
-- [ ] Tiempo hasta publicación.
-- [ ] Tiempo hasta primera solicitud.
+- [x] Tiempo hasta publicación, equivalente en el piloto a la aprobación que incorpora la ficha al directorio público; se muestra sin inventar valor cuando no hay muestra.
+- [x] Tiempo hasta primera solicitud, calculado por ficha desde su creación hasta la primera solicitud histórica asignable.
 - [x] Tasa de primera respuesta y mediana de tiempo sobre las solicitudes asignables del periodo, manteniendo visible el denominador.
 - [x] Proveedores activos a 7, 30 y 90 días según `last_significant_activity_at`, sin confundir aprobación con actividad.
 - [ ] Relevancia percibida de las solicitudes.
@@ -590,7 +590,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 - [ ] **Dirección / NSM:** conexiones útiles, solicitudes, respuesta, cobertura, oferta activa y principales riesgos.
 - [ ] **Adquisición:** canales, campañas, búsquedas, landing de proveedores y coste cuando exista inversión.
 - [ ] **Familias:** búsqueda, comparación, contacto, respuesta, utilidad y resultado.
-- [ ] **Proveedores:** `/admin/proveedores` ya agrega oferta actual, altas, reclamaciones, completitud, aprobaciones, solicitudes, respuesta, relevancia declarada y actividad a 7/30/90 días, con periodos 30/90/180 y filtros de categoría y municipio; faltan outreach, visitas a la landing, tiempos completos y motivos de abandono.
+- [ ] **Proveedores:** `/admin/proveedores` ya agrega oferta actual, altas, reclamaciones, completitud, aprobaciones, tiempos hasta publicación y primera solicitud, solicitudes, respuesta, relevancia declarada y actividad a 7/30/90 días, con periodos 30/90/180 y filtros de categoría y municipio; faltan outreach, visitas a la landing y motivos de abandono.
 - [ ] **Liquidez:** oferta y demanda por categoría/municipio, cobertura, tiempos y concentración.
 - [ ] **Ficha del proveedor:** visibilidad, impresiones, aperturas, guardados, solicitudes, respuesta y resultados, sin confundir tráfico con clientes.
 - [ ] **Calidad y confianza:** frescura, verificación, incidencias, relevancia y privacidad.

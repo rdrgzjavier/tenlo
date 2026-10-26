@@ -138,7 +138,7 @@ export default async function AdminProvidersPage({ searchParams }: { searchParam
     supabase.from("business_profiles").select("id,external_key,owner_id,category,municipality,status,completeness_percent,accepts_requests,created_at").limit(5000),
     supabase.from("profiles").select("id,role,onboarding_status,last_significant_activity_at,created_at").limit(5000),
     supabase.from("claim_requests").select("entity_type,entity_id,status,created_at").gte("created_at", periodStart.toISOString()).limit(5000),
-    supabase.from("connection_requests").select("provider_id,target_id,status,relevance,first_response_at,created_at").gte("created_at", periodStart.toISOString()).limit(5000),
+    supabase.from("connection_requests").select("provider_id,target_id,status,relevance,first_response_at,created_at").limit(5000),
     supabase.from("services").select("id,external_key,business_profile_id").limit(5000),
     supabase.from("admin_queue_audit").select("record_id,changed_at").eq("queue", "business_profile").eq("new_status", "approved").gte("changed_at", periodStart.toISOString()).limit(5000)
   ]);
@@ -159,10 +159,11 @@ export default async function AdminProvidersPage({ searchParams }: { searchParam
     : []
   ));
   const requestBusinessId = (request: ConnectionRequest) => request.provider_id || (request.target_id ? serviceBusinessIds.get(request.target_id) || businessPublicIds.get(request.target_id) : null);
-  const requests = ((connectionsResult.data ?? []) as ConnectionRequest[]).filter((request) => {
+  const allRequests = ((connectionsResult.data ?? []) as ConnectionRequest[]).filter((request) => {
     const businessId = requestBusinessId(request);
     return Boolean(businessId && businessIds.has(businessId));
   });
+  const requests = allRequests.filter((request) => new Date(request.created_at) >= periodStart);
   const claims = ((claimsResult.data ?? []) as ClaimRequest[]).filter((claim) => claim.entity_type === "provider" && businessIds.has(businessPublicIds.get(claim.entity_id) ?? ""));
   const profiles = (profilesResult.data ?? []) as ProviderProfile[];
   const ownerIds = new Set(businesses.flatMap((profile) => profile.owner_id ? [profile.owner_id] : []));
@@ -177,6 +178,27 @@ export default async function AdminProvidersPage({ searchParams }: { searchParam
   const profilesSubmitted = businesses.filter((profile) => new Date(profile.created_at) >= periodStart).length;
   const newProviderAccounts = providerAccounts.filter((profile) => new Date(profile.created_at) >= periodStart).length;
   const approvals = ((approvalsResult.data ?? []) as ApprovalAudit[]).filter((approval) => businessIds.has(approval.record_id));
+  const businessById = new Map(businesses.map((profile) => [profile.id, profile]));
+  const approvalTimes = approvals.flatMap((approval) => {
+    const profile = businessById.get(approval.record_id);
+    if (!profile) return [];
+    const duration = new Date(approval.changed_at).getTime() - new Date(profile.created_at).getTime();
+    return duration >= 0 ? [duration] : [];
+  });
+  const firstRequestAt = new Map<string, number>();
+  allRequests.forEach((request) => {
+    const businessId = requestBusinessId(request);
+    if (!businessId) return;
+    const createdAt = new Date(request.created_at).getTime();
+    const current = firstRequestAt.get(businessId);
+    if (current === undefined || createdAt < current) firstRequestAt.set(businessId, createdAt);
+  });
+  const firstRequestTimes = [...firstRequestAt.entries()].flatMap(([businessId, requestCreatedAt]) => {
+    const profile = businessById.get(businessId);
+    if (!profile) return [];
+    const duration = requestCreatedAt - new Date(profile.created_at).getTime();
+    return duration >= 0 ? [duration] : [];
+  });
   const responseTimes = requests.flatMap((request) => request.first_response_at ? [new Date(request.first_response_at).getTime() - new Date(request.created_at).getTime()] : []).filter((duration) => duration >= 0);
   const respondedRequests = requests.filter((request) => request.first_response_at || ["responded", "declined", "closed"].includes(request.status)).length;
   const ratedRequests = requests.filter((request) => request.relevance);
@@ -216,6 +238,8 @@ export default async function AdminProvidersPage({ searchParams }: { searchParam
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Reclamaciones iniciadas</dt><dd className="mt-2 text-3xl font-black text-ink">{claims.length}</dd></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Fichas profesionales creadas</dt><dd className="mt-2 text-3xl font-black text-ink">{profilesSubmitted}</dd></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Aprobaciones registradas</dt><dd className="mt-2 text-3xl font-black text-ink">{approvals.length}</dd></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Mediana alta → publicación</dt><dd className="mt-2 text-3xl font-black text-ink">{durationLabel(median(approvalTimes))}</dd><p className="mt-1 text-xs text-muted">Aprobaciones del periodo</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Mediana alta → 1.ª solicitud</dt><dd className="mt-2 text-3xl font-black text-ink">{durationLabel(median(firstRequestTimes))}</dd><p className="mt-1 text-xs text-muted">Primera solicitud histórica por ficha</p></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Inbox size={16} aria-hidden />Solicitudes asignables</dt><dd className="mt-2 text-3xl font-black text-ink">{requests.length}</dd><p className="mt-1 text-xs text-muted">{providersWithRequests} proveedores alcanzados</p></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><CheckCircle2 size={16} aria-hidden />Primeras respuestas</dt><dd className="mt-2 text-3xl font-black text-ink">{respondedRequests}</dd><p className="mt-1 text-xs text-muted">{percentage(respondedRequests, requests.length)} de las solicitudes</p></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Clock3 size={16} aria-hidden />Mediana hasta respuesta</dt><dd className="mt-2 text-3xl font-black text-ink">{durationLabel(median(responseTimes))}</dd></div>
