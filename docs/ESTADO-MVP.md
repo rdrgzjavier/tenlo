@@ -1,6 +1,6 @@
 # Estado del MVP de Tenlo
 
-Fecha de corte: 24 de octubre de 2026.
+Fecha de corte: 26 de octubre de 2026.
 
 ## Progreso global
 
@@ -17,12 +17,12 @@ Una tarea solo puntúa como terminada cuando existe implementación o procedimie
 | Bloque del MVP | Peso | Avance | Puntos | Evidencia actual | Principal brecha |
 |---|---:|---:|---:|---|---|
 | Segmento, valor y reglas del piloto | 10 % | 100 % | 10,0 | Ámbito, oferta, confianza, conexión útil, SLA y gratuidad inicial decididos | Validar los mensajes con la primera cohorte |
-| Infraestructura, dominio y seguridad | 15 % | 93 % | 14,0 | Dominio, DNS, Vercel, CI, Auth, SMTP y migraciones `0024`–`0033` verificadas; superficie pública y campos protegidos comprobados | Completar pruebas cruzadas por rol, dependencias mayores, contraseñas filtradas y política de previews |
+| Infraestructura, dominio y seguridad | 15 % | 93 % | 14,0 | Dominio, DNS, Vercel, CI, Auth, SMTP y migraciones `0024`–`0035` verificadas; superficie pública y campos protegidos comprobados | Completar pruebas cruzadas por rol, dependencias mayores, contraseñas filtradas y política de previews |
 | Directorio real y calidad de oferta | 15 % | 87 % | 13,1 | Lote real auditado, Supabase activo, 21 centros, 14 proveedores y 16 servicios servidos mediante RPC públicos acotados | Normalizar cobertura/taxonomía y completar la revisión individual de fichas |
 | Reclamación y activación de proveedores | 15 % | 82 % | 12,3 | Reclamación, onboarding progresivo, ficha privada persistente, cola, moderación, petición de información y reenvío disponibles | Probar publicación y avisos reales con una cuenta de proveedor |
-| Búsqueda, comparación y conexión familiar | 15 % | 80 % | 12,0 | Buscar, filtrar, proponer, ver ficha, mapa, guardar, comparar, solicitar y valorar resultado | Respuesta segura del proveedor, recordatorio y alternativa automatizados |
+| Búsqueda, comparación y conexión familiar | 15 % | 80 % | 12,0 | Buscar, filtrar, proponer, ver ficha, mapa, guardar, comparar, solicitar, responder de forma protegida y valorar resultado | Probar la respuesta segura con cuentas reales y automatizar recordatorio y alternativa |
 | Cuentas, consentimiento y privacidad | 15 % | 72 % | 10,8 | Registro, confirmación, perfil persistente, recuperación, atribución saneada, historial de consentimiento, actividad significativa, exportación y solicitud de baja | Política legal completa, prueba de supresión y preferencias de comunicación |
-| Medición e informes | 10 % | 85 % | 8,5 | Cookiebot, GTM, GA4, búsquedas y eventos propios persistentes; embudos privados de búsqueda y conexión, North Star, actividad de usuarios y ventanas comparables de 30, 90 y 180 días | Confirmar recepción GA4 y validar informes con actividad real del piloto |
+| Medición e informes | 10 % | 85 % | 8,5 | Cookiebot, GTM, GA4, búsquedas y eventos propios persistentes; embudos privados de búsqueda y conexión, North Star, actividad de usuarios, relevancia declarada por proveedores y ventanas comparables de 30, 90 y 180 días | Confirmar recepción GA4 y validar informes con actividad real del piloto |
 | Operación y recuperación del piloto | 5 % | 60 % | 3,0 | Responsable, SLA, playbook, backoffice, exportación y runbook de copias | Ejecutar restauración, preparar CRM/contactos y probar recorridos completos |
 | **Total** | **100 %** |  | **83,7** |  |  |
 

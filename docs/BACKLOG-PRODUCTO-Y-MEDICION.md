@@ -2,7 +2,7 @@
 
 > Documento vivo para decidir, construir y comprobar el MVP de Tenlo.
 >
-> Última revisión: 24 de octubre de 2026. El avance ponderado y sus criterios están en [`ESTADO-MVP.md`](./ESTADO-MVP.md).
+> Última revisión: 26 de octubre de 2026. El avance ponderado y sus criterios están en [`ESTADO-MVP.md`](./ESTADO-MVP.md).
 
 ## Cómo utilizar este documento
 
@@ -50,11 +50,11 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 
 - Repositorio: `rdrgzjavier/tenlo`.
 - Rama de producción: `main`.
-- Commit funcional de referencia: `47796d0` (`Add protected demand reporting`), validado por CI y desplegado correctamente; cada cambio posterior debe volver a superar ambas comprobaciones.
+- Commit funcional previo de referencia: `793398b` (`Add protected provider request workflow`), validado y desplegado correctamente; cada cambio posterior debe volver a superar las mismas comprobaciones.
 - Aplicación en Next.js 15, React 18, TypeScript y Tailwind 3.
 - `typecheck` y `lint` pasan correctamente.
 - Home, buscadores, listados, fichas, reclamaciones, solicitudes, favoritos, comparación, categorías, zonas y sitemap ya consumen una capa de acceso capaz de usar Supabase con retorno seguro a `mock-data.ts`. El cambio de fuente no se activará hasta validar paridad y reversibilidad en producción.
-- Existen treinta y tres migraciones de Supabase. El 23 de octubre se aplicaron y verificaron `0024`–`0033`: medición propia del directorio, RPC públicos explícitos, privilegios mínimos de perfil y contenido, moderación profesional, historial de consentimiento, funciones administrativas endurecidas, atribución de registro, propuestas inmutables y actividad significativa propia. La comprobación de catálogo devolvió 21 centros, 14 proveedores y 16 servicios públicos.
+- Existen treinta y cinco migraciones de Supabase. Las migraciones `0024`–`0035` están aplicadas y verificadas: medición propia del directorio, RPC públicos explícitos, privilegios mínimos de perfil y contenido, moderación profesional, historial de consentimiento, funciones administrativas endurecidas, atribución de registro, propuestas inmutables, actividad significativa, bandeja protegida para proveedores y relevancia declarada de cada solicitud. La comprobación de catálogo devolvió 21 centros, 14 proveedores y 16 servicios públicos.
 - Supabase está activo como fuente del directorio público con RPC de columnas explícitas y fallback editorial. El lote publicado se auditó y los conteos, relaciones y contenido se compararon antes de activarlo.
 - La reclamación de ficha ya puede iniciarse sin cuenta; la aprobación y los cambios siguen sujetos a verificación posterior.
 - El formulario de registro ya solicita tipo de usuario, nombre público, email, teléfono, contraseña, municipio y centro opcional. Para proveedores también muestra tipología, web, descripción, zona, modalidad, edades, disponibilidad, credenciales y otros campos.
@@ -260,6 +260,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] Notificar al proveedor con un enlace seguro para responder. El backoffice ya sustituye la antigua casilla manual por un envío real al titular, enlaza `/solicitudes-profesionales` y solo registra el aviso tras aceptar el email. `0034` se aplicó y verificó el 25/10/2026; falta validar un envío real con una cuenta proveedora.
 - [x] Permitir registrar respuesta, rechazo, falta de disponibilidad y una actualización visible para la familia desde el backoffice.
 - [ ] Permitir que el titular responda desde una bandeja profesional sin ver la identidad ni los datos de contacto de la familia. `/solicitudes-profesionales`, los RPC restringidos y la asignación automática están implementados; `0034_provider_connection_flow.sql` se aplicó y verificó el 25/10/2026 con ejecución anónima denegada. Falta probar el recorrido completo con una cuenta proveedora real.
+- [x] Permitir que el proveedor declare por separado si una solicitud encaja con su oferta, aunque no tenga disponibilidad. `0035_provider_lead_relevance.sql` se aplicó y verificó el 26/10/2026; la bandeja individual y el informe administrativo muestran volumen, respuesta, tiempo mediano y relevancia sin exponer datos de la familia.
 - [x] Registrar aviso al proveedor, primera respuesta, cierre y última actualización comunicada a la familia. Falta estructurar los motivos de rechazo cuando haya volumen suficiente.
 - [ ] Si no hay respuesta, recordar al proveedor y ofrecer alternativas a la familia.
 - [x] Guardar la petición y la alternativa ofrecida en Supabase como estado y seguimiento operativo, no solo como email.
@@ -501,7 +502,7 @@ Propiedades recomendadas: `request_id`, proveedor, categoría, municipio, posici
 - [ ] `provider_request_viewed` (instrumentado y con `0034` aplicada; pendiente de validar el recorrido real).
 - [ ] `provider_request_responded` (instrumentado y con `0034` aplicada; pendiente de validar el recorrido real).
 - [ ] `provider_request_declined` (instrumentado y con `0034` aplicada; pendiente de validar el recorrido real).
-- [ ] `lead_relevance_reported`
+- [x] `lead_relevance_reported` (persistido como señal operativa y emitido a GA4 solo con consentimiento; pendiente de obtener la primera muestra real).
 - [ ] `provider_reactivated`
 
 Propiedades recomendadas: canal/campaña de captación, estado anterior y nuevo, porcentaje de completitud, nivel de confianza, plan, categoría, zona, motivo de rechazo y bucket de tiempo de respuesta.
@@ -589,7 +590,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 - [ ] **Dirección / NSM:** conexiones útiles, solicitudes, respuesta, cobertura, oferta activa y principales riesgos.
 - [ ] **Adquisición:** canales, campañas, búsquedas, landing de proveedores y coste cuando exista inversión.
 - [ ] **Familias:** búsqueda, comparación, contacto, respuesta, utilidad y resultado.
-- [ ] **Proveedores:** `/admin/proveedores` ya agrega oferta actual, altas, reclamaciones, completitud, aprobaciones, solicitudes, respuesta y actividad a 7/30/90 días, con periodos 30/90/180 y filtros de categoría y municipio; faltan outreach, visitas a la landing, tiempos completos y motivos de abandono.
+- [ ] **Proveedores:** `/admin/proveedores` ya agrega oferta actual, altas, reclamaciones, completitud, aprobaciones, solicitudes, respuesta, relevancia declarada y actividad a 7/30/90 días, con periodos 30/90/180 y filtros de categoría y municipio; faltan outreach, visitas a la landing, tiempos completos y motivos de abandono.
 - [ ] **Liquidez:** oferta y demanda por categoría/municipio, cobertura, tiempos y concentración.
 - [ ] **Ficha del proveedor:** visibilidad, impresiones, aperturas, guardados, solicitudes, respuesta y resultados, sin confundir tráfico con clientes.
 - [ ] **Calidad y confianza:** frescura, verificación, incidencias, relevancia y privacidad.
@@ -620,7 +621,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 `Demanda real -> reclamar ficha -> mejorar información -> recibir solicitudes relevantes -> responder -> percibir valor -> mantener ficha activa`
 
 - [ ] Mostrar demanda real del segmento sin exagerarla.
-- [ ] Crear informe periódico de presencia, interés, solicitudes, respuesta y resultado. `/admin/proveedores` ya ofrece el agregado interno por periodo, categoría y municipio; falta una versión individual segura y comprensible para cada proveedor.
+- [ ] Crear informe periódico de presencia, interés, solicitudes, respuesta y resultado. `/admin/proveedores` ofrece el agregado interno y `/solicitudes-profesionales` ya muestra a cada titular volumen, tasa de respuesta, tiempo mediano y relevancia; faltan visibilidad, guardados, resultados, comparación temporal y un formato periódico compartible.
 - [ ] Recomendar un máximo de tres mejoras conectadas con datos observados.
 - [ ] Recordar actualizar disponibilidad y servicios.
 - [ ] Reactivar proveedores solo cuando exista una oportunidad o razón útil.

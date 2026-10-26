@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { BriefcaseBusiness, Inbox, ShieldCheck } from "lucide-react";
+import { BriefcaseBusiness, CheckCircle2, Clock3, Inbox, ShieldCheck, Target } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import ProviderRequestResponseForm from "@/components/ProviderRequestResponseForm";
 import ProviderRequestViewedTracker from "@/components/ProviderRequestViewedTracker";
@@ -24,6 +24,7 @@ type ProviderRequest = {
   message: string | null;
   contact_preference: string;
   status: string;
+  relevance: "relevant" | "irrelevant" | null;
   provider_response_summary: string | null;
   provider_notified_at: string | null;
   first_response_at: string | null;
@@ -47,6 +48,23 @@ const contactLabels: Record<string, string> = {
   phone: "Preferencia de la familia: teléfono"
 };
 
+function percentage(part: number, total: number) {
+  return total ? `${Math.round((part / total) * 100)} %` : "Sin datos";
+}
+
+function median(values: number[]) {
+  if (!values.length) return null;
+  const sorted = [...values].sort((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+}
+
+function durationLabel(milliseconds: number | null) {
+  if (milliseconds === null) return "Sin datos";
+  const hours = milliseconds / 3_600_000;
+  return hours < 48 ? `${hours.toFixed(hours < 10 ? 1 : 0)} h` : `${(hours / 24).toFixed(1)} días`;
+}
+
 export default async function ProviderRequestsPage() {
   if (!hasSupabaseServerConfig()) return <PrivateAreaUnavailable />;
   const supabase = await createSupabaseServerClient();
@@ -58,11 +76,15 @@ export default async function ProviderRequestsPage() {
 
   const [businessResult, requestsResult] = await Promise.all([
     supabase.from("business_profiles").select("id,business_name,status,accepts_requests").eq("owner_id", authData.user.id).order("created_at", { ascending: false }),
-    supabase.rpc("get_provider_connection_requests")
+    supabase.rpc("get_provider_connection_requests_v2")
   ]);
   const businesses = businessResult.data ?? [];
   const businessNames = new Map(businesses.map((business) => [business.id, business.business_name]));
   const requests = (requestsResult.data ?? []) as ProviderRequest[];
+  const respondedRequests = requests.filter((request) => request.first_response_at || ["responded", "declined", "closed"].includes(request.status)).length;
+  const ratedRequests = requests.filter((request) => request.relevance);
+  const relevantRequests = ratedRequests.filter((request) => request.relevance === "relevant").length;
+  const responseTimes = requests.flatMap((request) => request.first_response_at ? [new Date(request.first_response_at).getTime() - new Date(request.created_at).getTime()] : []).filter((duration) => duration >= 0);
   const viewableRequestIds = requests.filter((request) => ["submitted", "delivered"].includes(request.status)).map((request) => request.id);
   const queryError = businessResult.error || requestsResult.error;
 
@@ -77,6 +99,17 @@ export default async function ProviderRequestsPage() {
 
       <div className="mt-6 flex items-start gap-3 rounded-2xl border border-sage/30 bg-sage/10 p-4 text-sm leading-6 text-slatecopy"><ShieldCheck className="mt-0.5 shrink-0 text-petrol" size={20} aria-hidden /><p><strong className="text-ink">Contacto protegido.</strong> No solicites ni compartas nombres completos, fotos, colegio, clase, horarios personales ni otros datos identificativos de menores.</p></div>
 
+      <section className="card mt-6 p-5" aria-labelledby="provider-request-summary-title">
+        <h2 id="provider-request-summary-title" className="subsection-title text-ink">Resumen de tus solicitudes</h2>
+        <p className="mt-2 text-sm leading-6 text-muted">Datos de tus fichas para entender si las oportunidades son relevantes y se responden a tiempo. No es una puntuación pública.</p>
+        <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Inbox size={16} aria-hidden />Recibidas</dt><dd className="mt-2 text-3xl font-black text-ink">{requests.length}</dd></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><CheckCircle2 size={16} aria-hidden />Respondidas</dt><dd className="mt-2 text-3xl font-black text-ink">{respondedRequests}</dd><p className="mt-1 text-xs text-muted">{percentage(respondedRequests, requests.length)}</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Clock3 size={16} aria-hidden />Tiempo mediano</dt><dd className="mt-2 text-3xl font-black text-ink">{durationLabel(median(responseTimes))}</dd></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Target size={16} aria-hidden />Relevantes</dt><dd className="mt-2 text-3xl font-black text-ink">{relevantRequests}</dd><p className="mt-1 text-xs text-muted">{percentage(relevantRequests, ratedRequests.length)} de {ratedRequests.length} valoradas</p></div>
+        </dl>
+      </section>
+
       {requests.length ? (
         <div className="mt-8 grid gap-4 lg:grid-cols-2">
           {requests.map((request) => {
@@ -89,7 +122,7 @@ export default async function ProviderRequestsPage() {
                 <div className="mt-4 rounded-2xl border border-line bg-soft p-4"><p className="text-xs font-bold uppercase tracking-wide text-muted">Necesidad de la familia</p><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slatecopy">{request.message || "La familia no añadió más información."}</p></div>
                 <p className="mt-3 text-xs font-semibold text-muted">{contactLabels[request.contact_preference] ?? "Respuesta dentro de Tenlo"}. Tenlo no muestra el dato de contacto en esta pantalla.</p>
                 {request.provider_response_summary ? <div className="mt-4 rounded-2xl border border-primary/20 bg-violet/5 p-4"><p className="text-xs font-bold uppercase tracking-wide text-primary">Tu respuesta actual</p><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slatecopy">{request.provider_response_summary}</p></div> : null}
-                {canRespond ? <ProviderRequestResponseForm recordId={request.id} /> : null}
+                {canRespond ? <ProviderRequestResponseForm recordId={request.id} initialRelevance={request.relevance} /> : null}
               </article>
             );
           })}

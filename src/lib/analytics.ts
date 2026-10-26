@@ -44,6 +44,7 @@ export type TrackingAction =
   | "provider_request_responded"
   | "provider_request_declined"
   | "provider_request_response_failed"
+  | "lead_relevance_reported"
   | "profile_edit_started"
   | "profile_section_completed"
   | "profile_submitted";

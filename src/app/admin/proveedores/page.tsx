@@ -45,6 +45,7 @@ type ConnectionRequest = {
   provider_id: string | null;
   target_id: string | null;
   status: string;
+  relevance: "relevant" | "irrelevant" | null;
   first_response_at: string | null;
   created_at: string;
 };
@@ -137,7 +138,7 @@ export default async function AdminProvidersPage({ searchParams }: { searchParam
     supabase.from("business_profiles").select("id,external_key,owner_id,category,municipality,status,completeness_percent,accepts_requests,created_at").limit(5000),
     supabase.from("profiles").select("id,role,onboarding_status,last_significant_activity_at,created_at").limit(5000),
     supabase.from("claim_requests").select("entity_type,entity_id,status,created_at").gte("created_at", periodStart.toISOString()).limit(5000),
-    supabase.from("connection_requests").select("provider_id,target_id,status,first_response_at,created_at").gte("created_at", periodStart.toISOString()).limit(5000),
+    supabase.from("connection_requests").select("provider_id,target_id,status,relevance,first_response_at,created_at").gte("created_at", periodStart.toISOString()).limit(5000),
     supabase.from("services").select("id,external_key,business_profile_id").limit(5000),
     supabase.from("admin_queue_audit").select("record_id,changed_at").eq("queue", "business_profile").eq("new_status", "approved").gte("changed_at", periodStart.toISOString()).limit(5000)
   ]);
@@ -178,6 +179,8 @@ export default async function AdminProvidersPage({ searchParams }: { searchParam
   const approvals = ((approvalsResult.data ?? []) as ApprovalAudit[]).filter((approval) => businessIds.has(approval.record_id));
   const responseTimes = requests.flatMap((request) => request.first_response_at ? [new Date(request.first_response_at).getTime() - new Date(request.created_at).getTime()] : []).filter((duration) => duration >= 0);
   const respondedRequests = requests.filter((request) => request.first_response_at || ["responded", "declined", "closed"].includes(request.status)).length;
+  const ratedRequests = requests.filter((request) => request.relevance);
+  const relevantRequests = ratedRequests.filter((request) => request.relevance === "relevant").length;
   const providersWithRequests = new Set(requests.flatMap((request) => {
     const businessId = requestBusinessId(request);
     return businessId ? [businessId] : [];
@@ -216,6 +219,7 @@ export default async function AdminProvidersPage({ searchParams }: { searchParam
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Inbox size={16} aria-hidden />Solicitudes asignables</dt><dd className="mt-2 text-3xl font-black text-ink">{requests.length}</dd><p className="mt-1 text-xs text-muted">{providersWithRequests} proveedores alcanzados</p></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><CheckCircle2 size={16} aria-hidden />Primeras respuestas</dt><dd className="mt-2 text-3xl font-black text-ink">{respondedRequests}</dd><p className="mt-1 text-xs text-muted">{percentage(respondedRequests, requests.length)} de las solicitudes</p></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Clock3 size={16} aria-hidden />Mediana hasta respuesta</dt><dd className="mt-2 text-3xl font-black text-ink">{durationLabel(median(responseTimes))}</dd></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Solicitudes relevantes</dt><dd className="mt-2 text-3xl font-black text-ink">{relevantRequests}</dd><p className="mt-1 text-xs text-muted">{percentage(relevantRequests, ratedRequests.length)} de {ratedRequests.length} valoradas</p></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Activity size={16} aria-hidden />Actividad 7 / 30 / 90 días</dt><dd className="mt-2 text-2xl font-black text-ink">{activeWithin(7)} / {activeWithin(30)} / {activeWithin(90)}</dd><p className="mt-1 text-xs text-muted">Titulares con acción significativa</p></div>
         </dl>
       </section>

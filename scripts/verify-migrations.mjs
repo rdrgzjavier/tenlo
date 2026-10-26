@@ -31,7 +31,7 @@ numbers.forEach((number, index) => {
   assert(number === index + 1, `Falta la migración ${String(index + 1).padStart(4, "0")}.`);
 });
 
-const [m24, m25, m26, m27, m28, m29, m30, m31, m32, m33, m34, repository, registration, verification, providerVerification] = await Promise.all([
+const [m24, m25, m26, m27, m28, m29, m30, m31, m32, m33, m34, m35, repository, registration, verification, providerVerification, providerRelevanceVerification] = await Promise.all([
   text("supabase/migrations/0024_directory_performance_events.sql"),
   text("supabase/migrations/0025_public_directory_rpc.sql"),
   text("supabase/migrations/0026_profile_role_hardening.sql"),
@@ -43,10 +43,12 @@ const [m24, m25, m26, m27, m28, m29, m30, m31, m32, m33, m34, repository, regist
   text("supabase/migrations/0032_submission_content_immutability.sql"),
   text("supabase/migrations/0033_profile_activity_tracking.sql"),
   text("supabase/migrations/0034_provider_connection_flow.sql"),
+  text("supabase/migrations/0035_provider_lead_relevance.sql"),
   text("src/lib/directory-repository.ts"),
   text("src/components/LoginRegistration.tsx"),
   text("supabase/verification/0024_0025_directory_controls.sql"),
-  text("supabase/verification/0034_provider_connection_flow.sql")
+  text("supabase/verification/0034_provider_connection_flow.sql"),
+  text("supabase/verification/0035_provider_lead_relevance.sql")
 ]);
 
 assert(/revoke all on public\.directory_events from anon, authenticated/i.test(m24), "directory_events debe retirar privilegios heredados.");
@@ -135,6 +137,20 @@ for (const functionName of ["get_provider_connection_requests", "mark_provider_r
 }
 assert(providerVerification.includes("connection_requests_provider_created_idx"), "La verificación post-despliegue no comprueba el índice del proveedor.");
 assert(providerVerification.includes("assign_connection_request_provider"), "La verificación post-despliegue no comprueba el trigger de asignación.");
+
+for (const functionName of ["get_provider_connection_requests_v2", "respond_to_connection_request_v2"]) {
+  assert(m35.includes(`function public.${functionName}`), `0035 debe definir ${functionName}.`);
+  assert(providerRelevanceVerification.includes(`public.${functionName}`), `La verificación post-despliegue no comprueba ${functionName}.`);
+}
+const providerRequestShapeV2 = m35.match(/get_provider_connection_requests_v2\(\)\s+returns table \(([\s\S]*?)\)\s+language/i)?.[1] ?? "";
+for (const privateColumn of ["family_id", "email", "phone"]) {
+  assert(!providerRequestShapeV2.includes(privateColumn), `La bandeja v2 del proveedor expone por error ${privateColumn}.`);
+}
+assert(providerRequestShapeV2.includes("relevance text"), "La bandeja v2 debe devolver la relevancia estructurada.");
+assert(/respond_to_connection_request_v2[\s\S]*lead_relevance not in \('relevant', 'irrelevant'\)/i.test(m35), "La relevancia debe quedar limitada a valores estructurados.");
+assert(/get_provider_connection_requests_v2\(\)[\s\S]*profile\.owner_id = \(select auth\.uid\(\)\)/i.test(m35), "La bandeja v2 debe limitarse al titular autenticado.");
+assert(/revoke all on function public\.get_provider_connection_requests_v2\(\) from public, anon, authenticated/i.test(m35), "El RPC v2 debe retirar la ejecución heredada.");
+assert(/security definer[\s\S]*set search_path = ''/i.test(m35), "0035 debe aislar las funciones privilegiadas con search_path vacío.");
 
 console.log(`Migraciones verificadas: ${migrationFiles.length} archivos, secuencia 0001-${String(numbers.at(-1)).padStart(4, "0")}.`);
 console.log("Contratos comprobados: directorio público, permisos por columna, moderación, consentimiento y search_path.");
