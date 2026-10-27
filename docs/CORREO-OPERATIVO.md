@@ -50,7 +50,7 @@ Antes de activarla:
 4. [x] Configurar en Supabase Authentication > Emails > SMTP Settings el host, puerto, usuario, contraseña y remitente de Resend. Supabase confirmó el guardado el 16/10/2026.
 5. [x] Pegar las plantillas de alta e invitación y realizar un alta de prueba.
 6. [x] Sincronizar las seis plantillas con el recorrido `/auth/confirmar` y verificar en Supabase asunto, identidad visual, ausencia del contenido predeterminado en inglés, variables y CTA. Completado el 27/10/2026.
-7. [ ] Repetir una recuperación real con un enlace recién solicitado y verificar recepción, paso seguro de confirmación, creación de contraseña y redirección final. Mantener la revisión móvil y de spam dentro de las pruebas periódicas.
+7. [x] Repetir una recuperación real con un enlace recién solicitado y verificar recepción, paso seguro de confirmación, creación de contraseña y redirección final. Recorrido completado en móvil el 27/10/2026; el CTA del email se acortó a `Crear contraseña` para mantener una sola línea. Mantener la revisión móvil y de spam dentro de las pruebas periódicas.
 
 La credencial de producción debe tener solo permiso de envío y quedar restringida a `notificaciones.tenlo.es`. No se guardará en el repositorio. `RESEND_API_KEY` se configura como secreto de Production y `MAIL_FROM=Tenlo <acceso@notificaciones.tenlo.es>` como configuración de Production en Vercel.
 
