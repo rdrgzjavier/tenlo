@@ -515,10 +515,10 @@ export default function LoginRegistration() {
             <h2 className="text-base font-bold text-slatecopy">¿Ya tienes cuenta?</h2>
             <form className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_auto]" onSubmit={handleLogin}>
               <label className="sr-only" htmlFor="login-email">Email</label>
-              <input id="login-email" type="email" required className="field m-0 placeholder:text-muted" placeholder="Email" value={loginEmail} onChange={(event) => setLoginEmail(event.target.value)} />
+              <input id="login-email" name="email" type="email" required autoComplete="email" className="field m-0 placeholder:text-muted" placeholder="Email" value={loginEmail} onChange={(event) => setLoginEmail(event.target.value)} />
               <label className="sr-only" htmlFor="login-password">Contraseña</label>
               <div className="relative">
-                <input id="login-password" type={showLoginPassword ? "text" : "password"} required className="field m-0 pr-12 placeholder:text-muted" placeholder="Contraseña" value={loginPassword} onChange={(event) => setLoginPassword(event.target.value)} />
+                <input id="login-password" name="password" type={showLoginPassword ? "text" : "password"} required autoComplete="current-password" className="field m-0 pr-12 placeholder:text-muted" placeholder="Contraseña" value={loginPassword} onChange={(event) => setLoginPassword(event.target.value)} />
                 <button
                   type="button"
                   className="absolute inset-y-0 right-3 my-auto inline-flex h-10 w-10 items-center justify-center rounded-xl text-muted transition hover:text-ink focus:outline-none focus:ring-2 focus:ring-ink/20"
@@ -565,6 +565,8 @@ export default function LoginRegistration() {
                 {showBusinessFields ? "Nombre público de la entidad o profesional" : "Nombre usuario"}
                 <input
                   required
+                  name="displayName"
+                  autoComplete={showBusinessFields ? "organization" : "nickname"}
                   className="field font-normal placeholder:text-muted"
                   placeholder={showBusinessFields ? "Ej. Academia Norte, Colegio Los Olivos" : "Ej. Marta G."}
                   value={displayName}
@@ -585,12 +587,12 @@ export default function LoginRegistration() {
                   {usernameStatus === "unknown" && "No hemos podido comprobarlo ahora. Lo validaremos al crear la cuenta."}
                 </span>
               </label>
-              <label className="field-label">Email de contacto<input required type="email" className="field font-normal placeholder:text-muted" placeholder="tu@email.com" value={registerEmail} onChange={(event) => setRegisterEmail(event.target.value)} /></label>
-              <label className="field-label">Teléfono de contacto<input type="tel" className="field font-normal placeholder:text-muted" placeholder="Teléfono de contacto" value={phone} onChange={(event) => setPhone(event.target.value)} /></label>
+              <label className="field-label">Email de contacto<input required name="registerEmail" type="email" autoComplete="email" className="field font-normal placeholder:text-muted" placeholder="tu@email.com" value={registerEmail} onChange={(event) => setRegisterEmail(event.target.value)} /></label>
+              <label className="field-label">Teléfono de contacto<input name="phone" type="tel" autoComplete="tel" className="field font-normal placeholder:text-muted" placeholder="Teléfono de contacto" value={phone} onChange={(event) => setPhone(event.target.value)} /></label>
               <div className="field-label">
                 <label htmlFor="register-password">Contraseña</label>
                 <div className="relative mt-2">
-                  <input id="register-password" required type={showPassword ? "text" : "password"} minLength={8} className="field m-0 pr-12 font-normal placeholder:text-muted" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Mínimo 8 caracteres" />
+                  <input id="register-password" name="registerPassword" required type={showPassword ? "text" : "password"} minLength={8} autoComplete="new-password" className="field m-0 pr-12 font-normal placeholder:text-muted" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Mínimo 8 caracteres" />
                   <button
                     type="button"
                     className="absolute inset-y-0 right-3 my-auto inline-flex h-10 w-10 items-center justify-center rounded-xl text-muted transition hover:text-ink focus:outline-none focus:ring-2 focus:ring-ink/20"
@@ -605,7 +607,7 @@ export default function LoginRegistration() {
               <div className="field-label">
                 <label htmlFor="register-password-confirm">Confirmar contraseña</label>
                 <div className="relative mt-2">
-                  <input id="register-password-confirm" required type={showPasswordConfirm ? "text" : "password"} minLength={8} className="field m-0 pr-12 font-normal placeholder:text-muted" value={passwordConfirm} onChange={(event) => setPasswordConfirm(event.target.value)} aria-invalid={passwordMismatch} placeholder="Repite la contraseña" />
+                  <input id="register-password-confirm" name="registerPasswordConfirm" required type={showPasswordConfirm ? "text" : "password"} minLength={8} autoComplete="new-password" className="field m-0 pr-12 font-normal placeholder:text-muted" value={passwordConfirm} onChange={(event) => setPasswordConfirm(event.target.value)} aria-invalid={passwordMismatch} placeholder="Repite la contraseña" />
                   <button
                     type="button"
                     className="absolute inset-y-0 right-3 my-auto inline-flex h-10 w-10 items-center justify-center rounded-xl text-muted transition hover:text-ink focus:outline-none focus:ring-2 focus:ring-ink/20"

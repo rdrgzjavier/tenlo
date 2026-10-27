@@ -332,7 +332,7 @@ export default function AccountSettings({ email, displayName, role, status, muni
           <div className="field-label">
             <label htmlFor="account-password">Nueva contraseña</label>
             <div className="relative mt-2">
-              <input id="account-password" required type={showPassword ? "text" : "password"} minLength={8} className="field m-0 pr-12 font-normal placeholder:text-muted" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Mínimo 8 caracteres" />
+              <input id="account-password" name="newPassword" required type={showPassword ? "text" : "password"} minLength={8} autoComplete="new-password" className="field m-0 pr-12 font-normal placeholder:text-muted" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Mínimo 8 caracteres" />
               <button type="button" className="absolute inset-y-0 right-3 my-auto inline-flex h-10 w-10 items-center justify-center rounded-xl text-muted transition hover:text-ink focus:outline-none focus:ring-2 focus:ring-ink/20" onClick={() => setShowPassword((visible) => !visible)} aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"} aria-pressed={showPassword}>
                 {showPassword ? <EyeOff size={20} aria-hidden /> : <Eye size={20} aria-hidden />}
               </button>
@@ -341,7 +341,7 @@ export default function AccountSettings({ email, displayName, role, status, muni
           <div className="field-label">
             <label htmlFor="account-password-confirm">Confirmar nueva contraseña</label>
             <div className="relative mt-2">
-              <input id="account-password-confirm" required type={showPasswordConfirm ? "text" : "password"} minLength={8} className="field m-0 pr-12 font-normal placeholder:text-muted" value={passwordConfirm} onChange={(event) => setPasswordConfirm(event.target.value)} placeholder="Repite la contraseña" />
+              <input id="account-password-confirm" name="newPasswordConfirm" required type={showPasswordConfirm ? "text" : "password"} minLength={8} autoComplete="new-password" className="field m-0 pr-12 font-normal placeholder:text-muted" value={passwordConfirm} onChange={(event) => setPasswordConfirm(event.target.value)} placeholder="Repite la contraseña" />
               <button type="button" className="absolute inset-y-0 right-3 my-auto inline-flex h-10 w-10 items-center justify-center rounded-xl text-muted transition hover:text-ink focus:outline-none focus:ring-2 focus:ring-ink/20" onClick={() => setShowPasswordConfirm((visible) => !visible)} aria-label={showPasswordConfirm ? "Ocultar contraseña" : "Mostrar contraseña"} aria-pressed={showPasswordConfirm}>
                 {showPasswordConfirm ? <EyeOff size={20} aria-hidden /> : <Eye size={20} aria-hidden />}
               </button>
