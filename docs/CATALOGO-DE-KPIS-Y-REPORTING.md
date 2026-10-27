@@ -24,6 +24,7 @@ Este documento fija una definición única para producto, GA4, Supabase y Looker
 | Cobertura de demanda | Búsquedas con al menos una opción adecuada / búsquedas registradas | Supabase | Diaria | Tenlo | La adecuación necesita criterios por vertical |
 | Fill rate | Solicitudes entregadas a un proveedor disponible / solicitudes creadas válidas | Supabase | Diaria | Tenlo | Disponibilidad debe estar actualizada |
 | Respuesta dentro del SLA | Solicitudes con primera respuesta en 48 h / solicitudes entregadas | Supabase | Diaria | Tenlo y proveedor | Excluir fallos de entrega atribuibles a Tenlo |
+| Tiempo de primera respuesta | Mediana del intervalo entre creación y primera respuesta; P75 y P90 solo desde diez respuestas válidas | Supabase | Diaria | Tenlo y proveedor | Mostrar tamaño de muestra y no calcular con fechas inválidas |
 | Oferta activa | Proveedores publicados, disponibles y actualizados dentro del umbral acordado | Supabase | Diaria | Tenlo | El umbral de actividad debe validarse en piloto |
 | Demanda no atendida | Búsquedas con cero resultados más solicitudes sin proveedor disponible, sin duplicar una misma necesidad | Supabase | Diaria | Tenlo | La deduplicación inicial será aproximada |
 

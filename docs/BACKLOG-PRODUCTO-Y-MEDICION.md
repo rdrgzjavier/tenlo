@@ -538,7 +538,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 - [x] Tasa de ficha vista a contacto iniciado, calculada sobre búsquedas únicas con ficha vista.
 - [x] Tasa de contacto iniciado a solicitud enviada, calculada sobre búsquedas únicas con intención de contacto.
 - [x] Tasa de solicitudes con respuesta o alternativa, calculada sobre solicitudes creadas en el periodo de 90 días.
-- [ ] Mediana y percentiles de tiempo de respuesta. La mediana ya se muestra en el informe privado; faltan percentiles cuando haya muestra suficiente.
+- [x] Mediana y percentiles de tiempo de respuesta. El informe privado muestra mediana siempre que existe una primera respuesta y P75/P90 a partir de diez respuestas válidas, indicando el tamaño de muestra.
 - [x] Volumen y tasa de conexiones útiles sobre el feedback familiar recibido; la North Star se muestra además en ventana de 30 días.
 - [x] Tasa de resultado confirmado sobre el feedback recibido, manteniendo el denominador visible.
 - [ ] Recuperación de búsquedas guardadas y retorno cuando reaparece una necesidad.

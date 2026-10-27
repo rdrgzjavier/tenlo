@@ -81,6 +81,16 @@ function median(values: number[]) {
   return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
 }
 
+function percentile(values: number[], target: number) {
+  if (!values.length) return null;
+  const sorted = [...values].sort((a, b) => a - b);
+  const position = (sorted.length - 1) * target;
+  const lowerIndex = Math.floor(position);
+  const upperIndex = Math.ceil(position);
+  if (lowerIndex === upperIndex) return sorted[lowerIndex];
+  return sorted[lowerIndex] + (sorted[upperIndex] - sorted[lowerIndex]) * (position - lowerIndex);
+}
+
 function durationLabel(milliseconds: number | null) {
   if (milliseconds === null) return "Sin datos";
   const hours = milliseconds / 3_600_000;
@@ -219,6 +229,9 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
     ? [new Date(request.first_response_at).getTime() - new Date(request.created_at).getTime()]
     : []
   ).filter((duration) => duration >= 0);
+  const responsePercentiles = responseTimes.length >= 10
+    ? { p75: percentile(responseTimes, 0.75), p90: percentile(responseTimes, 0.9) }
+    : null;
   const confirmedOutcomes = feedback.filter((item) => item.outcome !== "not_progressed").length;
   const usefulConnectionsPeriod = feedback.filter((item) => item.useful).length;
   const usefulConnections30 = feedback.filter((item) => item.useful && new Date(item.created_at) >= monthStart).length;
@@ -251,7 +264,7 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
         <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Solicitudes creadas</dt><dd className="mt-2 text-3xl font-black text-ink">{requests.length || "Sin datos"}</dd><p className="mt-1 text-xs text-muted">Últimos {period} días</p></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Con respuesta o alternativa</dt><dd className="mt-2 text-3xl font-black text-ink">{requests.length ? respondedRequests : "Sin datos"}</dd><p className="mt-1 text-xs text-muted">{requests.length ? `${percent(respondedRequests, requests.length)} de las solicitudes` : "Sin tasa calculable"}</p></div>
-          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Clock3 size={16} aria-hidden />Tiempo mediano de respuesta</dt><dd className="mt-2 text-3xl font-black text-ink">{durationLabel(median(responseTimes))}</dd><p className="mt-1 text-xs text-muted">Solo primeras respuestas registradas</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Clock3 size={16} aria-hidden />Tiempo de respuesta</dt><dd className="mt-2 text-3xl font-black text-ink">{durationLabel(median(responseTimes))}</dd><p className="mt-1 text-xs text-muted">Mediana · {responseTimes.length} primeras respuestas</p>{responsePercentiles ? <p className="mt-2 text-xs font-semibold text-slatecopy">P75 {durationLabel(responsePercentiles.p75)} · P90 {durationLabel(responsePercentiles.p90)}</p> : <p className="mt-2 text-xs text-muted">P75 y P90 se mostrarán desde 10 respuestas.</p>}</div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Resultados confirmados</dt><dd className="mt-2 text-3xl font-black text-ink">{feedback.length ? confirmedOutcomes : "Sin datos"}</dd><p className="mt-1 text-xs text-muted">{feedback.length ? `${percent(confirmedOutcomes, feedback.length)} del feedback recibido` : "Últimos 90 días"}</p></div>
           <div className="rounded-2xl border border-violet/25 bg-violet/5 p-4"><dt className="text-sm font-semibold text-muted">Conexiones útiles mensuales</dt><dd className="mt-2 text-3xl font-black text-ink">{usefulConnections30}</dd><p className="mt-1 text-xs text-muted">North Star · {usefulConnectionsPeriod} útiles en {period} días</p></div>
         </dl>
