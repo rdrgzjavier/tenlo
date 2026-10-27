@@ -67,6 +67,13 @@ type ConnectionFeedbackMetric = {
   created_at: string;
 };
 
+type SearchCoverageMetric = {
+  category_id: string | null;
+  vertical_id: string | null;
+  municipality: string | null;
+  results_count: number;
+};
+
 const contactEvents = new Set(["contact_started", "contact_email_clicked", "contact_phone_clicked", "contact_web_clicked"]);
 
 function percent(part: number, total: number) {
@@ -123,7 +130,7 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
   periodStart.setDate(periodStart.getDate() - period);
   const monthStart = new Date();
   monthStart.setDate(monthStart.getDate() - 30);
-  const [{ data, error }, directory, requestsResult, feedbackResult] = await Promise.all([
+  const [{ data, error }, directory, requestsResult, feedbackResult, searchEventsResult] = await Promise.all([
     supabase
       .from("directory_events")
       .select("anonymous_session_id,event_name,entity_type,entity_id,category_id,vertical_id,municipality,created_at")
@@ -141,6 +148,11 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
       .from("connection_feedback")
       .select("request_id,useful,outcome,created_at")
       .gte("created_at", periodStart.toISOString())
+      .limit(5000),
+    supabase
+      .from("search_events")
+      .select("category_id,vertical_id,municipality,results_count")
+      .gte("created_at", periodStart.toISOString())
       .limit(5000)
   ]);
 
@@ -155,13 +167,38 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
   });
 
   const allEvents = (data ?? []) as DirectoryEvent[];
-  const categoryOptions = [...new Set(allEvents.flatMap((event) => event.category_id ? [event.category_id] : []))].sort((a, b) => a.localeCompare(b, "es"));
-  const municipalityOptions = [...new Set(allEvents.flatMap((event) => event.municipality ? [event.municipality] : []))].sort((a, b) => a.localeCompare(b, "es"));
+  const allRequests = (requestsResult.data ?? []) as ConnectionRequestMetric[];
+  const allSearches = (searchEventsResult.data ?? []) as SearchCoverageMetric[];
+  const categoryOptions = [...new Set([
+    ...allEvents.flatMap((event) => event.category_id ? [event.category_id] : []),
+    ...allRequests.flatMap((request) => request.category_id ? [request.category_id] : []),
+    ...directory.listings.map((listing) => listing.categoryId)
+  ])].sort((a, b) => a.localeCompare(b, "es"));
+  const municipalityOptions = [...new Set([
+    ...allEvents.flatMap((event) => event.municipality ? [event.municipality] : []),
+    ...allRequests.flatMap((request) => request.municipality ? [request.municipality] : []),
+    ...directory.listings.flatMap((listing) => listing.municipality ? [listing.municipality] : [])
+  ])].sort((a, b) => a.localeCompare(b, "es"));
   const activeCategory = rawCategory && categoryOptions.includes(rawCategory) ? rawCategory : "";
   const activeMunicipality = rawMunicipality && municipalityOptions.includes(rawMunicipality) ? rawMunicipality : "";
   const events = allEvents.filter((event) => (
     (!activeCategory || event.category_id === activeCategory)
     && (!activeMunicipality || event.municipality === activeMunicipality)
+  ));
+  const requests = allRequests.filter((request) => (
+    (!activeCategory || request.category_id === activeCategory)
+    && (!activeMunicipality || request.municipality === activeMunicipality)
+  ));
+  const requestIds = new Set(requests.map((request) => request.id));
+  const feedback = ((feedbackResult.data ?? []) as ConnectionFeedbackMetric[]).filter((item) => requestIds.has(item.request_id));
+  const searches = allSearches.filter((search) => (
+    (!activeCategory || search.category_id === activeCategory)
+    && (!activeMunicipality || search.municipality === activeMunicipality)
+  ));
+  const publishedListings = directory.listings.filter((listing) => (
+    listing.status === "published"
+    && (!activeCategory || listing.categoryId === activeCategory)
+    && (!activeMunicipality || listing.municipality === activeMunicipality)
   ));
   const grouped = new Map<string, PerformanceRow>();
   const rowFor = (key: string, category: string | null, municipality: string | null, vertical?: string | null) => {
@@ -201,8 +238,6 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
     if (event.event_name === "provider_saved") row.saves += 1;
   }
 
-  const requests = (requestsResult.data ?? []) as ConnectionRequestMetric[];
-  const feedback = (feedbackResult.data ?? []) as ConnectionFeedbackMetric[];
   const requestRowKeys = new Map<string, string>();
   requests.forEach((request) => {
     if (!request.target_id) return;
@@ -229,10 +264,14 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
   const totalViews = rows.reduce((sum, row) => sum + row.views, 0);
   const totalContacts = rows.reduce((sum, row) => sum + row.contacts, 0);
   const totalSessions = new Set(events.map((event) => event.anonymous_session_id)).size;
-  const verticalRows = [...rows.reduce((groups, row) => {
+  const verticalPerformance = rows.reduce((groups, row) => {
     const current = groups.get(row.vertical) ?? {
       id: row.vertical,
-      profiles: 0,
+      profilesWithSignal: 0,
+      publishedProfiles: 0,
+      activeProfiles: 0,
+      searches: 0,
+      coveredSearches: 0,
       impressions: 0,
       views: 0,
       contacts: 0,
@@ -240,7 +279,7 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
       responses: 0,
       usefulConnections: 0
     };
-    current.profiles += 1;
+    current.profilesWithSignal += 1;
     current.impressions += row.impressions;
     current.views += row.views;
     current.contacts += row.contacts;
@@ -249,7 +288,36 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
     current.usefulConnections += row.usefulConnections;
     groups.set(row.vertical, current);
     return groups;
-  }, new Map<string, { id: string; profiles: number; impressions: number; views: number; contacts: number; requests: number; responses: number; usefulConnections: number }>()).values()]
+  }, new Map<string, { id: string; profilesWithSignal: number; publishedProfiles: number; activeProfiles: number; searches: number; coveredSearches: number; impressions: number; views: number; contacts: number; requests: number; responses: number; usefulConnections: number }>());
+  const verticalRow = (vertical: string) => {
+    const current = verticalPerformance.get(vertical) ?? {
+      id: vertical,
+      profilesWithSignal: 0,
+      publishedProfiles: 0,
+      activeProfiles: 0,
+      searches: 0,
+      coveredSearches: 0,
+      impressions: 0,
+      views: 0,
+      contacts: 0,
+      requests: 0,
+      responses: 0,
+      usefulConnections: 0
+    };
+    verticalPerformance.set(vertical, current);
+    return current;
+  };
+  publishedListings.forEach((listing) => {
+    const row = verticalRow(verticalIdForCategory(listing.categoryId));
+    row.publishedProfiles += 1;
+    if (listing.acceptsRequests) row.activeProfiles += 1;
+  });
+  searches.forEach((search) => {
+    const row = verticalRow(search.vertical_id || verticalIdForCategory(search.category_id ?? undefined));
+    row.searches += 1;
+    if (search.results_count > 0) row.coveredSearches += 1;
+  });
+  const verticalRows = [...verticalPerformance.values()]
     .sort((a, b) => verticalLabel(a.id).localeCompare(verticalLabel(b.id), "es"));
   const respondedRequests = requests.filter((request) => request.first_response_at || request.alternative_summary).length;
   const responseTimes = requests.flatMap((request) => request.first_response_at
@@ -262,7 +330,7 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
   const confirmedOutcomes = feedback.filter((item) => item.outcome !== "not_progressed").length;
   const usefulConnectionsPeriod = feedback.filter((item) => item.useful).length;
   const usefulConnections30 = feedback.filter((item) => item.useful && new Date(item.created_at) >= monthStart).length;
-  const operationalError = requestsResult.error || feedbackResult.error;
+  const operationalError = requestsResult.error || feedbackResult.error || searchEventsResult.error;
 
   return (
     <main className="section-shell">
@@ -287,7 +355,7 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
       </section>
 
       <section className="card mt-6 p-5 md:p-6" aria-labelledby="connection-summary-title">
-        <div className="flex items-center gap-3"><Handshake size={22} className="text-ink" aria-hidden /><div><h2 id="connection-summary-title" className="subsection-title text-ink">Conexiones y resultados</h2><p className="mt-1 text-sm text-muted">Solicitudes y feedback agregado del conjunto del piloto, sin aplicar los filtros de ficha. La North Star usa 30 días; el resto del embudo, {period} días.</p></div></div>
+        <div className="flex items-center gap-3"><Handshake size={22} className="text-ink" aria-hidden /><div><h2 id="connection-summary-title" className="subsection-title text-ink">Conexiones y resultados</h2><p className="mt-1 text-sm text-muted">Solicitudes y feedback del segmento seleccionado. La North Star usa 30 días; el resto del embudo, {period} días.</p></div></div>
         <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Solicitudes creadas</dt><dd className="mt-2 text-3xl font-black text-ink">{requests.length || "Sin datos"}</dd><p className="mt-1 text-xs text-muted">Últimos {period} días</p></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Con respuesta o alternativa</dt><dd className="mt-2 text-3xl font-black text-ink">{requests.length ? respondedRequests : "Sin datos"}</dd><p className="mt-1 text-xs text-muted">{requests.length ? `${percent(respondedRequests, requests.length)} de las solicitudes` : "Sin tasa calculable"}</p></div>
@@ -300,18 +368,21 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
 
       <section className="card mt-6 p-5 md:p-6" aria-labelledby="vertical-performance-title">
         <h2 id="vertical-performance-title" className="subsection-title text-ink">Rendimiento por vertical</h2>
-        <p className="mt-2 text-sm leading-6 text-muted">Lectura operativa por tipo de necesidad. Los volúmenes no forman un ranking: cada vertical tiene una frecuencia natural distinta. Las tasas se ocultan con menos de 20 visitas o cinco solicitudes.</p>
+        <p className="mt-2 text-sm leading-6 text-muted">Lectura operativa por tipo de necesidad. Los volúmenes no forman un ranking: cada vertical tiene una frecuencia natural distinta. Cobertura significa búsqueda con al menos un resultado; disponibilidad significa ficha que confirma aceptar solicitudes. Las tasas se ocultan con menos de tres búsquedas, 20 visitas o cinco solicitudes.</p>
         {verticalRows.length ? (
           <div className="mt-5 overflow-x-auto">
-            <table className="w-full min-w-[58rem] text-left text-sm">
+            <table className="w-full min-w-[82rem] text-left text-sm">
               <thead className="border-b border-line text-xs uppercase tracking-wide text-muted">
-                <tr><th className="pb-3 pr-4">Vertical</th><th className="pb-3 pr-4 text-right">Fichas con señal</th><th className="pb-3 pr-4 text-right">Impresiones</th><th className="pb-3 pr-4 text-right">Visitas</th><th className="pb-3 pr-4 text-right">Contactos</th><th className="pb-3 pr-4 text-right">Contacto / visita</th><th className="pb-3 pr-4 text-right">Solicitudes</th><th className="pb-3 pr-4 text-right">Respuestas</th><th className="pb-3 text-right">Conexiones útiles</th></tr>
+                <tr><th className="pb-3 pr-4">Vertical</th><th className="pb-3 pr-4 text-right">Fichas publicadas</th><th className="pb-3 pr-4 text-right">Disponibles</th><th className="pb-3 pr-4 text-right">Búsquedas</th><th className="pb-3 pr-4 text-right">Cobertura</th><th className="pb-3 pr-4 text-right">Impresiones</th><th className="pb-3 pr-4 text-right">Visitas</th><th className="pb-3 pr-4 text-right">Contactos</th><th className="pb-3 pr-4 text-right">Contacto / visita</th><th className="pb-3 pr-4 text-right">Solicitudes</th><th className="pb-3 pr-4 text-right">Respuestas</th><th className="pb-3 text-right">Conexiones útiles</th></tr>
               </thead>
               <tbody>
                 {verticalRows.map((row) => (
                   <tr key={row.id} className="border-b border-line last:border-0">
                     <th scope="row" className="py-3 pr-4 font-semibold text-ink">{verticalLabel(row.id)}</th>
-                    <td className="py-3 pr-4 text-right text-slatecopy">{row.profiles}</td>
+                    <td className="py-3 pr-4 text-right text-slatecopy">{row.publishedProfiles}</td>
+                    <td className="py-3 pr-4 text-right text-slatecopy">{row.activeProfiles}</td>
+                    <td className="py-3 pr-4 text-right text-slatecopy">{row.searches}</td>
+                    <td className="py-3 pr-4 text-right text-slatecopy">{row.searches < 3 ? "—" : percent(row.coveredSearches, row.searches)}</td>
                     <td className="py-3 pr-4 text-right text-slatecopy">{row.impressions}</td>
                     <td className="py-3 pr-4 text-right text-slatecopy">{row.views}</td>
                     <td className="py-3 pr-4 text-right text-slatecopy">{row.contacts}</td>
