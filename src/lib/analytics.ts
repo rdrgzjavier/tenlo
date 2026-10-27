@@ -36,6 +36,8 @@ export type TrackingAction =
   | "newsletter_failed"
   | "registration_completed"
   | "registration_failed"
+  | "login_completed"
+  | "login_failed"
   | "password_recovery_requested"
   | "password_recovery_request_failed"
   | "password_reset_completed"

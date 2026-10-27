@@ -363,10 +363,19 @@ export default function LoginRegistration() {
     try {
       if (loginError) throw loginError;
       if (data.user) await ensureProfileAfterLogin(data.user);
+      pushTrackingEvent("login_completed", { login_method: "password" });
       router.push(redirectTo);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "No hemos podido iniciar sesión.");
+      const invalidCredentials = err instanceof Error && /invalid login credentials/i.test(err.message);
+      pushTrackingEvent("login_failed", {
+        login_method: "password",
+        failure_stage: "auth_signin",
+        failure_reason: invalidCredentials ? "invalid_credentials" : "request_rejected"
+      });
+      setError(invalidCredentials
+        ? "No hemos podido iniciar sesión. Comprueba el email y la contraseña."
+        : "No hemos podido iniciar sesión. Inténtalo de nuevo.");
     } finally {
       setLoading(null);
     }
@@ -537,7 +546,7 @@ export default function LoginRegistration() {
             </button>
           </div>
 
-          {error ? <p className="mt-4 rounded-xl border border-coral/30 bg-coral/10 p-3 text-sm font-semibold text-coral">{error}</p> : null}
+          {error ? <p className="mt-4 rounded-xl border border-coral/30 bg-coral/10 p-3 text-sm font-semibold text-coral" role="alert">{error}</p> : null}
           <form className="mt-6 grid gap-5" onSubmit={handleRegister}>
             <section className="rounded-2xl border border-line bg-white p-4">
               <label className="field-label">
