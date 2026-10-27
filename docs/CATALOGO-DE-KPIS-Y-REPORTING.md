@@ -38,6 +38,8 @@ Este documento fija una definición única para producto, GA4, Supabase y Looker
 | Conversión búsqueda-solicitud | Solicitudes creadas con `search_id` / búsquedas | GA4 + Supabase | Semanal | Producto | Requiere atribuir `search_id` a la solicitud |
 | Adquisición activada | Usuarios que realizan una acción de valor / usuarios adquiridos por canal | GA4 | Semanal | Marketing | Depende del consentimiento estadístico |
 | Demanda por segmento | Búsquedas por vertical, categoría, municipio y periodo | Supabase | Diaria | Producto y captación | No mostrar texto individual al proveedor |
+| Demanda por intención | Búsquedas agrupadas por la vertical elegida o, si falta o es genérica, por reglas estables sobre el término saneado | Supabase | Diaria | Producto y captación | Es una clasificación heurística; `unclassified` se revisa para mejorarla sin inventar intención |
+| Utilidad por término | Conexiones útiles / búsquedas del término que ya tienen feedback, mostrando además búsquedas, cero resultados y solicitudes | Supabase | Semanal | Producto | Solo se lista con al menos tres búsquedas y una solicitud; `Sin feedback` no equivale a 0 % de utilidad |
 
 ## Informe de ficha para proveedores
 

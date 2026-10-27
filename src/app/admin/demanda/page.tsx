@@ -5,6 +5,7 @@ import { ArrowLeft, BarChart3, CheckCircle2, Eye, MapPin, MessageCircle, SearchX
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import ReportPeriodSelector, { resolveReportPeriod } from "@/components/ReportPeriodSelector";
 import ReportSegmentFilters from "@/components/ReportSegmentFilters";
+import { classifySearchIntent, searchIntentLabel } from "@/lib/search-intent";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -56,6 +57,16 @@ type TrendValue = {
   current: number;
   previous: number;
   change: number;
+};
+
+type OutcomeValue = {
+  id: string;
+  label: string;
+  searches: number;
+  zeroResults: number;
+  requests: number;
+  feedback: number;
+  useful: number;
 };
 
 function dateLabel(value: Date) {
@@ -155,6 +166,66 @@ function RankingTable({ title, description, items }: { title: string; descriptio
   );
 }
 
+function outcomeRows(
+  events: SearchEvent[],
+  selector: (event: SearchEvent) => { id: string; label: string } | null,
+  requestedSearchIds: Set<string>,
+  feedbackSearchIds: Set<string>,
+  usefulSearchIds: Set<string>
+) {
+  const grouped = new Map<string, OutcomeValue>();
+
+  events.forEach((event) => {
+    const selected = selector(event);
+    if (!selected) return;
+    const current = grouped.get(selected.id) ?? {
+      ...selected,
+      searches: 0,
+      zeroResults: 0,
+      requests: 0,
+      feedback: 0,
+      useful: 0
+    };
+    current.searches += 1;
+    current.zeroResults += event.zero_results ? 1 : 0;
+    if (event.search_id && requestedSearchIds.has(event.search_id)) current.requests += 1;
+    if (event.search_id && feedbackSearchIds.has(event.search_id)) current.feedback += 1;
+    if (event.search_id && usefulSearchIds.has(event.search_id)) current.useful += 1;
+    grouped.set(selected.id, current);
+  });
+
+  return [...grouped.values()];
+}
+
+function OutcomeTable({ title, description, items, emptyMessage, firstColumnLabel }: { title: string; description: string; items: OutcomeValue[]; emptyMessage: string; firstColumnLabel: string }) {
+  return (
+    <section className="card p-5 md:p-6">
+      <h2 className="subsection-title text-ink">{title}</h2>
+      <p className="mt-2 text-sm leading-6 text-muted">{description}</p>
+      {items.length ? (
+        <div className="mt-5 overflow-x-auto">
+          <table className="w-full min-w-[46rem] text-left text-sm">
+            <thead className="border-b border-line text-xs uppercase tracking-wide text-muted">
+              <tr><th className="pb-3 pr-4">{firstColumnLabel}</th><th className="pb-3 pr-4 text-right">Búsquedas</th><th className="pb-3 pr-4 text-right">Sin resultados</th><th className="pb-3 pr-4 text-right">Solicitudes</th><th className="pb-3 text-right">Conexión útil</th></tr>
+            </thead>
+            <tbody>
+              {items.map((item) => (
+                <tr key={item.id} className="border-b border-line last:border-0">
+                  <th scope="row" className="py-3 pr-4 font-semibold text-ink">{item.label}</th>
+                  <td className="py-3 pr-4 text-right text-slatecopy">{item.searches}</td>
+                  <td className="py-3 pr-4 text-right text-slatecopy">{item.zeroResults} ({percent(item.zeroResults, item.searches)})</td>
+                  <td className="py-3 pr-4 text-right text-slatecopy">{item.requests}</td>
+                  <td className="py-3 text-right text-slatecopy">{item.feedback ? `${item.useful} · ${percent(item.useful, item.feedback)}` : "Sin feedback"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : <p className="mt-5 rounded-2xl border border-line bg-soft p-4 text-sm text-muted">{emptyMessage}</p>}
+    </section>
+  );
+}
+
 export default async function AdminDemandPage({ searchParams }: { searchParams: Promise<{ period?: string; category?: string; municipality?: string }> }) {
   if (!hasSupabaseServerConfig()) return <PrivateAreaUnavailable />;
 
@@ -246,9 +317,39 @@ export default async function AdminDemandPage({ searchParams }: { searchParams: 
   const respondedSearchIds = new Set(matchedRequests.flatMap((request) => (
     request.first_response_at || ["responded", "declined", "alternative_offered", "closed"].includes(request.status) ? [request.searchId] : []
   )));
+  const feedbackRequestIds = new Set(((feedbackResult.data ?? []) as ConnectionFeedback[]).map((feedback) => feedback.request_id));
   const usefulRequestIds = new Set(((feedbackResult.data ?? []) as ConnectionFeedback[]).flatMap((feedback) => feedback.useful ? [feedback.request_id] : []));
+  const feedbackSearchIds = new Set(matchedRequests.flatMap((request) => feedbackRequestIds.has(request.id) ? [request.searchId] : []));
   const usefulSearchIds = new Set(matchedRequests.flatMap((request) => usefulRequestIds.has(request.id) ? [request.searchId] : []));
   const profileViewsFromSearch = journeyEvents.filter((event) => event.search_id && ["provider_profile_viewed", "center_profile_viewed"].includes(event.event_name)).length;
+  const intentOutcomes = outcomeRows(
+    events,
+    (event) => {
+      const intent = classifySearchIntent(event.normalized_query, event.vertical_id ?? event.category_id);
+      return { id: intent, label: searchIntentLabel(intent) };
+    },
+    matchedRequestSearchIds,
+    feedbackSearchIds,
+    usefulSearchIds
+  ).sort((a, b) => b.searches - a.searches || b.zeroResults - a.zeroResults || a.label.localeCompare(b.label, "es"));
+  const unclassifiedSearches = intentOutcomes.find((item) => item.id === "unclassified")?.searches ?? 0;
+  const termOutcomes = outcomeRows(
+    events,
+    (event) => {
+      const term = event.normalized_query?.trim();
+      return term ? { id: term, label: term } : null;
+    },
+    matchedRequestSearchIds,
+    feedbackSearchIds,
+    usefulSearchIds
+  )
+    .filter((item) => item.searches >= 3 && item.requests > 0)
+    .sort((a, b) => {
+      const aUtility = a.feedback ? a.useful / a.feedback : -1;
+      const bUtility = b.feedback ? b.useful / b.feedback : -1;
+      return aUtility - bUtility || b.searches - a.searches || a.label.localeCompare(b.label, "es");
+    })
+    .slice(0, 8);
 
   return (
     <main className="section-shell">
@@ -284,6 +385,23 @@ export default async function AdminDemandPage({ searchParams }: { searchParams: 
         </dl>
         <p className="mt-4 text-xs leading-5 text-muted">Las tasas se calculan sobre búsquedas únicas, no sobre clics. Respuesta y utilidad solo incluyen solicitudes enlazables mediante un `event_id` consentido; los textos y la identidad de la familia permanecen fuera de este informe y de GA4.</p>
       </section>
+
+      <div className="mt-6 grid gap-5 xl:grid-cols-2">
+        <OutcomeTable
+          title="Demanda por intención"
+          description={`Clasificación estable a partir de la vertical seleccionada y, cuando no existe, de palabras clave del término saneado. ${unclassifiedSearches ? `${unclassifiedSearches} búsquedas permanecen sin clasificar para revisión.` : "No quedan búsquedas sin clasificar en el periodo."}`}
+          items={intentOutcomes}
+          emptyMessage="Todavía no hay búsquedas suficientes para clasificar la intención."
+          firstColumnLabel="Intención"
+        />
+        <OutcomeTable
+          title="Señal útil por término"
+          description="Términos saneados con al menos tres búsquedas y una solicitud. «Sin feedback» significa que aún no puede calcularse utilidad; no equivale a una conexión fallida."
+          items={termOutcomes}
+          emptyMessage="No hay términos con muestra mínima y solicitudes asociadas en este periodo."
+          firstColumnLabel="Término"
+        />
+      </div>
 
       <section className="mt-6 rounded-2xl border border-violet/20 bg-violet/5 p-5 md:p-6" aria-labelledby="opportunities-title">
         <div className="flex items-start gap-3"><TrendingUp size={22} className="mt-1 shrink-0 text-violet" aria-hidden /><div><h2 id="opportunities-title" className="subsection-title text-ink">Oportunidades de oferta</h2><p className="mt-1 text-sm leading-6 text-muted">Términos con al menos tres búsquedas, ordenados por búsquedas sin resultados. Úsalos para priorizar nuevas fichas o captar proveedores; valida antes que no sean errores o datos personales saneados.</p></div></div>

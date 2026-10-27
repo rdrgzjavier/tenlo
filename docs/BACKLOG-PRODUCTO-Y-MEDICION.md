@@ -332,21 +332,21 @@ Tenlo debe poder explicar qué buscan las familias y qué rendimiento obtiene ca
 
 - [x] Preparar entidad `search_events` con ID anónimo, consulta normalizada, filtros y número de resultados.
 - [x] Registrar en Supabase término saneado, categoría, municipio, filtros, número de resultados y momento de la búsqueda, tanto para personas anónimas como autenticadas.
-- [x] Clasificar búsquedas con categoría en verticales estables (`education`, `education_support`, `activities`, `care`, `school_goods`); falta clasificar por intención las búsquedas de texto sin categoría.
+- [x] Clasificar búsquedas por intención: primero usa la vertical estable elegida y, si no existe o es genérica, aplica reglas de palabras clave sobre el término saneado; conserva `unclassified` cuando no hay señal suficiente.
 - [x] Registrar reformulaciones enlazadas durante 30 minutos mediante `previous_search_id` y `search_id`, sin guardar ni enviar a GA4 el texto o su firma local.
 - [x] Registrar búsquedas sin resultados y permitir identificar búsquedas con pocos resultados mediante `results_count`.
 - [x] Distinguir cuándo existen fichas de proveedor pero ninguna ha confirmado que acepta solicitudes, tanto en interfaz como en GA4 y en los filtros persistidos de `search_events`.
 - [x] Registrar qué resultados se renderizaron y en qué posición, vinculados mediante `search_id`.
 - [x] Relacionar búsqueda con ficha vista, guardado, compartido y contacto mediante un `search_id` anónimo activo durante 30 minutos. Respuesta y conexión útil se incorporarán cuando exista el flujo del proveedor.
 - [x] Sanear el texto libre antes de persistirlo, descartar posibles emails o teléfonos y no enviarlo a GA4.
-- [ ] Crear un informe de demanda. La vista interna `/admin/demanda` permite comparar 30, 90 y 180 días, filtrar por categoría y municipio, detectar tendencias y seguir el recorrido consentido hasta respuesta y conexión útil; faltan clasificación de intención y utilidad por término:
-  - [ ] términos e intenciones más buscados; ya muestra términos saneados, falta clasificar intención;
+- [x] Crear un informe de demanda. La vista interna `/admin/demanda` permite comparar 30, 90 y 180 días, filtrar por categoría y municipio, detectar tendencias, agrupar intención y seguir el recorrido consentido hasta respuesta y conexión útil:
+  - [x] términos e intenciones más buscados, con texto saneado, clasificación heurística estable y volumen sin clasificar visible;
   - [x] categorías y verticales con más demanda;
   - [x] demanda por municipio y periodos comparables de 30, 90 y 180 días;
   - [x] búsquedas emergentes frente al periodo anterior equivalente, con un umbral mínimo de tres búsquedas actuales;
   - [x] búsquedas sin oferta suficiente;
   - [x] búsquedas que terminan en contacto, respuesta o alternativa y conexión útil, enlazadas con un `event_id` técnico sin mostrar identidad;
-  - [ ] términos con tráfico pero poca utilidad;
+  - [x] términos con tráfico pero poca utilidad, con muestra mínima de tres búsquedas y una solicitud y distinguiendo ausencia de feedback de una valoración negativa;
   - [x] oportunidades para captar nuevos proveedores o crear nuevas fichas.
 
 ### Tráfico y rendimiento de cada ficha

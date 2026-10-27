@@ -41,7 +41,7 @@ Las vistas, guardados, compartidos y contactos heredan durante 30 minutos el `se
 
 La entrada inicial a `/buscar` sin término ni filtros no cuenta como búsqueda. Las impresiones se deduplican junto con la búsqueda y `result_opened` hereda el mismo `search_id` cuando el clic procede de una tarjeta de resultados.
 
-Las verticales iniciales son `education`, `education_support`, `activities`, `care`, `health`, `school_goods` y `other_services`; una búsqueda sin categoría queda como `unclassified` hasta incorporar clasificación por intención. La normalización acepta tanto identificadores técnicos como etiquetas visibles y elimina variaciones de mayúsculas, acentos y separadores.
+Las verticales iniciales son `education`, `education_support`, `activities`, `care`, `health`, `school_goods` y `other_services`. El informe interno clasifica la intención con la vertical seleccionada y, cuando falta o es genérica, con reglas estables aplicadas al término saneado; `unclassified` identifica explícitamente lo que no puede inferirse. Esta clasificación permanece en Supabase y no envía el texto libre a GA4. La normalización acepta tanto identificadores técnicos como etiquetas visibles y elimina variaciones de mayúsculas, acentos y separadores.
 
 Los municipios piloto usan los identificadores `las-rozas`, `majadahonda`, `pozuelo` y `boadilla`. Los nombres visibles pueden cambiar sin romper las series históricas. Cualquier municipio nuevo se normaliza a un slug estable hasta incorporarlo al catálogo.
 
