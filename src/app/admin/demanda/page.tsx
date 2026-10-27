@@ -140,7 +140,7 @@ function emergingTrends(currentEvents: SearchEvent[], previousEvents: SearchEven
 
 function RankingTable({ title, description, items }: { title: string; description: string; items: RankedValue[] }) {
   return (
-    <section className="card p-5 md:p-6">
+    <section className="card min-w-0 p-5 md:p-6">
       <h2 className="subsection-title text-ink">{title}</h2>
       <p className="mt-2 text-sm leading-6 text-muted">{description}</p>
       {items.length ? (

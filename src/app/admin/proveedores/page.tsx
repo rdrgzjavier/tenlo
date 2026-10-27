@@ -112,7 +112,7 @@ function segmentRows(profiles: BusinessProfile[], selector: (profile: BusinessPr
 
 function SegmentTable({ title, description, rows }: { title: string; description: string; rows: SegmentRow[] }) {
   return (
-    <section className="card p-5 md:p-6">
+    <section className="card min-w-0 p-5 md:p-6">
       <h2 className="subsection-title text-ink">{title}</h2>
       <p className="mt-2 text-sm leading-6 text-muted">{description}</p>
       {rows.length ? <div className="mt-5 overflow-x-auto"><table className="w-full min-w-[36rem] text-left text-sm"><thead className="border-b border-line text-xs uppercase tracking-wide text-muted"><tr><th className="pb-3 pr-4">Segmento</th><th className="pb-3 pr-4 text-right">Fichas</th><th className="pb-3 pr-4 text-right">Aprobadas</th><th className="pb-3 pr-4 text-right">≥ 75 %</th><th className="pb-3 text-right">Aceptan solicitudes</th></tr></thead><tbody>{rows.map((row) => <tr key={row.label} className="border-b border-line last:border-0"><th scope="row" className="py-3 pr-4 font-semibold text-ink">{row.label}</th><td className="py-3 pr-4 text-right text-slatecopy">{row.profiles}</td><td className="py-3 pr-4 text-right text-slatecopy">{row.approved}</td><td className="py-3 pr-4 text-right text-slatecopy">{row.complete}</td><td className="py-3 text-right text-slatecopy">{row.available}</td></tr>)}</tbody></table></div> : <p className="mt-5 rounded-2xl border border-line bg-soft p-4 text-sm text-muted">Todavía no hay oferta en este segmento.</p>}
