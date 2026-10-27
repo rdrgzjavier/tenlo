@@ -357,7 +357,7 @@ La persistencia propia, la migración `0024` y el informe privado están despleg
 - [x] Medir posición y búsqueda de origen mediante un `search_id` compartido; falta extenderlo a otros tipos de listado.
 - [x] Medir la primera vista de cada ficha por sesión del navegador con `view_scope=session_unique`, evitando inflarla con recargas; mantener `page_view` separado para el tráfico general.
 - [x] Medir fuente/medio/campaña, entrada orgánica, referencia, navegación interna y tráfico directo sin guardar la URL completa de referencia ni UTMs que parezcan datos personales.
-- [ ] Medir scroll o consumo de secciones relevantes solo si ayuda a tomar una decisión de producto.
+- [x] No instrumentar scroll genérico en el MVP: no cambia por sí solo una decisión y añadiría ruido. Medir interacciones con CTAs y secciones concretas únicamente cuando exista una hipótesis y una decisión asociada.
 - [x] Medir guardados, compartidos, clics externos, inicios de contacto y solicitudes completadas, con categoría, vertical, municipio y ficha estables cuando estén disponibles.
 - [x] Relacionar solicitudes con respuesta, tiempo de respuesta, utilidad y resultado mediante `connection_requests` y `connection_feedback`.
 - [ ] Calcular por ficha:
@@ -598,8 +598,8 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 - [ ] **Ficha del proveedor:** visibilidad, impresiones, aperturas, guardados, solicitudes, respuesta y resultados, sin confundir tráfico con clientes.
 - [ ] **Calidad y confianza:** frescura, verificación, incidencias, relevancia y privacidad.
 - [ ] **Monetización:** pricing, activación del plan, ingresos y churn cuando exista producto de pago.
-- [ ] **Demanda y buscador:** términos, intenciones, verticales, municipios, cero resultados, reformulaciones y conversión hasta conexión útil.
-- [ ] **Rendimiento de fichas y verticales:** impresiones, visitas, CTR, contactos, respuestas y conexiones útiles por proveedor, categoría y vertical.
+- [x] **Demanda y buscador:** `/admin/demanda` integra términos, intenciones, verticales, municipios, cero resultados, reformulaciones y conversión hasta conexión útil.
+- [x] **Rendimiento de fichas y verticales:** `/admin/rendimiento` integra impresiones, visitas, CTR, contactos, cobertura, oferta disponible, respuestas y conexiones útiles por proveedor, categoría y vertical.
 - [ ] **Usuarios y consentimiento:** registros, activación, perfiles completos, centros/intereses declarados, origen de adquisición y base activable para marketing. `/admin/usuarios` ya presenta altas, roles, onboarding, canal, municipio, campaña y consentimiento de forma agregada; `0031` está aplicada y faltan datos reales de prueba e intereses cuando exista una finalidad definida.
 
 ## Reglas para Looker Studio u otra herramienta
