@@ -376,7 +376,7 @@ La persistencia propia, la migración `0024` y el informe privado están despleg
 - [x] Aplicar a vistas, impresiones, guardados, compartidos y contactos de cada ficha una dimensión estable `vertical_id` además de categoría y tipo de proveedor, normalizada centralmente antes de `dataLayer`.
 - [x] Crear informes comparables para colegios, guarderías, servicios, actividades y futuras verticales. `/admin/rendimiento` agrega fichas con señal, impresiones, visitas, contactos, solicitudes, respuestas y conexiones útiles por vertical estable.
 - [x] Comparar volumen de demanda, cobertura de oferta, engagement, contacto, respuesta y resultado por vertical. El informe une búsquedas cubiertas, fichas publicadas, disponibilidad declarada, impresiones, visitas, contactos, solicitudes, respuestas y conexiones útiles, con denominadores y umbrales visibles.
-- [ ] Poder desglosar por municipio, categoría, estado de reclamación, confianza, plan y periodo.
+- [ ] Poder desglosar por municipio, categoría, estado de reclamación, confianza, plan y periodo. `/admin/rendimiento` ya filtra por periodo, municipio, categoría, confianza y plan preservando el corte al cambiar de ventana; falta incorporar el estado de reclamación.
 - [x] No comparar verticales como si tuvieran la misma frecuencia natural o intención de uso: el informe presenta una lectura operativa alfabética, advierte que no es un ranking y mantiene umbrales mínimos para tasas.
 - [ ] Utilizar GA4 para análisis agregado y la base de datos para el histórico por ficha; un `provider_id` de alta cardinalidad no debe depender exclusivamente de dimensiones personalizadas de GA4.
 
@@ -607,7 +607,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 - [x] Crear una primera capa de datos estable: taxonomía `dataLayer` versionada y migración `0009` con dimensiones de búsqueda y vista agregada diaria sin PII.
 - [x] Aplicar y verificar la migración `0009_analytics_foundations.sql` en Supabase antes de desplegar el código que escribe sus nuevas columnas.
 - [x] Documentar para cada KPI: definición, fórmula, fuente, frecuencia, propietario y limitaciones en `CATALOGO-DE-KPIS-Y-REPORTING.md`.
-- [ ] Mostrar intervalos comparables y filtros por categoría, municipio, estado de ficha, plan y canal. Demanda y rendimiento ya permiten filtrar por categoría y municipio, y demanda, rendimiento, usuarios y consentimiento comparan ventanas comunes de 30, 90 y 180 días; faltan estado de ficha, plan y canal donde sean aplicables.
+- [ ] Mostrar intervalos comparables y filtros por categoría, municipio, estado de ficha, plan y canal. Demanda y rendimiento permiten categoría y municipio; rendimiento añade confianza y plan; demanda, rendimiento, usuarios y consentimiento comparan ventanas comunes de 30, 90 y 180 días. Faltan estado de reclamación/ficha y canal donde sean aplicables.
 - [ ] No comparar poblaciones distintas sin explicar la unidad.
 - [ ] Diferenciar `0`, `sin dato` y `no aplicable`.
 - [ ] Añadir notas cuando cambie una definición o implementación.

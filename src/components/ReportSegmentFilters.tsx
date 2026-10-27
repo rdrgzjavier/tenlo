@@ -8,6 +8,13 @@ type ReportSegmentFiltersProps = {
   categoryOptions: string[];
   municipalityOptions: string[];
   pathname: string;
+  extraFilters?: Array<{
+    name: string;
+    label: string;
+    activeValue: string;
+    allLabel: string;
+    options: Array<{ value: string; label: string }>;
+  }>;
 };
 
 export default function ReportSegmentFilters({
@@ -16,14 +23,15 @@ export default function ReportSegmentFilters({
   activePeriod,
   categoryOptions,
   municipalityOptions,
-  pathname
+  pathname,
+  extraFilters = []
 }: ReportSegmentFiltersProps) {
-  const hasFilters = Boolean(activeCategory || activeMunicipality);
+  const hasFilters = Boolean(activeCategory || activeMunicipality || extraFilters.some((filter) => filter.activeValue));
 
   return (
     <form action={pathname} method="get" className="mt-4 rounded-2xl border border-line bg-soft p-4" aria-label="Filtros del informe">
       <input type="hidden" name="period" value={activePeriod} />
-      <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] md:items-end">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4 xl:items-end">
         <label className="grid gap-2 text-sm font-semibold text-ink">
           Categoría
           <select name="category" defaultValue={activeCategory} className="min-h-11 rounded-xl border border-line bg-white px-3 text-base font-normal text-ink">
@@ -38,6 +46,15 @@ export default function ReportSegmentFilters({
             {municipalityOptions.map((municipality) => <option key={municipality} value={municipality}>{municipality}</option>)}
           </select>
         </label>
+        {extraFilters.map((filter) => (
+          <label key={filter.name} className="grid gap-2 text-sm font-semibold text-ink">
+            {filter.label}
+            <select name={filter.name} defaultValue={filter.activeValue} className="min-h-11 rounded-xl border border-line bg-white px-3 text-base font-normal text-ink">
+              <option value="">{filter.allLabel}</option>
+              {filter.options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+            </select>
+          </label>
+        ))}
         <button type="submit" className="btn-primary min-h-11 px-5">Aplicar</button>
         {hasFilters ? <Link href={`${pathname}?period=${activePeriod}`} className="btn-secondary min-h-11 px-5">Limpiar</Link> : null}
       </div>

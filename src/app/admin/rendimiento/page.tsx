@@ -113,10 +113,10 @@ function reportingKey(entityType: DirectoryEvent["entity_type"], entityId: strin
   return `resource:${entityId}`;
 }
 
-export default async function AdminDirectoryPerformancePage({ searchParams }: { searchParams: Promise<{ period?: string; category?: string; municipality?: string }> }) {
+export default async function AdminDirectoryPerformancePage({ searchParams }: { searchParams: Promise<{ period?: string; category?: string; municipality?: string; trust?: string; plan?: string }> }) {
   if (!hasSupabaseServerConfig()) return <PrivateAreaUnavailable />;
 
-  const { period: rawPeriod, category: rawCategory, municipality: rawMunicipality } = await searchParams;
+  const { period: rawPeriod, category: rawCategory, municipality: rawMunicipality, trust: rawTrust, plan: rawPlan } = await searchParams;
   const period = resolveReportPeriod(rawPeriod);
 
   const supabase = await createSupabaseServerClient();
@@ -156,14 +156,15 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
       .limit(5000)
   ]);
 
-  const labels = new Map<string, { title: string; href: string; trustLevel: string; lastReviewed: string }>();
+  const labels = new Map<string, { title: string; href: string; trustLevel: string; trustId: string; plan: string | null; lastReviewed: string }>();
+  const providerPlans = new Map(directory.providers.map((provider) => [provider.id, provider.plan]));
   directory.centers.forEach((center) => {
-    labels.set(`center:${center.id}`, { title: center.name, href: `/centros/${center.slug}`, trustLevel: trustLevelLabel(center.trustLevel), lastReviewed: center.lastReviewed || "Sin dato" });
+    labels.set(`center:${center.id}`, { title: center.name, href: `/centros/${center.slug}`, trustLevel: trustLevelLabel(center.trustLevel), trustId: center.trustLevel, plan: null, lastReviewed: center.lastReviewed || "Sin dato" });
   });
-  directory.providers.forEach((provider) => labels.set(`resource:${provider.id}`, { title: provider.businessName, href: `/servicios/${provider.id}`, trustLevel: trustLevelLabel(provider.trustLevel), lastReviewed: provider.lastReviewed || "Sin dato" }));
+  directory.providers.forEach((provider) => labels.set(`resource:${provider.id}`, { title: provider.businessName, href: `/servicios/${provider.id}`, trustLevel: trustLevelLabel(provider.trustLevel), trustId: provider.trustLevel, plan: provider.plan, lastReviewed: provider.lastReviewed || "Sin dato" }));
   directory.listings.forEach((listing) => {
     const href = listing.categoryId === "centros" ? `/centros/${listing.slug}` : `/servicios/${listing.id}`;
-    labels.set(listing.categoryId === "centros" ? reportingKey("center", listing.id) : `resource:${listing.id}`, { title: listing.title, href, trustLevel: trustLevelLabel(listing.trustLevel), lastReviewed: listing.lastReviewed || "Sin dato" });
+    labels.set(listing.categoryId === "centros" ? reportingKey("center", listing.id) : `resource:${listing.id}`, { title: listing.title, href, trustLevel: trustLevelLabel(listing.trustLevel), trustId: listing.trustLevel, plan: providerPlans.get(listing.userId) ?? null, lastReviewed: listing.lastReviewed || "Sin dato" });
   });
 
   const allEvents = (data ?? []) as DirectoryEvent[];
@@ -181,13 +182,23 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
   ])].sort((a, b) => a.localeCompare(b, "es"));
   const activeCategory = rawCategory && categoryOptions.includes(rawCategory) ? rawCategory : "";
   const activeMunicipality = rawMunicipality && municipalityOptions.includes(rawMunicipality) ? rawMunicipality : "";
+  const trustOptions = ["collected", "managed", "verified", "official"].filter((trust) => directory.listings.some((listing) => listing.trustLevel === trust));
+  const planOptions = ["gratuito", "destacado", "premium"].filter((plan) => directory.providers.some((provider) => provider.plan === plan));
+  const activeTrust = rawTrust && trustOptions.includes(rawTrust) ? rawTrust : "";
+  const activePlan = rawPlan && planOptions.includes(rawPlan) ? rawPlan : "";
+  const matchesProfileFilters = (key: string) => {
+    const metadata = labels.get(key);
+    return (!activeTrust || metadata?.trustId === activeTrust) && (!activePlan || metadata?.plan === activePlan);
+  };
   const events = allEvents.filter((event) => (
     (!activeCategory || event.category_id === activeCategory)
     && (!activeMunicipality || event.municipality === activeMunicipality)
+    && matchesProfileFilters(reportingKey(event.entity_type, event.entity_id))
   ));
   const requests = allRequests.filter((request) => (
     (!activeCategory || request.category_id === activeCategory)
     && (!activeMunicipality || request.municipality === activeMunicipality)
+    && ((!activeTrust && !activePlan) || Boolean(request.target_id && matchesProfileFilters(labels.has(reportingKey("center", request.target_id)) ? reportingKey("center", request.target_id) : `resource:${request.target_id}`)))
   ));
   const requestIds = new Set(requests.map((request) => request.id));
   const feedback = ((feedbackResult.data ?? []) as ConnectionFeedbackMetric[]).filter((item) => requestIds.has(item.request_id));
@@ -199,6 +210,7 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
     listing.status === "published"
     && (!activeCategory || listing.categoryId === activeCategory)
     && (!activeMunicipality || listing.municipality === activeMunicipality)
+    && matchesProfileFilters(listing.categoryId === "centros" ? reportingKey("center", listing.id) : `resource:${listing.id}`)
   ));
   const grouped = new Map<string, PerformanceRow>();
   const rowFor = (key: string, category: string | null, municipality: string | null, vertical?: string | null) => {
@@ -338,14 +350,25 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
       <p className="label mt-6">Informe interno</p>
       <h1 className="page-title">Rendimiento de fichas</h1>
       <p className="lead max-w-4xl">Visibilidad e intención registrada con consentimiento estadístico. Periodo del {dateLabel(periodStart)} al {dateLabel(new Date())}.</p>
-      <ReportPeriodSelector activePeriod={period} pathname="/admin/rendimiento" preservedParams={{ category: activeCategory, municipality: activeMunicipality }} />
-      <ReportSegmentFilters activeCategory={activeCategory} activeMunicipality={activeMunicipality} activePeriod={period} categoryOptions={categoryOptions} municipalityOptions={municipalityOptions} pathname="/admin/rendimiento" />
+      <ReportPeriodSelector activePeriod={period} pathname="/admin/rendimiento" preservedParams={{ category: activeCategory, municipality: activeMunicipality, trust: activeTrust, plan: activePlan }} />
+      <ReportSegmentFilters
+        activeCategory={activeCategory}
+        activeMunicipality={activeMunicipality}
+        activePeriod={period}
+        categoryOptions={categoryOptions}
+        municipalityOptions={municipalityOptions}
+        pathname="/admin/rendimiento"
+        extraFilters={[
+          { name: "trust", label: "Confianza", activeValue: activeTrust, allLabel: "Todos los niveles", options: trustOptions.map((trust) => ({ value: trust, label: trustLevelLabel(trust as "collected" | "managed" | "verified" | "official") })) },
+          { name: "plan", label: "Plan", activeValue: activePlan, allLabel: "Todos los planes", options: planOptions.map((plan) => ({ value: plan, label: plan === "gratuito" ? "Gratuito" : plan === "destacado" ? "Destacado" : "Premium" })) }
+        ]}
+      />
 
       {error ? <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">Todavía no se puede consultar el histórico por ficha. Comprueba que la migración de rendimiento esté aplicada.</p> : null}
       {operationalError ? <p className="mt-3 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">No se ha podido cargar una parte del embudo de conexiones. Comprueba los permisos administrativos.</p> : null}
 
       <section className="card mt-6 p-5 md:p-6" aria-labelledby="performance-summary-title">
-        <div className="flex items-center gap-3"><BarChart3 size={22} className="text-ink" aria-hidden /><div><h2 id="performance-summary-title" className="subsection-title text-ink">Resumen de {period} días</h2><p className="mt-1 text-sm text-muted">No contiene nombres, emails, teléfonos, mensajes ni identificadores de cuenta.{activeCategory || activeMunicipality ? " Visibilidad y detalle filtrados por el segmento seleccionado." : ""}</p></div></div>
+        <div className="flex items-center gap-3"><BarChart3 size={22} className="text-ink" aria-hidden /><div><h2 id="performance-summary-title" className="subsection-title text-ink">Resumen de {period} días</h2><p className="mt-1 text-sm text-muted">No contiene nombres, emails, teléfonos, mensajes ni identificadores de cuenta.{activeCategory || activeMunicipality || activeTrust || activePlan ? " Visibilidad y detalle filtrados por el segmento seleccionado." : ""}</p></div></div>
         <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Eye size={16} aria-hidden />Impresiones</dt><dd className="mt-2 text-3xl font-black text-ink">{events.length ? totalImpressions : "Sin datos"}</dd></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><MousePointerClick size={16} aria-hidden />Visitas de ficha</dt><dd className="mt-2 text-3xl font-black text-ink">{events.length ? totalViews : "Sin datos"}</dd></div>
@@ -368,7 +391,7 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
 
       <section className="card mt-6 p-5 md:p-6" aria-labelledby="vertical-performance-title">
         <h2 id="vertical-performance-title" className="subsection-title text-ink">Rendimiento por vertical</h2>
-        <p className="mt-2 text-sm leading-6 text-muted">Lectura operativa por tipo de necesidad. Los volúmenes no forman un ranking: cada vertical tiene una frecuencia natural distinta. Cobertura significa búsqueda con al menos un resultado; disponibilidad significa ficha que confirma aceptar solicitudes. Las tasas se ocultan con menos de tres búsquedas, 20 visitas o cinco solicitudes.</p>
+        <p className="mt-2 text-sm leading-6 text-muted">Lectura operativa por tipo de necesidad. Los volúmenes no forman un ranking: cada vertical tiene una frecuencia natural distinta. Cobertura significa búsqueda con al menos un resultado; disponibilidad significa ficha que confirma aceptar solicitudes. Los filtros de confianza y plan acotan la oferta y su rendimiento, no la demanda observada. Las tasas se ocultan con menos de tres búsquedas, 20 visitas o cinco solicitudes.</p>
         {verticalRows.length ? (
           <div className="mt-5 overflow-x-auto">
             <table className="w-full min-w-[82rem] text-left text-sm">
