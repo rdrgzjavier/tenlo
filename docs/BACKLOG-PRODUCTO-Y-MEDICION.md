@@ -374,10 +374,10 @@ La persistencia propia, la migración `0024` y el informe privado están despleg
 ### Rendimiento por vertical
 
 - [x] Aplicar a vistas, impresiones, guardados, compartidos y contactos de cada ficha una dimensión estable `vertical_id` además de categoría y tipo de proveedor, normalizada centralmente antes de `dataLayer`.
-- [ ] Crear informes comparables para colegios, guarderías, servicios, actividades y futuras verticales.
-- [ ] Comparar volumen de demanda, cobertura de oferta, engagement, contacto, respuesta y resultado por vertical.
+- [x] Crear informes comparables para colegios, guarderías, servicios, actividades y futuras verticales. `/admin/rendimiento` agrega fichas con señal, impresiones, visitas, contactos, solicitudes, respuestas y conexiones útiles por vertical estable.
+- [ ] Comparar volumen de demanda, cobertura de oferta, engagement, contacto, respuesta y resultado por vertical. Demanda, engagement, contacto, respuesta y resultado ya están agregados; falta incorporar oferta activa y cobertura adecuada al mismo corte.
 - [ ] Poder desglosar por municipio, categoría, estado de reclamación, confianza, plan y periodo.
-- [ ] No comparar verticales como si tuvieran la misma frecuencia natural o intención de uso.
+- [x] No comparar verticales como si tuvieran la misma frecuencia natural o intención de uso: el informe presenta una lectura operativa alfabética, advierte que no es un ranking y mantiene umbrales mínimos para tasas.
 - [ ] Utilizar GA4 para análisis agregado y la base de datos para el histórico por ficha; un `provider_id` de alta cardinalidad no debe depender exclusivamente de dimensiones personalizadas de GA4.
 
 ## P0. Base de usuarios, consentimiento y futura activación de marketing

@@ -8,6 +8,7 @@ import ReportSegmentFilters from "@/components/ReportSegmentFilters";
 import { loadDirectorySnapshot } from "@/lib/directory-repository";
 import { trustLevelLabel } from "@/lib/display-labels";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
+import { verticalIdForCategory, verticalLabel } from "@/lib/verticals";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,7 @@ type DirectoryEvent = {
   entity_type: "center" | "provider" | "listing";
   entity_id: string;
   category_id: string | null;
+  vertical_id: string | null;
   municipality: string | null;
   created_at: string;
 };
@@ -31,6 +33,7 @@ type PerformanceRow = {
   title: string;
   href: string | null;
   category: string;
+  vertical: string;
   municipality: string;
   trustLevel: string;
   lastReviewed: string;
@@ -123,7 +126,7 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
   const [{ data, error }, directory, requestsResult, feedbackResult] = await Promise.all([
     supabase
       .from("directory_events")
-      .select("anonymous_session_id,event_name,entity_type,entity_id,category_id,municipality,created_at")
+      .select("anonymous_session_id,event_name,entity_type,entity_id,category_id,vertical_id,municipality,created_at")
       .gte("created_at", periodStart.toISOString())
       .order("created_at", { ascending: false })
       .limit(5000),
@@ -161,13 +164,14 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
     && (!activeMunicipality || event.municipality === activeMunicipality)
   ));
   const grouped = new Map<string, PerformanceRow>();
-  const rowFor = (key: string, category: string | null, municipality: string | null) => {
+  const rowFor = (key: string, category: string | null, municipality: string | null, vertical?: string | null) => {
     const label = labels.get(key);
     const row = grouped.get(key) ?? {
       key,
       title: label?.title ?? "Ficha sin título disponible",
       href: label?.href ?? null,
       category: category ?? "Sin categoría",
+      vertical: vertical || verticalIdForCategory(category ?? undefined),
       municipality: municipality ?? "Sin municipio",
       trustLevel: label?.trustLevel ?? "Sin dato",
       lastReviewed: label?.lastReviewed ?? "Sin dato",
@@ -182,12 +186,13 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
       saves: 0,
       sessions: new Set<string>()
     };
+    if (row.vertical === "unclassified" && vertical) row.vertical = vertical;
     grouped.set(key, row);
     return row;
   };
   for (const event of events) {
     const key = reportingKey(event.entity_type, event.entity_id);
-    const row = rowFor(key, event.category_id, event.municipality);
+    const row = rowFor(key, event.category_id, event.municipality, event.vertical_id);
     row.sessions.add(event.anonymous_session_id);
     if (event.event_name === "provider_impression") row.impressions += 1;
     if (["provider_profile_viewed", "center_profile_viewed"].includes(event.event_name)) row.views += 1;
@@ -204,7 +209,7 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
     const centerKey = reportingKey("center", request.target_id);
     const resourceKey = `resource:${request.target_id}`;
     const key = labels.has(centerKey) ? centerKey : resourceKey;
-    const row = rowFor(key, request.category_id, request.municipality);
+    const row = rowFor(key, request.category_id, request.municipality, verticalIdForCategory(request.category_id ?? undefined));
     row.requests += 1;
     requestRowKeys.set(request.id, key);
     const responseAt = request.first_response_at ? new Date(request.first_response_at).getTime() : null;
@@ -224,6 +229,28 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
   const totalViews = rows.reduce((sum, row) => sum + row.views, 0);
   const totalContacts = rows.reduce((sum, row) => sum + row.contacts, 0);
   const totalSessions = new Set(events.map((event) => event.anonymous_session_id)).size;
+  const verticalRows = [...rows.reduce((groups, row) => {
+    const current = groups.get(row.vertical) ?? {
+      id: row.vertical,
+      profiles: 0,
+      impressions: 0,
+      views: 0,
+      contacts: 0,
+      requests: 0,
+      responses: 0,
+      usefulConnections: 0
+    };
+    current.profiles += 1;
+    current.impressions += row.impressions;
+    current.views += row.views;
+    current.contacts += row.contacts;
+    current.requests += row.requests;
+    current.responses += row.responses;
+    current.usefulConnections += row.usefulConnections;
+    groups.set(row.vertical, current);
+    return groups;
+  }, new Map<string, { id: string; profiles: number; impressions: number; views: number; contacts: number; requests: number; responses: number; usefulConnections: number }>()).values()]
+    .sort((a, b) => verticalLabel(a.id).localeCompare(verticalLabel(b.id), "es"));
   const respondedRequests = requests.filter((request) => request.first_response_at || request.alternative_summary).length;
   const responseTimes = requests.flatMap((request) => request.first_response_at
     ? [new Date(request.first_response_at).getTime() - new Date(request.created_at).getTime()]
@@ -269,6 +296,35 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
           <div className="rounded-2xl border border-violet/25 bg-violet/5 p-4"><dt className="text-sm font-semibold text-muted">Conexiones útiles mensuales</dt><dd className="mt-2 text-3xl font-black text-ink">{usefulConnections30}</dd><p className="mt-1 text-xs text-muted">North Star · {usefulConnectionsPeriod} útiles en {period} días</p></div>
         </dl>
         <p className="mt-4 text-xs leading-5 text-muted">Una respuesta o alternativa no se considera útil por sí sola: la conexión útil requiere valoración de la familia. No se muestran rankings ni comparaciones si la muestra es insuficiente.</p>
+      </section>
+
+      <section className="card mt-6 p-5 md:p-6" aria-labelledby="vertical-performance-title">
+        <h2 id="vertical-performance-title" className="subsection-title text-ink">Rendimiento por vertical</h2>
+        <p className="mt-2 text-sm leading-6 text-muted">Lectura operativa por tipo de necesidad. Los volúmenes no forman un ranking: cada vertical tiene una frecuencia natural distinta. Las tasas se ocultan con menos de 20 visitas o cinco solicitudes.</p>
+        {verticalRows.length ? (
+          <div className="mt-5 overflow-x-auto">
+            <table className="w-full min-w-[58rem] text-left text-sm">
+              <thead className="border-b border-line text-xs uppercase tracking-wide text-muted">
+                <tr><th className="pb-3 pr-4">Vertical</th><th className="pb-3 pr-4 text-right">Fichas con señal</th><th className="pb-3 pr-4 text-right">Impresiones</th><th className="pb-3 pr-4 text-right">Visitas</th><th className="pb-3 pr-4 text-right">Contactos</th><th className="pb-3 pr-4 text-right">Contacto / visita</th><th className="pb-3 pr-4 text-right">Solicitudes</th><th className="pb-3 pr-4 text-right">Respuestas</th><th className="pb-3 text-right">Conexiones útiles</th></tr>
+              </thead>
+              <tbody>
+                {verticalRows.map((row) => (
+                  <tr key={row.id} className="border-b border-line last:border-0">
+                    <th scope="row" className="py-3 pr-4 font-semibold text-ink">{verticalLabel(row.id)}</th>
+                    <td className="py-3 pr-4 text-right text-slatecopy">{row.profiles}</td>
+                    <td className="py-3 pr-4 text-right text-slatecopy">{row.impressions}</td>
+                    <td className="py-3 pr-4 text-right text-slatecopy">{row.views}</td>
+                    <td className="py-3 pr-4 text-right text-slatecopy">{row.contacts}</td>
+                    <td className="py-3 pr-4 text-right text-slatecopy">{row.views < 20 ? "—" : percent(row.contacts, row.views)}</td>
+                    <td className="py-3 pr-4 text-right text-slatecopy">{row.requests}</td>
+                    <td className="py-3 pr-4 text-right text-slatecopy">{row.requests < 5 ? "—" : `${row.responses} · ${percent(row.responses, row.requests)}`}</td>
+                    <td className="py-3 text-right text-slatecopy">{row.usefulConnections}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : <p className="mt-5 rounded-2xl border border-line bg-soft p-4 text-sm text-muted">Todavía no hay señales suficientes para comparar verticales.</p>}
       </section>
 
       <section className="card mt-6 p-5 md:p-6">

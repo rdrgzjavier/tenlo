@@ -8,6 +8,21 @@ export type VerticalId =
   | "other_services"
   | "unclassified";
 
+const verticalLabels: Record<VerticalId, string> = {
+  education: "Centros educativos",
+  education_support: "Apoyo escolar e idiomas",
+  activities: "Actividades y ocio",
+  care: "Cuidado y conciliación",
+  health: "Salud y bienestar",
+  school_goods: "Material y equipamiento escolar",
+  other_services: "Otros servicios familiares",
+  unclassified: "Sin clasificar"
+};
+
+export function verticalLabel(vertical: string) {
+  return verticalLabels[vertical as VerticalId] ?? "Sin clasificar";
+}
+
 function normalizedCategory(value?: string) {
   return value
     ?.trim()
