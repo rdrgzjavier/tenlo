@@ -199,7 +199,7 @@ function outcomeRows(
 
 function OutcomeTable({ title, description, items, emptyMessage, firstColumnLabel }: { title: string; description: string; items: OutcomeValue[]; emptyMessage: string; firstColumnLabel: string }) {
   return (
-    <section className="card p-5 md:p-6">
+    <section className="card min-w-0 p-5 md:p-6">
       <h2 className="subsection-title text-ink">{title}</h2>
       <p className="mt-2 text-sm leading-6 text-muted">{description}</p>
       {items.length ? (
