@@ -25,24 +25,18 @@ export default function ProviderSuggestionForm({ initialLocation = "", initialSe
     const service = String(data.get("service") || "").trim();
     const notes = String(data.get("notes") || "").trim();
 
-    const message = [
-      `Proveedor propuesto: ${providerName}`,
-      `Web: ${website || "No indicada"}`,
-      `Ubicación: ${location}`,
-      `Servicio o categoría: ${service || "No indicado"}`,
-      `Información adicional: ${notes || "No indicada"}`
-    ].join("\n");
-
     try {
-      const response = await fetch("/api/feedback", {
+      const response = await fetch("/api/provider-suggestion", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          context: "provider_suggestion",
-          itemId: providerName,
+          providerName,
+          website,
+          location,
+          service,
+          notes,
           name: data.get("name"),
-          email: data.get("email"),
-          message
+          email: data.get("email")
         })
       });
       const result = await response.json();

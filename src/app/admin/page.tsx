@@ -6,6 +6,7 @@ import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import AdminStatusControl from "@/components/AdminStatusControl";
 import AdminNotes from "@/components/AdminNotes";
 import ConnectionWorkflow from "@/components/ConnectionWorkflow";
+import AdminProviderSuggestionReview from "@/components/AdminProviderSuggestionReview";
 import { feedbackContextParts, moderationStatusLabel } from "@/lib/adminFeedback";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
@@ -127,11 +128,12 @@ export default async function AdminPage() {
   if (profile?.role !== "tenlo_admin" || profile.status !== "approved") redirect("/area-personal");
 
   const reviewCutoff = staleReviewCutoff();
-  const [claimsResult, requestsResult, submissionsResult, businessProfilesResult, feedbackResult, connectionFeedbackResult, auditResult, exportAuditResult, notesResult, staleServicesResult, staleCentersResult] = await Promise.all([
+  const [claimsResult, requestsResult, submissionsResult, businessProfilesResult, providerSuggestionsResult, feedbackResult, connectionFeedbackResult, auditResult, exportAuditResult, notesResult, staleServicesResult, staleCentersResult] = await Promise.all([
     supabase.from("claim_requests").select("id,entity_type,entity_id,entity_name,requester_name,requester_email,requester_phone,role_description,corrections,official_website,image_url,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("connection_requests").select("id,family_id,target_type,target_id,category_id,municipality,message,contact_preference,status,provider_notified_at,provider_response_summary,alternative_summary,first_response_at,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("submissions").select("id,user_id,submission_type,payload,review_notes,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("business_profiles").select("id,owner_id,business_name,website,address,municipality,service_area,category,subtype,description,phone,contact_email,status,trust_level,completeness_percent,details,latitude,longitude,location_visibility,service_municipalities,accepts_requests,contact_preferences,created_at").in("status", ["pending_review", "rejected"]).order("created_at", { ascending: false }).limit(100),
+    supabase.from("provider_suggestions").select("id,provider_name,website,location,service,notes,submitter_name,submitter_email,status,converted_profile_id,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("feedback_requests").select("id,context,item_id,name,email,message,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("connection_feedback").select("request_id,useful,outcome,updated_at").order("updated_at", { ascending: false }).limit(500),
     supabase.from("admin_queue_audit").select("id,queue,record_id,previous_status,new_status,changed_by,changed_at").order("changed_at", { ascending: false }).limit(30),
@@ -146,11 +148,12 @@ export default async function AdminPage() {
     ? await supabase.from("profiles").select("id,public_name,display_name,contact_email,phone").in("id", familyIds)
     : { data: [], error: null };
 
-  const queryError = claimsResult.error || requestsResult.error || requestProfilesResult.error || submissionsResult.error || businessProfilesResult.error || feedbackResult.error || connectionFeedbackResult.error || auditResult.error || exportAuditResult.error || notesResult.error || staleServicesResult.error || staleCentersResult.error;
+  const queryError = claimsResult.error || requestsResult.error || requestProfilesResult.error || submissionsResult.error || businessProfilesResult.error || providerSuggestionsResult.error || feedbackResult.error || connectionFeedbackResult.error || auditResult.error || exportAuditResult.error || notesResult.error || staleServicesResult.error || staleCentersResult.error;
   const claims = claimsResult.data ?? [];
   const requests = requestsResult.data ?? [];
   const submissions = submissionsResult.data ?? [];
   const businessProfiles = businessProfilesResult.data ?? [];
+  const providerSuggestions = providerSuggestionsResult.data ?? [];
   const feedback = feedbackResult.data ?? [];
   const connectionFeedback = new Map((connectionFeedbackResult.data ?? []).map((item) => [item.request_id, item]));
   const requestProfiles = new Map((requestProfilesResult.data ?? []).map((item) => [item.id, item]));
@@ -239,6 +242,20 @@ export default async function AdminPage() {
       ) : null}
 
       <div className="mt-8 grid gap-5 xl:grid-cols-2">
+        <QueueSection title="Proveedores propuestos" count={providerSuggestions.length} Icon={BriefcaseBusiness}>
+          <p className="rounded-2xl border border-line bg-white p-4 text-sm leading-6 text-slatecopy">Una propuesta nunca se publica automáticamente. Contrasta la web, evita duplicados y completa una descripción profesional antes de crear la ficha.</p>
+          {providerSuggestions.length ? providerSuggestions.map((suggestion) => (
+            <article key={suggestion.id} className="rounded-2xl border border-line bg-soft p-4 text-sm">
+              <div className="flex flex-wrap items-center justify-between gap-2"><strong className="text-ink">{suggestion.provider_name}</strong><span className="chip">{moderationStatusLabel(suggestion.status)}</span></div>
+              <p className="mt-2 text-slatecopy">{suggestion.service || "Servicio no indicado"} · {suggestion.location}</p>
+              {suggestion.website ? <a href={suggestion.website} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 break-all font-semibold text-ink underline">{suggestion.website} <ExternalLink size={13} aria-hidden /></a> : null}
+              {suggestion.notes ? <p className="mt-3 whitespace-pre-wrap leading-6 text-muted">{suggestion.notes}</p> : null}
+              <p className="mt-2 text-xs text-muted">Propuesta: {dateLabel(suggestion.created_at)}{suggestion.submitter_email ? ` · ${suggestion.submitter_email}` : ""}</p>
+              {suggestion.status === "pending_review" && !suggestion.converted_profile_id ? <AdminProviderSuggestionReview id={suggestion.id} name={suggestion.provider_name} website={suggestion.website} location={suggestion.location} service={suggestion.service} notes={suggestion.notes} /> : null}
+              {suggestion.converted_profile_id ? <Link href={`/servicios/${suggestion.converted_profile_id}`} className="mt-3 inline-flex font-bold text-ink underline">Ver ficha creada</Link> : null}
+            </article>
+          )) : <p className="text-sm text-muted">No hay proveedores propuestos.</p>}
+        </QueueSection>
         <QueueSection title="Reclamaciones" count={claims.length} Icon={FileCheck2}>
           <p className="rounded-2xl border border-line bg-white p-4 text-sm leading-6 text-slatecopy">Comprueba la relación de la persona con la entidad, contrasta la web oficial y revisa cada cambio antes de aprobar o rechazar la reclamación.</p>
           {claims.length ? claims.map((claim) => (

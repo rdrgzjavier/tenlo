@@ -236,7 +236,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Mostrar el número de resultados sin sugerir que más siempre es mejor.
 - [x] Registrar visualmente búsquedas sin resultados y crear una salida útil para limpiar filtros o pedir ayuda a Tenlo.
 - [x] Permitir proponer desde una búsqueda sin resultados un proveedor con nombre, web, ubicación y servicio; conservarlo pendiente de revisión antes de crear una ficha `No verificada`.
-- [ ] Crear el flujo administrativo que convierta una propuesta revisada en ficha `No verificada`, evitando la publicación automática de datos aportados por usuarios.
+- [x] Crear el flujo administrativo que convierta una propuesta revisada en ficha `No verificada`, evitando la publicación automática de datos aportados por usuarios. Las propuestas se guardan de forma estructurada; el administrador debe contrastar y confirmar nombre, web, municipio, categoría y descripción, y la conversión rechaza duplicados por nombre y municipio.
 - [x] Permitir comparar un número pequeño de opciones con campos homogéneos. Favoritos permite elegir entre dos y tres fichas y contrasta categoría, municipio, cobertura, edad, precio, disponibilidad, confianza y revisión sin ocultar campos pendientes.
 - [x] Hacer visibles cobertura, disponibilidad, actualización y confianza. Las fichas muestran zona o ubicación según el tipo de proveedor, campos homogéneos de disponibilidad, nivel de confianza y un bloque de origen, última revisión y control de la ficha; los datos ausentes se declaran pendientes.
 - [x] Revisar el orden de resultados y definir criterios transparentes de ranking. El buscador prioriza coincidencias en el nombre cuando hay texto y después usa orden alfabético; la explicación está visible junto al recuento.

@@ -31,6 +31,7 @@ Todas las cuentas no familiares deben quedar en `pending_review` hasta que Tenlo
 - `community_posts`: iniciativas, eventos, ONGs y recursos comunitarios.
 - `favorites`: favoritos del usuario logado.
 - `saved_searches`: criterios estructurados y ruta interna que cada usuario decide conservar.
+- `provider_suggestions`: propuestas estructuradas pendientes de contraste y conversión administrativa.
 - `submissions`: propuestas pendientes de revision.
 - `contact_events`: trazabilidad de CTAs de contacto.
 - `newsletter_subscribers`: altas de newsletter con consentimiento.

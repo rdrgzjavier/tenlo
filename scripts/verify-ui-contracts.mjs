@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-const [loginRegistration, passwordRecovery, passwordReset, accountSettings, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, searchPage, savedSearchPage, savedSearchButton] = await Promise.all([
+const [loginRegistration, passwordRecovery, passwordReset, accountSettings, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage] = await Promise.all([
   read("src/components/LoginRegistration.tsx"),
   read("src/components/PasswordRecoveryRequest.tsx"),
   read("src/components/PasswordResetForm.tsx"),
@@ -17,7 +17,9 @@ const [loginRegistration, passwordRecovery, passwordReset, accountSettings, invi
   read("src/app/admin/proveedores/page.tsx"),
   read("src/app/buscar/page.tsx"),
   read("src/app/busquedas-guardadas/page.tsx"),
-  read("src/components/SaveSearchButton.tsx")
+  read("src/components/SaveSearchButton.tsx"),
+  read("src/components/ProviderSuggestionForm.tsx"),
+  read("src/app/admin/page.tsx")
 ]);
 
 const checks = [
@@ -37,7 +39,8 @@ const checks = [
   [performanceReport.includes('{ name: "claim", label: "Reclamación"') && performanceReport.includes('.select("id,external_key,claim_status")'), "El informe de rendimiento debe filtrar por reclamación usando el estado privado de la ficha."],
   [providerReport.includes("Activas 30 d") && providerReport.includes("active30OwnerIds"), "El informe de proveedores debe separar oferta publicada, disponible y activa por segmento."],
   [searchPage.includes("<SaveSearchButton") && savedSearchButton.includes('.from("saved_searches").upsert'), "El buscador debe permitir guardar criterios persistentes tras autenticar al usuario."],
-  [savedSearchPage.includes('.from("saved_searches")') && savedSearchPage.includes("<SavedSearchActions"), "El área privada debe permitir recuperar y gestionar búsquedas guardadas."]
+  [savedSearchPage.includes('.from("saved_searches")') && savedSearchPage.includes("<SavedSearchActions"), "El área privada debe permitir recuperar y gestionar búsquedas guardadas."],
+  [providerSuggestionForm.includes('fetch("/api/provider-suggestion"') && adminPage.includes("<AdminProviderSuggestionReview"), "Las propuestas de proveedor deben quedar estructuradas y exigir revisión administrativa antes de crear una ficha."]
 ];
 
 for (const [condition, message] of checks) {

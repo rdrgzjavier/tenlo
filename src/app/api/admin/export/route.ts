@@ -79,7 +79,7 @@ export async function GET() {
     return NextResponse.json({ error: "No tienes permiso para exportar la cola." }, { status: 403 });
   }
 
-  const [claimsResult, requestsResult, submissionsResult, businessProfilesResult, feedbackResult, connectionFeedbackResult] = await Promise.all([
+  const [claimsResult, requestsResult, submissionsResult, businessProfilesResult, providerSuggestionsResult, feedbackResult, connectionFeedbackResult] = await Promise.all([
     supabase
       .from("claim_requests")
       .select("id,entity_type,entity_id,entity_name,requester_name,requester_email,requester_phone,status,created_at,updated_at")
@@ -101,6 +101,11 @@ export async function GET() {
       .order("created_at", { ascending: false })
       .limit(1000),
     supabase
+      .from("provider_suggestions")
+      .select("id,user_id,provider_name,website,location,service,notes,submitter_name,submitter_email,status,converted_profile_id,created_at,updated_at")
+      .order("created_at", { ascending: false })
+      .limit(1000),
+    supabase
       .from("feedback_requests")
       .select("id,user_id,context,item_id,name,email,message,status,created_at,updated_at")
       .order("created_at", { ascending: false })
@@ -111,7 +116,7 @@ export async function GET() {
       .limit(1000)
   ]);
 
-  const failed = [claimsResult, requestsResult, submissionsResult, businessProfilesResult, feedbackResult, connectionFeedbackResult].find((result) => result.error);
+  const failed = [claimsResult, requestsResult, submissionsResult, businessProfilesResult, providerSuggestionsResult, feedbackResult, connectionFeedbackResult].find((result) => result.error);
   if (failed?.error) {
     console.error("No se pudo preparar la exportación administrativa", failed.error);
     return NextResponse.json({ error: "No hemos podido preparar la exportación." }, { status: 500 });
@@ -188,6 +193,22 @@ export async function GET() {
       source_name: item.source_name,
       source_url: item.source_url,
       last_reviewed: item.last_reviewed
+    })),
+    ...(providerSuggestionsResult.data ?? []).map((item) => ({
+      queue: "provider_suggestion",
+      id: item.id,
+      status: item.status,
+      created_at: item.created_at,
+      updated_at: item.updated_at,
+      entity_name: item.provider_name,
+      category_id: item.service,
+      municipality: item.location,
+      account_id: item.user_id,
+      provider_id: item.converted_profile_id,
+      contact_name: item.submitter_name,
+      contact_email: item.submitter_email,
+      website: item.website,
+      message: item.notes
     })),
     ...(feedbackResult.data ?? []).map((item) => ({
       queue: "feedback",

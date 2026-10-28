@@ -108,7 +108,7 @@ type ServiceRow = {
 
 type BusinessProfileRow = {
   id: string;
-  owner_id: string;
+  owner_id: string | null;
   business_name: string;
   legal_name: string | null;
   website: string | null;
@@ -148,7 +148,7 @@ type BusinessProfileRow = {
 
 type BusinessProfileInsert = {
   id?: string;
-  owner_id: string;
+  owner_id?: string | null;
   business_name: string;
   legal_name?: string | null;
   website?: string | null;
@@ -365,6 +365,22 @@ export type Database = {
         }>;
         Relationships: [];
       };
+      provider_suggestions: {
+        Row: {
+          id: string; user_id: string | null; provider_name: string; website: string | null;
+          location: string; service: string | null; notes: string | null; submitter_name: string | null;
+          submitter_email: string | null; status: ModerationStatus; converted_profile_id: string | null;
+          created_at: string; updated_at: string;
+        };
+        Insert: {
+          id?: string; user_id?: string | null; provider_name: string; website?: string | null;
+          location: string; service?: string | null; notes?: string | null; submitter_name?: string | null;
+          submitter_email?: string | null; status?: ModerationStatus; converted_profile_id?: string | null;
+          created_at?: string; updated_at?: string;
+        };
+        Update: Partial<{ status: ModerationStatus; converted_profile_id: string | null; updated_at: string }>;
+        Relationships: [];
+      };
       data_export_audit: {
         Row: {
           id: string;
@@ -385,7 +401,13 @@ export type Database = {
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      convert_provider_suggestion: {
+        Args: { target_id: string; reviewed_name: string; reviewed_website: string; reviewed_municipality: string; reviewed_category: string; reviewed_description: string };
+        Returns: string;
+      };
+      record_profile_activity: { Args: { next_onboarding_status: string | null }; Returns: boolean };
+    };
     Enums: {
       profile_role: ProfileRole;
       moderation_status: ModerationStatus;
