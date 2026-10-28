@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import AccountSettings from "@/components/AccountSettings";
+import InternalAnalyticsControl from "@/components/InternalAnalyticsControl";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
@@ -78,6 +79,7 @@ export default async function AccountDataPage() {
           marketingConsentAt={profile?.marketing_consent_at}
           marketingConsentWithdrawnAt={profile?.marketing_consent_withdrawn_at}
         />
+        {profile?.role === "tenlo_admin" ? <InternalAnalyticsControl /> : null}
       </div>
     </div>
   );

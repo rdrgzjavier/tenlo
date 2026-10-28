@@ -61,6 +61,7 @@ export type TrackingAction =
   | "profile_submitted";
 
 export const analyticsSchemaVersion = "1.0";
+const internalTrafficCookie = "tenlo_internal_traffic=1";
 
 type TrackingValue = string | number | boolean | undefined;
 
@@ -136,7 +137,12 @@ export function shouldAttachSearchContext(action: unknown): action is TrackingAc
 }
 export function hasAnalyticsConsent() {
   if (typeof window === "undefined") return false;
-  return window.__tenloAnalyticsConsent === true;
+  return window.__tenloAnalyticsConsent === true && !isInternalAnalyticsTraffic();
+}
+
+export function isInternalAnalyticsTraffic() {
+  if (typeof document === "undefined") return false;
+  return document.cookie.split(";").some((part) => part.trim() === internalTrafficCookie);
 }
 
 function eventEnvelope() {

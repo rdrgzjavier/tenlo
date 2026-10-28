@@ -319,7 +319,7 @@ Arquitectura inicial recomendada:
 - [x] Definir qué eventos se envían desde cliente, cuáles desde servidor y cuáles desde ambos con deduplicación en `QA-ANALITICA.md`.
 - [x] Añadir en el cliente `event_id`, timestamp ISO y versión del esquema a los eventos enviados al `dataLayer`.
 - [x] Añadir timestamp de servidor, versión de esquema y `event_id` único a solicitudes y reclamaciones mediante la migración `0015`, reutilizando el mismo ID en el evento de cliente.
-- [ ] Crear entornos de prueba y reglas para excluir tráfico interno.
+- [x] Crear una regla operativa para excluir tráfico interno. La cuenta administradora puede marcar cada navegador desde `/datos-cuenta`; la cookie propia bloquea los eventos antes de `dataLayer` y el endpoint de eventos vuelve a descartarlos en servidor. Debe activarse en cada dispositivo usado para administración o QA.
 - [x] Aislar cuentas, fichas y solicitudes controladas mediante `is_test`; `0036_test_account_isolation.sql` impide que las fichas de prueba aparezcan en el directorio público y los informes excluyen sus cuentas y solicitudes.
 - [x] Preparar un procedimiento de QA con GTM Preview, GA4 DebugView y validación en Supabase (`QA-ANALITICA.md`).
 - [ ] Definir retención, acceso, borrado y anonimización de datos. La matriz operativa, el flujo de supresión y los requisitos técnicos están documentados en `RETENCION-Y-SUPRESION.md`; faltan validar los plazos jurídicamente, completar la identidad del responsable y probar una baja real con una cuenta de prueba.
