@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useCallback, useState } from "react";
+import TurnstileChallenge, { turnstileEnabled } from "@/components/TurnstileChallenge";
 import { pushTrackingEvent } from "@/lib/analytics";
 import { createSupabaseBrowserClient, hasSupabaseBrowserConfig } from "@/lib/supabase/client";
 
@@ -9,10 +10,18 @@ export default function PasswordRecoveryRequest() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [error, setError] = useState("");
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaReset, setCaptchaReset] = useState(0);
+  const handleCaptcha = useCallback((token: string | null) => setCaptchaToken(token), []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+
+    if (turnstileEnabled && !captchaToken) {
+      setError("Completa la comprobación de seguridad antes de solicitar el enlace.");
+      return;
+    }
 
     if (!hasSupabaseBrowserConfig()) {
       setStatus("error");
@@ -24,8 +33,11 @@ export default function PasswordRecoveryRequest() {
     setStatus("sending");
     const supabase = createSupabaseBrowserClient();
     const { error: recoveryError } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent("/restablecer-contrasena")}`
+      redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent("/restablecer-contrasena")}`,
+      captchaToken: captchaToken || undefined
     });
+
+    if (turnstileEnabled) setCaptchaReset((value) => value + 1);
 
     if (recoveryError) {
       setStatus("error");
@@ -58,6 +70,7 @@ export default function PasswordRecoveryRequest() {
               Email de la cuenta
               <input id="recovery-email" type="email" required autoComplete="email" className="field font-normal placeholder:text-muted" placeholder="tu@email.com" value={email} onChange={(event) => setEmail(event.target.value)} />
             </label>
+            <TurnstileChallenge action="password_recovery" onTokenChange={handleCaptcha} resetKey={captchaReset} />
             {error ? <p className="rounded-xl border border-coral/30 bg-coral/10 p-3 text-sm font-semibold text-coral" role="alert">{error}</p> : null}
             <button className="btn-primary w-full justify-center sm:w-fit" type="submit" disabled={status === "sending"}>{status === "sending" ? "Enviando..." : "Enviar enlace"}</button>
           </form>

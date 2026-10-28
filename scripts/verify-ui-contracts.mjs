@@ -3,11 +3,13 @@ import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-const [loginRegistration, passwordReset, accountSettings, invitationSetup, providerSections, servicePage, centerPage] = await Promise.all([
+const [loginRegistration, passwordRecovery, passwordReset, accountSettings, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage] = await Promise.all([
   read("src/components/LoginRegistration.tsx"),
+  read("src/components/PasswordRecoveryRequest.tsx"),
   read("src/components/PasswordResetForm.tsx"),
   read("src/components/AccountSettings.tsx"),
   read("src/components/InvitationSetupForm.tsx"),
+  read("src/components/TurnstileChallenge.tsx"),
   read("src/components/ProviderProfileSections.tsx"),
   read("src/app/servicios/[id]/page.tsx"),
   read("src/app/centros/[slug]/page.tsx")
@@ -17,6 +19,9 @@ const checks = [
   [loginRegistration.includes('autoComplete="current-password"'), "El acceso debe identificar la contraseña actual para gestores de contraseñas."],
   [(loginRegistration.match(/autoComplete="new-password"/g) || []).length >= 2, "El registro debe identificar ambos campos de contraseña nueva."],
   [loginRegistration.includes('name="registration_middle_name"') && loginRegistration.includes('failure_reason: "honeypot_filled"'), "El registro debe conservar la primera barrera antiabuso medible."],
+  [loginRegistration.includes("captchaToken: loginCaptchaToken") && loginRegistration.includes("captchaToken: registerCaptchaToken"), "Acceso y registro deben enviar el token CAPTCHA cuando esté configurado."],
+  [passwordRecovery.includes("captchaToken: captchaToken"), "La recuperación debe enviar el token CAPTCHA cuando esté configurado."],
+  [turnstileChallenge.includes("NEXT_PUBLIC_TURNSTILE_SITE_KEY") && turnstileChallenge.includes("challenges.cloudflare.com/turnstile"), "Turnstile debe permanecer opcional y usar el servicio oficial."],
   [(passwordReset.match(/autoComplete="new-password"/g) || []).length >= 2, "El restablecimiento debe identificar ambos campos de contraseña nueva."],
   [accountSettings.includes('autoComplete="current-password"'), "El área personal debe identificar la contraseña actual."],
   [(accountSettings.match(/autoComplete="new-password"/g) || []).length >= 2, "El área personal debe identificar ambos campos de contraseña nueva."],

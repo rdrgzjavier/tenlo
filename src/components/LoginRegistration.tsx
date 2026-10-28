@@ -18,7 +18,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { type FormEvent, useMemo, useState } from "react";
+import { type FormEvent, useCallback, useMemo, useState } from "react";
+import TurnstileChallenge, { turnstileEnabled } from "@/components/TurnstileChallenge";
 import { centers, municipalities } from "@/lib/mock-data";
 import { pushTrackingEvent } from "@/lib/analytics";
 import { currentAcquisitionContext } from "@/lib/acquisition";
@@ -214,6 +215,12 @@ export default function LoginRegistration() {
   const [loading, setLoading] = useState<"login" | "register" | "google" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [registrationComplete, setRegistrationComplete] = useState(false);
+  const [loginCaptchaToken, setLoginCaptchaToken] = useState<string | null>(null);
+  const [registerCaptchaToken, setRegisterCaptchaToken] = useState<string | null>(null);
+  const [loginCaptchaReset, setLoginCaptchaReset] = useState(0);
+  const [registerCaptchaReset, setRegisterCaptchaReset] = useState(0);
+  const handleLoginCaptcha = useCallback((token: string | null) => setLoginCaptchaToken(token), []);
+  const handleRegisterCaptcha = useCallback((token: string | null) => setRegisterCaptchaToken(token), []);
 
   const Icon = typeIcons[userType];
   const showBusinessFields = needsBusinessFields(userType);
@@ -353,11 +360,18 @@ export default function LoginRegistration() {
     event.preventDefault();
     blurActiveField();
     setError(null);
+
+    if (turnstileEnabled && !loginCaptchaToken) {
+      setError("Completa la comprobación de seguridad antes de entrar.");
+      return;
+    }
+
     setLoading("login");
 
     const { data, error: loginError } = await supabase.auth.signInWithPassword({
       email: loginEmail,
-      password: loginPassword
+      password: loginPassword,
+      options: { captchaToken: loginCaptchaToken || undefined }
     });
 
     try {
@@ -378,6 +392,7 @@ export default function LoginRegistration() {
         : "No hemos podido iniciar sesión. Inténtalo de nuevo.");
     } finally {
       setLoading(null);
+      if (turnstileEnabled) setLoginCaptchaReset((value) => value + 1);
     }
   }
 
@@ -394,6 +409,11 @@ export default function LoginRegistration() {
         account_type: userType
       });
       setRegistrationComplete(true);
+      return;
+    }
+
+    if (turnstileEnabled && !registerCaptchaToken) {
+      setError("Completa la comprobación de seguridad antes de crear la cuenta.");
       return;
     }
 
@@ -425,6 +445,7 @@ export default function LoginRegistration() {
         email: registerEmail,
         password,
         options: {
+          captchaToken: registerCaptchaToken || undefined,
           emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
           data: {
             display_name: displayName,
@@ -478,6 +499,7 @@ export default function LoginRegistration() {
       setError(isDuplicatePublicNameError(err) ? "Ese nombre de usuario ya está en uso." : err instanceof Error ? err.message : "No hemos podido crear la cuenta.");
     } finally {
       setLoading(null);
+      if (turnstileEnabled) setRegisterCaptchaReset((value) => value + 1);
     }
   }
 
@@ -549,6 +571,7 @@ export default function LoginRegistration() {
                   {showLoginPassword ? <EyeOff size={20} aria-hidden /> : <Eye size={20} aria-hidden />}
                 </button>
               </div>
+              <TurnstileChallenge action="login" onTokenChange={handleLoginCaptcha} resetKey={loginCaptchaReset} />
               <button className="btn-secondary" type="submit" disabled={loading === "login"}>{loading === "login" ? "Entrando..." : "Entrar"}</button>
             </form>
             <Link href="/recuperar-contrasena" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-ink underline decoration-ink/35 underline-offset-4">¿Has olvidado la contraseña?</Link>
@@ -713,6 +736,7 @@ export default function LoginRegistration() {
               <input type="checkbox" checked={marketingConsent} onChange={(event) => setMarketingConsent(event.target.checked)} className="mr-2 h-4 w-4 rounded border-line" />
               Quiero recibir por email novedades, recursos y recomendaciones de Tenlo. Es opcional y podré retirar el consentimiento. Consulta la <Link href="/privacidad" className="font-semibold text-ink underline underline-offset-4">política de privacidad</Link>.
             </label>
+            <TurnstileChallenge action="registration" onTokenChange={handleRegisterCaptcha} resetKey={registerCaptchaReset} />
             <button className="btn-primary w-full md:w-fit" type="submit" disabled={passwordMismatch || loading === "register"}>{loading === "register" ? "Creando cuenta..." : "Crear cuenta"}</button>
           </form>
           </>
