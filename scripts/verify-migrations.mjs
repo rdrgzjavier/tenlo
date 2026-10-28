@@ -25,6 +25,42 @@ const migrationFiles = (await readdir(migrationsDir))
   .filter((name) => /^\d{4}_.+\.sql$/.test(name))
   .sort();
 
+const migrationEntries = await Promise.all(
+  migrationFiles.map(async (name) => ({ name, sql: await readFile(path.join(migrationsDir, name), "utf8") }))
+);
+const allMigrationsSql = migrationEntries.map(({ sql }) => sql).join("\n");
+
+const publicTables = new Set();
+for (const { sql } of migrationEntries) {
+  for (const match of sql.matchAll(/create\s+table(?:\s+if\s+not\s+exists)?\s+public\.([a-z0-9_]+)/gi)) {
+    publicTables.add(match[1].toLowerCase());
+  }
+}
+for (const table of publicTables) {
+  assert(
+    new RegExp(`alter\\s+table\\s+public\\.${table}\\s+enable\\s+row\\s+level\\s+security`, "i").test(allMigrationsSql),
+    `La tabla pública ${table} debe habilitar RLS.`
+  );
+}
+
+const privilegedFunctions = new Set();
+for (const { name, sql } of migrationEntries) {
+  for (const match of sql.matchAll(/security\s+definer/gi)) {
+    const precedingSql = sql.slice(0, match.index);
+    const functionStart = precedingSql.toLowerCase().lastIndexOf("create or replace function public.");
+    assert(functionStart >= 0, `${name} contiene SECURITY DEFINER sin una función pública identificable.`);
+    const functionName = sql.slice(functionStart).match(/^create\s+or\s+replace\s+function\s+public\.([a-z0-9_]+)/i)?.[1];
+    assert(functionName, `${name} contiene una función SECURITY DEFINER sin nombre identificable.`);
+    privilegedFunctions.add(functionName.toLowerCase());
+  }
+}
+for (const functionName of privilegedFunctions) {
+  assert(
+    new RegExp(`revoke\\s+all\\s+on\\s+function\\s+public\\.${functionName}\\s*\\(`, "i").test(allMigrationsSql),
+    `La función privilegiada ${functionName} debe revocar EXECUTE heredado a PUBLIC.`
+  );
+}
+
 const numbers = migrationFiles.map((name) => Number(name.slice(0, 4)));
 assert(new Set(numbers).size === numbers.length, "Hay números de migración duplicados.");
 numbers.forEach((number, index) => {
@@ -153,4 +189,5 @@ assert(/revoke all on function public\.get_provider_connection_requests_v2\(\) f
 assert(/security definer[\s\S]*set search_path = ''/i.test(m35), "0035 debe aislar las funciones privilegiadas con search_path vacío.");
 
 console.log(`Migraciones verificadas: ${migrationFiles.length} archivos, secuencia 0001-${String(numbers.at(-1)).padStart(4, "0")}.`);
+console.log(`RLS comprobado en ${publicTables.size} tablas públicas y EXECUTE revocado en ${privilegedFunctions.size} funciones privilegiadas.`);
 console.log("Contratos comprobados: directorio público, permisos por columna, moderación, consentimiento y search_path.");
