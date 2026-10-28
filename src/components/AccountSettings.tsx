@@ -323,7 +323,7 @@ export default function AccountSettings({ email, displayName, role, status, muni
           <div className="field-label md:col-span-2">
             <label htmlFor="account-current-password">Contraseña actual</label>
             <div className="relative mt-2">
-              <input id="account-current-password" required type={showCurrentPassword ? "text" : "password"} className="field m-0 pr-12 font-normal placeholder:text-muted" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} placeholder="Escribe tu contraseña actual" />
+              <input id="account-current-password" required type={showCurrentPassword ? "text" : "password"} autoComplete="current-password" className="field m-0 pr-12 font-normal placeholder:text-muted" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} placeholder="Escribe tu contraseña actual" />
               <button type="button" className="absolute inset-y-0 right-3 my-auto inline-flex h-10 w-10 items-center justify-center rounded-xl text-muted transition hover:text-ink focus:outline-none focus:ring-2 focus:ring-ink/20" onClick={() => setShowCurrentPassword((visible) => !visible)} aria-label={showCurrentPassword ? "Ocultar contraseña actual" : "Mostrar contraseña actual"} aria-pressed={showCurrentPassword}>
                 {showCurrentPassword ? <EyeOff size={20} aria-hidden /> : <Eye size={20} aria-hidden />}
               </button>
