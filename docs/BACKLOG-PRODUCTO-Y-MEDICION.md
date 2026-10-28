@@ -360,7 +360,7 @@ La persistencia propia, la migración `0024` y el informe privado están despleg
 - [x] No instrumentar scroll genérico en el MVP: no cambia por sí solo una decisión y añadiría ruido. Medir interacciones con CTAs y secciones concretas únicamente cuando exista una hipótesis y una decisión asociada.
 - [x] Medir guardados, compartidos, clics externos, inicios de contacto y solicitudes completadas, con categoría, vertical, municipio y ficha estables cuando estén disponibles.
 - [x] Relacionar solicitudes con respuesta, tiempo de respuesta, utilidad y resultado mediante `connection_requests` y `connection_feedback`.
-- [ ] Calcular por ficha:
+- [x] Calcular por ficha:
   - [x] impresiones;
   - [x] visitas únicas por sesión del navegador;
   - [x] CTR desde resultados;
@@ -609,7 +609,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 - [x] Documentar para cada KPI: definición, fórmula, fuente, frecuencia, propietario y limitaciones en `CATALOGO-DE-KPIS-Y-REPORTING.md`.
 - [ ] Mostrar intervalos comparables y filtros por categoría, municipio, estado de ficha, plan y canal. Demanda y rendimiento permiten categoría y municipio; rendimiento añade confianza, plan y estado de reclamación; demanda, rendimiento, usuarios y consentimiento comparan ventanas comunes de 30, 90 y 180 días. Falta el canal donde sea aplicable y extender el estado de ficha a otros informes que lo necesiten.
 - [ ] No comparar poblaciones distintas sin explicar la unidad.
-- [ ] Diferenciar `0`, `sin dato` y `no aplicable`.
+- [ ] Diferenciar `0`, `sin dato` y `no aplicable`. El detalle de rendimiento ya separa una reclamación inexistente (`Sin dato`) de un centro al que ese estado no corresponde (`No aplica`); falta aplicar el mismo criterio explícito a todos los informes y exportaciones.
 - [ ] Añadir notas cuando cambie una definición o implementación.
 - [x] Evitar rankings con muestras pequeñas: consultas y oportunidades exigen tres búsquedas; las tasas de rendimiento por ficha exigen 20 impresiones.
 - [ ] Establecer umbrales mínimos de privacidad antes de mostrar segmentos. Ya se aplican tres búsquedas para texto libre y 20 impresiones para tasas por ficha; falta validar jurídicamente y extender la regla a futuros informes exportables.
