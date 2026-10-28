@@ -386,6 +386,17 @@ export default function LoginRegistration() {
     blurActiveField();
     setError(null);
 
+    const antiAbuseValue = String(new FormData(event.currentTarget).get("registration_middle_name") || "").trim();
+    if (antiAbuseValue) {
+      pushTrackingEvent("registration_failed", {
+        failure_stage: "anti_abuse",
+        failure_reason: "honeypot_filled",
+        account_type: userType
+      });
+      setRegistrationComplete(true);
+      return;
+    }
+
     if (password !== passwordConfirm) {
       setError("Las contraseñas no coinciden.");
       pushTrackingEvent("registration_failed", { failure_stage: "validation", failure_reason: "password_mismatch", account_type: userType });
@@ -548,6 +559,10 @@ export default function LoginRegistration() {
 
           {error ? <p className="mt-4 rounded-xl border border-coral/30 bg-coral/10 p-3 text-sm font-semibold text-coral" role="alert">{error}</p> : null}
           <form className="mt-6 grid gap-5" onSubmit={handleRegister}>
+            <div className="pointer-events-none absolute -left-[10000px] h-px w-px overflow-hidden" aria-hidden="true">
+              <label htmlFor="registration-middle-name">Deja este campo vacío</label>
+              <input id="registration-middle-name" name="registration_middle_name" type="text" tabIndex={-1} autoComplete="off" />
+            </div>
             <section className="rounded-2xl border border-line bg-white p-4">
               <label className="field-label">
                 Tipo de usuario

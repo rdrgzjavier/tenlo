@@ -16,6 +16,7 @@ const [loginRegistration, passwordReset, accountSettings, invitationSetup, provi
 const checks = [
   [loginRegistration.includes('autoComplete="current-password"'), "El acceso debe identificar la contraseña actual para gestores de contraseñas."],
   [(loginRegistration.match(/autoComplete="new-password"/g) || []).length >= 2, "El registro debe identificar ambos campos de contraseña nueva."],
+  [loginRegistration.includes('name="registration_middle_name"') && loginRegistration.includes('failure_reason: "honeypot_filled"'), "El registro debe conservar la primera barrera antiabuso medible."],
   [(passwordReset.match(/autoComplete="new-password"/g) || []).length >= 2, "El restablecimiento debe identificar ambos campos de contraseña nueva."],
   [accountSettings.includes('autoComplete="current-password"'), "El área personal debe identificar la contraseña actual."],
   [(accountSettings.match(/autoComplete="new-password"/g) || []).length >= 2, "El área personal debe identificar ambos campos de contraseña nueva."],
