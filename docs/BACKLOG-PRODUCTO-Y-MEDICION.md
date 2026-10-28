@@ -624,7 +624,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 `Demanda real -> reclamar ficha -> mejorar información -> recibir solicitudes relevantes -> responder -> percibir valor -> mantener ficha activa`
 
 - [ ] Mostrar demanda real del segmento sin exagerarla.
-- [ ] Crear informe periódico de presencia, interés, solicitudes, respuesta y resultado. `/admin/proveedores` ofrece el agregado interno y `/solicitudes-profesionales` ya muestra a cada titular volumen, tasa de respuesta, tiempo mediano, relevancia, apariciones, aperturas, guardados e intenciones de contacto, comparando 30 días con los 30 anteriores. Faltan resultados confirmados y un formato periódico compartible.
+- [ ] Crear informe periódico de presencia, interés, solicitudes, respuesta y resultado. `/rendimiento-profesional` ofrece al titular un resumen agregado, imprimible o guardable como PDF, con apariciones, aperturas, guardados, intenciones de contacto, solicitudes, respuesta y relevancia, comparando 30 días con los 30 anteriores. Falta incorporar resultados confirmados cuando exista muestra real.
 - [ ] Recomendar un máximo de tres mejoras conectadas con datos observados.
 - [ ] Recordar actualizar disponibilidad y servicios.
 - [ ] Reactivar proveedores solo cuando exista una oportunidad o razón útil.

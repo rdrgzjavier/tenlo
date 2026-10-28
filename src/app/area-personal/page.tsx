@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Bookmark, BookmarkPlus, BriefcaseBusiness, ClipboardCheck, ClipboardList, FilePlus2, Inbox, LayoutDashboard, Settings, ShieldCheck } from "lucide-react";
+import { BarChart3, Bookmark, BookmarkPlus, BriefcaseBusiness, ClipboardCheck, ClipboardList, FilePlus2, Inbox, LayoutDashboard, Settings, ShieldCheck } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import { ensurePendingBusinessProfile } from "@/lib/provider-registration";
 import { acquisitionProfileFields } from "@/lib/profile-acquisition";
@@ -65,6 +65,13 @@ const providerRequestsAction = {
   text: "Consulta y responde de forma protegida las peticiones asignadas a tus fichas.",
   href: "/solicitudes-profesionales",
   Icon: Inbox
+};
+
+const providerPerformanceAction = {
+  title: "Rendimiento de mis fichas",
+  text: "Consulta y guarda un informe agregado de visibilidad, interés y respuesta.",
+  href: "/rendimiento-profesional",
+  Icon: BarChart3
 };
 
 function metadataName(value: unknown) {
@@ -210,7 +217,7 @@ export default async function PersonalAreaPage() {
   const visibleActions = profile?.role === "tenlo_admin"
     ? [...accountActions, { title: "Operación del piloto", text: "Revisa reclamaciones, solicitudes, publicaciones, bajas e incidencias.", href: "/admin", Icon: LayoutDashboard }]
     : profile?.role && profile.role !== "family"
-      ? [providerProfileAction, providerRequestsAction, ...accountActions]
+      ? [providerProfileAction, providerRequestsAction, providerPerformanceAction, ...accountActions]
       : accountActions;
 
   return (

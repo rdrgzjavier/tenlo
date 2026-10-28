@@ -108,6 +108,7 @@ export default async function ProviderRequestsPage() {
       <h1 className="page-title">Solicitudes recibidas</h1>
       <p className="lead max-w-4xl">Responde desde Tenlo sin acceder a la identidad ni a los datos de contacto de la familia. La familia verá tu respuesta en su área privada.</p>
       <ProviderRequestViewedTracker recordIds={viewableRequestIds} />
+      <div className="mt-5 print:hidden"><Link href="/rendimiento-profesional" className="btn-secondary">Ver informe de rendimiento</Link></div>
 
       {queryError ? <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">La bandeja todavía no está disponible. Comprueba que la migración del flujo profesional esté aplicada.</p> : null}
 
