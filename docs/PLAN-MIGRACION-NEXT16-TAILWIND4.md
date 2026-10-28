@@ -12,7 +12,7 @@ La auditoría actual devuelve 11 avisos en dependencias transitivas: 8 altos y 3
 - `typecheck`, `lint` y `build` correctos.
 - Las rutas públicas y privadas conservan su comportamiento.
 - Sin regresiones visuales en móvil y escritorio en Home, buscadores, listados, fichas, login, área personal y administración.
-- Cookiebot, Consent Mode, GTM y los eventos P0 siguen respetando el consentimiento.
+- El gestor propio, Consent Mode, GTM y los eventos P0 siguen respetando el consentimiento.
 - Autenticación, callback, formularios y acceso a Supabase siguen funcionando.
 - El despliegue de preview se valida antes de promover a producción.
 

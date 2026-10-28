@@ -103,7 +103,7 @@ El informe se divide en cuatro bloques para que el proveedor entienda dónde se 
 
 ## Dependencias para activar el primer informe real
 
-- Cookiebot configurado con un ID real y consentimiento validado.
+- Gestor propio de consentimiento validado en rechazo, aceptación y cambio de preferencias.
 - Contenedor GTM y propiedad GA4 propiedad de Tenlo.
 - `NEXT_PUBLIC_GTM_ID` configurado únicamente tras superar QA.
 - Eventos de impresión, búsqueda, apertura, contacto y solicitud validados sin duplicados.

@@ -21,7 +21,6 @@ Referencia para mantener separados el desarrollo local, las previews de Vercel y
 | `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` | URL estable de pruebas si se habilita | `https://tenlo.es` | No | Base de metadata, enlaces absolutos y emails. Si falta, el código usa `https://tenlo.es`. |
 | `NEXT_PUBLIC_GTM_ID` | Vacía salvo pruebas específicas | Contenedor de pruebas o vacía | Contenedor de Tenlo | No | Activa GTM. Si falta, no se carga GTM. Nunca reutilizar producción en preview sin filtros. |
 | `DIRECTORY_DATA_SOURCE` | `mock` o `supabase` durante QA | `supabase` tras validar el lote | `supabase` tras validar paridad | No | El servidor lee solo fichas aprobadas mediante RLS. Si falta, la consulta falla o el directorio queda vacío, usa el fallback editorial. |
-| `NEXT_PUBLIC_COOKIEBOT_ID` | Vacía normalmente | ID de pruebas o de Tenlo según dominio autorizado | ID de Tenlo | No | Activa Cookiebot. Si falta, no se carga el gestor de consentimiento. |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Vacía | Clave de prueba si se valida el flujo | Clave pública de Turnstile para `tenlo.es` | No | Activa la comprobación en acceso, registro y recuperación. Debe configurarse antes de habilitar CAPTCHA en Supabase. |
 | `ADMIN_EMAIL` | Email de pruebas | Email de pruebas | `solicitudes@tenlo.es` | No | Destino de avisos operativos. Si falta, el código usa temporalmente `tenlocerca@gmail.com`. |
 | `RESEND_API_KEY` | Clave de pruebas opcional | Clave restringida de pruebas o vacía | Clave de producción | Sí | Permite enviar emails. Si falta, la operación continúa pero el email no se envía. |
@@ -34,7 +33,7 @@ Referencia para mantener separados el desarrollo local, las previews de Vercel y
 
 - Copiar `.env.example` a `.env.local` sin añadir este último a Git.
 - Usar el proyecto de Supabase únicamente con datos de prueba no personales.
-- Mantener GTM, Cookiebot y Resend desactivados salvo que se esté verificando específicamente su integración.
+- Mantener GTM y Resend desactivados salvo que se esté verificando específicamente su integración; el gestor propio de consentimiento funciona en todos los entornos.
 - Usar `NEXT_PUBLIC_SITE_URL=http://localhost:3000`.
 
 ### Preview de Vercel
@@ -50,7 +49,7 @@ Referencia para mantener separados el desarrollo local, las previews de Vercel y
 - `NEXT_PUBLIC_SITE_URL=https://tenlo.es`.
 - Supabase URL y publishable key de producción.
 - `ADMIN_EMAIL=solicitudes@tenlo.es` cuando el reenvío esté verificado.
-- GTM y Cookiebot solo después de validar consentimiento y tráfico real.
+- GTM solo después de validar consentimiento y tráfico real.
 - Resend y `MAIL_FROM` solo después de verificar SPF, DKIM, DMARC y el dominio remitente.
 - `SUPABASE_SERVICE_ROLE_KEY` únicamente cuando una ruta de servidor implementada la necesite.
 
@@ -60,7 +59,6 @@ Referencia para mantener separados el desarrollo local, las previews de Vercel y
 | --- | --- | --- | --- |
 | Supabase URL y clave pública | Presente | Presente | Mantener y probar flujos reales con cuentas de prueba. |
 | `ADMIN_EMAIL` | Presente | Presente | Usar `solicitudes@tenlo.es`; el reenvío a `tenlocerca@gmail.com` quedó verificado el 06/10/2026. |
-| `NEXT_PUBLIC_COOKIEBOT_ID` | Valor de ejemplo bloqueado por código | Valor de ejemplo bloqueado por código | Sustituir por el ID real y validar consentimiento en el dominio definitivo. |
 | `NEXT_PUBLIC_SITE_URL` | Presente (`https://tenlo.es`) | Ausente | Producción configurada el 06/10/2026; decidir estrategia de preview. |
 | `NEXT_PUBLIC_GTM_ID` | Ausente | Ausente | Crear/configurar GTM antes de activar analítica. |
 | `SUPABASE_SERVICE_ROLE_KEY` | Ausente | Ausente | No añadir hasta que una función administrativa la necesite. |

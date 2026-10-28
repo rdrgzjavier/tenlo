@@ -3,12 +3,15 @@ import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-const [loginRegistration, passwordRecovery, passwordReset, accountSettings, internalAnalyticsControl, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerPrivateReport, printableProviderReport, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage] = await Promise.all([
+const [loginRegistration, passwordRecovery, passwordReset, accountSettings, internalAnalyticsControl, consentBanner, consentMode, consentLibrary, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerPrivateReport, printableProviderReport, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage] = await Promise.all([
   read("src/components/LoginRegistration.tsx"),
   read("src/components/PasswordRecoveryRequest.tsx"),
   read("src/components/PasswordResetForm.tsx"),
   read("src/components/AccountSettings.tsx"),
   read("src/components/InternalAnalyticsControl.tsx"),
+  read("src/components/ConsentBanner.tsx"),
+  read("src/components/ConsentMode.tsx"),
+  read("src/lib/consent.ts"),
   read("src/lib/analytics.ts"),
   read("src/app/api/analytics/directory-event/route.ts"),
   read("src/components/InvitationSetupForm.tsx"),
@@ -39,6 +42,9 @@ const checks = [
   [accountSettings.includes('autoComplete="current-password"'), "El área personal debe identificar la contraseña actual."],
   [(accountSettings.match(/autoComplete="new-password"/g) || []).length >= 2, "El área personal debe identificar ambos campos de contraseña nueva."],
   [internalAnalyticsControl.includes("tenlo_internal_traffic") && analyticsLibrary.includes("!isInternalAnalyticsTraffic()") && directoryEventRoute.includes("excluded: true"), "La exclusión de tráfico interno debe bloquear analítica en cliente y servidor."],
+  [consentBanner.includes('choose("rejected")') && consentBanner.includes('choose("accepted")'), "El consentimiento debe permitir rechazar o aceptar la analítica sin publicidad."],
+  [consentMode.includes('readAnalyticsConsent() === "accepted"') && consentMode.includes('analytics_storage: analyticsGranted ? "granted" : "denied"'), "GTM y GA4 deben permanecer denegados hasta recibir consentimiento estadístico."],
+  [consentLibrary.includes("Max-Age=31536000") && consentLibrary.includes("SameSite=Lax; Secure") && consentLibrary.includes('name === "_ga"'), "La preferencia propia debe ser limitada, segura y retirar cookies de GA al rechazar."],
   [(invitationSetup.match(/autoComplete="new-password"/g) || []).length >= 2, "La activación de invitaciones debe identificar ambos campos de contraseña nueva."],
   [providerSections.includes("href={`tel:${phone}`}"), "La información específica del proveedor debe permitir llamar."],
   [servicePage.includes("href={`tel:${provider.phone.replace(/\\s/g, \"\")}`}"), "La ficha de servicio debe permitir llamar."],

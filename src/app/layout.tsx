@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import AnalyticsEvents from "@/components/AnalyticsEvents";
 import ConsentMode from "@/components/ConsentMode";
+import ConsentBanner from "@/components/ConsentBanner";
 import PageViewTracker from "@/components/PageViewTracker";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 import "./globals.css";
@@ -54,10 +55,6 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const gtmId = process.env.NEXT_PUBLIC_GTM_ID;
-  const cookiebotId = process.env.NEXT_PUBLIC_COOKIEBOT_ID;
-  const hasValidCookiebotId = Boolean(
-    cookiebotId && !/^(tu-id|your-|example|placeholder)/i.test(cookiebotId)
-  );
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -107,19 +104,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             {`window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){window.dataLayer.push(arguments);};window.gtag('consent','default',{'ad_storage':'denied','ad_user_data':'denied','ad_personalization':'denied','analytics_storage':'denied','functionality_storage':'granted','security_storage':'granted'});`}
           </Script>
         ) : null}
-        {hasValidCookiebotId ? (
-          <Script
-            id="Cookiebot"
-            src="https://consent.cookiebot.com/uc.js"
-            data-cbid={cookiebotId}
-            data-blockingmode="auto"
-            strategy="beforeInteractive"
-          />
-        ) : null}
       </head>
       <body className={`${inter.variable} ${poppins.variable} font-sans`}>
         <Header />
         <ConsentMode gtmId={gtmId} />
+        <ConsentBanner />
         <AnalyticsEvents />
         <PageViewTracker />
         <JsonLd data={organizationSchema} />

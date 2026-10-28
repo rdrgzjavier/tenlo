@@ -1,13 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
+import { analyticsConsentChangedEvent, readAnalyticsConsent } from "@/lib/consent";
 
 declare global {
   interface Window {
-    Cookiebot?: {
-      consent?: { statistics?: boolean; marketing?: boolean; preferences?: boolean };
-      renew?: () => void;
-    };
     gtag?: (...args: unknown[]) => void;
     google_tag_manager?: Record<string, unknown>;
     __tenloAnalyticsConsent?: boolean;
@@ -47,30 +44,26 @@ export default function ConsentMode({ gtmId }: { gtmId?: string }) {
     };
 
     const updateConsent = () => {
-      const consent = window.Cookiebot?.consent;
-      if (!consent || !window.gtag) return;
-      window.__tenloAnalyticsConsent = consent.statistics === true;
+      if (!window.gtag) return;
+      const analyticsGranted = readAnalyticsConsent() === "accepted";
+      window.__tenloAnalyticsConsent = analyticsGranted;
       window.gtag("consent", "update", {
-        analytics_storage: consent.statistics ? "granted" : "denied",
-        ad_storage: consent.marketing ? "granted" : "denied",
-        ad_user_data: consent.marketing ? "granted" : "denied",
-        ad_personalization: consent.marketing ? "granted" : "denied",
-        functionality_storage: consent.preferences ? "granted" : "denied",
+        analytics_storage: analyticsGranted ? "granted" : "denied",
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+        functionality_storage: "granted",
         security_storage: "granted"
       });
-      if (consent.statistics) {
+      if (analyticsGranted) {
         loadGtm();
       }
     };
 
-    window.addEventListener("CookiebotOnConsentReady", updateConsent);
-    window.addEventListener("CookiebotOnAccept", updateConsent);
-    window.addEventListener("CookiebotOnDecline", updateConsent);
+    window.addEventListener(analyticsConsentChangedEvent, updateConsent);
     updateConsent();
     return () => {
-      window.removeEventListener("CookiebotOnConsentReady", updateConsent);
-      window.removeEventListener("CookiebotOnAccept", updateConsent);
-      window.removeEventListener("CookiebotOnDecline", updateConsent);
+      window.removeEventListener(analyticsConsentChangedEvent, updateConsent);
     };
   }, [gtmId]);
 

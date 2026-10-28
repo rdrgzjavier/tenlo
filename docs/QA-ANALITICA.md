@@ -22,14 +22,14 @@ Este procedimiento valida el recorrido completo `navegador -> dataLayer -> GTM -
 ## Preparación
 
 1. Usar un navegador externo limpio, sin extensiones que bloqueen analítica.
-2. Abrir una ventana privada y borrar consentimiento previo de `tenlo.es`.
+2. Abrir una ventana privada y borrar la cookie `tenlo_analytics_consent` de `tenlo.es`.
 3. Conectar GTM Preview a producción y abrir GA4 DebugView en la propiedad Tenlo.
 4. Abrir el inspector de red filtrando por `gtm`, `collect` y `google-analytics`.
 5. Tener preparada una consulta controlada de Supabase para `search_events` y, si se prueba una solicitud, `connection_requests`.
 
 ## Caso A: rechazo
 
-- Rechazar cookies estadísticas.
+- Elegir «Solo necesarias».
 - Confirmar que el estado por defecto es `analytics_storage=denied`.
 - Navegar por Home, búsqueda y una ficha.
 - Confirmar que no se descarga GTM, no aparecen cookies `_ga` y no salen peticiones `collect`.
@@ -37,7 +37,7 @@ Este procedimiento valida el recorrido completo `navegador -> dataLayer -> GTM -
 
 ## Caso B: aceptación
 
-- Aceptar estadísticas.
+- Elegir «Permitir analítica».
 - Confirmar que `analytics_storage` cambia a `granted` antes de enviar eventos.
 - Ejecutar una búsqueda con categoría y municipio.
 - Abrir un resultado, guardar y quitar favorito, compartir, pulsar una salida externa y enviar una solicitud de prueba cuando exista una cuenta preparada.
@@ -47,7 +47,7 @@ Este procedimiento valida el recorrido completo `navegador -> dataLayer -> GTM -
 
 ## Caso C: cambio de preferencias
 
-- Retirar el consentimiento estadístico desde la página de cookies.
+- Cambiar a «Solo necesarias» desde la página de cookies.
 - Confirmar que las acciones posteriores dejan de enviar eventos a GA4 sin impedir la navegación.
 - Volver a concederlo y confirmar que la medición se reanuda sin duplicar el primer evento.
 
