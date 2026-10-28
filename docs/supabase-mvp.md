@@ -30,6 +30,7 @@ Todas las cuentas no familiares deben quedar en `pending_review` hasta que Tenlo
 - `listings`: publicaciones de familias, centros o proveedores.
 - `community_posts`: iniciativas, eventos, ONGs y recursos comunitarios.
 - `favorites`: favoritos del usuario logado.
+- `saved_searches`: criterios estructurados y ruta interna que cada usuario decide conservar.
 - `submissions`: propuestas pendientes de revision.
 - `contact_events`: trazabilidad de CTAs de contacto.
 - `newsletter_subscribers`: altas de newsletter con consentimiento.
@@ -38,7 +39,7 @@ Todas las cuentas no familiares deben quedar en `pending_review` hasta que Tenlo
 
 - RLS activo en todas las tablas publicas.
 - Las fichas publicas se leen solo cuando estan aprobadas, salvo centros, que parten de informacion publica.
-- Cada usuario solo gestiona sus propios favoritos, publicaciones y perfil.
+- Cada usuario solo gestiona sus propios favoritos, búsquedas guardadas, publicaciones y perfil.
 - La `service_role` solo puede usarse en servidor y nunca debe tener prefijo `NEXT_PUBLIC`.
 - No se guardan perfiles, fotos, horarios personales ni datos identificativos de menores.
 

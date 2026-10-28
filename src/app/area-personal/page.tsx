@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Bookmark, BriefcaseBusiness, ClipboardCheck, ClipboardList, FilePlus2, Inbox, LayoutDashboard, Settings, ShieldCheck } from "lucide-react";
+import { Bookmark, BookmarkPlus, BriefcaseBusiness, ClipboardCheck, ClipboardList, FilePlus2, Inbox, LayoutDashboard, Settings, ShieldCheck } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import { ensurePendingBusinessProfile } from "@/lib/provider-registration";
 import { acquisitionProfileFields } from "@/lib/profile-acquisition";
@@ -20,6 +20,12 @@ const accountActions = [
     text: "Guarda servicios, centros y recursos para compararlos más tarde.",
     href: "/favoritos",
     Icon: Bookmark
+  },
+  {
+    title: "Búsquedas guardadas",
+    text: "Retoma filtros útiles y comprueba si han aparecido nuevas opciones.",
+    href: "/busquedas-guardadas",
+    Icon: BookmarkPlus
   },
   {
     title: "Mis solicitudes",

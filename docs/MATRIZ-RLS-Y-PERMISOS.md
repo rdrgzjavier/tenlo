@@ -29,6 +29,7 @@ Referencia: [Row Level Security de Supabase](https://supabase.com/docs/guides/da
 | `listings` | Retirada directa prevista | Lee los propios y edita solo contenido permitido | Gestiona los propios | Sin excepción específica | `0025` retira la lectura pública y `0027` protege moderación, confianza y procedencia. Antes de reactivar publicaciones públicas se necesita un RPC seguro equivalente. |
 | `community_posts` | Retirada directa prevista | Lee los propios y edita solo contenido permitido | Gestiona los propios | Sin excepción específica | `0025` retira la lectura pública y `0027` reserva moderación y procedencia. La comunidad actual seguirá siendo editorial hasta disponer de un RPC seguro equivalente. |
 | `favorites` | Sin acceso | Solo filas propias | Solo filas propias | Sin lectura global | Correcto para el producto actual. |
+| `saved_searches` | Sin acceso | Lee, crea, actualiza y elimina solo filas propias | Solo filas propias | Sin lectura global | `0037` conserva únicamente nombre, ruta interna y criterios estructurados; no admite URLs externas ni datos de otras cuentas. |
 | `submissions` | Sin acceso | Inserta y lee las propias; no las modifica tras enviarlas | Solo las propias | Lee y cambia solo `status` | `0027` y `0032` aplicadas: `payload` y `review_notes` son inmutables; el permiso de estado queda sometido a la política `tenlo_admin`. |
 | `contact_events` | Sin acceso | Solo inserción vinculada a sí mismo o sin usuario | — | Sin lectura definida | Tabla residual: confirmar si se conserva o se sustituye por eventos operativos mejor definidos. |
 | `newsletter_subscribers` | Solo inserción acotada | Solo inserción acotada | — | Sin lectura desde cliente | Correcto para captación; la explotación debe hacerse desde un entorno administrativo/servidor autorizado. |
@@ -48,6 +49,8 @@ Referencia: [Row Level Security de Supabase](https://supabase.com/docs/guides/da
 Las migraciones `0022` y `0023` se aplicaron en producción el 22 de octubre de 2026. La consulta de control confirmó la existencia de las cinco políticas, ejecución anónima de la comprobación booleana de alias y ausencia de permiso anónimo de lectura sobre `profile_usernames`.
 
 Las migraciones `0024` a `0033` se aplicaron y verificaron en producción el 23 de octubre de 2026. La consulta de catálogo confirmó RPC públicos con 21 centros, 14 proveedores y 16 servicios, tablas base sin lectura anónima, campos de moderación protegidos, historial de consentimiento sin escritura directa, funciones administrativas con `search_path` vacío, nueve campos de atribución, propuestas con contenido inmutable y registro acotado de la actividad propia. El procedimiento y la evidencia esperada están en `APLICACION-MIGRACIONES-0024-0031.md`.
+
+La migración `0037` se aplicó y verificó en producción el 28 de octubre de 2026. La consulta de catálogo confirmó RLS activo, cuatro políticas por propietario, ausencia de lectura para `anon` y CRUD para `authenticated` sometido a esas políticas.
 
 1. [x] Permitir que solo un perfil aprobado `tenlo_admin` lea en el backoffice los contactos necesarios para gestionar solicitudes.
 2. [x] Hacer que la comprobación de alias devuelva solo `true/false`, limitar los centros públicos a aprobados y permitir leer proveedores aprobados desde el directorio.
@@ -70,7 +73,7 @@ Las migraciones `0024` a `0033` se aplicaron y verificaron en producción el 23 
 ### Familia autenticada
 
 - Lee y corrige únicamente su perfil.
-- Gestiona solo sus favoritos, publicaciones, solicitudes y feedback.
+- Gestiona solo sus favoritos, búsquedas guardadas, publicaciones, solicitudes y feedback.
 - No puede consultar el perfil ni la actividad de otra familia.
 - No puede llamar rutas administrativas ni cambiar estados operativos.
 

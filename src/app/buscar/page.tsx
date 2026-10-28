@@ -5,6 +5,7 @@ import ListingCard from "@/components/ListingCard";
 import LoadMoreGrid from "@/components/LoadMoreGrid";
 import ResponsiveFilterPanel from "@/components/ResponsiveFilterPanel";
 import SearchEventRecorder from "@/components/SearchEventRecorder";
+import SaveSearchButton from "@/components/SaveSearchButton";
 import ValidatedSearchForm from "@/components/ValidatedSearchForm";
 import { loadDirectorySnapshot } from "@/lib/directory-repository";
 import { categories, municipalities } from "@/lib/mock-data";
@@ -130,6 +131,8 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   const providerResults = filtered.filter((listing) => listing.publicationType === "proveedor");
   const availableProviderCount = providerResults.filter((listing) => listing.acceptsRequests).length;
   const hasOnlyUnconfirmedProviders = providerResults.length > 0 && availableProviderCount === 0;
+  const selectedCategoryLabel = categories.find((category) => category.id === selected.categoria)?.name;
+  const hasSearchCriteria = Boolean(Object.values(selected).some(Boolean));
 
   return (
     <div className="section-shell">
@@ -172,6 +175,11 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               <p className="mt-2 max-w-md text-left leading-5">Primero se aplican tus filtros. Si escribes un término, aparecen antes las coincidencias en el nombre; después, el orden es alfabético. El plan comercial y el nivel de confianza no compran una mejor posición.</p>
             </details>
           </div>
+          {hasSearchCriteria ? (
+            <div className="mb-5">
+              <SaveSearchButton category={selected.categoria} categoryLabel={selectedCategoryLabel} municipality={selected.municipio} query={selected.tag} />
+            </div>
+          ) : null}
           {hasOnlyUnconfirmedProviders ? (
             <div className="mb-4 rounded-2xl border border-line bg-soft p-4 text-sm leading-6 text-slatecopy" role="status">
               Hay opciones informativas, pero estos proveedores todavía no han confirmado que acepten solicitudes desde Tenlo. Puedes consultar sus fichas y canales públicos mientras completamos el piloto.

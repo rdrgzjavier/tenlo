@@ -405,7 +405,7 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
   - [x] estado de onboarding; `0031` separa activación operativa de la moderación de la cuenta;
   - [x] fecha de última actividad significativa; `0033` la actualiza sin conceder escritura directa al guardar una ficha profesional, gestionar favoritos, enviar una publicación o solicitar contacto;
   - [ ] estado de cuenta, baja y solicitud de eliminación.
-- [x] Permitir que la persona consulte sus datos, corrija municipio, contraseña y consentimiento, descargue una copia privada en JSON y solicite su eliminación. La exportación `1.1` incluye perfil, fichas profesionales, favoritos, publicaciones, solicitudes, reclamaciones, historial de consentimiento y búsquedas asociadas a la cuenta. La ejecución administrativa de borrado/anonimización sigue el procedimiento pendiente de gobierno del dato.
+- [x] Permitir que la persona consulte sus datos, corrija municipio, contraseña y consentimiento, descargue una copia privada en JSON y solicite su eliminación. La exportación `1.2` incluye perfil, fichas profesionales, favoritos, búsquedas guardadas, publicaciones, solicitudes, reclamaciones, historial de consentimiento e historial de búsquedas asociado a la cuenta. La ejecución administrativa de borrado/anonimización sigue el procedimiento pendiente de gobierno del dato.
 - [x] Evitar recoger nombres de menores, clase, horarios, fecha de nacimiento u otros datos sensibles en el registro.
 - [x] No hacer público el centro, email, municipio o intereses de una familia por defecto; `profiles` solo es legible por su titular.
 - [x] No duplicar contraseñas, tokens o datos gestionados por Supabase Auth en tablas propias.
@@ -541,7 +541,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 - [x] Mediana y percentiles de tiempo de respuesta. El informe privado muestra mediana siempre que existe una primera respuesta y P75/P90 a partir de diez respuestas válidas, indicando el tamaño de muestra.
 - [x] Volumen y tasa de conexiones útiles sobre el feedback familiar recibido; la North Star se muestra además en ventana de 30 días.
 - [x] Tasa de resultado confirmado sobre el feedback recibido, manteniendo el denominador visible.
-- [ ] Recuperación de búsquedas guardadas y retorno cuando reaparece una necesidad.
+- [ ] Recuperación de búsquedas guardadas y retorno cuando reaparece una necesidad. El retorno manual ya está implementado: una familia autenticada puede guardar los filtros de `/buscar`, recuperarlos desde `/busquedas-guardadas` y eliminarlos; falta definir la señal de nueva oferta y el canal de aviso consentido antes de activar recordatorios.
 
 ### Funnel de proveedores
 
@@ -634,7 +634,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 
 `Necesidad -> opciones claras -> comparación -> contacto -> respuesta -> solución -> señal de calidad -> mejores decisiones futuras`
 
-- [ ] Guardar búsqueda y shortlist.
+- [x] Guardar búsqueda y shortlist. Las búsquedas se persisten por cuenta con RLS y los favoritos permiten construir y comparar una shortlist de dos o tres opciones.
 - [ ] Facilitar retomar el contexto cuando reaparezca una necesidad.
 - [ ] Solicitar feedback en el momento adecuado.
 - [ ] Utilizar señales de calidad para mejorar la recomendación.

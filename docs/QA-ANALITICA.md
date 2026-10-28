@@ -10,6 +10,7 @@ Este procedimiento valida el recorrido completo `navegador -> dataLayer -> GTM -
 | Búsqueda | Eventos de interacción y resultados agregados | Una fila en `search_events` por búsqueda válida | `search_id` único; el texto libre nunca llega a GA4 |
 | Impresión y apertura de ficha | Evento de cliente | No | `search_id` + ficha + posición para impresiones; una vista de ficha por sesión mediante `view_scope=session_unique` |
 | Favorito | Evento solo tras confirmar la escritura | Tabla `favorites` | Restricción única `user_id,target_type,target_id`; no emitir si Supabase falla |
+| Búsqueda guardada | `search_saved` solo tras confirmar la escritura; apertura y borrado separados | Tabla `saved_searches` | RLS por propietario, ruta interna única por cuenta y texto libre fuera de GA4 |
 | Compartir | Evento tras completar compartir o copiar | No | Un evento por acción confirmada; cancelar el menú nativo no cuenta |
 | Contacto externo | Evento de clic | No | El clic no se presenta como respuesta ni conexión útil |
 | Solicitud interna | `contact_form_completed` y `request_created` tras insertar | Una fila en `connection_requests` | `event_id` se crea antes de insertar y es común a Supabase y GA4; `request_id` identifica la solicitud |

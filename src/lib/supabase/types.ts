@@ -335,6 +335,36 @@ export type Database = {
         Update: Partial<Pick<ConnectionFeedbackRow, "useful" | "outcome">>;
         Relationships: [];
       };
+      saved_searches: {
+        Row: {
+          id: string;
+          user_id: string;
+          name: string;
+          search_path: string;
+          category_id: string | null;
+          municipality: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          name: string;
+          search_path: string;
+          category_id?: string | null;
+          municipality?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<{
+          name: string;
+          search_path: string;
+          category_id: string | null;
+          municipality: string | null;
+          updated_at: string;
+        }>;
+        Relationships: [];
+      };
       data_export_audit: {
         Row: {
           id: string;
