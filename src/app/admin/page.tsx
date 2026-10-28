@@ -252,7 +252,7 @@ export default async function AdminPage() {
               {suggestion.notes ? <p className="mt-3 whitespace-pre-wrap leading-6 text-muted">{suggestion.notes}</p> : null}
               <p className="mt-2 text-xs text-muted">Propuesta: {dateLabel(suggestion.created_at)}{suggestion.submitter_email ? ` · ${suggestion.submitter_email}` : ""}</p>
               {suggestion.status === "pending_review" && !suggestion.converted_profile_id ? <AdminProviderSuggestionReview id={suggestion.id} name={suggestion.provider_name} website={suggestion.website} location={suggestion.location} service={suggestion.service} notes={suggestion.notes} /> : null}
-              {suggestion.converted_profile_id ? <Link href={`/servicios/${suggestion.converted_profile_id}`} className="mt-3 inline-flex font-bold text-ink underline">Ver ficha creada</Link> : null}
+              {suggestion.converted_profile_id ? <Link href={`/servicios/suggestion-${suggestion.id.replaceAll("-", "")}`} className="mt-3 inline-flex font-bold text-ink underline">Ver ficha creada</Link> : null}
             </article>
           )) : <p className="text-sm text-muted">No hay proveedores propuestos.</p>}
         </QueueSection>
