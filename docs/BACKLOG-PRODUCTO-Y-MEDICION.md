@@ -2,7 +2,7 @@
 
 > Documento vivo para decidir, construir y comprobar el MVP de Tenlo.
 >
-> Última revisión: 26 de octubre de 2026. El avance ponderado y sus criterios están en [`ESTADO-MVP.md`](./ESTADO-MVP.md).
+> Última revisión: 28 de octubre de 2026. El avance ponderado y sus criterios están en [`ESTADO-MVP.md`](./ESTADO-MVP.md).
 
 ## Cómo utilizar este documento
 
@@ -58,12 +58,12 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - Supabase está activo como fuente del directorio público con RPC de columnas explícitas y fallback editorial. El lote publicado se auditó y los conteos, relaciones y contenido se compararon antes de activarlo.
 - La reclamación de ficha ya puede iniciarse sin cuenta; la aprobación y los cambios siguen sujetos a verificación posterior.
 - El formulario de registro ya solicita tipo de usuario, nombre público, email, teléfono, contraseña, municipio y centro opcional. Para proveedores también muestra tipología, web, descripción, zona, modalidad, edades, disponibilidad, credenciales y otros campos.
-- El esquema ya incluye centro relacionado, intereses y consentimiento específico de marketing, pero el formulario de registro aún debe conectarlos al guardado y conservar la evidencia del consentimiento.
+- El registro conserva teléfono, municipio, centro relacionado y consentimiento específico de marketing al crear o materializar el perfil después de confirmar el email. Los intereses siguen pendientes hasta definir una finalidad y una taxonomía útiles.
 - Existe una bandeja administrativa restringida para reclamaciones, solicitudes, publicaciones, bajas, incidencias, notas, estados, alternativas, vencimientos y exportación; incluye un informe agregado de demanda de 90 días.
 - Los CTAs distinguen llamada, email, web y solicitud protegida; todavía falta que el proveedor responda desde un enlace o área propia y automatizar recordatorios y alternativas.
 - Favoritos se guarda por cuenta en Supabase y permite comparar entre dos y tres fichas compatibles.
 - La aplicación carga Cookiebot y Consent Mode con analítica denegada por defecto, y solo descarga GTM tras consentimiento estadístico. Cookiebot, la propiedad GA4 y el contenedor GTM de Tenlo ya están configurados y publicados. La migración analítica `0009` se aplicó y verificó el 07/10/2026; la vista agregada no es legible por `anon` ni `authenticated`. Queda validar la recepción de eventos y parámetros en GA4 y completar la medición persistente del resultado de cada conexión.
-- `typecheck`, `lint` y `build` pasan en local; las rutas privadas ya no bloquean el prerender cuando faltan variables de Supabase.
+- `typecheck`, `lint` y `build` pasan en local; las rutas privadas ya no bloquean el prerender cuando faltan variables de Supabase. El 27/10/2026 se verificaron en producción las vistas administrativas, sus filtros y su comportamiento móvil; las tablas anchas conservan scroll interno sin desbordar la página.
 - La actualización a Next.js 15 eliminó los avisos críticos conocidos. La auditoría repetida el 18/10/2026 devuelve 0 críticos, 8 altos y 3 moderados; los avisos restantes proceden de dependencias transitivas de Next.js, ESLint y Tailwind y requieren migraciones mayores a Next.js 16 y Tailwind 4. Deben abordarse con pruebas visuales y funcionales antes de captar usuarios reales.
 
 ### Vercel y dominio

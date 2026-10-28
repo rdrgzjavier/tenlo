@@ -1,11 +1,11 @@
 # Estado del MVP de Tenlo
 
-Fecha de corte: 26 de octubre de 2026.
+Fecha de corte: 28 de octubre de 2026.
 
 ## Progreso global
 
 ```text
-MVP construido  [█████████████████░░░] 84 %
+MVP construido  [█████████████████░░░] 85 %
 ```
 
 El porcentaje mide la capacidad necesaria para ejecutar un piloto pequeño en Madrid noroeste. No incluye monetización, comunidad, expansión geográfica, recomendaciones avanzadas ni automatizaciones propias de fases posteriores.
@@ -17,16 +17,16 @@ Una tarea solo puntúa como terminada cuando existe implementación o procedimie
 | Bloque del MVP | Peso | Avance | Puntos | Evidencia actual | Principal brecha |
 |---|---:|---:|---:|---|---|
 | Segmento, valor y reglas del piloto | 10 % | 100 % | 10,0 | Ámbito, oferta, confianza, conexión útil, SLA y gratuidad inicial decididos | Validar los mensajes con la primera cohorte |
-| Infraestructura, dominio y seguridad | 15 % | 93 % | 14,0 | Dominio, DNS, Vercel, CI, Auth, SMTP y migraciones `0024`–`0036` verificadas; superficie pública, campos protegidos y aislamiento de datos de prueba comprobados | Completar pruebas cruzadas por rol, protección antiabuso, dependencias mayores, contraseñas filtradas y política de previews |
+| Infraestructura, dominio y seguridad | 15 % | 95 % | 14,3 | Dominio, DNS, Vercel, CI sobre Node 24, Auth, SMTP y migraciones `0024`–`0036` verificados; superficie pública, campos protegidos, rutas privadas y aislamiento de datos de prueba comprobados | Completar la prueba cruzada de familia y proveedor, protección antiabuso, dependencias mayores, contraseñas filtradas y política de previews |
 | Directorio real y calidad de oferta | 15 % | 87 % | 13,1 | Lote real auditado, Supabase activo, 21 centros, 14 proveedores y 16 servicios servidos mediante RPC públicos acotados | Normalizar cobertura/taxonomía y completar la revisión individual de fichas |
 | Reclamación y activación de proveedores | 15 % | 84 % | 12,6 | Reclamación, onboarding progresivo, ficha privada persistente, cola, moderación, petición de información y reenvío disponibles; cuenta proveedora controlada invitada y aislada; activación de invitaciones con contraseña y feedback implementada | Revalidar un enlace de invitación nuevo y probar publicación, aviso y respuesta de extremo a extremo |
 | Búsqueda, comparación y conexión familiar | 15 % | 80 % | 12,0 | Buscar, filtrar, proponer, ver ficha, mapa, guardar, comparar, solicitar, responder de forma protegida y valorar resultado | Probar la respuesta segura con cuentas reales y automatizar recordatorio y alternativa |
-| Cuentas, consentimiento y privacidad | 15 % | 72 % | 10,8 | Registro, confirmación, perfil persistente, recuperación, atribución saneada, historial de consentimiento, actividad significativa, exportación y solicitud de baja | Política legal completa, prueba de supresión y preferencias de comunicación |
-| Medición e informes | 10 % | 85 % | 8,5 | Cookiebot, GTM, GA4, búsquedas y eventos propios persistentes; embudos privados de búsqueda y conexión, North Star, actividad de usuarios, relevancia declarada por proveedores y ventanas comparables de 30, 90 y 180 días | Confirmar recepción GA4 y validar informes con actividad real del piloto |
-| Operación y recuperación del piloto | 5 % | 60 % | 3,0 | Responsable, SLA, playbook, backoffice, exportación y runbook de copias | Ejecutar restauración, preparar CRM/contactos y probar recorridos completos |
-| **Total** | **100 %** |  | **83,7** |  |  |
+| Cuentas, consentimiento y privacidad | 15 % | 74 % | 11,1 | Registro, confirmación, perfil persistente, recuperación, atribución saneada, historial de consentimiento, actividad significativa, exportación y solicitud de baja; acceso erróneo localizado y medido sin exponer credenciales | Política legal completa, prueba de supresión y preferencias de comunicación |
+| Medición e informes | 10 % | 86 % | 8,6 | Cookiebot, GTM, GA4, búsquedas y eventos propios persistentes; embudos privados de búsqueda y conexión, North Star, actividad de usuarios, relevancia declarada por proveedores y ventanas comparables de 30, 90 y 180 días; informes administrativos probados en escritorio y móvil | Confirmar recepción GA4 y validar informes con actividad real del piloto |
+| Operación y recuperación del piloto | 5 % | 65 % | 3,3 | Responsable, SLA, playbook, backoffice, exportación, incidencias accionables y runbook de copias; panel privado y filtros comprobados con cuenta administradora | Ejecutar restauración, preparar CRM/contactos y probar recorridos completos |
+| **Total** | **100 %** |  | **84,9** |  |  |
 
-El valor mostrado se redondea a **84 %**. Debe actualizarse solo cuando cambie la evidencia de alguno de los ocho bloques, no al añadir tareas futuras al backlog.
+El valor mostrado se redondea a **85 %**. Debe actualizarse solo cuando cambie la evidencia de alguno de los ocho bloques, no al añadir tareas futuras al backlog.
 
 ## Qué falta para considerar el MVP listo para el piloto
 
