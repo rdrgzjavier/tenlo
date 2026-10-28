@@ -67,6 +67,7 @@ type SegmentRow = {
   approved: number;
   complete: number;
   available: number;
+  active: number;
 };
 
 const providerRoles = new Set([
@@ -96,15 +97,16 @@ function durationLabel(milliseconds: number | null) {
   return hours < 48 ? `${hours.toFixed(hours < 10 ? 1 : 0)} h` : `${(hours / 24).toFixed(1)} días`;
 }
 
-function segmentRows(profiles: BusinessProfile[], selector: (profile: BusinessProfile) => string) {
+function segmentRows(profiles: BusinessProfile[], selector: (profile: BusinessProfile) => string, activeOwnerIds: Set<string>) {
   const groups = new Map<string, SegmentRow>();
   profiles.forEach((profile) => {
     const label = selector(profile) || "No indicado";
-    const row = groups.get(label) ?? { label, profiles: 0, approved: 0, complete: 0, available: 0 };
+    const row = groups.get(label) ?? { label, profiles: 0, approved: 0, complete: 0, available: 0, active: 0 };
     row.profiles += 1;
     row.approved += profile.status === "approved" ? 1 : 0;
     row.complete += profile.completeness_percent >= 75 ? 1 : 0;
     row.available += profile.accepts_requests ? 1 : 0;
+    row.active += profile.owner_id && activeOwnerIds.has(profile.owner_id) ? 1 : 0;
     groups.set(label, row);
   });
   return [...groups.values()].sort((a, b) => b.profiles - a.profiles || a.label.localeCompare(b.label, "es"));
@@ -115,7 +117,7 @@ function SegmentTable({ title, description, rows }: { title: string; description
     <section className="card min-w-0 p-5 md:p-6">
       <h2 className="subsection-title text-ink">{title}</h2>
       <p className="mt-2 text-sm leading-6 text-muted">{description}</p>
-      {rows.length ? <div className="mt-5 overflow-x-auto"><table className="w-full min-w-[36rem] text-left text-sm"><thead className="border-b border-line text-xs uppercase tracking-wide text-muted"><tr><th className="pb-3 pr-4">Segmento</th><th className="pb-3 pr-4 text-right">Fichas</th><th className="pb-3 pr-4 text-right">Aprobadas</th><th className="pb-3 pr-4 text-right">≥ 75 %</th><th className="pb-3 text-right">Aceptan solicitudes</th></tr></thead><tbody>{rows.map((row) => <tr key={row.label} className="border-b border-line last:border-0"><th scope="row" className="py-3 pr-4 font-semibold text-ink">{row.label}</th><td className="py-3 pr-4 text-right text-slatecopy">{row.profiles}</td><td className="py-3 pr-4 text-right text-slatecopy">{row.approved}</td><td className="py-3 pr-4 text-right text-slatecopy">{row.complete}</td><td className="py-3 text-right text-slatecopy">{row.available}</td></tr>)}</tbody></table></div> : <p className="mt-5 rounded-2xl border border-line bg-soft p-4 text-sm text-muted">Todavía no hay oferta en este segmento.</p>}
+      {rows.length ? <div className="mt-5 overflow-x-auto"><table className="w-full min-w-[44rem] text-left text-sm"><thead className="border-b border-line text-xs uppercase tracking-wide text-muted"><tr><th className="pb-3 pr-4">Segmento</th><th className="pb-3 pr-4 text-right">Fichas</th><th className="pb-3 pr-4 text-right">Publicadas</th><th className="pb-3 pr-4 text-right">≥ 75 %</th><th className="pb-3 pr-4 text-right">Aceptan solicitudes</th><th className="pb-3 text-right">Activas 30 d</th></tr></thead><tbody>{rows.map((row) => <tr key={row.label} className="border-b border-line last:border-0"><th scope="row" className="py-3 pr-4 font-semibold text-ink">{row.label}</th><td className="py-3 pr-4 text-right text-slatecopy">{row.profiles}</td><td className="py-3 pr-4 text-right text-slatecopy">{row.approved}</td><td className="py-3 pr-4 text-right text-slatecopy">{row.complete}</td><td className="py-3 pr-4 text-right text-slatecopy">{row.available}</td><td className="py-3 text-right text-slatecopy">{row.active}</td></tr>)}</tbody></table></div> : <p className="mt-5 rounded-2xl border border-line bg-soft p-4 text-sm text-muted">Todavía no hay oferta en este segmento.</p>}
     </section>
   );
 }
@@ -168,6 +170,7 @@ export default async function AdminProvidersPage({ searchParams }: { searchParam
   const profiles = (profilesResult.data ?? []) as ProviderProfile[];
   const ownerIds = new Set(businesses.flatMap((profile) => profile.owner_id ? [profile.owner_id] : []));
   const providerAccounts = profiles.filter((profile) => providerRoles.has(profile.role) && ownerIds.has(profile.id));
+  const active30OwnerIds = new Set(providerAccounts.filter((profile) => profile.last_significant_activity_at && new Date(profile.last_significant_activity_at).getTime() >= Date.now() - 30 * 86_400_000).map((profile) => profile.id));
   const activeWithin = (days: number) => {
     const cutoff = Date.now() - days * 86_400_000;
     return providerAccounts.filter((profile) => profile.last_significant_activity_at && new Date(profile.last_significant_activity_at).getTime() >= cutoff).length;
@@ -249,8 +252,8 @@ export default async function AdminProvidersPage({ searchParams }: { searchParam
       </section>
 
       <div className="mt-6 grid gap-5 xl:grid-cols-2">
-        <SegmentTable title="Oferta por categoría" description="Cobertura y preparación actual de cada tipo de proveedor." rows={segmentRows(businesses, (profile) => profile.category)} />
-        <SegmentTable title="Oferta por municipio" description="No equivale a cobertura confirmada; usa el municipio principal declarado." rows={segmentRows(businesses, (profile) => profile.municipality || "No indicado")} />
+        <SegmentTable title="Oferta por categoría" description="Publicación, disponibilidad y actividad significativa reciente de cada tipo de proveedor." rows={segmentRows(businesses, (profile) => profile.category, active30OwnerIds)} />
+        <SegmentTable title="Oferta por municipio" description="Usa el municipio principal declarado; no sustituye la cobertura confirmada por cada proveedor." rows={segmentRows(businesses, (profile) => profile.municipality || "No indicado", active30OwnerIds)} />
       </div>
 
       <p className="mt-6 rounded-2xl border border-line bg-soft p-4 text-sm leading-6 text-slatecopy">Este informe no afirma que una ficha esté activa solo por estar aprobada. La actividad requiere una acción reciente; la disponibilidad requiere que el proveedor acepte solicitudes; y la verificación sigue siendo una señal independiente.</p>

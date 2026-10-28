@@ -559,7 +559,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 
 ### Liquidez del marketplace
 
-- [ ] Proveedores publicados, disponibles y activos por categoría y municipio.
+- [x] Proveedores publicados, disponibles y activos por categoría y municipio. `/admin/proveedores` separa fichas publicadas, aceptación de solicitudes y titulares con actividad significativa en 30 días para ambos cortes.
 - [ ] Necesidades y solicitudes por categoría y municipio.
 - [ ] Cobertura: porcentaje de necesidades con al menos una opción adecuada.
 - [ ] Fill rate: porcentaje de solicitudes que llegan a un proveedor disponible.
