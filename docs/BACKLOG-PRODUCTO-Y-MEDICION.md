@@ -499,7 +499,7 @@ Propiedades recomendadas: `request_id`, proveedor, categoría, municipio, posici
 - [x] `profile_edit_started`
 - [x] `profile_section_completed`
 - [x] `profile_submitted`
-- [ ] `profile_published`
+- [x] `profile_published` (derivado del cambio auditable de la ficha profesional a `approved`; se conserva en Supabase y no se envía a GA4 como dato de alta cardinalidad).
 - [x] `verification_requested` (equivalente al envío trazable de `claim_submitted`).
 - [ ] `verification_approved`
 - [ ] `provider_request_viewed` (instrumentado y con `0034` aplicada; pendiente de validar el recorrido real).

@@ -86,7 +86,7 @@ El nombre, la web, la ubicación exacta, las notas y los datos de contacto aport
 | `claim_submitted` | La solicitud queda registrada | identificador de reclamación, tipo | GA4 + Supabase |
 | `claim_approved` | Tenlo aprueba la relación | identificador, tiempo de revisión | Supabase |
 | `profile_section_completed` | El titular guarda una sección válida de su ficha | sección y estado previo normalizado | GA4; Supabase conserva la ficha actual |
-| `profile_published` | La ficha queda publicada | `provider_id`, categoría, municipio, confianza | Supabase |
+| `profile_published` | La ficha profesional cambia de un estado no público a `approved` | Derivado de `admin_queue_audit`: identificador interno, estado anterior/nuevo y fecha; categoría, municipio y confianza se consultan en la ficha sin duplicarlos en el historial | Supabase |
 
 ## Conversiones iniciales en GA4
 
