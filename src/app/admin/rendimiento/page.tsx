@@ -74,6 +74,19 @@ type SearchCoverageMetric = {
   results_count: number;
 };
 
+type BusinessClaimMetric = {
+  id: string;
+  external_key: string | null;
+  claim_status: string;
+};
+
+const claimStatusLabels: Record<string, string> = {
+  unclaimed: "Sin reclamar",
+  claim_pending: "Reclamación pendiente",
+  managed: "Gestionada",
+  suspended: "Suspendida"
+};
+
 const contactEvents = new Set(["contact_started", "contact_email_clicked", "contact_phone_clicked", "contact_web_clicked"]);
 
 function percent(part: number, total: number) {
@@ -113,10 +126,10 @@ function reportingKey(entityType: DirectoryEvent["entity_type"], entityId: strin
   return `resource:${entityId}`;
 }
 
-export default async function AdminDirectoryPerformancePage({ searchParams }: { searchParams: Promise<{ period?: string; category?: string; municipality?: string; trust?: string; plan?: string }> }) {
+export default async function AdminDirectoryPerformancePage({ searchParams }: { searchParams: Promise<{ period?: string; category?: string; municipality?: string; trust?: string; plan?: string; claim?: string }> }) {
   if (!hasSupabaseServerConfig()) return <PrivateAreaUnavailable />;
 
-  const { period: rawPeriod, category: rawCategory, municipality: rawMunicipality, trust: rawTrust, plan: rawPlan } = await searchParams;
+  const { period: rawPeriod, category: rawCategory, municipality: rawMunicipality, trust: rawTrust, plan: rawPlan, claim: rawClaim } = await searchParams;
   const period = resolveReportPeriod(rawPeriod);
 
   const supabase = await createSupabaseServerClient();
@@ -130,7 +143,7 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
   periodStart.setDate(periodStart.getDate() - period);
   const monthStart = new Date();
   monthStart.setDate(monthStart.getDate() - 30);
-  const [{ data, error }, directory, requestsResult, feedbackResult, searchEventsResult] = await Promise.all([
+  const [{ data, error }, directory, requestsResult, feedbackResult, searchEventsResult, businessClaimsResult] = await Promise.all([
     supabase
       .from("directory_events")
       .select("anonymous_session_id,event_name,entity_type,entity_id,category_id,vertical_id,municipality,created_at")
@@ -153,18 +166,27 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
       .from("search_events")
       .select("category_id,vertical_id,municipality,results_count")
       .gte("created_at", periodStart.toISOString())
+      .limit(5000),
+    supabase
+      .from("business_profiles")
+      .select("id,external_key,claim_status")
+      .eq("is_test", false)
+      .eq("status", "approved")
       .limit(5000)
   ]);
 
-  const labels = new Map<string, { title: string; href: string; trustLevel: string; trustId: string; plan: string | null; lastReviewed: string }>();
+  const businessClaims = (businessClaimsResult.data ?? []) as BusinessClaimMetric[];
+  const claimStatusByKey = new Map(businessClaims.map((profile) => [`resource:${profile.external_key || profile.id}`, profile.claim_status]));
+  const labels = new Map<string, { title: string; href: string; trustLevel: string; trustId: string; plan: string | null; claimStatus: string | null; lastReviewed: string }>();
   const providerPlans = new Map(directory.providers.map((provider) => [provider.id, provider.plan]));
   directory.centers.forEach((center) => {
-    labels.set(`center:${center.id}`, { title: center.name, href: `/centros/${center.slug}`, trustLevel: trustLevelLabel(center.trustLevel), trustId: center.trustLevel, plan: null, lastReviewed: center.lastReviewed || "Sin dato" });
+    labels.set(`center:${center.id}`, { title: center.name, href: `/centros/${center.slug}`, trustLevel: trustLevelLabel(center.trustLevel), trustId: center.trustLevel, plan: null, claimStatus: null, lastReviewed: center.lastReviewed || "Sin dato" });
   });
-  directory.providers.forEach((provider) => labels.set(`resource:${provider.id}`, { title: provider.businessName, href: `/servicios/${provider.id}`, trustLevel: trustLevelLabel(provider.trustLevel), trustId: provider.trustLevel, plan: provider.plan, lastReviewed: provider.lastReviewed || "Sin dato" }));
+  directory.providers.forEach((provider) => labels.set(`resource:${provider.id}`, { title: provider.businessName, href: `/servicios/${provider.id}`, trustLevel: trustLevelLabel(provider.trustLevel), trustId: provider.trustLevel, plan: provider.plan, claimStatus: claimStatusByKey.get(`resource:${provider.id}`) ?? null, lastReviewed: provider.lastReviewed || "Sin dato" }));
   directory.listings.forEach((listing) => {
     const href = listing.categoryId === "centros" ? `/centros/${listing.slug}` : `/servicios/${listing.id}`;
-    labels.set(listing.categoryId === "centros" ? reportingKey("center", listing.id) : `resource:${listing.id}`, { title: listing.title, href, trustLevel: trustLevelLabel(listing.trustLevel), trustId: listing.trustLevel, plan: providerPlans.get(listing.userId) ?? null, lastReviewed: listing.lastReviewed || "Sin dato" });
+    const key = listing.categoryId === "centros" ? reportingKey("center", listing.id) : `resource:${listing.id}`;
+    labels.set(key, { title: listing.title, href, trustLevel: trustLevelLabel(listing.trustLevel), trustId: listing.trustLevel, plan: providerPlans.get(listing.userId) ?? null, claimStatus: claimStatusByKey.get(key) ?? claimStatusByKey.get(`resource:${listing.userId}`) ?? null, lastReviewed: listing.lastReviewed || "Sin dato" });
   });
 
   const allEvents = (data ?? []) as DirectoryEvent[];
@@ -186,9 +208,11 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
   const planOptions = ["gratuito", "destacado", "premium"].filter((plan) => directory.providers.some((provider) => provider.plan === plan));
   const activeTrust = rawTrust && trustOptions.includes(rawTrust) ? rawTrust : "";
   const activePlan = rawPlan && planOptions.includes(rawPlan) ? rawPlan : "";
+  const claimOptions = [...new Set(businessClaims.map((profile) => profile.claim_status))].filter((status) => claimStatusLabels[status]).sort((a, b) => claimStatusLabels[a].localeCompare(claimStatusLabels[b], "es"));
+  const activeClaim = rawClaim && claimOptions.includes(rawClaim) ? rawClaim : "";
   const matchesProfileFilters = (key: string) => {
     const metadata = labels.get(key);
-    return (!activeTrust || metadata?.trustId === activeTrust) && (!activePlan || metadata?.plan === activePlan);
+    return (!activeTrust || metadata?.trustId === activeTrust) && (!activePlan || metadata?.plan === activePlan) && (!activeClaim || metadata?.claimStatus === activeClaim);
   };
   const events = allEvents.filter((event) => (
     (!activeCategory || event.category_id === activeCategory)
@@ -198,7 +222,7 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
   const requests = allRequests.filter((request) => (
     (!activeCategory || request.category_id === activeCategory)
     && (!activeMunicipality || request.municipality === activeMunicipality)
-    && ((!activeTrust && !activePlan) || Boolean(request.target_id && matchesProfileFilters(labels.has(reportingKey("center", request.target_id)) ? reportingKey("center", request.target_id) : `resource:${request.target_id}`)))
+    && ((!activeTrust && !activePlan && !activeClaim) || Boolean(request.target_id && matchesProfileFilters(labels.has(reportingKey("center", request.target_id)) ? reportingKey("center", request.target_id) : `resource:${request.target_id}`)))
   ));
   const requestIds = new Set(requests.map((request) => request.id));
   const feedback = ((feedbackResult.data ?? []) as ConnectionFeedbackMetric[]).filter((item) => requestIds.has(item.request_id));
@@ -342,7 +366,7 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
   const confirmedOutcomes = feedback.filter((item) => item.outcome !== "not_progressed").length;
   const usefulConnectionsPeriod = feedback.filter((item) => item.useful).length;
   const usefulConnections30 = feedback.filter((item) => item.useful && new Date(item.created_at) >= monthStart).length;
-  const operationalError = requestsResult.error || feedbackResult.error || searchEventsResult.error;
+  const operationalError = requestsResult.error || feedbackResult.error || searchEventsResult.error || businessClaimsResult.error;
 
   return (
     <main className="section-shell">
@@ -350,7 +374,7 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
       <p className="label mt-6">Informe interno</p>
       <h1 className="page-title">Rendimiento de fichas</h1>
       <p className="lead max-w-4xl">Visibilidad e intención registrada con consentimiento estadístico. Periodo del {dateLabel(periodStart)} al {dateLabel(new Date())}.</p>
-      <ReportPeriodSelector activePeriod={period} pathname="/admin/rendimiento" preservedParams={{ category: activeCategory, municipality: activeMunicipality, trust: activeTrust, plan: activePlan }} />
+      <ReportPeriodSelector activePeriod={period} pathname="/admin/rendimiento" preservedParams={{ category: activeCategory, municipality: activeMunicipality, trust: activeTrust, plan: activePlan, claim: activeClaim }} />
       <ReportSegmentFilters
         activeCategory={activeCategory}
         activeMunicipality={activeMunicipality}
@@ -360,7 +384,8 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
         pathname="/admin/rendimiento"
         extraFilters={[
           { name: "trust", label: "Confianza", activeValue: activeTrust, allLabel: "Todos los niveles", options: trustOptions.map((trust) => ({ value: trust, label: trustLevelLabel(trust as "collected" | "managed" | "verified" | "official") })) },
-          { name: "plan", label: "Plan", activeValue: activePlan, allLabel: "Todos los planes", options: planOptions.map((plan) => ({ value: plan, label: plan === "gratuito" ? "Gratuito" : plan === "destacado" ? "Destacado" : "Premium" })) }
+          { name: "plan", label: "Plan", activeValue: activePlan, allLabel: "Todos los planes", options: planOptions.map((plan) => ({ value: plan, label: plan === "gratuito" ? "Gratuito" : plan === "destacado" ? "Destacado" : "Premium" })) },
+          { name: "claim", label: "Reclamación", activeValue: activeClaim, allLabel: "Todos los estados", options: claimOptions.map((status) => ({ value: status, label: claimStatusLabels[status] })) }
         ]}
       />
 
@@ -368,7 +393,7 @@ export default async function AdminDirectoryPerformancePage({ searchParams }: { 
       {operationalError ? <p className="mt-3 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">No se ha podido cargar una parte del embudo de conexiones. Comprueba los permisos administrativos.</p> : null}
 
       <section className="card mt-6 p-5 md:p-6" aria-labelledby="performance-summary-title">
-        <div className="flex items-center gap-3"><BarChart3 size={22} className="text-ink" aria-hidden /><div><h2 id="performance-summary-title" className="subsection-title text-ink">Resumen de {period} días</h2><p className="mt-1 text-sm text-muted">No contiene nombres, emails, teléfonos, mensajes ni identificadores de cuenta.{activeCategory || activeMunicipality || activeTrust || activePlan ? " Visibilidad y detalle filtrados por el segmento seleccionado." : ""}</p></div></div>
+        <div className="flex items-center gap-3"><BarChart3 size={22} className="text-ink" aria-hidden /><div><h2 id="performance-summary-title" className="subsection-title text-ink">Resumen de {period} días</h2><p className="mt-1 text-sm text-muted">No contiene nombres, emails, teléfonos, mensajes ni identificadores de cuenta.{activeCategory || activeMunicipality || activeTrust || activePlan || activeClaim ? " Visibilidad y detalle filtrados por el segmento seleccionado." : ""}</p></div></div>
         <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Eye size={16} aria-hidden />Impresiones</dt><dd className="mt-2 text-3xl font-black text-ink">{events.length ? totalImpressions : "Sin datos"}</dd></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><MousePointerClick size={16} aria-hidden />Visitas de ficha</dt><dd className="mt-2 text-3xl font-black text-ink">{events.length ? totalViews : "Sin datos"}</dd></div>

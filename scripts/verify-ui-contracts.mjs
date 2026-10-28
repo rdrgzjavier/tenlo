@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-const [loginRegistration, passwordRecovery, passwordReset, accountSettings, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage] = await Promise.all([
+const [loginRegistration, passwordRecovery, passwordReset, accountSettings, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport] = await Promise.all([
   read("src/components/LoginRegistration.tsx"),
   read("src/components/PasswordRecoveryRequest.tsx"),
   read("src/components/PasswordResetForm.tsx"),
@@ -12,7 +12,8 @@ const [loginRegistration, passwordRecovery, passwordReset, accountSettings, invi
   read("src/components/TurnstileChallenge.tsx"),
   read("src/components/ProviderProfileSections.tsx"),
   read("src/app/servicios/[id]/page.tsx"),
-  read("src/app/centros/[slug]/page.tsx")
+  read("src/app/centros/[slug]/page.tsx"),
+  read("src/app/admin/rendimiento/page.tsx")
 ]);
 
 const checks = [
@@ -28,7 +29,8 @@ const checks = [
   [(invitationSetup.match(/autoComplete="new-password"/g) || []).length >= 2, "La activación de invitaciones debe identificar ambos campos de contraseña nueva."],
   [providerSections.includes("href={`tel:${phone}`}"), "La información específica del proveedor debe permitir llamar."],
   [servicePage.includes("href={`tel:${provider.phone.replace(/\\s/g, \"\")}`}"), "La ficha de servicio debe permitir llamar."],
-  [centerPage.includes("href={`tel:${center.phone.replace(/\\s/g, \"\")}`}"), "La ficha de centro debe permitir llamar."]
+  [centerPage.includes("href={`tel:${center.phone.replace(/\\s/g, \"\")}`}"), "La ficha de centro debe permitir llamar."],
+  [performanceReport.includes('{ name: "claim", label: "Reclamación"') && performanceReport.includes('.select("id,external_key,claim_status")'), "El informe de rendimiento debe filtrar por reclamación usando el estado privado de la ficha."]
 ];
 
 for (const [condition, message] of checks) {
