@@ -186,7 +186,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   - [x] preparar en el esquema preferencias de contacto;
   - [x] preparar en el esquema motivo de inactividad o rechazo.
 - [x] Añadir historial de cambios y responsable de cada modificación. La migración `0017_admin_queue_status_history.sql` registra automáticamente cada cambio; el 16/10/2026 se validaron dos transiciones reversibles con responsable y fecha en `/admin`.
-- [ ] Definir reglas RLS y permisos para proveedor, familia, moderación y administración. Las migraciones `0025`–`0030` y `0032` ya están aplicadas; la verificación de catálogo confirma RPC públicos acotados, tablas base sin lectura anónima, campos de moderación protegidos, funciones administrativas con `search_path` vacío y propuestas inmutables. Falta completar la prueba cruzada de anónimo, familia, proveedor y `tenlo_admin` en producción para cerrar la tarea.
+- [x] Definir y probar reglas RLS y permisos para anónimo, familia, proveedor y `tenlo_admin`. La prueba cruzada de producción del 28/10/2026 confirmó superficie pública acotada, aislamiento por propietario, campos de confianza y moderación protegidos, colas administrativas ocultas y acceso administrativo aprobado. Evidencia y clasificación de Security Advisor en `MATRIZ-RLS-Y-PERMISOS.md`.
 - [ ] Crear copias de seguridad y procedimiento de recuperación. El procedimiento, frecuencia, retención, prueba y criterios de escalado están definidos en `COPIAS-Y-RECUPERACION.md`; falta ejecutar la primera copia y una restauración aislada.
 
 ## P0. Flujo para reclamar y enriquecer una ficha

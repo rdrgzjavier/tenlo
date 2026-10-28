@@ -55,14 +55,38 @@ La migración `0037` se aplicó y verificó en producción el 28 de octubre de 2
 
 La migración `0038` se aplicó y verificó en producción el 28 de octubre de 2026. La consulta confirmó RLS activo, dos políticas, inserción anónima sin lectura, lectura administrativa y ejecución del RPC de conversión solo para usuarios autenticados; la propia función vuelve a exigir un administrador aprobado.
 
+### Prueba cruzada de producción — 28 de octubre de 2026
+
+Se ejecutaron consultas de solo lectura dentro de transacciones con `SET LOCAL ROLE` y claims de cuentas controladas. Cada transacción terminó con `ROLLBACK`; no se copiaron UUID ni datos personales a este documento.
+
+| Rol probado | Resultado |
+|---|---|
+| `anon` | Sin privilegio de lectura sobre perfiles, favoritos, solicitudes ni notas. Los RPC públicos devolvieron únicamente las 14 fichas profesionales y 16 servicios aprobados. |
+| Familia aprobada | Solo una fila de perfil visible y perteneciente a la sesión; favoritos, búsquedas, solicitudes y consentimientos limitados al propio UUID; cero notas y propuestas administrativas visibles. |
+| Proveedor aprobado | Solo su perfil, fichas y servicios vinculados; cero notas administrativas; titularidad, confianza, plan comercial y moderación sin permiso de actualización. |
+| `tenlo_admin` aprobado | `is_tenlo_admin()` verdadero; lectura de perfiles y colas administrativas; propuestas y auditoría disponibles; el RPC de recordatorio rechazó correctamente un identificador inexistente. |
+
+Security Advisor se volvió a ejecutar después de las migraciones `0037`–`0040`: **0 errores**, **21 advertencias** y **0 sugerencias informativas**. Las advertencias visibles pertenecen a la categoría genérica de funciones `SECURITY DEFINER` ejecutables por los roles a los que sirven. Se conservan intencionadamente porque:
+
+- los RPC públicos solo devuelven columnas explícitas de fichas aprobadas o un booleano de disponibilidad de alias;
+- los RPC del proveedor vuelven a comprobar `auth.uid()` y la titularidad;
+- los RPC administrativos vuelven a exigir `is_tenlo_admin()`;
+- todas las funciones privilegiadas fijan `search_path` vacío y el verificador de migraciones comprueba revocaciones y concesiones explícitas.
+
+No se observó una advertencia corregible que permita ampliar acceso sin control. Cualquier nueva función privilegiada deberá repetir esta revisión.
+
+Performance Advisor mostró inicialmente **0 errores** y 26 advertencias de planificación RLS relacionadas con llamadas directas a `auth.uid()` en 15 políticas históricas. La migración `0041`, aplicada el 28/10/2026, sustituyó esas llamadas por `(select auth.uid())` sin cambiar las condiciones de acceso. Después de volver a ejecutar el linter quedaron **0 errores**, **11 advertencias** y **23 sugerencias**. Las pruebas de aislamiento de familia y proveedor se repitieron y conservaron todos los resultados esperados.
+
+Las 11 advertencias restantes corresponden a políticas permisivas múltiples creadas para separar propietario, administración e inserción pública. Combinarlas puede alterar la semántica y no se hará como cambio mecánico; se revisarán tabla por tabla cuando el volumen o los planes de consulta lo justifiquen. Las sugerencias informativas se tratarán del mismo modo para no eliminar índices antes de contar con uso representativo del piloto.
+
 1. [x] Permitir que solo un perfil aprobado `tenlo_admin` lea en el backoffice los contactos necesarios para gestionar solicitudes.
 2. [x] Hacer que la comprobación de alias devuelva solo `true/false`, limitar los centros públicos a aprobados y permitir leer proveedores aprobados desde el directorio.
 3. [x] Aplicar y validar las funciones de directorio con columnas expresamente públicas y retirar lectura directa anónima de las tablas base (`0025`).
 4. Evitar añadir a las tablas públicas campos que no deban quedar disponibles mediante la Data API; separar PII nueva en tablas privadas.
 5. Probar que los borradores y estados rechazados no aparecen en centros, servicios, fichas ni comunidad. El SQL de control de `0024` y `0025` está en `supabase/verification/0024_0025_directory_controls.sql`.
-6. Probar que una familia no puede leer perfiles, favoritos, solicitudes, feedback, notas o exportaciones de otra.
-7. Probar que un proveedor no puede autoconcederse rol, estado aprobado, confianza o plan comercial.
-8. Ejecutar Security Advisor y Performance Advisor después de aplicar las migraciones.
+6. [x] Probar que una familia no puede leer perfiles, favoritos, solicitudes, feedback, notas o exportaciones de otra.
+7. [x] Probar que un proveedor no puede autoconcederse rol, estado aprobado, confianza o plan comercial.
+8. [x] Ejecutar Security Advisor después de aplicar las migraciones. Performance Advisor se mantiene como revisión de rendimiento separada.
 
 ## Casos de prueba mínimos
 
@@ -102,3 +126,5 @@ El punto de backlog de RLS solo podrá marcarse como completado cuando:
 - los cuatro perfiles de prueba superen los casos anteriores;
 - Security Advisor no muestre advertencias corregibles del esquema propio;
 - la evidencia y fecha de la prueba queden añadidas a este documento.
+
+**Criterio cumplido el 28 de octubre de 2026.**
