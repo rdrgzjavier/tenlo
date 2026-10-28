@@ -553,29 +553,29 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 - [x] Tiempo hasta primera solicitud, calculado por ficha desde su creación hasta la primera solicitud histórica asignable.
 - [x] Tasa de primera respuesta y mediana de tiempo sobre las solicitudes asignables del periodo, manteniendo visible el denominador.
 - [x] Proveedores activos a 7, 30 y 90 días según `last_significant_activity_at`, sin confundir aprobación con actividad.
-- [ ] Relevancia percibida de las solicitudes.
+- [x] Relevancia percibida de las solicitudes. El proveedor declara `relevant` o `irrelevant`; `/admin/proveedores` muestra volumen, denominador y porcentaje sin convertirlo en ranking.
 - [ ] Motivos de rechazo, inactividad y abandono.
 - [ ] Conversión de gratuito a plan de pago cuando exista.
 
 ### Liquidez del marketplace
 
 - [x] Proveedores publicados, disponibles y activos por categoría y municipio. `/admin/proveedores` separa fichas publicadas, aceptación de solicitudes y titulares con actividad significativa en 30 días para ambos cortes.
-- [ ] Necesidades y solicitudes por categoría y municipio.
-- [ ] Cobertura: porcentaje de necesidades con al menos una opción adecuada.
+- [x] Necesidades y solicitudes por categoría y municipio. Demanda y rendimiento comparten ambos filtros y mantienen la ventana temporal al cambiar de periodo.
+- [x] Cobertura: porcentaje de necesidades con al menos una opción adecuada. `/admin/demanda` calcula búsquedas con resultados y `/admin/rendimiento` lo desglosa por vertical con volumen y umbral mínimo.
 - [ ] Fill rate: porcentaje de solicitudes que llegan a un proveedor disponible.
-- [ ] Response rate dentro del SLA.
+- [x] Response rate dentro del SLA. El detalle por ficha calcula primeras respuestas en 48 horas y oculta la tasa con menos de cinco solicitudes.
 - [ ] Conexiones útiles por proveedor activo.
-- [ ] Demanda no atendida y búsquedas sin resultados.
+- [x] Demanda no atendida y búsquedas sin resultados. `/admin/demanda` muestra volumen, proporción, términos con muestra mínima y oportunidades por categoría y municipio.
 - [ ] Concentración de demanda en los principales proveedores.
 - [ ] Ratio entre oferta activa y demanda, siempre contextualizado por segmento.
 
 ### Calidad y confianza
 
-- [ ] Completitud y frescura de las fichas.
+- [x] Completitud y frescura de las fichas. El informe de proveedores segmenta el umbral de completitud del 75 % y rendimiento muestra confianza y fecha de última revisión por ficha.
 - [ ] Porcentaje reclamado, verificado y con disponibilidad actualizada.
 - [ ] Errores o correcciones informadas.
 - [ ] Solicitudes irrelevantes, spam y contactos sin respuesta.
-- [ ] Valoración de utilidad por ambas partes.
+- [x] Valoración de utilidad por ambas partes. La familia declara utilidad y resultado en `connection_feedback`; el proveedor declara relevancia de la solicitud, con agregados separados para no confundir ambas señales.
 - [ ] Quejas, bloqueos, retiradas y problemas de privacidad.
 
 ### Monetización futura
