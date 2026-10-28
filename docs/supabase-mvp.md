@@ -43,6 +43,7 @@ Todas las cuentas no familiares deben quedar en `pending_review` hasta que Tenlo
 - Las fichas publicas se leen solo cuando estan aprobadas, salvo centros, que parten de informacion publica.
 - Cada usuario solo gestiona sus propios favoritos, búsquedas guardadas, publicaciones y perfil.
 - La función `get_provider_private_performance` no expone eventos ni sesiones: devuelve conteos agregados de las fichas aprobadas cuyo `owner_id` coincide con el usuario autenticado. La migración `0039` se aplicó y verificó el 28/10/2026 con ejecución anónima denegada, ejecución autenticada permitida, `security definer` y `search_path` vacío.
+- `provider_reminded_at`, incorporado mediante `0040` el 28/10/2026, permite registrar un único recordatorio operativo por solicitud; el endpoint administrativo exige rol `tenlo_admin`, aviso inicial, 48 horas de espera y estado pendiente.
 - La `service_role` solo puede usarse en servidor y nunca debe tener prefijo `NEXT_PUBLIC`.
 - No se guardan perfiles, fotos, horarios personales ni datos identificativos de menores.
 

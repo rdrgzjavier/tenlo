@@ -9,13 +9,14 @@ const options = [
   ["alternative_offered", "Alternativa ofrecida"], ["closed", "Cerrada"]
 ];
 
-export default function ConnectionWorkflow({ recordId, currentStatus, providerNotifiedAt, responseSummary, alternativeSummary }: { recordId: string; currentStatus: string; providerNotifiedAt?: string | null; responseSummary?: string | null; alternativeSummary?: string | null }) {
+export default function ConnectionWorkflow({ recordId, currentStatus, providerNotifiedAt, providerRemindedAt, responseSummary, alternativeSummary }: { recordId: string; currentStatus: string; providerNotifiedAt?: string | null; providerRemindedAt?: string | null; responseSummary?: string | null; alternativeSummary?: string | null }) {
   const router = useRouter();
   const [status, setStatus] = useState(currentStatus);
   const [response, setResponse] = useState(responseSummary || "");
   const [alternative, setAlternative] = useState(alternativeSummary || "");
   const [pending, setPending] = useState(false);
   const [notifying, setNotifying] = useState(false);
+  const [reminding, setReminding] = useState(false);
   const [message, setMessage] = useState("");
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
@@ -46,9 +47,22 @@ export default function ConnectionWorkflow({ recordId, currentStatus, providerNo
     }
   }
 
+  async function remindProvider() {
+    setReminding(true); setMessage("");
+    try {
+      const result = await fetch("/api/admin/connection-remind", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ recordId }) });
+      const data = (await result.json().catch(() => ({}))) as { error?: string };
+      if (!result.ok) { setMessage(data.error || "No se pudo enviar el recordatorio."); return; }
+      setMessage("Recordatorio enviado y registrado."); router.refresh();
+    } catch {
+      setMessage("No se pudo enviar el recordatorio. Comprueba la conexión.");
+    } finally { setReminding(false); }
+  }
+
   return <form className="mt-4 grid gap-3 border-t border-line pt-4" onSubmit={submit}>
     <div className="flex flex-wrap items-center gap-3">
       <button type="button" className="btn-secondary min-h-11 px-4 py-2 text-sm" disabled={Boolean(providerNotifiedAt) || notifying} onClick={notifyProvider}>{providerNotifiedAt ? "Proveedor avisado" : notifying ? "Enviando aviso…" : "Avisar al proveedor"}</button>
+      {providerNotifiedAt ? <button type="button" className="btn-secondary min-h-11 px-4 py-2 text-sm" disabled={Boolean(providerRemindedAt) || reminding || !["delivered", "viewed"].includes(currentStatus)} onClick={remindProvider}>{providerRemindedAt ? "Recordatorio enviado" : reminding ? "Enviando…" : "Enviar recordatorio"}</button> : null}
       <span className="text-xs text-muted">{providerNotifiedAt ? "Aviso registrado en el seguimiento." : "Se enviará un enlace a su bandeja privada."}</span>
     </div>
     <label className="text-xs font-bold text-ink">Estado<select className="mt-1 min-h-11 w-full rounded-xl border border-line bg-white px-3 text-sm" value={status} onChange={(event) => setStatus(event.target.value)}>{options.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>

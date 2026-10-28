@@ -130,7 +130,7 @@ export default async function AdminPage() {
   const reviewCutoff = staleReviewCutoff();
   const [claimsResult, requestsResult, submissionsResult, businessProfilesResult, providerSuggestionsResult, feedbackResult, connectionFeedbackResult, auditResult, exportAuditResult, notesResult, staleServicesResult, staleCentersResult] = await Promise.all([
     supabase.from("claim_requests").select("id,entity_type,entity_id,entity_name,requester_name,requester_email,requester_phone,role_description,corrections,official_website,image_url,status,created_at").order("created_at", { ascending: false }).limit(100),
-    supabase.from("connection_requests").select("id,family_id,target_type,target_id,category_id,municipality,message,contact_preference,status,provider_notified_at,provider_response_summary,alternative_summary,first_response_at,created_at").order("created_at", { ascending: false }).limit(100),
+    supabase.from("connection_requests").select("id,family_id,target_type,target_id,category_id,municipality,message,contact_preference,status,provider_notified_at,provider_reminded_at,provider_response_summary,alternative_summary,first_response_at,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("submissions").select("id,user_id,submission_type,payload,review_notes,status,created_at").order("created_at", { ascending: false }).limit(100),
     supabase.from("business_profiles").select("id,owner_id,business_name,website,address,municipality,service_area,category,subtype,description,phone,contact_email,status,trust_level,completeness_percent,details,latitude,longitude,location_visibility,service_municipalities,accepts_requests,contact_preferences,created_at").in("status", ["pending_review", "rejected"]).order("created_at", { ascending: false }).limit(100),
     supabase.from("provider_suggestions").select("id,provider_name,website,location,service,notes,submitter_name,submitter_email,status,converted_profile_id,created_at").order("created_at", { ascending: false }).limit(100),
@@ -297,7 +297,7 @@ export default async function AdminPage() {
               {requestTargetHref(request.target_type, request.target_id) ? <Link href={requestTargetHref(request.target_type, request.target_id)!} target="_blank" rel="noreferrer" className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-xl border border-line bg-white px-4 py-2 font-bold text-ink">Abrir ficha <ExternalLink size={15} aria-hidden /></Link> : null}
               <p className="mt-2 text-xs text-muted">{dateLabel(request.created_at)}</p>
               <AdminNotes queue="connection" recordId={request.id} notes={notesFor("connection", request.id)} />
-              <ConnectionWorkflow recordId={request.id} currentStatus={request.status} providerNotifiedAt={request.provider_notified_at} responseSummary={request.provider_response_summary} alternativeSummary={request.alternative_summary} />
+              <ConnectionWorkflow recordId={request.id} currentStatus={request.status} providerNotifiedAt={request.provider_notified_at} providerRemindedAt={request.provider_reminded_at} responseSummary={request.provider_response_summary} alternativeSummary={request.alternative_summary} />
             </article>
           )) : <p className="text-sm text-muted">No hay solicitudes.</p>}
         </QueueSection>

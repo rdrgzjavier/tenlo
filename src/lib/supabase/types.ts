@@ -402,6 +402,7 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      record_provider_request_reminder: { Args: { target_request_id: string }; Returns: boolean };
       get_provider_private_performance: {
         Args: { window_days?: number; offset_days?: number };
         Returns: Array<{ impressions: number; profile_views: number; saves: number; contact_intents: number; requests: number }>;
