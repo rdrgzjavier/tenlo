@@ -402,6 +402,10 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      get_provider_private_performance: {
+        Args: { window_days?: number; offset_days?: number };
+        Returns: Array<{ impressions: number; profile_views: number; saves: number; contact_intents: number; requests: number }>;
+      };
       convert_provider_suggestion: {
         Args: { target_id: string; reviewed_name: string; reviewed_website: string; reviewed_municipality: string; reviewed_category: string; reviewed_description: string };
         Returns: string;

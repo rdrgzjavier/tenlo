@@ -32,6 +32,7 @@ Todas las cuentas no familiares deben quedar en `pending_review` hasta que Tenlo
 - `favorites`: favoritos del usuario logado.
 - `saved_searches`: criterios estructurados y ruta interna que cada usuario decide conservar.
 - `provider_suggestions`: propuestas estructuradas pendientes de contraste y conversión administrativa.
+- `directory_events`: señales agregables del directorio, registradas solo con consentimiento estadístico; los proveedores acceden únicamente a un resumen de sus propias fichas mediante `get_provider_private_performance`.
 - `submissions`: propuestas pendientes de revision.
 - `contact_events`: trazabilidad de CTAs de contacto.
 - `newsletter_subscribers`: altas de newsletter con consentimiento.
@@ -41,6 +42,7 @@ Todas las cuentas no familiares deben quedar en `pending_review` hasta que Tenlo
 - RLS activo en todas las tablas publicas.
 - Las fichas publicas se leen solo cuando estan aprobadas, salvo centros, que parten de informacion publica.
 - Cada usuario solo gestiona sus propios favoritos, búsquedas guardadas, publicaciones y perfil.
+- La función `get_provider_private_performance` no expone eventos ni sesiones: devuelve conteos agregados de las fichas aprobadas cuyo `owner_id` coincide con el usuario autenticado. La migración `0039` se aplicó y verificó el 28/10/2026 con ejecución anónima denegada, ejecución autenticada permitida, `security definer` y `search_path` vacío.
 - La `service_role` solo puede usarse en servidor y nunca debe tener prefijo `NEXT_PUBLIC`.
 - No se guardan perfiles, fotos, horarios personales ni datos identificativos de menores.
 

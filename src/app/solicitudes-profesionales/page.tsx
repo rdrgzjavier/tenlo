@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { BriefcaseBusiness, CheckCircle2, Clock3, Inbox, ShieldCheck, Target } from "lucide-react";
+import { Bookmark, BriefcaseBusiness, CheckCircle2, Clock3, Eye, Inbox, MousePointerClick, ShieldCheck, Target } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import ProviderRequestResponseForm from "@/components/ProviderRequestResponseForm";
 import ProviderRequestViewedTracker from "@/components/ProviderRequestViewedTracker";
@@ -65,6 +65,16 @@ function durationLabel(milliseconds: number | null) {
   return hours < 48 ? `${hours.toFixed(hours < 10 ? 1 : 0)} h` : `${(hours / 24).toFixed(1)} días`;
 }
 
+type PerformanceSummary = { impressions: number; profile_views: number; saves: number; contact_intents: number; requests: number };
+const emptyPerformance: PerformanceSummary = { impressions: 0, profile_views: 0, saves: 0, contact_intents: 0, requests: 0 };
+
+function comparisonLabel(current: number, previous: number) {
+  if (!previous) return current ? "Nueva actividad" : "Sin actividad todavía";
+  const change = Math.round(((current - previous) / previous) * 100);
+  if (!change) return "Igual que el periodo anterior";
+  return `${change > 0 ? "+" : ""}${change} % frente a los 30 días anteriores`;
+}
+
 export default async function ProviderRequestsPage() {
   if (!hasSupabaseServerConfig()) return <PrivateAreaUnavailable />;
   const supabase = await createSupabaseServerClient();
@@ -74,9 +84,11 @@ export default async function ProviderRequestsPage() {
   const { data: profile } = await supabase.from("profiles").select("role,status").eq("id", authData.user.id).maybeSingle();
   if (!profile || profile.role === "family" || profile.role === "tenlo_admin") redirect("/area-personal");
 
-  const [businessResult, requestsResult] = await Promise.all([
+  const [businessResult, requestsResult, performanceResult, previousPerformanceResult] = await Promise.all([
     supabase.from("business_profiles").select("id,business_name,status,accepts_requests").eq("owner_id", authData.user.id).order("created_at", { ascending: false }),
-    supabase.rpc("get_provider_connection_requests_v2")
+    supabase.rpc("get_provider_connection_requests_v2"),
+    supabase.rpc("get_provider_private_performance", { window_days: 30, offset_days: 0 }),
+    supabase.rpc("get_provider_private_performance", { window_days: 30, offset_days: 30 })
   ]);
   const businesses = businessResult.data ?? [];
   const businessNames = new Map(businesses.map((business) => [business.id, business.business_name]));
@@ -86,7 +98,9 @@ export default async function ProviderRequestsPage() {
   const relevantRequests = ratedRequests.filter((request) => request.relevance === "relevant").length;
   const responseTimes = requests.flatMap((request) => request.first_response_at ? [new Date(request.first_response_at).getTime() - new Date(request.created_at).getTime()] : []).filter((duration) => duration >= 0);
   const viewableRequestIds = requests.filter((request) => ["submitted", "delivered"].includes(request.status)).map((request) => request.id);
-  const queryError = businessResult.error || requestsResult.error;
+  const performance = (performanceResult.data?.[0] as PerformanceSummary | undefined) ?? emptyPerformance;
+  const previousPerformance = (previousPerformanceResult.data?.[0] as PerformanceSummary | undefined) ?? emptyPerformance;
+  const queryError = businessResult.error || requestsResult.error || performanceResult.error || previousPerformanceResult.error;
 
   return (
     <main className="section-shell">
@@ -108,6 +122,18 @@ export default async function ProviderRequestsPage() {
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Clock3 size={16} aria-hidden />Tiempo mediano</dt><dd className="mt-2 text-3xl font-black text-ink">{durationLabel(median(responseTimes))}</dd></div>
           <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Target size={16} aria-hidden />Relevantes</dt><dd className="mt-2 text-3xl font-black text-ink">{relevantRequests}</dd><p className="mt-1 text-xs text-muted">{percentage(relevantRequests, ratedRequests.length)} de {ratedRequests.length} valoradas</p></div>
         </dl>
+      </section>
+
+      <section className="card mt-6 p-5" aria-labelledby="provider-performance-title">
+        <h2 id="provider-performance-title" className="subsection-title text-ink">Visibilidad de tus fichas</h2>
+        <p className="mt-2 text-sm leading-6 text-muted">Actividad consentida de los últimos 30 días. Se compara con los 30 días anteriores y no identifica a las familias.</p>
+        <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Eye size={16} aria-hidden />Apariciones</dt><dd className="mt-2 text-3xl font-black text-ink">{performance.impressions}</dd><p className="mt-1 text-xs text-muted">{comparisonLabel(performance.impressions, previousPerformance.impressions)}</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><MousePointerClick size={16} aria-hidden />Aperturas de ficha</dt><dd className="mt-2 text-3xl font-black text-ink">{performance.profile_views}</dd><p className="mt-1 text-xs text-muted">{comparisonLabel(performance.profile_views, previousPerformance.profile_views)}</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Bookmark size={16} aria-hidden />Guardados</dt><dd className="mt-2 text-3xl font-black text-ink">{performance.saves}</dd><p className="mt-1 text-xs text-muted">{comparisonLabel(performance.saves, previousPerformance.saves)}</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Target size={16} aria-hidden />Intenciones de contacto</dt><dd className="mt-2 text-3xl font-black text-ink">{performance.contact_intents}</dd><p className="mt-1 text-xs text-muted">{comparisonLabel(performance.contact_intents, previousPerformance.contact_intents)}</p></div>
+        </dl>
+        <p className="mt-4 text-xs leading-5 text-muted">Los datos pueden ser cero si no hubo actividad consentida. No equivalen a clientes ni a contrataciones confirmadas.</p>
       </section>
 
       {requests.length ? (
