@@ -33,5 +33,7 @@ jobs:
         run: npm run lint
       - name: Verify UI contracts
         run: npm run verify:ui
+      - name: Verify database migrations
+        run: npm run verify:migrations
       - name: Build
         run: npm run build
