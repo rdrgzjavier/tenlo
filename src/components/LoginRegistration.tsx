@@ -555,7 +555,7 @@ export default function LoginRegistration() {
           <>
           <div className="mt-6 rounded-2xl border border-line bg-soft p-4">
             <h2 className="text-base font-bold text-slatecopy">¿Ya tienes cuenta?</h2>
-            <form className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_auto]" onSubmit={handleLogin}>
+            <form className="mt-4 grid gap-3 sm:grid-cols-2" onSubmit={handleLogin}>
               <label className="sr-only" htmlFor="login-email">Email</label>
               <input id="login-email" name="email" type="email" required autoComplete="email" className="field m-0 placeholder:text-muted" placeholder="Email" value={loginEmail} onChange={(event) => setLoginEmail(event.target.value)} />
               <label className="sr-only" htmlFor="login-password">Contraseña</label>
@@ -571,8 +571,10 @@ export default function LoginRegistration() {
                   {showLoginPassword ? <EyeOff size={20} aria-hidden /> : <Eye size={20} aria-hidden />}
                 </button>
               </div>
-              <TurnstileChallenge action="login" onTokenChange={handleLoginCaptcha} resetKey={loginCaptchaReset} />
-              <button className="btn-secondary" type="submit" disabled={loading === "login"}>{loading === "login" ? "Entrando..." : "Entrar"}</button>
+              <div className="sm:col-span-2">
+                <TurnstileChallenge action="login" onTokenChange={handleLoginCaptcha} resetKey={loginCaptchaReset} />
+              </div>
+              <button className="btn-secondary justify-center sm:col-span-2 sm:w-fit" type="submit" disabled={loading === "login"}>{loading === "login" ? "Entrando..." : "Entrar"}</button>
             </form>
             <Link href="/recuperar-contrasena" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-ink underline decoration-ink/35 underline-offset-4">¿Has olvidado la contraseña?</Link>
             <button className="btn-primary mt-3 w-full justify-center" type="button" onClick={handleGoogleLogin} disabled={loading === "google"}>
