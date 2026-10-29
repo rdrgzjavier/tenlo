@@ -38,7 +38,7 @@ Los eventos se deduplican por `event_id` y nombre. Esto permite que una misma co
 
 ## Informe administrativo
 
-La ruta privada `/admin/rendimiento` presenta 90 días de actividad y separa:
+La ruta privada `/admin/rendimiento` permite elegir el periodo y separa:
 
 - sesiones observadas;
 - impresiones;
@@ -53,7 +53,8 @@ Las tasas no se muestran con menos de 20 observaciones en el denominador. El inf
 
 ## Estado de implantación
 
-- Código, migración e informe preparados y validados mediante typecheck, lint y build.
-- Pendiente aplicar `0024_directory_performance_events.sql` en Supabase.
-- Pendiente desplegar y validar eventos consentidos de prueba en producción.
-- Pendiente unir respuesta, conexión útil y frescura de la ficha en el mismo informe.
+- `0024_directory_performance_events.sql` aplicada en Supabase con RLS y escritura pública limitada a `INSERT`.
+- Código, persistencia e informes desplegados y validados mediante typecheck, lint, build y prueba limpia en producción.
+- El 29/10/2026 se confirmó que el rechazo no persiste eventos ni carga Google y que, tras aceptar, `page_view` y `provider_profile_viewed` llegan al `dataLayer` y el endpoint propio responde sin errores 4xx.
+- El informe ya relaciona visibilidad con solicitudes, primeras respuestas, tiempos de respuesta, valoración de utilidad y fecha de revisión de la ficha.
+- Sigue pendiente observar una petición `collect` y la recepción en tiempo real de GA4 antes de declarar completa la capa externa de analítica.
