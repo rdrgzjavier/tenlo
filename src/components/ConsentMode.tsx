@@ -8,6 +8,7 @@ declare global {
     gtag?: (...args: unknown[]) => void;
     google_tag_manager?: Record<string, unknown>;
     __tenloAnalyticsConsent?: boolean;
+    __tenloAnalyticsReady?: boolean;
   }
 }
 
@@ -34,7 +35,10 @@ export default function ConsentMode({ gtmId }: { gtmId?: string }) {
           delete script.dataset.analyticsWaiting;
           script.dataset.analyticsReady = "true";
           window.dataLayer?.push({ event: "analytics_consent_granted" });
-          window.setTimeout(() => window.dispatchEvent(new Event("tenlo:analytics-ready")), 0);
+          window.setTimeout(() => {
+            window.__tenloAnalyticsReady = true;
+            window.dispatchEvent(new Event("tenlo:analytics-ready"));
+          }, 0);
           return;
         }
         if (Date.now() - startedAt >= 10_000) {
@@ -48,6 +52,7 @@ export default function ConsentMode({ gtmId }: { gtmId?: string }) {
       if (!window.gtag) return;
       const analyticsGranted = readAnalyticsConsent() === "accepted";
       window.__tenloAnalyticsConsent = analyticsGranted;
+      if (!analyticsGranted) window.__tenloAnalyticsReady = false;
       window.gtag("consent", "update", {
         analytics_storage: analyticsGranted ? "granted" : "denied",
         ad_storage: "denied",

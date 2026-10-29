@@ -48,6 +48,7 @@ const checks = [
   [consentBanner.includes("Configurar") && consentBanner.includes("Guardar selección") && consentBanner.includes("Permitir cookies analíticas"), "La primera capa debe ofrecer configuración directa y el panel debe guardar una selección granular."],
   [consentSettings.includes("Estado actual") && consentSettings.includes("analyticsConsentChangedEvent"), "El gestor debe mostrar y actualizar la preferencia de consentimiento vigente."],
   [consentMode.includes('readAnalyticsConsent() === "accepted"') && consentMode.includes('analytics_storage: analyticsGranted ? "granted" : "denied"'), "GTM y GA4 deben permanecer denegados hasta recibir consentimiento estadístico."],
+  [consentMode.includes("window.__tenloAnalyticsReady = true") && analyticsLibrary.includes("window.__tenloAnalyticsReady === true"), "Los eventos de producto deben esperar a que la etiqueta base de GA4 esté preparada."],
   [consentLibrary.includes("Max-Age=31536000") && consentLibrary.includes("SameSite=Lax; Secure") && consentLibrary.includes('name === "_ga"'), "La preferencia propia debe ser limitada, segura y retirar cookies de GA al rechazar."],
   [(invitationSetup.match(/autoComplete="new-password"/g) || []).length >= 2, "La activación de invitaciones debe identificar ambos campos de contraseña nueva."],
   [providerSections.includes("href={`tel:${phone}`}"), "La información específica del proveedor debe permitir llamar."],

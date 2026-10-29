@@ -137,7 +137,7 @@ export function shouldAttachSearchContext(action: unknown): action is TrackingAc
 }
 export function hasAnalyticsConsent() {
   if (typeof window === "undefined") return false;
-  return window.__tenloAnalyticsConsent === true && !isInternalAnalyticsTraffic();
+  return window.__tenloAnalyticsConsent === true && window.__tenloAnalyticsReady === true && !isInternalAnalyticsTraffic();
 }
 
 export function isInternalAnalyticsTraffic() {
