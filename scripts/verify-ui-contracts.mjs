@@ -44,6 +44,7 @@ const checks = [
   [(accountSettings.match(/autoComplete="new-password"/g) || []).length >= 2, "El área personal debe identificar ambos campos de contraseña nueva."],
   [internalAnalyticsControl.includes("tenlo_internal_traffic") && analyticsLibrary.includes("!isInternalAnalyticsTraffic()") && directoryEventRoute.includes("excluded: true"), "La exclusión de tráfico interno debe bloquear analítica en cliente y servidor."],
   [consentBanner.includes('choose("rejected")') && consentBanner.includes('choose("accepted")'), "El consentimiento debe permitir rechazar o aceptar la analítica sin publicidad."],
+  [consentBanner.includes("Configurar") && consentBanner.includes("Guardar selección") && consentBanner.includes("Permitir cookies analíticas"), "La primera capa debe ofrecer configuración directa y el panel debe guardar una selección granular."],
   [consentSettings.includes("Estado actual") && consentSettings.includes("analyticsConsentChangedEvent"), "El gestor debe mostrar y actualizar la preferencia de consentimiento vigente."],
   [consentMode.includes('readAnalyticsConsent() === "accepted"') && consentMode.includes('analytics_storage: analyticsGranted ? "granted" : "denied"'), "GTM y GA4 deben permanecer denegados hasta recibir consentimiento estadístico."],
   [consentLibrary.includes("Max-Age=31536000") && consentLibrary.includes("SameSite=Lax; Secure") && consentLibrary.includes('name === "_ga"'), "La preferencia propia debe ser limitada, segura y retirar cookies de GA al rechazar."],
