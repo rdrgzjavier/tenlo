@@ -29,7 +29,7 @@ Procedimiento reproducible de validación: [QA de analítica y consentimiento](.
    La migración `0015_critical_event_envelopes.sql` se aplicó y verificó el 13/10/2026: solicitudes y reclamaciones tienen `event_id` único, `schema_version` y `created_at` generado por servidor.
 9. Marcar como eventos clave iniciales `request_created` y `claim_submitted` después de descartar duplicados.
 10. [x] Crear el informe base de Looker Studio y conectarlo exclusivamente a la propiedad GA4 de Tenlo.
-11. Construir sus vistas de adquisición y comportamiento cuando GA4 reciba datos, y añadir después vistas agregadas/exportaciones controladas de Supabase para operación y valor.
+11. [~] Primera vista de Looker Studio construida el 29/10/2026 con usuarios activos, eventos, vistas, desglose por evento y periodo seleccionable. Incluye un aviso explícito de que la actividad actual es técnica. Completar adquisición, búsqueda y conexiones cuando exista volumen real, y añadir después vistas agregadas o exportaciones controladas de Supabase para operación y valor.
 
 ## Informes mínimos antes de ofrecer reporting a proveedores
 
