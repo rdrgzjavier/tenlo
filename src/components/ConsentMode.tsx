@@ -17,6 +17,7 @@ export default function ConsentMode({ gtmId }: { gtmId?: string }) {
       if (!gtmId) return;
       let script = document.getElementById("gtm-script") as HTMLScriptElement | null;
       if (!script) {
+        window.dataLayer?.push({ "gtm.start": Date.now(), event: "gtm.js" });
         script = document.createElement("script");
         script.id = "gtm-script";
         script.async = true;

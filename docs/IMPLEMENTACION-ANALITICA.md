@@ -63,6 +63,7 @@ La matriz de fuentes, deduplicación y casos paso a paso se mantiene en `QA-ANAL
 - GA4 con medición mejorada desactivada para evitar duplicados con los eventos explícitos de producto.
 - GTM publicado con la etiqueta base y `send_page_view=false`; la aplicación envía `page_view` y los eventos de producto con sus parámetros tras el consentimiento.
 - La etiqueta genérica `GA4 - Eventos Tenlo` está activa en la versión 3 del contenedor y transforma los eventos consentidos de `dataLayer` en eventos de GA4.
+- El cargador condicionado al consentimiento emite el evento estándar `gtm.js` con `gtm.start` justo antes de descargar el contenedor. Así GTM conserva su secuencia de inicialización normal aunque se cargue después de aceptar la analítica.
 - Identificadores públicos almacenados como variables de tipo configuración en Vercel, no como secretos.
 - Informe `Tenlo - adquisición, búsqueda y conexiones` creado en Looker Studio y conectado a la propiedad GA4 `Tenlo` (`558009522`). No se añaden todavía gráficos que puedan aparentar datos hasta confirmar la recepción de eventos.
 - La medición no se declarará operativa hasta observar `collect` y los eventos en tiempo real de GA4 después del nuevo despliegue.
