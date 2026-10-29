@@ -43,6 +43,7 @@ const checks = [
   [accountSettings.includes('autoComplete="current-password"'), "El área personal debe identificar la contraseña actual."],
   [(accountSettings.match(/autoComplete="new-password"/g) || []).length >= 2, "El área personal debe identificar ambos campos de contraseña nueva."],
   [internalAnalyticsControl.includes("tenlo_internal_traffic") && analyticsLibrary.includes("!isInternalAnalyticsTraffic()") && directoryEventRoute.includes("excluded: true"), "La exclusión de tráfico interno debe bloquear analítica en cliente y servidor."],
+  [directoryEventRoute.includes('tenlo_analytics_consent=accepted') && directoryEventRoute.includes('.from("directory_events").insert(events)'), "La persistencia propia debe exigir consentimiento y limitarse a INSERT bajo RLS."],
   [consentBanner.includes('choose("rejected")') && consentBanner.includes('choose("accepted")'), "El consentimiento debe permitir rechazar o aceptar la analítica sin publicidad."],
   [consentBanner.includes("Configurar") && consentBanner.includes("Guardar selección") && consentBanner.includes("Permitir cookies analíticas"), "La primera capa debe ofrecer configuración directa y el panel debe guardar una selección granular."],
   [consentSettings.includes("Estado actual") && consentSettings.includes("analyticsConsentChangedEvent"), "El gestor debe mostrar y actualizar la preferencia de consentimiento vigente."],

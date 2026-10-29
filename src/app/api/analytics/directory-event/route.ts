@@ -59,8 +59,12 @@ function validEvent(value: IncomingEvent) {
 
 export async function POST(request: Request) {
   if (!hasSupabaseServerConfig()) return NextResponse.json({ ok: false }, { status: 503 });
-  if (request.headers.get("cookie")?.split(";").some((part) => part.trim() === "tenlo_internal_traffic=1")) {
+  const requestCookies = request.headers.get("cookie")?.split(";").map((part) => part.trim()) ?? [];
+  if (requestCookies.includes("tenlo_internal_traffic=1")) {
     return NextResponse.json({ ok: true, excluded: true }, { headers: { "Cache-Control": "no-store" } });
+  }
+  if (!requestCookies.includes("tenlo_analytics_consent=accepted")) {
+    return NextResponse.json({ ok: true, excluded: true, reason: "consent_required" }, { headers: { "Cache-Control": "no-store" } });
   }
 
   const body = await request.json().catch(() => null) as { events?: unknown } | null;
@@ -75,7 +79,7 @@ export async function POST(request: Request) {
   if (events.length !== body.events.length) return NextResponse.json({ ok: false }, { status: 400 });
 
   const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.from("directory_events").upsert(events, { onConflict: "event_id,event_name", ignoreDuplicates: true });
+  const { error } = await supabase.from("directory_events").insert(events);
   if (error) {
     console.error("No se pudieron persistir los eventos del directorio", error.code);
     return NextResponse.json({ ok: false }, { status: 400 });
