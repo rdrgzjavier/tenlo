@@ -56,7 +56,7 @@ La matriz de fuentes, deduplicación y casos paso a paso se mantiene en `QA-ANAL
 ## Configuración preparada el 28/10/2026
 
 - Gestor propio de Tenlo, sin coste recurrente, con cookies necesarias y estadísticas opcionales, sin publicidad y sin widget flotante tras decidir.
-- La elección se conserva en la cookie técnica `tenlo_analytics_consent` durante doce meses y puede reabrirse desde `/cookies`.
+- La elección se conserva en la cookie técnica `tenlo_analytics_consent` durante doce meses y puede reabrirse desde `/cookies`, donde el gestor muestra el estado vigente y permite modificarlo.
 - Cookiebot queda retirado: la prueba Premium terminó, el banner fue pausado y no se contrató el plan de 30 €/mes.
 - GA4 con medición mejorada desactivada para evitar duplicados con los eventos explícitos de producto.
 - GTM publicado con la etiqueta base y `send_page_view=false`; la aplicación envía `page_view` y los eventos de producto con sus parámetros tras el consentimiento.
