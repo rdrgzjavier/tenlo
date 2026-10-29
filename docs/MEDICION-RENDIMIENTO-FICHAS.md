@@ -57,4 +57,4 @@ Las tasas no se muestran con menos de 20 observaciones en el denominador. El inf
 - Código, persistencia e informes desplegados y validados mediante typecheck, lint, build y prueba limpia en producción.
 - El 29/10/2026 se confirmó que el rechazo no persiste eventos ni carga Google y que, tras aceptar, `page_view` y `provider_profile_viewed` llegan al `dataLayer` y el endpoint propio responde sin errores 4xx.
 - El informe ya relaciona visibilidad con solicitudes, primeras respuestas, tiempos de respuesta, valoración de utilidad y fecha de revisión de la ficha.
-- Sigue pendiente observar una petición `collect` y la recepción en tiempo real de GA4 antes de declarar completa la capa externa de analítica.
+- La misma ronda observó tres peticiones `collect` sin 4xx y confirmó en GA4 Tiempo real `page_view` y `provider_profile_viewed`; la capa externa queda operativa para comenzar a recoger datos reales, sin confundir esta prueba técnica con rendimiento del piloto.

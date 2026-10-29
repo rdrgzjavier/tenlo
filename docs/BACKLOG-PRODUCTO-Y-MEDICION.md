@@ -302,7 +302,7 @@ Arquitectura inicial recomendada:
 - [x] Crear un contenedor GTM separado para Tenlo bajo la cuenta gestionada por Javier y publicar su primera versión.
 - [x] Eliminar el ID de GTM hardcodeado y moverlo a configuración por entorno.
 - [x] Implementar en código Consent Mode con almacenamiento analítico/publicitario denegado por defecto y sincronización con la elección propia de Tenlo.
-- [ ] Completar la verificación de consentimiento: la prueba limpia del 29/10/2026 confirmó que el rechazo no carga GTM ni Google, la aceptación carga GTM y activa `page_view` y `provider_profile_viewed`, y el endpoint propio persiste sin respuestas 4xx. Falta observar la petición `collect` y confirmar la recepción en GA4; no se considera todavía operativa la parte de GA4.
+- [x] Completar la verificación de consentimiento. La prueba limpia del 29/10/2026 confirmó que el rechazo no carga GTM ni Google; la aceptación inicia GTM, crea `_ga` solo después del permiso, activa `page_view` y `provider_profile_viewed`, envía tres peticiones `collect` sin respuestas 4xx y deja ambos eventos visibles en Tiempo real de la propiedad GA4 de Tenlo.
 - [x] Crear el informe base `Tenlo - adquisición, búsqueda y conexiones` en Looker Studio y conectarlo a la propiedad GA4 de Tenlo.
 - [ ] Construir las páginas y gráficos de Looker Studio cuando GA4 confirme recepción de datos; no presentar ceros iniciales como rendimiento real.
 - [x] Resolver el fin de la prueba de Cookiebot sin activar pagos: no existe plan gratuito aplicable a las 446 URL detectadas; se sustituye por consentimiento propio sin coste.

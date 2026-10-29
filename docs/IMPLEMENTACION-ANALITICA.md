@@ -66,4 +66,4 @@ La matriz de fuentes, deduplicación y casos paso a paso se mantiene en `QA-ANAL
 - El cargador condicionado al consentimiento emite el evento estándar `gtm.js` con `gtm.start` justo antes de descargar el contenedor. Así GTM conserva su secuencia de inicialización normal aunque se cargue después de aceptar la analítica.
 - Identificadores públicos almacenados como variables de tipo configuración en Vercel, no como secretos.
 - Informe `Tenlo - adquisición, búsqueda y conexiones` creado en Looker Studio y conectado a la propiedad GA4 `Tenlo` (`558009522`). No se añaden todavía gráficos que puedan aparentar datos hasta confirmar la recepción de eventos.
-- La medición no se declarará operativa hasta observar `collect` y los eventos en tiempo real de GA4 después del nuevo despliegue.
+- Verificación de producción completada el 29/10/2026: con rechazo hubo 0 cargas de GTM y 0 peticiones `collect`; con aceptación se creó la preferencia propia, se cargó GTM, aparecieron las cookies `_ga`, se observaron tres peticiones `collect` sin 4xx y GA4 Tiempo real mostró `page_view` y `provider_profile_viewed` para las páginas probadas.
