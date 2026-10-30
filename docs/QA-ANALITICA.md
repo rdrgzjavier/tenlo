@@ -2,6 +2,8 @@
 
 Este procedimiento valida el recorrido completo `navegador -> dataLayer -> GTM -> GA4` y, cuando corresponde, `navegador/servidor -> Supabase`. Debe repetirse antes de cambiar la taxonomía, publicar un flujo crítico o entregar informes a proveedores.
 
+Antes de la prueba de navegador, ejecutar `npm run verify:gtm`. La comprobación descarga el contenedor público y exige paridad exacta entre su activador y los eventos declarados por `TrackingAction`; una etiqueta creada en GTM no basta si el activador omite eventos.
+
 ## Fuente de cada evento
 
 | Familia | Cliente | Servidor / Supabase | Regla de deduplicación |

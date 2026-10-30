@@ -11,6 +11,7 @@
     "directory:seed:write": "tsc -p tsconfig.seed.json && node .tmp/directory-seed/scripts/build-directory-seed.js --write supabase/seeds/0001_pilot_directory.sql",
     "directory:seed:check": "tsc -p tsconfig.seed.json && node .tmp/directory-seed/scripts/build-directory-seed.js --summary",
     "verify:migrations": "node scripts/verify-migrations.mjs",
+    "verify:gtm": "node --use-system-ca scripts/verify-gtm-contract.mjs",
     "verify:ui": "node scripts/verify-ui-contracts.mjs",
     "verify:production": "node scripts/smoke-production.mjs"
   },

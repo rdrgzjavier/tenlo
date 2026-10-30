@@ -33,17 +33,18 @@ export default function ValidatedSearchForm({
     }
     setError("");
     if (trackingEvent) {
+      const form = event.currentTarget;
       const searchId = window.crypto.randomUUID();
-      let searchIdInput = event.currentTarget.elements.namedItem("search_id") as HTMLInputElement | null;
+      let searchIdInput = form.elements.namedItem("search_id") as HTMLInputElement | null;
       if (!searchIdInput) {
         searchIdInput = document.createElement("input");
         searchIdInput.type = "hidden";
         searchIdInput.name = "search_id";
-        event.currentTarget.append(searchIdInput);
+        form.append(searchIdInput);
       }
       searchIdInput.value = searchId;
       const activeFields = Array.from(data.entries()).filter(([, value]) => String(value).trim().length > 0);
-      pushTrackingEvent(trackingEvent, {
+      const trackedEvent = pushTrackingEvent(trackingEvent, {
         search_id: searchId,
         placement: trackingPlacement,
         category: String(data.get("categoria") ?? "") || undefined,
@@ -51,6 +52,10 @@ export default function ValidatedSearchForm({
         filter_count: activeFields.length,
         has_keyword: Boolean(String(data.get("tag") ?? data.get("q") ?? "").trim())
       });
+      if (trackedEvent) {
+        event.preventDefault();
+        window.setTimeout(() => form.submit(), 120);
+      }
     }
   }
 

@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-const [loginRegistration, passwordRecovery, passwordReset, accountSettings, internalAnalyticsControl, consentBanner, consentSettings, consentMode, consentLibrary, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerPrivateReport, printableProviderReport, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage] = await Promise.all([
+const [loginRegistration, passwordRecovery, passwordReset, accountSettings, internalAnalyticsControl, consentBanner, consentSettings, consentMode, consentLibrary, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerPrivateReport, printableProviderReport, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage, validatedSearchForm] = await Promise.all([
   read("src/components/LoginRegistration.tsx"),
   read("src/components/PasswordRecoveryRequest.tsx"),
   read("src/components/PasswordResetForm.tsx"),
@@ -29,7 +29,8 @@ const [loginRegistration, passwordRecovery, passwordReset, accountSettings, inte
   read("src/app/busquedas-guardadas/page.tsx"),
   read("src/components/SaveSearchButton.tsx"),
   read("src/components/ProviderSuggestionForm.tsx"),
-  read("src/app/admin/page.tsx")
+  read("src/app/admin/page.tsx"),
+  read("src/components/ValidatedSearchForm.tsx")
 ]);
 
 const checks = [
@@ -49,6 +50,7 @@ const checks = [
   [consentSettings.includes("Estado actual") && consentSettings.includes("analyticsConsentChangedEvent"), "El gestor debe mostrar y actualizar la preferencia de consentimiento vigente."],
   [consentMode.includes('readAnalyticsConsent() === "accepted"') && consentMode.includes('analytics_storage: analyticsGranted ? "granted" : "denied"'), "GTM y GA4 deben permanecer denegados hasta recibir consentimiento estadístico."],
   [consentMode.includes("window.__tenloAnalyticsReady = true") && analyticsLibrary.includes("window.__tenloAnalyticsReady === true"), "Los eventos de producto deben esperar a que la etiqueta base de GA4 esté preparada."],
+  [validatedSearchForm.includes("event.preventDefault()") && validatedSearchForm.includes("window.setTimeout(() => form.submit(), 120)"), "Los eventos de búsqueda deben procesarse antes de abandonar la página."],
   [consentLibrary.includes("Max-Age=31536000") && consentLibrary.includes("SameSite=Lax; Secure") && consentLibrary.includes('name === "_ga"'), "La preferencia propia debe ser limitada, segura y retirar cookies de GA al rechazar."],
   [(invitationSetup.match(/autoComplete="new-password"/g) || []).length >= 2, "La activación de invitaciones debe identificar ambos campos de contraseña nueva."],
   [providerSections.includes("href={`tel:${phone}`}"), "La información específica del proveedor debe permitir llamar."],
