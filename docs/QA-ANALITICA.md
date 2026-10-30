@@ -2,7 +2,7 @@
 
 Este procedimiento valida el recorrido completo `navegador -> dataLayer -> GTM -> GA4` y, cuando corresponde, `navegador/servidor -> Supabase`. Debe repetirse antes de cambiar la taxonomía, publicar un flujo crítico o entregar informes a proveedores.
 
-Antes de la prueba de navegador, ejecutar `npm run verify:gtm`. La comprobación descarga el contenedor público y exige paridad exacta entre su activador y los eventos declarados por `TrackingAction`; una etiqueta creada en GTM no basta si el activador omite eventos.
+Antes de la prueba de navegador, ejecutar `npm run verify:gtm`. La comprobación descarga el contenedor público y exige la etiqueta base consentida, el destino GA4 de Tenlo y el activador genérico deshabilitado. Los eventos de `TrackingAction` se envían una sola vez desde la capa central saneada; una entrada en `dataLayer` por sí sola no demuestra recepción en GA4.
 
 ## Fuente de cada evento
 
@@ -63,3 +63,5 @@ Antes de la prueba de navegador, ejecutar `npm run verify:gtm`. La comprobación
 ## Criterio de aprobación
 
 La medición solo se considera operativa cuando rechazo, aceptación, cambio de preferencias, ausencia de PII, ausencia de duplicados y recepción en GA4 se han comprobado en una misma ronda. La creación de etiquetas o la presencia de eventos en `dataLayer` por sí solas no bastan.
+
+Última ronda técnica aprobada: 30/10/2026. En Chrome limpio, el rechazo produjo 0 peticiones Google; con aceptación, la búsqueda `robotica` produjo `search_started`, `search_results_viewed` y `search_zero_results`, con el mismo `search_id`, parámetros agregables y 0 respuestas 4xx. Esta prueba valida el transporte, no representa demanda real del piloto.

@@ -302,7 +302,7 @@ Arquitectura inicial recomendada:
 - [x] Crear un contenedor GTM separado para Tenlo bajo la cuenta gestionada por Javier y publicar su primera versión.
 - [x] Eliminar el ID de GTM hardcodeado y moverlo a configuración por entorno.
 - [x] Implementar en código Consent Mode con almacenamiento analítico/publicitario denegado por defecto y sincronización con la elección propia de Tenlo.
-- [x] Completar la verificación de consentimiento. La prueba limpia del 29/10/2026 confirmó que el rechazo no carga GTM ni Google; la aceptación inicia GTM, crea `_ga` solo después del permiso, activa `page_view` y `provider_profile_viewed`, envía tres peticiones `collect` sin respuestas 4xx y deja ambos eventos visibles en Tiempo real de la propiedad GA4 de Tenlo.
+- [x] Completar la verificación de consentimiento. La prueba limpia del 30/10/2026 confirmó de nuevo que el rechazo deja 0 cargas de GTM, 0 peticiones Google y 0 `collect`; la aceptación crea `_ga` solo después del permiso y envía eventos con parámetros sin respuestas 4xx.
 - [x] Crear el informe base `Tenlo - adquisición, búsqueda y conexiones` en Looker Studio y conectarlo a la propiedad GA4 de Tenlo.
 - [ ] Construir las páginas y gráficos de Looker Studio cuando GA4 confirme recepción de datos. El 29/10/2026 se creó la primera vista funcional con usuarios activos, eventos, vistas, desglose por evento y selector de fechas, acompañada de un aviso visible que identifica los datos actuales como verificación técnica. Faltan adquisición, búsqueda y conexiones cuando exista volumen real; no presentar ceros iniciales como rendimiento del piloto.
 - [x] Resolver el fin de la prueba de Cookiebot sin activar pagos: no existe plan gratuito aplicable a las 446 URL detectadas; se sustituye por consentimiento propio sin coste.
@@ -378,7 +378,7 @@ La persistencia propia, la migración `0024` y el informe privado están despleg
 - [x] Comparar volumen de demanda, cobertura de oferta, engagement, contacto, respuesta y resultado por vertical. El informe une búsquedas cubiertas, fichas publicadas, disponibilidad declarada, impresiones, visitas, contactos, solicitudes, respuestas y conexiones útiles, con denominadores y umbrales visibles.
 - [x] Poder desglosar por municipio, categoría, estado de reclamación, confianza, plan y periodo. `/admin/rendimiento` filtra por los seis cortes, conserva el segmento al cambiar de ventana y obtiene el estado de reclamación desde la tabla privada de fichas profesionales, sin incorporarlo al directorio público.
 - [x] No comparar verticales como si tuvieran la misma frecuencia natural o intención de uso: el informe presenta una lectura operativa alfabética, advierte que no es un ranking y mantiene umbrales mínimos para tasas.
-- [ ] Utilizar GA4 para análisis agregado y la base de datos para el histórico por ficha; un `provider_id` de alta cardinalidad no debe depender exclusivamente de dimensiones personalizadas de GA4.
+- [x] Utilizar GA4 para análisis agregado y la base de datos para el histórico por ficha. La capa central envía dimensiones agregables y Supabase conserva `directory_events`; `provider_id`, `profile_id`, `search_id` y otros identificadores de alta cardinalidad no se registran como dimensiones personalizadas de GA4.
 
 ## P0. Base de usuarios, consentimiento y futura activación de marketing
 
@@ -532,7 +532,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 
 ### Funnel de familias
 
-- [ ] Búsquedas iniciadas y completadas. El informe privado ya muestra búsquedas completadas persistidas; falta confirmar en GA4 los inicios consentidos para comparar ambas poblaciones.
+- [x] Búsquedas iniciadas y completadas. La QA de red del 30/10/2026 confirmó `search_started`, `search_results_viewed` y `search_zero_results` en GA4 con el mismo `search_id`; la base conserva la búsqueda completada saneada para contrastar ambas poblaciones.
 - [x] Porcentaje de búsquedas con resultados, con volumen y denominador visibles en el informe privado de demanda.
 - [x] Resultados medios y fichas vistas por búsqueda, enlazados mediante `search_id` anónimo y sin contar tráfico directo.
 - [x] Tasa de ficha vista a contacto iniciado, calculada sobre búsquedas únicas con ficha vista.
@@ -745,7 +745,7 @@ No iniciar contacto sistemático con proveedores hasta poder marcar:
 - [x] Cola de moderación operativa con acceso restringido a `tenlo_admin` y exportación básica para seguimiento manual.
 - [x] Emails de autenticación funcionando de extremo a extremo en los recorridos probados de alta, invitación y recuperación. `notificaciones.tenlo.es`, DKIM, SPF/CNAME, DMARC y SMTP están activos; las seis plantillas están sincronizadas con el paso seguro `/auth/confirmar` y la recuperación real se validó en móvil el 27/10/2026. Los flujos de cambio de email, acceso mágico y reautenticación se probarán cuando se habiliten en producto.
 - [ ] Política de privacidad y condiciones alineadas con los datos recogidos.
-- [ ] Taxonomía de eventos P0 implantada y validada.
+- [x] Taxonomía de eventos P0 implantada y validada. GTM v6 carga la etiqueta base tras consentimiento, el activador genérico permanece deshabilitado y la capa central envía eventos y parámetros una sola vez; la QA de búsqueda y ficha se contrastó en red el 30/10/2026.
 - [x] Dashboard mínimo en administración para ver colas, vencimientos, solicitudes gestionadas, conexiones útiles y mediana de primera respuesta. Las exportaciones incluyen además el seguimiento y el resultado declarado por la familia.
 - [ ] Informe de búsquedas y rendimiento por ficha validado con datos de prueba.
 - [ ] Base de perfiles con RLS, consentimiento de marketing y proceso de baja probados.
