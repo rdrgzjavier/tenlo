@@ -209,6 +209,7 @@ export function sendTrackingPayload(payload: Record<string, unknown>, onComplete
   if (!hasAnalyticsConsent()) return;
   if (typeof payload.event !== "string") return;
   const { event, event_id, event_timestamp, schema_version, ...params } = payload;
+  const safeParams = Object.fromEntries(sanitizeTrackingEntries(Object.entries(params)));
   let completed = false;
   const completeOnce = () => {
     if (completed) return;
@@ -220,8 +221,13 @@ export function sendTrackingPayload(payload: Record<string, unknown>, onComplete
     event_id,
     event_timestamp,
     schema_version,
-    ...Object.fromEntries(sanitizeTrackingEntries(Object.entries(params))),
-    ...(onComplete ? { eventCallback: completeOnce, eventTimeout: 1_000 } : {})
+    ...safeParams
+  });
+  window.gtag?.("event", event, {
+    event_id,
+    schema_version,
+    ...safeParams,
+    ...(onComplete ? { transport_type: "beacon", event_callback: completeOnce, event_timeout: 1_000 } : {})
   });
   if (onComplete) window.setTimeout(completeOnce, 1_100);
 

@@ -64,7 +64,11 @@ const invalidAnalyticsResponse = await fetch(`${baseUrl}/api/analytics/directory
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ events: [] })
 });
-const invalidAnalyticsOk = invalidAnalyticsResponse.status === 400 || invalidAnalyticsResponse.status === 404;
+const invalidAnalyticsBody = await invalidAnalyticsResponse.json().catch(() => null);
+const invalidAnalyticsOk = invalidAnalyticsResponse.status === 200
+  && invalidAnalyticsBody?.ok === true
+  && invalidAnalyticsBody?.excluded === true
+  && invalidAnalyticsBody?.reason === "consent_required";
 console.log(`${invalidAnalyticsOk ? "OK" : "FAIL"} ${invalidAnalyticsResponse.status} /api/analytics/directory-event · rechazo sin escritura`);
 failed ||= !invalidAnalyticsOk;
 
