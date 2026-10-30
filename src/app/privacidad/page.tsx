@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Política de Privacidad | Tenlo",
-  description: "Información sobre cómo tratamos y protegemos tus datos personales en Tenlo."
+  description: "Información sobre cómo tratamos y protegemos tus datos personales en Tenlo.",
+  robots: { index: false, follow: false }
 };
 
 export default function PrivacyPolicyPage() {
@@ -10,12 +11,13 @@ export default function PrivacyPolicyPage() {
     <div className="section-shell max-w-4xl">
       <h1 className="page-title">Política de Privacidad</h1>
       <p className="lead mt-4">En Tenlo, la privacidad es nuestro pilar fundamental. Esta política explica cómo recogemos, usamos y protegemos la información de las familias y profesionales que utilizan nuestra plataforma.</p>
+      <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold leading-6 text-slatecopy">Documento provisional del piloto. La identidad fiscal y el domicilio del responsable deben completarse antes de abrir el servicio a terceros.</p>
 
       <div className="mt-10 space-y-10 text-base leading-8 text-slatecopy">
         <section>
           <h2 className="text-xl font-bold text-ink">1. Responsable del Tratamiento</h2>
           <p className="mt-4">
-            Identidad: Tenlo (vía [Nombre del Titular])<br />
+            Identidad: proyecto Tenlo; identificación legal completa pendiente antes de la apertura del piloto<br />
             Email: <a href="mailto:solicitudes@tenlo.es" className="font-semibold text-ink">solicitudes@tenlo.es</a>
           </p>
         </section>

@@ -11,6 +11,7 @@ const publicChecks = [
   ["/login", ["Iniciar sesión"]],
   ["/contacto", ["solicitudes@tenlo.es", "mailto:solicitudes@tenlo.es"]],
   ["/privacidad", ["solicitudes@tenlo.es"]],
+  ["/aviso-legal", ["solicitudes@tenlo.es"]],
   ["/auth/confirmar?token_hash=smoke-test&type=recovery&next=/restablecer-contrasena", ["Restablece tu contraseña", "Continuar de forma segura"]],
   ["/sitemap.xml", ["/centros/ceip-agora-boadilla", "/servicios/centro-cultural-volturno-pozuelo"]],
   ["/robots.txt", ["Sitemap: https://tenlo.es/sitemap.xml", "Disallow: /admin/"]],
@@ -25,15 +26,21 @@ const securityHeaders = {
   "permissions-policy": "camera=(), microphone=(), geolocation=()",
   "cross-origin-opener-policy": "same-origin-allow-popups"
 };
+const forbiddenTexts = {
+  "/aviso-legal": ["[Nombre del Titular/Empresa]", "[NIF]", "[Dirección Completa]"],
+  "/privacidad": ["[Nombre del Titular]"]
+};
 
 for (const [path, expectedTexts] of publicChecks) {
   const response = await fetch(`${baseUrl}${path}`, { headers: { "User-Agent": "Tenlo production smoke check" } });
   const body = await response.text();
   const missing = expectedTexts.filter((text) => !body.includes(text));
+  const forbiddenPresent = (forbiddenTexts[path] || []).filter((text) => body.includes(text));
   const missingSecurityHeaders = Object.entries(securityHeaders).filter(([name, value]) => response.headers.get(name) !== value).map(([name]) => name);
+  if (!response.headers.get("strict-transport-security")?.includes("max-age=")) missingSecurityHeaders.push("strict-transport-security");
   const contentTypeOk = path !== "/llms.txt" || response.headers.get("content-type")?.includes("text/markdown");
-  const ok = response.status === 200 && missing.length === 0 && contentTypeOk && missingSecurityHeaders.length === 0;
-  console.log(`${ok ? "OK" : "FAIL"} ${response.status} ${path}${missing.length ? ` · faltan: ${missing.join(", ")}` : ""}${contentTypeOk ? "" : " · Content-Type no es text/markdown"}${missingSecurityHeaders.length ? ` · cabeceras ausentes: ${missingSecurityHeaders.join(", ")}` : ""}`);
+  const ok = response.status === 200 && missing.length === 0 && forbiddenPresent.length === 0 && contentTypeOk && missingSecurityHeaders.length === 0;
+  console.log(`${ok ? "OK" : "FAIL"} ${response.status} ${path}${missing.length ? ` · faltan: ${missing.join(", ")}` : ""}${forbiddenPresent.length ? ` · marcadores provisionales: ${forbiddenPresent.join(", ")}` : ""}${contentTypeOk ? "" : " · Content-Type no es text/markdown"}${missingSecurityHeaders.length ? ` · cabeceras ausentes: ${missingSecurityHeaders.join(", ")}` : ""}`);
   failed ||= !ok;
 }
 

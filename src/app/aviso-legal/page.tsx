@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Aviso Legal | Tenlo",
-  description: "Información legal sobre el uso de la plataforma Tenlo."
+  description: "Información legal sobre el uso de la plataforma Tenlo.",
+  robots: { index: false, follow: false }
 };
 
 export default function LegalNoticePage() {
@@ -10,13 +11,13 @@ export default function LegalNoticePage() {
     <div className="section-shell max-w-4xl">
       <h1 className="page-title">Aviso Legal</h1>
       <p className="lead mt-4">Bienvenido a Tenlo. En cumplimiento de la Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la Información y de Comercio Electrónico (LSSI-CE), se informa a los usuarios de los siguientes datos identificativos.</p>
+      <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold leading-6 text-slatecopy">Documento provisional del piloto. La identidad fiscal y el domicilio del titular deben completarse antes de abrir el servicio a terceros.</p>
 
       <div className="mt-10 space-y-10 text-base leading-8 text-slatecopy">
         <section>
           <h2 className="text-xl font-bold text-ink">1. Datos Identificativos</h2>
           <p className="mt-4">
-            El titular de la plataforma Tenlo es [Nombre del Titular/Empresa], con NIF [NIF] y domicilio en [Dirección Completa]. 
-            Correo electrónico de contacto: <a href="mailto:solicitudes@tenlo.es" className="font-semibold text-ink">solicitudes@tenlo.es</a>.
+            Tenlo se encuentra en fase de preparación del piloto. La identificación legal completa del titular, NIF y domicilio se incorporarán antes de abrir el servicio a terceros. Correo electrónico operativo: <a href="mailto:solicitudes@tenlo.es" className="font-semibold text-ink">solicitudes@tenlo.es</a>.
           </p>
         </section>
 
