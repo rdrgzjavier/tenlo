@@ -16,7 +16,7 @@ export default function PrivacyPolicyPage() {
           <h2 className="text-xl font-bold text-ink">1. Responsable del Tratamiento</h2>
           <p className="mt-4">
             Identidad: Tenlo (vía [Nombre del Titular])<br />
-            Email: <a href="mailto:hola@tenlo.es" className="font-semibold text-ink">hola@tenlo.es</a>
+            Email: <a href="mailto:solicitudes@tenlo.es" className="font-semibold text-ink">solicitudes@tenlo.es</a>
           </p>
         </section>
 
@@ -44,7 +44,7 @@ export default function PrivacyPolicyPage() {
         <section>
           <h2 className="text-xl font-bold text-ink">5. Derechos</h2>
           <p className="mt-4">
-            Puedes ejercer tus derechos de acceso, rectificación, supresión y portabilidad escribiendo a <a href="mailto:hola@tenlo.es" className="font-semibold text-ink">hola@tenlo.es</a>.
+            Puedes ejercer tus derechos de acceso, rectificación, supresión y portabilidad escribiendo a <a href="mailto:solicitudes@tenlo.es" className="font-semibold text-ink">solicitudes@tenlo.es</a>.
           </p>
         </section>
 

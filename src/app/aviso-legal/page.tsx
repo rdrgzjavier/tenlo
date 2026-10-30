@@ -16,7 +16,7 @@ export default function LegalNoticePage() {
           <h2 className="text-xl font-bold text-ink">1. Datos Identificativos</h2>
           <p className="mt-4">
             El titular de la plataforma Tenlo es [Nombre del Titular/Empresa], con NIF [NIF] y domicilio en [Dirección Completa]. 
-            Correo electrónico de contacto: <a href="mailto:hola@tenlo.es" className="font-semibold text-ink">hola@tenlo.es</a>.
+            Correo electrónico de contacto: <a href="mailto:solicitudes@tenlo.es" className="font-semibold text-ink">solicitudes@tenlo.es</a>.
           </p>
         </section>
 

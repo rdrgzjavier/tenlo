@@ -19,8 +19,8 @@ export default function ContactPage() {
           <Mail className="text-ink" size={32} />
           <h2 className="mt-4 text-xl font-bold text-ink">Correo electrónico</h2>
           <p className="mt-2 text-sm text-muted">Nuestro equipo revisa todos los mensajes y responde en un plazo de 24-48 horas laborables.</p>
-          <a href="mailto:hola@tenlo.es" className="mt-6 inline-block text-xl font-bold text-ink underline decoration-lavender underline-offset-4 transition-colors hover:text-lavender">
-            hola@tenlo.es
+          <a href="mailto:solicitudes@tenlo.es" className="mt-6 inline-block text-xl font-bold text-ink underline decoration-lavender underline-offset-4 transition-colors hover:text-lavender">
+            solicitudes@tenlo.es
           </a>
         </div>
 

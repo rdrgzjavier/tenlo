@@ -79,6 +79,6 @@ Referencias públicas:
 
 - Completar la identidad y domicilio del responsable en la política de privacidad.
 - Validar jurídicamente los plazos propuestos y las bases de legitimación por finalidad.
-- Determinar el canal único para derechos y el sustituto si `hola@tenlo.es` no está atendido.
+- Mantener `solicitudes@tenlo.es` como canal único de derechos y soporte mientras su reenvío a la bandeja operativa siga probado y atendido.
 - Aprobar qué actividad cuenta como `actividad significativa`.
 - Decidir si la ejecución de bajas seguirá siendo manual durante el piloto o si se programa una tarea con doble confirmación.

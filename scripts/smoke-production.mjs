@@ -9,6 +9,8 @@ const publicChecks = [
   ["/servicios/boadilla-beone", ["BeOne Boadilla", "href=\"tel:916327361\""]],
   ["/buscar?municipio=Majadahonda", ["Majadahonda"]],
   ["/login", ["Iniciar sesión"]],
+  ["/contacto", ["solicitudes@tenlo.es", "mailto:solicitudes@tenlo.es"]],
+  ["/privacidad", ["solicitudes@tenlo.es"]],
   ["/auth/confirmar?token_hash=smoke-test&type=recovery&next=/restablecer-contrasena", ["Restablece tu contraseña", "Continuar de forma segura"]],
   ["/sitemap.xml", ["/centros/ceip-agora-boadilla", "/servicios/centro-cultural-volturno-pozuelo"]],
   ["/robots.txt", ["Sitemap: https://tenlo.es/sitemap.xml", "Disallow: /admin/"]],
