@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { getActiveSearchContext, hasAnalyticsConsent, sendTrackingPayload, shouldAttachSearchContext, toDataLayerEvent } from "@/lib/analytics";
+import { flushPendingNavigationTrackingEvent, getActiveSearchContext, hasAnalyticsConsent, sendTrackingPayload, shouldAttachSearchContext, toDataLayerEvent } from "@/lib/analytics";
 
 declare global {
   interface Window {
@@ -11,6 +11,9 @@ declare global {
 
 export default function AnalyticsEvents() {
   useEffect(() => {
+    flushPendingNavigationTrackingEvent();
+    window.addEventListener("tenlo:analytics-ready", flushPendingNavigationTrackingEvent);
+
     function pushTrackedEvent(event: Event) {
       if (!hasAnalyticsConsent()) return;
       const target = event.target;
@@ -27,6 +30,7 @@ export default function AnalyticsEvents() {
     document.addEventListener("click", pushTrackedEvent);
     document.addEventListener("submit", pushTrackedEvent);
     return () => {
+      window.removeEventListener("tenlo:analytics-ready", flushPendingNavigationTrackingEvent);
       document.removeEventListener("click", pushTrackedEvent);
       document.removeEventListener("submit", pushTrackedEvent);
     };

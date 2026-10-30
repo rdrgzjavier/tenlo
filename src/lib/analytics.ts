@@ -94,6 +94,7 @@ const emailPattern = /\b[^\s@]+@[^\s@]+\.[^\s@]+\b/i;
 const phonePattern = /(?:\+?34)?[\s.-]*\d(?:[\s.-]*\d){7,}/;
 
 const activeSearchContextKey = "tenlo_active_search_context_v1";
+const pendingNavigationEventKey = "tenlo_pending_navigation_event_v1";
 const analyticsSessionKey = "tenlo_directory_session_id_v1";
 
 type ActiveSearchContext = {
@@ -206,17 +207,11 @@ export function toDataLayerEvent(element: HTMLElement) {
   };
 }
 
-export function sendTrackingPayload(payload: Record<string, unknown>, onComplete?: () => void) {
+export function sendTrackingPayload(payload: Record<string, unknown>) {
   if (!hasAnalyticsConsent()) return;
   if (typeof payload.event !== "string") return;
   const { event, event_id, event_timestamp, schema_version, ...params } = payload;
   const safeParams = Object.fromEntries(sanitizeTrackingEntries(Object.entries(params)));
-  let completed = false;
-  const completeOnce = () => {
-    if (completed) return;
-    completed = true;
-    onComplete?.();
-  };
   window.dataLayer?.push({
     event,
     event_id,
@@ -228,10 +223,8 @@ export function sendTrackingPayload(payload: Record<string, unknown>, onComplete
     send_to: ga4MeasurementId,
     event_id,
     schema_version,
-    ...safeParams,
-    ...(onComplete ? { transport_type: "beacon", event_callback: completeOnce, event_timeout: 1_000 } : {})
+    ...safeParams
   });
-  if (onComplete) window.setTimeout(completeOnce, 1_100);
 
   if (event !== "provider_impression") persistDirectoryEvents([payload]);
 }
@@ -240,8 +233,28 @@ export function pushNavigationTrackingEvent(action: TrackingAction, params: Reco
   if (typeof window === "undefined" || !hasAnalyticsConsent()) return null;
   const searchContext = shouldAttachSearchContext(action) ? getActiveSearchContext() : null;
   const payload = { event: action, ...eventEnvelope(), ...withStableDimensions(params), ...searchContext };
-  sendTrackingPayload(payload, onComplete);
+  try {
+    window.sessionStorage.setItem(pendingNavigationEventKey, JSON.stringify(payload));
+  } catch {
+    // La navegación debe continuar aunque el almacenamiento de sesión esté restringido.
+  }
+  onComplete();
   return payload;
+}
+
+export function flushPendingNavigationTrackingEvent() {
+  if (typeof window === "undefined" || !hasAnalyticsConsent()) return;
+  try {
+    const raw = window.sessionStorage.getItem(pendingNavigationEventKey);
+    if (!raw) return;
+    window.sessionStorage.removeItem(pendingNavigationEventKey);
+    const payload = JSON.parse(raw) as Record<string, unknown>;
+    const recordedAt = typeof payload.event_timestamp === "string" ? Date.parse(payload.event_timestamp) : Number.NaN;
+    if (typeof payload.event !== "string" || !Number.isFinite(recordedAt) || Date.now() - recordedAt > 5 * 60 * 1000) return;
+    sendTrackingPayload(payload);
+  } catch {
+    window.sessionStorage.removeItem(pendingNavigationEventKey);
+  }
 }
 
 export function pushTrackingEvent(action: TrackingAction, params: Record<string, TrackingValue>) {
