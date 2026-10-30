@@ -8,6 +8,7 @@ const moderationStatuses = new Set(["pending_review", "approved", "rejected", "a
 const connectionStatuses = new Set(["submitted", "delivered", "viewed", "responded", "declined", "alternative_requested", "alternative_offered", "closed"]);
 
 type QueueType = "claim" | "connection" | "submission" | "feedback" | "business_profile";
+type SubmissionReviewSnapshot = { submission_type: string; payload: Record<string, unknown>; status: string };
 
 function validStatus(queue: QueueType, status: string) {
   return queue === "connection" ? connectionStatuses.has(status) : moderationStatuses.has(status);
@@ -34,6 +35,7 @@ export async function POST(request: Request) {
 
   let claimBeforeUpdate: { entity_name: string; requester_email: string; status: string } | null = null;
   let businessBeforeUpdate: { business_name: string; contact_email: string | null; owner_id: string; status: string } | null = null;
+  let submissionBeforeUpdate: SubmissionReviewSnapshot | null = null;
   if (body.queue === "claim") {
     const { data, error } = await supabase
       .from("claim_requests")
@@ -65,6 +67,18 @@ export async function POST(request: Request) {
         .maybeSingle();
       businessBeforeUpdate.contact_email = ownerProfile?.contact_email ?? null;
     }
+  }
+  if (body.queue === "submission") {
+    const { data, error } = await supabase
+      .from("submissions")
+      .select("submission_type,payload,status")
+      .eq("id", body.recordId)
+      .maybeSingle();
+    if (error) {
+      console.error("No se pudo consultar la solicitud antes de actualizarla", error);
+      return NextResponse.json({ error: "No hemos podido consultar la solicitud." }, { status: 500 });
+    }
+    submissionBeforeUpdate = data as SubmissionReviewSnapshot | null;
   }
 
   let result;
@@ -142,6 +156,37 @@ export async function POST(request: Request) {
     } catch (error) {
       notificationSent = false;
       console.error("El estado de la ficha se actualizó, pero no se pudo avisar al titular", error);
+    }
+  }
+
+  if (
+    body.queue === "submission" &&
+    submissionBeforeUpdate?.submission_type === "account_deletion" &&
+    submissionBeforeUpdate.status !== body.status &&
+    ["approved", "rejected"].includes(body.status)
+  ) {
+    const payload = submissionBeforeUpdate.payload;
+    const email = typeof payload.email === "string" && /^\S+@\S+\.\S+$/.test(payload.email) ? payload.email : null;
+    const displayName = escapeHtml(typeof payload.display_name === "string" ? payload.display_name : "");
+    const completed = body.status === "approved";
+    if (email) {
+      try {
+        const notification = await sendMail({
+          to: email,
+          subject: completed ? "Tu baja de Tenlo ha sido completada" : "Actualización sobre tu solicitud de baja",
+          html: tenloEmailShell(
+            completed ? "Baja completada" : "La solicitud de baja no se ha completado",
+            completed
+              ? `<p style="margin:0 0 14px;line-height:1.6">${displayName ? `${displayName}, hemos` : "Hemos"} completado la baja solicitada y aplicado la eliminación o anonimización correspondiente.</p><p style="margin:0;line-height:1.6">Si necesitas ejercer otro derecho o pedir aclaraciones, responde a este email.</p>`
+              : `<p style="margin:0 0 14px;line-height:1.6">${displayName ? `${displayName}, no hemos` : "No hemos"} podido completar la baja con la información disponible.</p><p style="margin:0;line-height:1.6">Responde a este email para que podamos revisar el caso contigo.</p>`
+          ),
+          replyTo: ADMIN_EMAIL
+        });
+        notificationSent = notification.sent;
+      } catch (error) {
+        notificationSent = false;
+        console.error("El estado de la baja se actualizó, pero no se pudo avisar a la cuenta", error);
+      }
     }
   }
 

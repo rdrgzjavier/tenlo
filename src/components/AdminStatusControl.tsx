@@ -72,9 +72,9 @@ export default function AdminStatusControl({ queue, recordId, currentStatus, con
       const result = (await response.json()) as { error?: string; notificationSent?: boolean | null };
       if (!response.ok) throw new Error(result.error || "No se pudo actualizar el estado.");
       setFeedback(
-        ["claim", "business_profile"].includes(queue) && ["approved", "rejected"].includes(status)
+        (["claim", "business_profile"].includes(queue) || context === "account_deletion") && ["approved", "rejected"].includes(status)
           ? result.notificationSent
-            ? "Estado actualizado y solicitante avisado por email."
+            ? context === "account_deletion" ? "Estado de la baja actualizado y cuenta avisada por email." : "Estado actualizado y solicitante avisado por email."
             : "Estado actualizado. Revisa manualmente el aviso por email."
           : "Estado actualizado."
       );
