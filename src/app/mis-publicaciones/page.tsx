@@ -19,6 +19,15 @@ function statusLabel(status: string) {
   return "Pendiente de revisión";
 }
 
+function publicationTypeLabel(value: string) {
+  return ({
+    service_offer: "Oferta de servicio",
+    family_resource: "Recurso familiar",
+    community_content: "Contenido de comunidad",
+    informational_profile: "Ficha informativa"
+  } as Record<string, string>)[value] || "Publicación";
+}
+
 export default async function MyPublicationsPage() {
   if (!hasSupabaseServerConfig()) return <PrivateAreaUnavailable />;
 
@@ -33,6 +42,7 @@ export default async function MyPublicationsPage() {
       .from("submissions")
       .select("id,submission_type,status,review_notes,created_at,payload")
       .eq("user_id", user.id)
+      .neq("submission_type", "account_deletion")
       .order("created_at", { ascending: false }),
     supabase
       .from("business_profiles")
@@ -80,7 +90,7 @@ export default async function MyPublicationsPage() {
                     <div>
                       <span className="chip">{statusLabel(submission.status)}</span>
                       <h2 className="mt-4 text-xl font-bold text-slatecopy">{title}</h2>
-                      <p className="mt-2 text-sm leading-6 text-muted">Tipo: {submission.submission_type}</p>
+                      <p className="mt-2 text-sm leading-6 text-muted">Tipo: {publicationTypeLabel(submission.submission_type)}</p>
                     </div>
                     <Link href="/publicar" className="btn-secondary">Publicar otra oferta</Link>
                   </div>
