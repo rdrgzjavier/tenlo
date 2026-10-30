@@ -61,6 +61,7 @@ export type TrackingAction =
   | "profile_submitted";
 
 export const analyticsSchemaVersion = "1.0";
+const ga4MeasurementId = process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID || "G-FDTX9QB5EG";
 const internalTrafficCookie = "tenlo_internal_traffic=1";
 
 type TrackingValue = string | number | boolean | undefined;
@@ -224,6 +225,7 @@ export function sendTrackingPayload(payload: Record<string, unknown>, onComplete
     ...safeParams
   });
   window.gtag?.("event", event, {
+    send_to: ga4MeasurementId,
     event_id,
     schema_version,
     ...safeParams,

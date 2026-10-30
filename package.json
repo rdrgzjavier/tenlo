@@ -13,7 +13,7 @@
     "verify:migrations": "node scripts/verify-migrations.mjs",
     "verify:gtm": "node --use-system-ca scripts/verify-gtm-contract.mjs",
     "verify:ui": "node scripts/verify-ui-contracts.mjs",
-    "verify:production": "node scripts/smoke-production.mjs"
+    "verify:production": "node --use-system-ca scripts/smoke-production.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
