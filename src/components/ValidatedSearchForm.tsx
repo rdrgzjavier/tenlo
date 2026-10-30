@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, ReactNode, useId, useState } from "react";
-import { pushTrackingEvent } from "@/lib/analytics";
+import { pushNavigationTrackingEvent } from "@/lib/analytics";
 
 type ValidatedSearchFormProps = {
   action?: string;
@@ -44,18 +44,16 @@ export default function ValidatedSearchForm({
       }
       searchIdInput.value = searchId;
       const activeFields = Array.from(data.entries()).filter(([, value]) => String(value).trim().length > 0);
-      const trackedEvent = pushTrackingEvent(trackingEvent, {
+      event.preventDefault();
+      const trackedEvent = pushNavigationTrackingEvent(trackingEvent, {
         search_id: searchId,
         placement: trackingPlacement,
         category: String(data.get("categoria") ?? "") || undefined,
         municipality: String(data.get("municipio") ?? "") || undefined,
         filter_count: activeFields.length,
         has_keyword: Boolean(String(data.get("tag") ?? data.get("q") ?? "").trim())
-      });
-      if (trackedEvent) {
-        event.preventDefault();
-        window.setTimeout(() => form.submit(), 120);
-      }
+      }, () => form.submit());
+      if (!trackedEvent) form.submit();
     }
   }
 

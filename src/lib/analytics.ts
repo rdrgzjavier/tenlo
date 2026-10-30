@@ -205,19 +205,35 @@ export function toDataLayerEvent(element: HTMLElement) {
   };
 }
 
-export function sendTrackingPayload(payload: Record<string, unknown>) {
+export function sendTrackingPayload(payload: Record<string, unknown>, onComplete?: () => void) {
   if (!hasAnalyticsConsent()) return;
   if (typeof payload.event !== "string") return;
   const { event, event_id, event_timestamp, schema_version, ...params } = payload;
+  let completed = false;
+  const completeOnce = () => {
+    if (completed) return;
+    completed = true;
+    onComplete?.();
+  };
   window.dataLayer?.push({
     event,
     event_id,
     event_timestamp,
     schema_version,
-    ...Object.fromEntries(sanitizeTrackingEntries(Object.entries(params)))
+    ...Object.fromEntries(sanitizeTrackingEntries(Object.entries(params))),
+    ...(onComplete ? { eventCallback: completeOnce, eventTimeout: 1_000 } : {})
   });
+  if (onComplete) window.setTimeout(completeOnce, 1_100);
 
   if (event !== "provider_impression") persistDirectoryEvents([payload]);
+}
+
+export function pushNavigationTrackingEvent(action: TrackingAction, params: Record<string, TrackingValue>, onComplete: () => void) {
+  if (typeof window === "undefined" || !hasAnalyticsConsent()) return null;
+  const searchContext = shouldAttachSearchContext(action) ? getActiveSearchContext() : null;
+  const payload = { event: action, ...eventEnvelope(), ...withStableDimensions(params), ...searchContext };
+  sendTrackingPayload(payload, onComplete);
+  return payload;
 }
 
 export function pushTrackingEvent(action: TrackingAction, params: Record<string, TrackingValue>) {
