@@ -15,6 +15,7 @@ type AccountSettingsProps = {
   marketingConsent: boolean;
   marketingConsentAt?: string | null;
   marketingConsentWithdrawnAt?: string | null;
+  deletionRequest?: { status: string; createdAt: string } | null;
 };
 
 function statusLabel(status: string) {
@@ -34,6 +35,13 @@ function roleLabel(role: string) {
   return "Cuenta Tenlo";
 }
 
+function deletionStatusLabel(status: string) {
+  if (["draft", "pending_review"].includes(status)) return "Pendiente de revisión";
+  if (status === "approved") return "Baja completada";
+  if (status === "rejected") return "No procede";
+  return "Archivada";
+}
+
 function normalizePublicName(value: string) {
   return value.trim().replace(/\s+/g, " ").toLowerCase();
 }
@@ -43,7 +51,7 @@ function isValidPublicName(value: string) {
   return normalized.length >= 3 && normalized.length <= 40 && /^[\p{L}\p{N} ._-]+$/u.test(normalized);
 }
 
-export default function AccountSettings({ email, displayName, role, status, municipality, marketingConsent, marketingConsentAt, marketingConsentWithdrawnAt }: AccountSettingsProps) {
+export default function AccountSettings({ email, displayName, role, status, municipality, marketingConsent, marketingConsentAt, marketingConsentWithdrawnAt, deletionRequest }: AccountSettingsProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
   const [currentPassword, setCurrentPassword] = useState("");
@@ -212,6 +220,7 @@ export default function AccountSettings({ email, displayName, role, status, muni
 
     setDeleteConfirm("");
     setMessage(result.alreadyRequested ? "Ya tienes una solicitud de baja pendiente de revisión." : "Solicitud de borrado recibida. El equipo de Tenlo la revisará antes de eliminar o anonimizar datos asociados.");
+    router.refresh();
   }
 
   async function handleMarketingUpdate(event: FormEvent<HTMLFormElement>) {
@@ -364,7 +373,15 @@ export default function AccountSettings({ email, displayName, role, status, muni
           </button>
         </div>
         <p className="mt-3 text-xs leading-5 text-muted">La descarga se genera en el momento, requiere tu sesión activa y no se almacena en el navegador de Tenlo.</p>
-        <form className="mt-6 rounded-2xl border border-coral/20 bg-coral/5 p-4" onSubmit={handleDeleteRequest}>
+        {deletionRequest ? <div className="mt-6 rounded-2xl border border-line bg-soft p-4 text-sm leading-6 text-slatecopy" role="status">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <strong className="text-ink">Solicitud de baja</strong>
+            <span className="chip">{deletionStatusLabel(deletionRequest.status)}</span>
+          </div>
+          <p className="mt-2">Registrada el {new Intl.DateTimeFormat("es-ES", { dateStyle: "medium", timeStyle: "short" }).format(new Date(deletionRequest.createdAt))}.</p>
+          {["draft", "pending_review"].includes(deletionRequest.status) ? <p className="mt-1">No necesitas enviarla otra vez. Te comunicaremos por email cuando termine la revisión.</p> : null}
+        </div> : null}
+        {!deletionRequest || ["rejected", "archived"].includes(deletionRequest.status) ? <form className="mt-6 rounded-2xl border border-coral/20 bg-coral/5 p-4" onSubmit={handleDeleteRequest}>
           <h3 className="minor-title">Solicitar borrado de cuenta</h3>
           <p className="mt-2 text-sm leading-6 text-muted">
             Para proteger la trazabilidad de publicaciones y revisiones, el equipo de Tenlo revisa la baja antes de eliminar o anonimizar datos asociados.
@@ -377,7 +394,7 @@ export default function AccountSettings({ email, displayName, role, status, muni
             <Trash2 size={18} aria-hidden />
             {loading === "delete" ? "Enviando..." : "Solicitar borrado"}
           </button>
-        </form>
+        </form> : null}
       </section>
     </div>
   );

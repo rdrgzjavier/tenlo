@@ -61,6 +61,14 @@ export default async function AccountDataPage() {
   }
 
   const displayName = profile?.public_name ?? profile?.display_name ?? user.email?.split("@")[0] ?? "Usuario Tenlo";
+  const { data: deletionRequest } = await supabase
+    .from("submissions")
+    .select("status,created_at")
+    .eq("user_id", user.id)
+    .eq("submission_type", "account_deletion")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
 
   return (
     <div className="section-shell">
@@ -78,6 +86,7 @@ export default async function AccountDataPage() {
           marketingConsent={profile?.marketing_consent ?? false}
           marketingConsentAt={profile?.marketing_consent_at}
           marketingConsentWithdrawnAt={profile?.marketing_consent_withdrawn_at}
+          deletionRequest={deletionRequest ? { status: deletionRequest.status, createdAt: deletionRequest.created_at } : null}
         />
         {profile?.role === "tenlo_admin" ? <InternalAnalyticsControl /> : null}
       </div>

@@ -42,7 +42,7 @@ const statusOptions: Record<QueueType, Array<{ value: string; label: string }>> 
   ]
 };
 
-export default function AdminStatusControl({ queue, recordId, currentStatus }: { queue: QueueType; recordId: string; currentStatus: string }) {
+export default function AdminStatusControl({ queue, recordId, currentStatus, context }: { queue: QueueType; recordId: string; currentStatus: string; context?: "account_deletion" }) {
   const router = useRouter();
   const [status, setStatus] = useState(currentStatus);
   const [pending, setPending] = useState(false);
@@ -50,6 +50,14 @@ export default function AdminStatusControl({ queue, recordId, currentStatus }: {
   const [informationRequest, setInformationRequest] = useState("");
   const [messagePending, setMessagePending] = useState(false);
   const [messageFeedback, setMessageFeedback] = useState("");
+  const options = context === "account_deletion"
+    ? [
+        { value: "pending_review", label: "Pendiente de revisión" },
+        { value: "approved", label: "Baja completada" },
+        { value: "rejected", label: "No procede" },
+        { value: "archived", label: "Archivada" }
+      ]
+    : statusOptions[queue];
 
   async function updateStatus() {
     if (status === currentStatus) return;
@@ -106,13 +114,13 @@ export default function AdminStatusControl({ queue, recordId, currentStatus }: {
 
   return (
     <div className="mt-3 border-t border-line pt-3">
-      <label className="text-xs font-bold text-ink" htmlFor={`${queue}-${recordId}`}>{queue === "feedback" ? "Resultado de la revisión" : "Estado operativo"}</label>
+      <label className="text-xs font-bold text-ink" htmlFor={`${queue}-${recordId}`}>{context === "account_deletion" ? "Estado de la baja" : queue === "feedback" ? "Resultado de la revisión" : "Estado operativo"}</label>
       <div className="mt-1.5 flex flex-col gap-2 sm:flex-row">
         <select id={`${queue}-${recordId}`} className="min-h-11 flex-1 rounded-xl border border-line bg-white px-3 text-sm text-ink" value={status} onChange={(event) => setStatus(event.target.value)} disabled={pending}>
-          {statusOptions[queue].map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+          {options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
         </select>
         <button type="button" className="btn-secondary min-h-11 px-4 py-2 text-sm" onClick={updateStatus} disabled={pending || status === currentStatus}>
-          {pending ? "Guardando…" : queue === "feedback" ? "Actualizar estado" : "Guardar"}
+          {pending ? "Guardando…" : queue === "feedback" || context === "account_deletion" ? "Actualizar estado" : "Guardar"}
         </button>
       </div>
       {feedback ? <p className="mt-2 text-xs text-muted" role="status">{feedback}</p> : null}
