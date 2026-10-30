@@ -16,6 +16,7 @@ type ImageWithFallbackProps = {
 export default function ImageWithFallback({ src, fallbackSrc, alt, className, illustrative = false, wrapperClassName = "", loading = "lazy", fetchPriority }: ImageWithFallbackProps) {
   const [currentSrc, setCurrentSrc] = useState(src ?? fallbackSrc);
   const priorityProps = fetchPriority ? { fetchPriority } : {};
+  const localFallbackSrc = "/images/cards/servicio-familiar.svg";
 
   const image = (
     <img
@@ -27,6 +28,7 @@ export default function ImageWithFallback({ src, fallbackSrc, alt, className, il
       decoding="async"
       onError={() => {
         if (currentSrc !== fallbackSrc) setCurrentSrc(fallbackSrc);
+        else if (currentSrc !== localFallbackSrc) setCurrentSrc(localFallbackSrc);
       }}
     />
   );
