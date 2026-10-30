@@ -129,6 +129,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Verificar que Cloudflare marque la zona como activa y que la resolución pública use `david.ns.cloudflare.com` y `norah.ns.cloudflare.com`.
 - [x] Sustituir `kiryco.vercel.app` en configuración, metadata, emails, sitemap y enlaces absolutos.
 - [x] Verificar SSL, sitemap, robots, canonical y Open Graph en el dominio definitivo: HTTPS y HSTS activos, rutas públicas con respuesta `200` y metadata generada desde `https://tenlo.es`.
+- [x] Aplicar y verificar cabeceras globales compatibles con Auth, Turnstile y analítica: `nosniff`, protección frente a framing, política de referencia, permisos de cámara/micrófono/geolocalización, aislamiento compatible con popups y HSTS. CSP queda como endurecimiento separado porque exige inventariar y probar todos los orígenes externos antes de bloquearlos.
 - [x] Añadir una comprobación automática en GitHub para `typecheck`, `lint` y `build` en cada cambio mediante `.github/workflows/quality.yml`, con permisos de solo lectura y cancelación de ejecuciones obsoletas.
 - [ ] Decidir si los previews deben permanecer protegidos y mantener producción pública.
 

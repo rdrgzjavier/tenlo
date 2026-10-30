@@ -61,6 +61,7 @@ export default function AdminStatusControl({ queue, recordId, currentStatus, con
 
   async function updateStatus() {
     if (status === currentStatus) return;
+    if (context === "account_deletion" && status === "approved" && !window.confirm("Confirma que la eliminación o anonimización ya se ha completado. Esta acción enviará el email de cierre a la cuenta.")) return;
     setPending(true);
     setFeedback("");
     try {

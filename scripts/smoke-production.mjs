@@ -16,14 +16,22 @@ const publicChecks = [
 ];
 
 let failed = false;
+const securityHeaders = {
+  "x-content-type-options": "nosniff",
+  "x-frame-options": "SAMEORIGIN",
+  "referrer-policy": "strict-origin-when-cross-origin",
+  "permissions-policy": "camera=(), microphone=(), geolocation=()",
+  "cross-origin-opener-policy": "same-origin-allow-popups"
+};
 
 for (const [path, expectedTexts] of publicChecks) {
   const response = await fetch(`${baseUrl}${path}`, { headers: { "User-Agent": "Tenlo production smoke check" } });
   const body = await response.text();
   const missing = expectedTexts.filter((text) => !body.includes(text));
+  const missingSecurityHeaders = Object.entries(securityHeaders).filter(([name, value]) => response.headers.get(name) !== value).map(([name]) => name);
   const contentTypeOk = path !== "/llms.txt" || response.headers.get("content-type")?.includes("text/markdown");
-  const ok = response.status === 200 && missing.length === 0 && contentTypeOk;
-  console.log(`${ok ? "OK" : "FAIL"} ${response.status} ${path}${missing.length ? ` · faltan: ${missing.join(", ")}` : ""}${contentTypeOk ? "" : " · Content-Type no es text/markdown"}`);
+  const ok = response.status === 200 && missing.length === 0 && contentTypeOk && missingSecurityHeaders.length === 0;
+  console.log(`${ok ? "OK" : "FAIL"} ${response.status} ${path}${missing.length ? ` · faltan: ${missing.join(", ")}` : ""}${contentTypeOk ? "" : " · Content-Type no es text/markdown"}${missingSecurityHeaders.length ? ` · cabeceras ausentes: ${missingSecurityHeaders.join(", ")}` : ""}`);
   failed ||= !ok;
 }
 
