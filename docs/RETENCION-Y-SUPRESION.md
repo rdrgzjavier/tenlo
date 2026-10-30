@@ -43,6 +43,7 @@ Referencias públicas:
 
 1. La persona solicita la baja desde `Datos de cuenta` o por el canal publicado.
 2. Tenlo crea una única tarea administrativa y envía acuse de recibo, sin ejecutar un borrado irreversible desde el navegador.
+   La persona puede consultar el estado desde `Datos de cuenta`; mientras esté pendiente no puede duplicar la solicitud.
 3. El administrador verifica que la solicitud corresponde a la cuenta autenticada. Si llegó por email, pide la mínima verificación necesaria.
 4. Se revisan relaciones: favoritos, publicaciones, proveedores reclamados, solicitudes de contacto, feedback, notas, consentimientos y posibles expedientes abiertos.
 5. Se decide por conjunto de datos entre:
@@ -52,11 +53,12 @@ Referencias públicas:
 6. Se elimina la cuenta de Auth al final, después de desvincular o anonimizar las relaciones que lo requieran.
 7. Se registra en la auditoría únicamente: solicitud, responsable, fecha, conjuntos tratados, resultado y excepciones. No se copia el contenido eliminado.
 8. Se confirma la finalización a la persona y se cierra la tarea.
+   En el backoffice, `Baja completada` se selecciona solo después de ejecutar los pasos anteriores; el cambio no elimina datos por sí mismo y envía el email de cierre. `No procede` también genera un aviso para poder revisar el caso.
 9. Si se restaura una copia anterior, se consulta el registro de supresiones y se repiten las eliminaciones antes de reabrir el servicio.
 
 ## Requisitos técnicos antes de automatizar
 
-- Añadir a `profiles` las fechas `last_meaningful_activity_at`, `deletion_requested_at`, `deletion_completed_at` y un estado de cuenta limitado por `check`.
+- `last_significant_activity_at` ya registra la actividad operativa. Antes de automatizar, añadir fechas específicas `deletion_requested_at` y `deletion_completed_at` y un estado de ciclo de vida separado del estado de moderación.
 - Crear un registro de supresión separado, sin contenido original, accesible solo a `tenlo_admin`.
 - Definir una función o tarea programada que seleccione candidatos, pero que no elimine cuentas con expedientes abiertos.
 - Eliminar primero PII y texto libre; ejecutar los agregados estadísticos antes de borrar el detalle.

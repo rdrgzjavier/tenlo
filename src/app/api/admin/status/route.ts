@@ -8,7 +8,7 @@ const moderationStatuses = new Set(["pending_review", "approved", "rejected", "a
 const connectionStatuses = new Set(["submitted", "delivered", "viewed", "responded", "declined", "alternative_requested", "alternative_offered", "closed"]);
 
 type QueueType = "claim" | "connection" | "submission" | "feedback" | "business_profile";
-type SubmissionReviewSnapshot = { submission_type: string; payload: Record<string, unknown>; status: string };
+type SubmissionReviewSnapshot = { submission_type: string; payload: Record<string, unknown>; status: string; user_id: string | null; contact_email?: string | null };
 
 function validStatus(queue: QueueType, status: string) {
   return queue === "connection" ? connectionStatuses.has(status) : moderationStatuses.has(status);
@@ -71,7 +71,7 @@ export async function POST(request: Request) {
   if (body.queue === "submission") {
     const { data, error } = await supabase
       .from("submissions")
-      .select("submission_type,payload,status")
+      .select("submission_type,payload,status,user_id")
       .eq("id", body.recordId)
       .maybeSingle();
     if (error) {
@@ -79,6 +79,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No hemos podido consultar la solicitud." }, { status: 500 });
     }
     submissionBeforeUpdate = data as SubmissionReviewSnapshot | null;
+    if (submissionBeforeUpdate?.user_id && submissionBeforeUpdate.submission_type !== "account_deletion") {
+      const { data: ownerProfile } = await supabase
+        .from("profiles")
+        .select("contact_email")
+        .eq("id", submissionBeforeUpdate.user_id)
+        .maybeSingle();
+      submissionBeforeUpdate.contact_email = ownerProfile?.contact_email ?? null;
+    }
   }
 
   let result;
@@ -186,6 +194,39 @@ export async function POST(request: Request) {
       } catch (error) {
         notificationSent = false;
         console.error("El estado de la baja se actualizó, pero no se pudo avisar a la cuenta", error);
+      }
+    }
+  }
+
+  if (
+    body.queue === "submission" &&
+    submissionBeforeUpdate &&
+    submissionBeforeUpdate.submission_type !== "account_deletion" &&
+    submissionBeforeUpdate.status !== body.status &&
+    ["approved", "rejected"].includes(body.status)
+  ) {
+    const payload = submissionBeforeUpdate.payload;
+    const payloadContact = typeof payload.contact === "string" && /^\S+@\S+\.\S+$/.test(payload.contact) ? payload.contact : null;
+    const email = submissionBeforeUpdate.contact_email || payloadContact;
+    const title = escapeHtml(typeof payload.title === "string" ? payload.title : "tu publicación");
+    const approved = body.status === "approved";
+    if (email) {
+      try {
+        const notification = await sendMail({
+          to: email,
+          subject: approved ? "Tu publicación de Tenlo ha sido aprobada" : "Actualización sobre tu publicación en Tenlo",
+          html: tenloEmailShell(
+            approved ? "Publicación aprobada" : "La publicación necesita una nueva revisión",
+            approved
+              ? `<p style="margin:0 0 14px;line-height:1.6">Hemos aprobado <strong>${title}</strong>.</p><p style="margin:0;line-height:1.6">El equipo de Tenlo mantiene la revisión editorial y la información de confianza separadas. Te avisaremos si necesitamos actualizar algún dato.</p>`
+              : `<p style="margin:0 0 14px;line-height:1.6">No hemos podido aprobar por ahora <strong>${title}</strong>.</p><p style="margin:0;line-height:1.6">Responde a este email si quieres aportar información o corregir los datos para que podamos revisarla de nuevo.</p>`
+          ),
+          replyTo: ADMIN_EMAIL
+        });
+        notificationSent = notification.sent;
+      } catch (error) {
+        notificationSent = false;
+        console.error("El estado de la publicación se actualizó, pero no se pudo avisar a la cuenta", error);
       }
     }
   }

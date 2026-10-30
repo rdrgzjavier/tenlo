@@ -388,7 +388,7 @@ export default async function AdminPage() {
               </details>
               <p className="mt-2 text-xs text-muted">{dateLabel(submission.created_at)}</p>
               <AdminNotes queue="submission" recordId={submission.id} notes={notesFor("submission", submission.id)} />
-              <AdminStatusControl queue="submission" recordId={submission.id} currentStatus={submission.status} context={isAccountDeletion ? "account_deletion" : undefined} />
+              <AdminStatusControl queue="submission" recordId={submission.id} currentStatus={submission.status} context={isAccountDeletion ? "account_deletion" : "publication"} />
             </article>;
           }) : <p className="text-sm text-muted">No hay publicaciones ni bajas pendientes.</p>}
         </QueueSection>
