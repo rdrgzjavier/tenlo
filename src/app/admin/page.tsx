@@ -59,6 +59,17 @@ function payloadText(payload: Record<string, unknown>, key: string, fallback = "
   return typeof value === "string" && value.trim() ? value : fallback;
 }
 
+function submissionTypeLabel(value: string) {
+  const labels: Record<string, string> = {
+    account_deletion: "Baja de cuenta",
+    service_offer: "Oferta de servicio",
+    family_resource: "Recurso familiar",
+    community_content: "Contenido de comunidad",
+    informational_profile: "Ficha informativa"
+  };
+  return labels[value] || value;
+}
+
 function listLabel(value: unknown, fallback = "No indicado") {
   return Array.isArray(value) && value.every((item) => typeof item === "string") && value.length
     ? value.join(", ")
@@ -344,22 +355,34 @@ export default async function AdminPage() {
         </QueueSection>
 
         <QueueSection title="Publicaciones y bajas" count={submissions.length} Icon={Inbox}>
+          <div className="rounded-2xl border border-line bg-white p-4 text-sm leading-6 text-slatecopy">
+            <strong className="text-ink">Cómo gestionar las bajas</strong>
+            <p className="mt-1">Comprueba la identidad y el alcance, anota la actuación y marca como Aprobada solo después de completar la eliminación o anonimización según el procedimiento. Cambiar el estado no borra la cuenta automáticamente.</p>
+          </div>
           {submissions.length ? submissions.map((submission) => {
             const payload = recordPayload(submission.payload);
+            const isAccountDeletion = submission.submission_type === "account_deletion";
             return <article key={submission.id} className="rounded-2xl border border-line bg-soft p-4 text-sm">
-              <div className="flex flex-wrap items-center justify-between gap-2"><strong className="text-ink">{payloadText(payload, "title", "Publicación sin título")}</strong><span className="chip">{moderationStatusLabel(submission.status)}</span></div>
+              <div className="flex flex-wrap items-center justify-between gap-2"><strong className="text-ink">{isAccountDeletion ? "Solicitud de baja de cuenta" : payloadText(payload, "title", "Publicación sin título")}</strong><span className="chip">{moderationStatusLabel(submission.status)}</span></div>
               <div className="mt-2"><PriorityFlag visible={overdueSubmissions.some((item) => item.id === submission.id)} label="Más de 4 días laborables" /></div>
-              <p className="mt-3 line-clamp-3 leading-6 text-slatecopy">{payloadText(payload, "description", "No se añadió una descripción.")}</p>
-              <p className="mt-2 text-muted">{payloadText(payload, "category")} · {payloadText(payload, "municipality")}</p>
+              <p className="mt-3 line-clamp-3 leading-6 text-slatecopy">{isAccountDeletion ? `Cuenta: ${payloadText(payload, "display_name", "Sin nombre público")}` : payloadText(payload, "description", "No se añadió una descripción.")}</p>
+              <p className="mt-2 text-muted">{isAccountDeletion ? payloadText(payload, "email", "Email no disponible") : `${payloadText(payload, "category")} · ${payloadText(payload, "municipality")}`}</p>
               <details className="mt-4 rounded-xl border border-line bg-white p-3">
-                <summary className="cursor-pointer font-bold text-ink">Ver datos de publicación</summary>
+                <summary className="cursor-pointer font-bold text-ink">{isAccountDeletion ? "Ver datos de la solicitud" : "Ver datos de publicación"}</summary>
                 <dl className="mt-3 grid gap-2 text-xs text-muted">
-                  <div><dt className="inline font-bold text-ink">Tipo: </dt><dd className="inline">{submission.submission_type}</dd></div>
-                  <div><dt className="inline font-bold text-ink">Centro: </dt><dd className="inline">{payloadText(payload, "center")}</dd></div>
-                  <div><dt className="inline font-bold text-ink">Edad: </dt><dd className="inline">{payloadText(payload, "recommended_age")}</dd></div>
-                  <div><dt className="inline font-bold text-ink">Precio: </dt><dd className="inline">{payloadText(payload, "price")}</dd></div>
-                  <div><dt className="inline font-bold text-ink">Contacto: </dt><dd className="inline break-all">{payloadText(payload, "contact")}</dd></div>
-                  <div><dt className="inline font-bold text-ink">Fuente: </dt><dd className="inline">{payloadText(payload, "source")}</dd></div>
+                  <div><dt className="inline font-bold text-ink">Tipo: </dt><dd className="inline">{submissionTypeLabel(submission.submission_type)}</dd></div>
+                  {isAccountDeletion ? <>
+                    <div><dt className="inline font-bold text-ink">Cuenta: </dt><dd className="inline">{payloadText(payload, "display_name", "Sin nombre público")}</dd></div>
+                    <div><dt className="inline font-bold text-ink">Email: </dt><dd className="inline break-all">{payloadText(payload, "email", "No disponible")}</dd></div>
+                    <div><dt className="inline font-bold text-ink">Origen: </dt><dd className="inline">{payloadText(payload, "requested_from", "Datos de cuenta")}</dd></div>
+                    <div><dt className="inline font-bold text-ink">Referencia interna: </dt><dd className="inline break-all">{submission.id}</dd></div>
+                  </> : <>
+                    <div><dt className="inline font-bold text-ink">Centro: </dt><dd className="inline">{payloadText(payload, "center")}</dd></div>
+                    <div><dt className="inline font-bold text-ink">Edad: </dt><dd className="inline">{payloadText(payload, "recommended_age")}</dd></div>
+                    <div><dt className="inline font-bold text-ink">Precio: </dt><dd className="inline">{payloadText(payload, "price")}</dd></div>
+                    <div><dt className="inline font-bold text-ink">Contacto: </dt><dd className="inline break-all">{payloadText(payload, "contact")}</dd></div>
+                    <div><dt className="inline font-bold text-ink">Fuente: </dt><dd className="inline">{payloadText(payload, "source")}</dd></div>
+                  </>}
                   {submission.review_notes ? <div><dt className="inline font-bold text-ink">Notas de revisión: </dt><dd className="inline">{submission.review_notes}</dd></div> : null}
                 </dl>
               </details>

@@ -404,7 +404,7 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
   - [x] fuente, medio, campaña y landing de adquisición; `0031` los persiste desde valores saneados, sin query string, término buscado ni referrer completo;
   - [x] estado de onboarding; `0031` separa activación operativa de la moderación de la cuenta;
   - [x] fecha de última actividad significativa; `0033` la actualiza sin conceder escritura directa al guardar una ficha profesional, gestionar favoritos, enviar una publicación o solicitar contacto;
-  - [ ] estado de cuenta, baja y solicitud de eliminación.
+  - [x] estado de cuenta, baja y solicitud de eliminación; Datos de cuenta muestra el estado, permite pedir la baja con confirmación explícita y evita solicitudes pendientes duplicadas. La ejecución final de supresión sigue separada como tarea administrativa y jurídica.
 - [x] Permitir que la persona consulte sus datos, corrija municipio, contraseña y consentimiento, descargue una copia privada en JSON y solicite su eliminación. La exportación `1.2` incluye perfil, fichas profesionales, favoritos, búsquedas guardadas, publicaciones, solicitudes, reclamaciones, historial de consentimiento e historial de búsquedas asociado a la cuenta. La ejecución administrativa de borrado/anonimización sigue el procedimiento pendiente de gobierno del dato.
 - [x] Evitar recoger nombres de menores, clase, horarios, fecha de nacimiento u otros datos sensibles en el registro.
 - [x] No hacer público el centro, email, municipio o intereses de una familia por defecto; `profiles` solo es legible por su titular.
