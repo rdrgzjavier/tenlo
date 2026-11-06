@@ -6,7 +6,7 @@ const images = {
   nursery: "https://images.unsplash.com/photo-1544253386-89d1b7642674?auto=format&fit=crop&w=1200&q=80",
   sport: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80",
   activity: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80",
-  birthday: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80",
+  birthday: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80",
   books: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1200&q=80",
   uniform: "https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&w=1200&q=80",
   service: "https://images.unsplash.com/photo-1581578731522-aa0bd3a67d28?auto=format&fit=crop&w=1200&q=80",
