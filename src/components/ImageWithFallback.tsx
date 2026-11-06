@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type ImageWithFallbackProps = {
   src?: string;
@@ -19,18 +19,18 @@ export default function ImageWithFallback({ src, fallbackSrc, alt, className, il
   const priorityProps = fetchPriority ? { fetchPriority } : {};
   const localFallbackSrc = "/images/cards/servicio-familiar.svg";
 
-  function useNextFallback() {
+  const advanceFallback = useCallback(() => {
     setCurrentSrc((current) => {
       if (current !== fallbackSrc) return fallbackSrc;
       if (current !== localFallbackSrc) return localFallbackSrc;
       return current;
     });
-  }
+  }, [fallbackSrc]);
 
   useEffect(() => {
     const image = imageRef.current;
-    if (image?.complete && image.naturalWidth === 0) useNextFallback();
-  }, [currentSrc, fallbackSrc]);
+    if (image?.complete && image.naturalWidth === 0) advanceFallback();
+  }, [currentSrc, advanceFallback]);
 
   const image = (
     <img
@@ -41,7 +41,7 @@ export default function ImageWithFallback({ src, fallbackSrc, alt, className, il
       className={className}
       loading={loading}
       decoding="async"
-      onError={useNextFallback}
+      onError={advanceFallback}
     />
   );
 

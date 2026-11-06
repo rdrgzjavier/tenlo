@@ -16,7 +16,7 @@ export default function ConsentBanner() {
   const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
 
   useEffect(() => {
-    setOpen(readAnalyticsConsent() === null);
+    queueMicrotask(() => setOpen(readAnalyticsConsent() === null));
     const openSettings = () => {
       setAnalyticsEnabled(readAnalyticsConsent() === "accepted");
       setShowSettings(true);

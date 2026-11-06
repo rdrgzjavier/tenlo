@@ -170,9 +170,12 @@ export default async function AdminProvidersPage({ searchParams }: { searchParam
   const profiles = (profilesResult.data ?? []) as ProviderProfile[];
   const ownerIds = new Set(businesses.flatMap((profile) => profile.owner_id ? [profile.owner_id] : []));
   const providerAccounts = profiles.filter((profile) => providerRoles.has(profile.role) && ownerIds.has(profile.id));
-  const active30OwnerIds = new Set(providerAccounts.filter((profile) => profile.last_significant_activity_at && new Date(profile.last_significant_activity_at).getTime() >= Date.now() - 30 * 86_400_000).map((profile) => profile.id));
+  // Server report cutoffs intentionally use request time rather than component state.
+  // eslint-disable-next-line react-hooks/purity
+  const reportGeneratedAt = Date.now();
+  const active30OwnerIds = new Set(providerAccounts.filter((profile) => profile.last_significant_activity_at && new Date(profile.last_significant_activity_at).getTime() >= reportGeneratedAt - 30 * 86_400_000).map((profile) => profile.id));
   const activeWithin = (days: number) => {
-    const cutoff = Date.now() - days * 86_400_000;
+    const cutoff = reportGeneratedAt - days * 86_400_000;
     return providerAccounts.filter((profile) => profile.last_significant_activity_at && new Date(profile.last_significant_activity_at).getTime() >= cutoff).length;
   };
   const approvedProfiles = businesses.filter((profile) => profile.status === "approved").length;

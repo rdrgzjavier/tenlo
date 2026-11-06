@@ -1,11 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   outputFileTracingRoot: process.cwd(),
-  eslint: {
-    // `npm run lint` is executed separately; Next 15's build runner does not
-    // support this project's flat ESLint configuration.
-    ignoreDuringBuilds: true
-  },
   experimental: {
     cpus: 1
   },
@@ -38,7 +33,12 @@ const nextConfig = {
     ];
   },
   images: {
-    domains: ["images.unsplash.com"]
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com"
+      }
+    ]
   }
 };
 

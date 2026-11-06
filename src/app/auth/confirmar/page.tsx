@@ -1,5 +1,6 @@
 import type { EmailOtpType } from "@supabase/supabase-js";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Confirmar acceso | Tenlo",
@@ -98,9 +99,9 @@ export default async function ConfirmAuthActionPage({
             </button>
           </form>
         ) : (
-          <a href="/recuperar-contrasena" className="btn-primary mt-6 w-full justify-center sm:w-fit">
+          <Link href="/recuperar-contrasena" className="btn-primary mt-6 w-full justify-center sm:w-fit">
             Solicitar un enlace nuevo
-          </a>
+          </Link>
         )}
 
         <p className="mt-5 text-xs leading-5 text-muted">

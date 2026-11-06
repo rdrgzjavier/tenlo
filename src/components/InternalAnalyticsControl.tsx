@@ -14,8 +14,10 @@ export default function InternalAnalyticsControl() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setExcluded(isExcluded());
-    setReady(true);
+    queueMicrotask(() => {
+      setExcluded(isExcluded());
+      setReady(true);
+    });
   }, []);
 
   function toggle() {

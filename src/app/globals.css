@@ -1,6 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@config "../../tailwind.config.js";
+@import "tailwindcss";
 
 :root {
   color-scheme: light;
@@ -38,7 +37,7 @@ p {
   }
 
   .section-shell {
-    @apply page py-12 sm:py-16 lg:py-20;
+    @apply mx-auto w-full max-w-[1240px] px-5 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20;
   }
 
   .card {
