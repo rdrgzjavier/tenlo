@@ -77,6 +77,8 @@ export default function CommunityPage() {
           {communityInitiatives.map((initiative) => (
             <article key={initiative.id} className="card flex h-full flex-col overflow-hidden">
               <Link href={`/comunidad/${initiative.id}`} aria-label={`Ver iniciativa ${initiative.name}`}>
+                {/* Editorial community images use the original source and are intentionally lazy-loaded. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={initiative.image} alt={`Imagen de ${initiative.name}`} className="h-44 w-full object-cover" loading="lazy" />
               </Link>
               <div className="flex flex-1 flex-col p-5">

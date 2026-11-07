@@ -12,6 +12,8 @@ export default function ProfileAvatar({ name, role, image }: { name: string; rol
   const initials = name.split(" ").slice(0, 2).map((part) => part[0]).join("").toUpperCase();
 
   if (image && role !== "family") {
+    // Provider logos can come from owner-confirmed external hosts that are not known at build time.
+    // eslint-disable-next-line @next/next/no-img-element
     return <img src={image} alt={`Logo de ${name}`} className={`h-12 w-12 object-cover ${style.shape}`} />;
   }
 

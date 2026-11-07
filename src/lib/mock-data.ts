@@ -198,9 +198,8 @@ const providerSeeds: ProviderSeed[] = [
   ["club-las-encinas-boadilla", "Club Las Encinas de Boadilla", "Celebraciones familiares", "cumpleaños, celebraciones familiares, ocio familiar", images.birthday, "extraescolares", "Boadilla del Monte", "916 33 03 64", "Consultar en web", "https://www.clublasencinas.es/Pages/108-cumpleanyos_y_celebraciones_infantiles_i_club_las_encinas_de_boadilla", "Club con instalaciones sociales, infantiles y deportivas en entorno natural para cumpleaños y celebraciones familiares.", "Horario y disponibilidad de cumpleaños sujetos a reserva y calendario del club; confirmar con el centro." ]
 ];
 
-export const providers: Provider[] = providerSeeds.map(([id, businessName, category, rawTags, image, categoryId, municipality, phone, email, website, description]) => {
+export const providers: Provider[] = providerSeeds.map(([id, businessName, category, rawTags, image, , municipality, phone, email, website, description]) => {
   const hasOfficialWebsite = Boolean(website?.startsWith("http"));
-  const protectedContact = phone.includes("Contacto protegido") || email.includes("tenlo.es");
   const verificationStatus = hasOfficialWebsite ? "Información pública localizada" : "Pendiente de revisión";
 
   return {

@@ -2,6 +2,7 @@
 const nextConfig = {
   outputFileTracingRoot: process.cwd(),
   experimental: {
+    // The managed Windows build environment restricts Turbopack child processes.
     cpus: 1
   },
   async headers() {

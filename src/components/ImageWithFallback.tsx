@@ -33,6 +33,8 @@ export default function ImageWithFallback({ src, fallbackSrc, alt, className, il
   }, [currentSrc, advanceFallback]);
 
   const image = (
+    // A native image is intentional: onError must be able to advance through remote and local fallbacks.
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       {...priorityProps}
       ref={imageRef}
