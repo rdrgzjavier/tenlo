@@ -81,7 +81,7 @@ function dateLabel(value: Date) {
 }
 
 function percentage(part: number, total: number) {
-  return total ? `${Math.round((part / total) * 100)} %` : "Sin datos";
+  return total ? `${Math.round((part / total) * 100)} %` : "No aplica";
 }
 
 function median(values: number[]) {
@@ -92,7 +92,7 @@ function median(values: number[]) {
 }
 
 function durationLabel(milliseconds: number | null) {
-  if (milliseconds === null) return "Sin datos";
+  if (milliseconds === null) return "No aplica";
   const hours = milliseconds / 3_600_000;
   return hours < 48 ? `${hours.toFixed(hours < 10 ? 1 : 0)} h` : `${(hours / 24).toFixed(1)} días`;
 }
@@ -146,6 +146,11 @@ export default async function AdminProvidersPage({ searchParams }: { searchParam
   ]);
 
   const allBusinesses = (businessResult.data ?? []) as BusinessProfile[];
+  const businessAvailable = !businessResult.error;
+  const profilesAvailable = businessAvailable && !profilesResult.error;
+  const claimsAvailable = businessAvailable && !claimsResult.error;
+  const connectionsAvailable = businessAvailable && !connectionsResult.error && !servicesResult.error;
+  const approvalsAvailable = businessAvailable && !approvalsResult.error;
   const categoryOptions = [...new Set(allBusinesses.map((profile) => profile.category).filter(Boolean))].sort((a, b) => a.localeCompare(b, "es"));
   const municipalityOptions = [...new Set(allBusinesses.flatMap((profile) => profile.municipality ? [profile.municipality] : []))].sort((a, b) => a.localeCompare(b, "es"));
   const activeCategory = rawCategory && categoryOptions.includes(rawCategory) ? rawCategory : "";
@@ -229,28 +234,28 @@ export default async function AdminProvidersPage({ searchParams }: { searchParam
       <section className="card mt-6 p-5 md:p-6" aria-labelledby="provider-stock-title">
         <div className="flex items-center gap-3"><BriefcaseBusiness size={22} className="text-ink" aria-hidden /><div><h2 id="provider-stock-title" className="subsection-title text-ink">Estado actual de la oferta</h2><p className="mt-1 text-sm text-muted">Fotografía actual del segmento seleccionado; no es una cohorte temporal.</p></div></div>
         <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Fichas identificadas</dt><dd className="mt-2 text-3xl font-black text-ink">{businesses.length}</dd></div>
-          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Con titular registrado</dt><dd className="mt-2 text-3xl font-black text-ink">{ownerIds.size}</dd><p className="mt-1 text-xs text-muted">{percentage(ownerIds.size, businesses.length)} de las fichas</p></div>
-          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Completitud ≥ 75 %</dt><dd className="mt-2 text-3xl font-black text-ink">{completeProfiles}</dd><p className="mt-1 text-xs text-muted">{percentage(completeProfiles, businesses.length)}</p></div>
-          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Aprobadas</dt><dd className="mt-2 text-3xl font-black text-ink">{approvedProfiles}</dd><p className="mt-1 text-xs text-muted">Moderación, no verificación</p></div>
-          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Aceptan solicitudes</dt><dd className="mt-2 text-3xl font-black text-ink">{acceptingRequests}</dd><p className="mt-1 text-xs text-muted">{percentage(acceptingRequests, businesses.length)}</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Fichas identificadas</dt><dd className="mt-2 text-3xl font-black text-ink">{businessAvailable ? businesses.length : "Sin dato"}</dd></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Con titular registrado</dt><dd className="mt-2 text-3xl font-black text-ink">{businessAvailable ? ownerIds.size : "Sin dato"}</dd><p className="mt-1 text-xs text-muted">{businessAvailable ? `${percentage(ownerIds.size, businesses.length)} de las fichas` : "Fuente no disponible"}</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Completitud ≥ 75 %</dt><dd className="mt-2 text-3xl font-black text-ink">{businessAvailable ? completeProfiles : "Sin dato"}</dd><p className="mt-1 text-xs text-muted">{businessAvailable ? percentage(completeProfiles, businesses.length) : "Fuente no disponible"}</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Aprobadas</dt><dd className="mt-2 text-3xl font-black text-ink">{businessAvailable ? approvedProfiles : "Sin dato"}</dd><p className="mt-1 text-xs text-muted">Moderación, no verificación</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Aceptan solicitudes</dt><dd className="mt-2 text-3xl font-black text-ink">{businessAvailable ? acceptingRequests : "Sin dato"}</dd><p className="mt-1 text-xs text-muted">{businessAvailable ? percentage(acceptingRequests, businesses.length) : "Fuente no disponible"}</p></div>
         </dl>
       </section>
 
       <section className="card mt-6 p-5 md:p-6" aria-labelledby="provider-flow-title">
         <div className="flex items-center gap-3"><UsersRound size={22} className="text-ink" aria-hidden /><div><h2 id="provider-flow-title" className="subsection-title text-ink">Captación y activación en {period} días</h2><p className="mt-1 text-sm text-muted">Altas, reclamaciones, moderación y solicitudes del periodo seleccionado.</p></div></div>
         <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Cuentas proveedoras nuevas</dt><dd className="mt-2 text-3xl font-black text-ink">{newProviderAccounts}</dd></div>
-          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Reclamaciones iniciadas</dt><dd className="mt-2 text-3xl font-black text-ink">{claims.length}</dd></div>
-          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Fichas profesionales creadas</dt><dd className="mt-2 text-3xl font-black text-ink">{profilesSubmitted}</dd></div>
-          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Aprobaciones registradas</dt><dd className="mt-2 text-3xl font-black text-ink">{approvals.length}</dd></div>
-          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Mediana alta → publicación</dt><dd className="mt-2 text-3xl font-black text-ink">{durationLabel(median(approvalTimes))}</dd><p className="mt-1 text-xs text-muted">Aprobaciones del periodo</p></div>
-          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Mediana alta → 1.ª solicitud</dt><dd className="mt-2 text-3xl font-black text-ink">{durationLabel(median(firstRequestTimes))}</dd><p className="mt-1 text-xs text-muted">Primera solicitud histórica por ficha</p></div>
-          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Inbox size={16} aria-hidden />Solicitudes asignables</dt><dd className="mt-2 text-3xl font-black text-ink">{requests.length}</dd><p className="mt-1 text-xs text-muted">{providersWithRequests} proveedores alcanzados</p></div>
-          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><CheckCircle2 size={16} aria-hidden />Primeras respuestas</dt><dd className="mt-2 text-3xl font-black text-ink">{respondedRequests}</dd><p className="mt-1 text-xs text-muted">{percentage(respondedRequests, requests.length)} de las solicitudes</p></div>
-          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Clock3 size={16} aria-hidden />Mediana hasta respuesta</dt><dd className="mt-2 text-3xl font-black text-ink">{durationLabel(median(responseTimes))}</dd></div>
-          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Solicitudes relevantes</dt><dd className="mt-2 text-3xl font-black text-ink">{relevantRequests}</dd><p className="mt-1 text-xs text-muted">{percentage(relevantRequests, ratedRequests.length)} de {ratedRequests.length} valoradas</p></div>
-          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Activity size={16} aria-hidden />Actividad 7 / 30 / 90 días</dt><dd className="mt-2 text-2xl font-black text-ink">{activeWithin(7)} / {activeWithin(30)} / {activeWithin(90)}</dd><p className="mt-1 text-xs text-muted">Titulares con acción significativa</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Cuentas proveedoras nuevas</dt><dd className="mt-2 text-3xl font-black text-ink">{profilesAvailable ? newProviderAccounts : "Sin dato"}</dd></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Reclamaciones iniciadas</dt><dd className="mt-2 text-3xl font-black text-ink">{claimsAvailable ? claims.length : "Sin dato"}</dd></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Fichas profesionales creadas</dt><dd className="mt-2 text-3xl font-black text-ink">{businessAvailable ? profilesSubmitted : "Sin dato"}</dd></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Aprobaciones registradas</dt><dd className="mt-2 text-3xl font-black text-ink">{approvalsAvailable ? approvals.length : "Sin dato"}</dd></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Mediana alta → publicación</dt><dd className="mt-2 text-3xl font-black text-ink">{approvalsAvailable ? durationLabel(median(approvalTimes)) : "Sin dato"}</dd><p className="mt-1 text-xs text-muted">Aprobaciones del periodo</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Mediana alta → 1.ª solicitud</dt><dd className="mt-2 text-3xl font-black text-ink">{connectionsAvailable ? durationLabel(median(firstRequestTimes)) : "Sin dato"}</dd><p className="mt-1 text-xs text-muted">Primera solicitud histórica por ficha</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Inbox size={16} aria-hidden />Solicitudes asignables</dt><dd className="mt-2 text-3xl font-black text-ink">{connectionsAvailable ? requests.length : "Sin dato"}</dd><p className="mt-1 text-xs text-muted">{connectionsAvailable ? `${providersWithRequests} proveedores alcanzados` : "Fuente no disponible"}</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><CheckCircle2 size={16} aria-hidden />Primeras respuestas</dt><dd className="mt-2 text-3xl font-black text-ink">{connectionsAvailable ? respondedRequests : "Sin dato"}</dd><p className="mt-1 text-xs text-muted">{connectionsAvailable ? `${percentage(respondedRequests, requests.length)} de las solicitudes` : "Fuente no disponible"}</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Clock3 size={16} aria-hidden />Mediana hasta respuesta</dt><dd className="mt-2 text-3xl font-black text-ink">{connectionsAvailable ? durationLabel(median(responseTimes)) : "Sin dato"}</dd></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="text-sm font-semibold text-muted">Solicitudes relevantes</dt><dd className="mt-2 text-3xl font-black text-ink">{connectionsAvailable ? relevantRequests : "Sin dato"}</dd><p className="mt-1 text-xs text-muted">{connectionsAvailable ? `${percentage(relevantRequests, ratedRequests.length)} de ${ratedRequests.length} valoradas` : "Fuente no disponible"}</p></div>
+          <div className="rounded-2xl border border-line bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Activity size={16} aria-hidden />Actividad 7 / 30 / 90 días</dt><dd className="mt-2 text-2xl font-black text-ink">{profilesAvailable ? `${activeWithin(7)} / ${activeWithin(30)} / ${activeWithin(90)}` : "Sin dato"}</dd><p className="mt-1 text-xs text-muted">Titulares con acción significativa</p></div>
         </dl>
       </section>
 
