@@ -601,14 +601,14 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 - [ ] **Monetización:** pricing, activación del plan, ingresos y churn cuando exista producto de pago.
 - [x] **Demanda y buscador:** `/admin/demanda` integra términos, intenciones, verticales, municipios, cero resultados, reformulaciones y conversión hasta conexión útil.
 - [x] **Rendimiento de fichas y verticales:** `/admin/rendimiento` integra impresiones, visitas, CTR, contactos, cobertura, oferta disponible, respuestas y conexiones útiles por proveedor, categoría y vertical.
-- [ ] **Usuarios y consentimiento:** registros, activación, perfiles completos, centros/intereses declarados, origen de adquisición y base activable para marketing. `/admin/usuarios` ya presenta altas, roles, onboarding, canal, municipio, campaña y consentimiento de forma agregada; `0031` está aplicada y faltan datos reales de prueba e intereses cuando exista una finalidad definida.
+- [ ] **Usuarios y consentimiento:** registros, activación, perfiles completos, centros/intereses declarados, origen de adquisición y base activable para marketing. `/admin/usuarios` ya presenta altas, roles, onboarding, canal, municipio, campaña y consentimiento de forma agregada, y permite filtrar todas esas métricas —incluido el historial de consentimiento— por canal de entrada y campaña; `0031` está aplicada y faltan datos reales de prueba e intereses cuando exista una finalidad definida.
 
 ## Reglas para Looker Studio u otra herramienta
 
 - [x] Crear una primera capa de datos estable: taxonomía `dataLayer` versionada y migración `0009` con dimensiones de búsqueda y vista agregada diaria sin PII.
 - [x] Aplicar y verificar la migración `0009_analytics_foundations.sql` en Supabase antes de desplegar el código que escribe sus nuevas columnas.
 - [x] Documentar para cada KPI: definición, fórmula, fuente, frecuencia, propietario y limitaciones en `CATALOGO-DE-KPIS-Y-REPORTING.md`.
-- [ ] Mostrar intervalos comparables y filtros por categoría, municipio, estado de ficha, plan y canal. Demanda y rendimiento permiten categoría y municipio; rendimiento añade confianza, plan y estado de reclamación; demanda, rendimiento, usuarios y consentimiento comparan ventanas comunes de 30, 90 y 180 días. Falta el canal donde sea aplicable y extender el estado de ficha a otros informes que lo necesiten.
+- [ ] Mostrar intervalos comparables y filtros por categoría, municipio, estado de ficha, plan y canal. Demanda y rendimiento permiten categoría y municipio; rendimiento añade confianza, plan y estado de reclamación; usuarios y consentimiento permiten canal de entrada y campaña; los tres informes comparan ventanas comunes de 30, 90 y 180 días. Falta extender el estado de ficha a otros informes que lo necesiten.
 - [ ] No comparar poblaciones distintas sin explicar la unidad.
 - [ ] Diferenciar `0`, `sin dato` y `no aplicable`. El detalle de rendimiento separa una reclamación inexistente (`Sin dato`) de un centro al que ese estado no corresponde (`No aplica`), y el resumen administrativo ya muestra `0` cuando la consulta funciona sin actividad y `Sin dato` solo si falla la fuente. Falta extender la misma regla a los demás informes y exportaciones.
 - [ ] Añadir notas cuando cambie una definición o implementación.

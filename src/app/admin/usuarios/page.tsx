@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, ShieldCheck, UserCheck, UsersRound } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import ReportPeriodSelector, { resolveReportPeriod } from "@/components/ReportPeriodSelector";
+import ReportSegmentFilters from "@/components/ReportSegmentFilters";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -67,10 +68,14 @@ const onboardingLabels: Record<string, string> = {
   active: "Activo"
 };
 
-export default async function AdminUsersPage({ searchParams }: { searchParams: Promise<{ period?: string }> }) {
+function distinct(values: Array<string | null | undefined>) {
+  return [...new Set(values.map((value) => value?.trim()).filter((value): value is string => Boolean(value)))].sort((a, b) => a.localeCompare(b, "es"));
+}
+
+export default async function AdminUsersPage({ searchParams }: { searchParams: Promise<{ period?: string; channel?: string; campaign?: string }> }) {
   if (!hasSupabaseServerConfig()) return <PrivateAreaUnavailable />;
 
-  const { period: rawPeriod } = await searchParams;
+  const { period: rawPeriod, channel: rawChannel, campaign: rawCampaign } = await searchParams;
   const period = resolveReportPeriod(rawPeriod);
 
   const supabase = await createSupabaseServerClient();
@@ -81,22 +86,31 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
   if (adminProfile?.role !== "tenlo_admin" || adminProfile.status !== "approved") redirect("/area-personal");
 
   const [profilesResult, consentResult] = await Promise.all([
-    supabase.from("profiles").select("role,municipality,marketing_consent,registration_channel,acquisition_entry_channel,acquisition_source,acquisition_medium,acquisition_campaign,onboarding_status,last_significant_activity_at,created_at").eq("is_test", false).order("created_at", { ascending: false }).limit(5000),
-    supabase.from("consent_history").select("decision,recorded_at").eq("purpose", "marketing_email").order("recorded_at", { ascending: false }).limit(5000)
+    supabase.from("profiles").select("id,role,municipality,marketing_consent,registration_channel,acquisition_entry_channel,acquisition_source,acquisition_medium,acquisition_campaign,onboarding_status,last_significant_activity_at,created_at").eq("is_test", false).order("created_at", { ascending: false }).limit(5000),
+    supabase.from("consent_history").select("user_id,decision,recorded_at").eq("purpose", "marketing_email").order("recorded_at", { ascending: false }).limit(5000)
   ]);
 
   const profiles = profilesResult.data ?? [];
-  const consentEvents = consentResult.data ?? [];
+  const channelOptions = distinct(profiles.map((profile) => profile.acquisition_entry_channel));
+  const campaignOptions = distinct(profiles.map((profile) => profile.acquisition_campaign));
+  const activeChannel = channelOptions.includes(rawChannel?.trim() || "") ? rawChannel!.trim() : "";
+  const activeCampaign = campaignOptions.includes(rawCampaign?.trim() || "") ? rawCampaign!.trim() : "";
+  const filteredProfiles = profiles.filter((profile) =>
+    (!activeChannel || profile.acquisition_entry_channel === activeChannel) &&
+    (!activeCampaign || profile.acquisition_campaign === activeCampaign)
+  );
+  const filteredProfileIds = new Set(filteredProfiles.map((profile) => profile.id));
+  const consentEvents = (consentResult.data ?? []).filter((event) => filteredProfileIds.has(event.user_id));
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - period);
-  const recentProfiles = profiles.filter((profile) => new Date(profile.created_at) >= cutoff);
-  const recentlyActiveProfiles = profiles.filter((profile) => profile.last_significant_activity_at && new Date(profile.last_significant_activity_at) >= cutoff);
-  const marketingActive = profiles.filter((profile) => profile.marketing_consent).length;
-  const providerProfiles = profiles.filter((profile) => !["family", "tenlo_admin"].includes(profile.role)).length;
+  const recentProfiles = filteredProfiles.filter((profile) => new Date(profile.created_at) >= cutoff);
+  const recentlyActiveProfiles = filteredProfiles.filter((profile) => profile.last_significant_activity_at && new Date(profile.last_significant_activity_at) >= cutoff);
+  const marketingActive = filteredProfiles.filter((profile) => profile.marketing_consent).length;
+  const providerProfiles = filteredProfiles.filter((profile) => !["family", "tenlo_admin"].includes(profile.role)).length;
   const recentConsentEvents = consentEvents.filter((event) => new Date(event.recorded_at) >= cutoff);
   const recentGranted = recentConsentEvents.filter((event) => event.decision === "granted").length;
   const recentWithdrawn = recentConsentEvents.filter((event) => event.decision === "withdrawn").length;
-  const campaigns = rank(profiles.map((profile) => profile.acquisition_campaign ? `${profile.acquisition_source || "sin fuente"} · ${profile.acquisition_campaign}` : null), "Sin campaña identificada");
+  const campaigns = rank(filteredProfiles.map((profile) => profile.acquisition_campaign ? `${profile.acquisition_source || "sin fuente"} · ${profile.acquisition_campaign}` : null), "Sin campaña identificada");
 
   return (
     <main className="section-shell">
@@ -104,15 +118,28 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
       <p className="label mt-6">Informe privado</p>
       <h1 className="page-title">Usuarios y consentimiento</h1>
       <p className="lead max-w-4xl">Lectura agregada de registros, activación y procedencia. No muestra nombres, emails, teléfonos ni textos libres.</p>
-      <ReportPeriodSelector activePeriod={period} pathname="/admin/usuarios" />
+      <ReportPeriodSelector activePeriod={period} pathname="/admin/usuarios" preservedParams={{ channel: activeChannel, campaign: activeCampaign }} />
+      <ReportSegmentFilters
+        activeCategory=""
+        activeMunicipality=""
+        activePeriod={period}
+        categoryOptions={[]}
+        municipalityOptions={[]}
+        pathname="/admin/usuarios"
+        showBaseFilters={false}
+        extraFilters={[
+          { name: "channel", label: "Canal de entrada", activeValue: activeChannel, allLabel: "Todos los canales", options: channelOptions.map((value) => ({ value, label: value })) },
+          { name: "campaign", label: "Campaña", activeValue: activeCampaign, allLabel: "Todas las campañas", options: campaignOptions.map((value) => ({ value, label: value })) }
+        ]}
+      />
 
       {profilesResult.error || consentResult.error ? <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">No se ha podido cargar una parte del informe. Comprueba las migraciones y permisos.</p> : null}
 
       <section className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-5" aria-label="Resumen de usuarios">
-        <div className="card p-5"><UsersRound className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Cuentas totales</p><p className="mt-1 text-3xl font-black text-ink">{profiles.length}</p></div>
+        <div className="card p-5"><UsersRound className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Cuentas del segmento</p><p className="mt-1 text-3xl font-black text-ink">{filteredProfiles.length}</p>{activeChannel || activeCampaign ? <p className="mt-1 text-xs text-muted">de {profiles.length} cuentas totales</p> : null}</div>
         <div className="card p-5"><UserCheck className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Altas en {period} días</p><p className="mt-1 text-3xl font-black text-ink">{recentProfiles.length}</p></div>
         <div className="card p-5"><UserCheck className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Actividad en {period} días</p><p className="mt-1 text-3xl font-black text-ink">{recentlyActiveProfiles.length}</p><p className="mt-1 text-xs text-muted">Usuarios con alguna acción significativa</p></div>
-        <div className="card p-5"><ShieldCheck className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Marketing activo</p><p className="mt-1 text-3xl font-black text-ink">{marketingActive}</p><p className="mt-1 text-xs text-muted">{percentage(marketingActive, profiles.length)} del total</p></div>
+        <div className="card p-5"><ShieldCheck className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Marketing activo</p><p className="mt-1 text-3xl font-black text-ink">{marketingActive}</p><p className="mt-1 text-xs text-muted">{percentage(marketingActive, filteredProfiles.length)} del segmento</p></div>
         <div className="card p-5"><UsersRound className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Cuentas proveedoras</p><p className="mt-1 text-3xl font-black text-ink">{providerProfiles}</p><p className="mt-1 text-xs text-muted">Excluye familias y administración</p></div>
       </section>
 
@@ -123,11 +150,11 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
       </section>
 
       <div className="mt-5 grid gap-5 xl:grid-cols-2">
-        <RankingTable title="Tipo de cuenta" description="Distribución de la oferta y la demanda registradas." items={rank(profiles.map((profile) => roleLabels[profile.role] || profile.role), "Sin tipo")} />
-        <RankingTable title="Estado de onboarding" description="Fase operativa distinta del estado de moderación." items={rank(profiles.map((profile) => onboardingLabels[profile.onboarding_status] || profile.onboarding_status), "Sin estado")} />
-        <RankingTable title="Canal de registro" description="Canal técnico utilizado para crear la cuenta." items={rank(profiles.map((profile) => profile.registration_channel), "Desconocido")} />
-        <RankingTable title="Canal de entrada" description="Atribución propia saneada al inicio de la sesión de registro." items={rank(profiles.map((profile) => profile.acquisition_entry_channel), "Sin atribución")} />
-        <RankingTable title="Municipio declarado" description="Zona general indicada por la persona, nunca una dirección familiar." items={rank(profiles.map((profile) => profile.municipality), "No indicado")} />
+        <RankingTable title="Tipo de cuenta" description="Distribución de la oferta y la demanda registradas." items={rank(filteredProfiles.map((profile) => roleLabels[profile.role] || profile.role), "Sin tipo")} />
+        <RankingTable title="Estado de onboarding" description="Fase operativa distinta del estado de moderación." items={rank(filteredProfiles.map((profile) => onboardingLabels[profile.onboarding_status] || profile.onboarding_status), "Sin estado")} />
+        <RankingTable title="Canal de registro" description="Canal técnico utilizado para crear la cuenta." items={rank(filteredProfiles.map((profile) => profile.registration_channel), "Desconocido")} />
+        <RankingTable title="Canal de entrada" description="Atribución propia saneada al inicio de la sesión de registro." items={rank(filteredProfiles.map((profile) => profile.acquisition_entry_channel), "Sin atribución")} />
+        <RankingTable title="Municipio declarado" description="Zona general indicada por la persona, nunca una dirección familiar." items={rank(filteredProfiles.map((profile) => profile.municipality), "No indicado")} />
         <RankingTable title="Campañas de adquisición" description="Fuente y campaña asociadas al alta. Sin campaña no significa necesariamente tráfico directo." items={campaigns} />
       </div>
 

@@ -8,6 +8,7 @@ type ReportSegmentFiltersProps = {
   categoryOptions: string[];
   municipalityOptions: string[];
   pathname: string;
+  showBaseFilters?: boolean;
   extraFilters?: Array<{
     name: string;
     label: string;
@@ -24,6 +25,7 @@ export default function ReportSegmentFilters({
   categoryOptions,
   municipalityOptions,
   pathname,
+  showBaseFilters = true,
   extraFilters = []
 }: ReportSegmentFiltersProps) {
   const hasFilters = Boolean(activeCategory || activeMunicipality || extraFilters.some((filter) => filter.activeValue));
@@ -32,20 +34,22 @@ export default function ReportSegmentFilters({
     <form action={pathname} method="get" className="mt-4 rounded-2xl border border-line bg-soft p-4" aria-label="Filtros del informe">
       <input type="hidden" name="period" value={activePeriod} />
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4 xl:items-end">
-        <label className="grid gap-2 text-sm font-semibold text-ink">
-          Categoría
-          <select name="category" defaultValue={activeCategory} className="min-h-11 rounded-xl border border-line bg-white px-3 text-base font-normal text-ink">
-            <option value="">Todas las categorías</option>
-            {categoryOptions.map((category) => <option key={category} value={category}>{category}</option>)}
-          </select>
-        </label>
-        <label className="grid gap-2 text-sm font-semibold text-ink">
-          Municipio
-          <select name="municipality" defaultValue={activeMunicipality} className="min-h-11 rounded-xl border border-line bg-white px-3 text-base font-normal text-ink">
-            <option value="">Todos los municipios</option>
-            {municipalityOptions.map((municipality) => <option key={municipality} value={municipality}>{municipality}</option>)}
-          </select>
-        </label>
+        {showBaseFilters ? <>
+          <label className="grid gap-2 text-sm font-semibold text-ink">
+            Categoría
+            <select name="category" defaultValue={activeCategory} className="min-h-11 rounded-xl border border-line bg-white px-3 text-base font-normal text-ink">
+              <option value="">Todas las categorías</option>
+              {categoryOptions.map((category) => <option key={category} value={category}>{category}</option>)}
+            </select>
+          </label>
+          <label className="grid gap-2 text-sm font-semibold text-ink">
+            Municipio
+            <select name="municipality" defaultValue={activeMunicipality} className="min-h-11 rounded-xl border border-line bg-white px-3 text-base font-normal text-ink">
+              <option value="">Todos los municipios</option>
+              {municipalityOptions.map((municipality) => <option key={municipality} value={municipality}>{municipality}</option>)}
+            </select>
+          </label>
+        </> : null}
         {extraFilters.map((filter) => (
           <label key={filter.name} className="grid gap-2 text-sm font-semibold text-ink">
             {filter.label}

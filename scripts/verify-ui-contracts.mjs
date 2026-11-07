@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-const [loginRegistration, passwordRecovery, passwordReset, accountSettings, internalAnalyticsControl, consentBanner, consentSettings, consentMode, consentLibrary, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerPrivateReport, printableProviderReport, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage, validatedSearchForm] = await Promise.all([
+const [loginRegistration, passwordRecovery, passwordReset, accountSettings, internalAnalyticsControl, consentBanner, consentSettings, consentMode, consentLibrary, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerPrivateReport, printableProviderReport, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage, validatedSearchForm, usersReport] = await Promise.all([
   read("src/components/LoginRegistration.tsx"),
   read("src/components/PasswordRecoveryRequest.tsx"),
   read("src/components/PasswordResetForm.tsx"),
@@ -30,7 +30,8 @@ const [loginRegistration, passwordRecovery, passwordReset, accountSettings, inte
   read("src/components/SaveSearchButton.tsx"),
   read("src/components/ProviderSuggestionForm.tsx"),
   read("src/app/admin/page.tsx"),
-  read("src/components/ValidatedSearchForm.tsx")
+  read("src/components/ValidatedSearchForm.tsx"),
+  read("src/app/admin/usuarios/page.tsx")
 ]);
 
 const checks = [
@@ -59,6 +60,7 @@ const checks = [
   [centerPage.includes("href={`tel:${center.phone.replace(/\\s/g, \"\")}`}"), "La ficha de centro debe permitir llamar."],
   [performanceReport.includes('{ name: "claim", label: "Reclamación"') && performanceReport.includes('.select("id,external_key,claim_status")'), "El informe de rendimiento debe filtrar por reclamación usando el estado privado de la ficha."],
   [performanceReport.includes("analyticsAvailable ? totalImpressions") && performanceReport.includes("requestsAvailable ? requests.length") && performanceReport.includes('feedbackAvailable ? confirmedOutcomes'), "El informe de rendimiento debe distinguir un cero observado de una fuente sin dato."],
+  [usersReport.includes('name: "channel"') && usersReport.includes('name: "campaign"') && usersReport.includes("filteredProfileIds.has(event.user_id)"), "El informe de usuarios debe segmentar adquisición y consentimiento por canal y campaña."],
   [providerReport.includes("Activas 30 d") && providerReport.includes("active30OwnerIds"), "El informe de proveedores debe separar oferta publicada, disponible y activa por segmento."],
   [providerPrivateReport.includes('rpc("get_provider_private_performance"') && providerPrivateReport.includes("30 días anteriores"), "El proveedor debe ver rendimiento privado y una comparación temporal sin datos familiares."],
   [printableProviderReport.includes("<PrintProviderReportButton") && printableProviderReport.includes("Cómo interpretar este informe"), "El informe compartible del proveedor debe ser agregado, imprimible y explicar los límites de las métricas."],
