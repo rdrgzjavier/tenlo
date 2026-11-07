@@ -2,6 +2,20 @@
 
 > Preparado el 18 de octubre de 2026. No ejecutar con `npm audit fix --force` directamente.
 
+## Resultado de ejecución — 7 de noviembre de 2026
+
+Migración ejecutada y validada en la rama `chore/next16-tailwind4` y en preview de Vercel:
+
+- Next.js `16.4.5`, React `19.3.1` y Tailwind CSS `4.3.5`.
+- configuración PostCSS trasladada a `@tailwindcss/postcss` y configuración visual existente conservada explícitamente;
+- ESLint migrado a la configuración plana nativa de Next.js 16;
+- `lint` sin errores, `typecheck`, `build`, contratos UI, migraciones y seed correctos;
+- Home comprobada en 390 px y 1440 px sin errores de navegador ni regresiones estructurales;
+- preview de Vercel `Ready`, con consentimiento, navegación, contenido y rutas públicas operativos;
+- auditoría reducida de 8 altas y 3 moderadas a 8 moderadas transitivas de las herramientas de lint, sin avisos altos.
+
+No se utilizó `npm audit fix --force`. El despliegue anterior de producción permanece disponible como rollback.
+
 ## Motivo
 
 La auditoría actual devuelve 11 avisos en dependencias transitivas: 8 altos y 3 moderados. Las correcciones propuestas por npm implican saltos mayores a Next.js 16 y Tailwind CSS 4. El proyecto compila correctamente con Next.js 15.5.27 y Tailwind 3, por lo que el cambio debe tratarse como una migración controlada, no como una actualización automática.

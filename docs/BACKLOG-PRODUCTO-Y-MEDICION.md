@@ -2,7 +2,7 @@
 
 > Documento vivo para decidir, construir y comprobar el MVP de Tenlo.
 >
-> Última revisión: 28 de octubre de 2026. El avance ponderado y sus criterios están en [`ESTADO-MVP.md`](./ESTADO-MVP.md).
+> Última revisión: 7 de noviembre de 2026. El avance ponderado y sus criterios están en [`ESTADO-MVP.md`](./ESTADO-MVP.md).
 
 ## Cómo utilizar este documento
 
@@ -115,7 +115,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 
 - [x] Actualizar Next.js y dependencias a versiones soportadas sin avisos críticos conocidos.
 - [x] Repetir `npm audit`, `typecheck`, `lint` y `build` tras la actualización. Resultado del 10/10/2026: 0 críticos, 8 altos y 3 moderados; tipado, lint y build correctos.
-- [ ] Planificar y validar la migración a Next.js 16 y Tailwind CSS 4 para eliminar los avisos restantes sin regresiones visuales ni funcionales. El plan, criterios, pruebas y rollback están definidos en `PLAN-MIGRACION-NEXT16-TAILWIND4.md`; falta ejecutar la migración en una rama y validar el preview.
+- [x] Planificar y validar la migración a Next.js 16, React 19 y Tailwind CSS 4 para eliminar los avisos altos sin regresiones visuales ni funcionales. La rama aislada, el build, los contratos y el preview responsive quedaron validados el 7/11/2026; la auditoría pasó de 8 altas y 3 moderadas a 8 moderadas transitivas del lint. Evidencia y rollback en `PLAN-MIGRACION-NEXT16-TAILWIND4.md`.
 - [x] Evitar que las páginas privadas conectadas a Supabase se ejecuten durante el prerender del build.
 - [x] Hacer que las rutas privadas muestren un mensaje operativo claro cuando falten variables de Supabase en tiempo de ejecución. El área personal, datos de cuenta, favoritos, publicaciones, solicitudes y publicación degradan a un estado seguro sin exponer errores técnicos.
 - [x] Crear `.env.example` sin secretos con todas las variables requeridas y su finalidad.
