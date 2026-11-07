@@ -91,6 +91,8 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
   ]);
 
   const profiles = profilesResult.data ?? [];
+  const profilesAvailable = !profilesResult.error;
+  const consentAvailable = !consentResult.error;
   const channelOptions = distinct(profiles.map((profile) => profile.acquisition_entry_channel));
   const campaignOptions = distinct(profiles.map((profile) => profile.acquisition_campaign));
   const activeChannel = channelOptions.includes(rawChannel?.trim() || "") ? rawChannel!.trim() : "";
@@ -136,16 +138,16 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
       {profilesResult.error || consentResult.error ? <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">No se ha podido cargar una parte del informe. Comprueba las migraciones y permisos.</p> : null}
 
       <section className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-5" aria-label="Resumen de usuarios">
-        <div className="card p-5"><UsersRound className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Cuentas del segmento</p><p className="mt-1 text-3xl font-black text-ink">{filteredProfiles.length}</p>{activeChannel || activeCampaign ? <p className="mt-1 text-xs text-muted">de {profiles.length} cuentas totales</p> : null}</div>
-        <div className="card p-5"><UserCheck className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Altas en {period} días</p><p className="mt-1 text-3xl font-black text-ink">{recentProfiles.length}</p></div>
-        <div className="card p-5"><UserCheck className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Actividad en {period} días</p><p className="mt-1 text-3xl font-black text-ink">{recentlyActiveProfiles.length}</p><p className="mt-1 text-xs text-muted">Usuarios con alguna acción significativa</p></div>
-        <div className="card p-5"><ShieldCheck className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Marketing activo</p><p className="mt-1 text-3xl font-black text-ink">{marketingActive}</p><p className="mt-1 text-xs text-muted">{percentage(marketingActive, filteredProfiles.length)} del segmento</p></div>
-        <div className="card p-5"><UsersRound className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Cuentas proveedoras</p><p className="mt-1 text-3xl font-black text-ink">{providerProfiles}</p><p className="mt-1 text-xs text-muted">Excluye familias y administración</p></div>
+        <div className="card p-5"><UsersRound className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Cuentas del segmento</p><p className="mt-1 text-3xl font-black text-ink">{profilesAvailable ? filteredProfiles.length : "Sin dato"}</p>{profilesAvailable && (activeChannel || activeCampaign) ? <p className="mt-1 text-xs text-muted">de {profiles.length} cuentas totales</p> : null}</div>
+        <div className="card p-5"><UserCheck className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Altas en {period} días</p><p className="mt-1 text-3xl font-black text-ink">{profilesAvailable ? recentProfiles.length : "Sin dato"}</p></div>
+        <div className="card p-5"><UserCheck className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Actividad en {period} días</p><p className="mt-1 text-3xl font-black text-ink">{profilesAvailable ? recentlyActiveProfiles.length : "Sin dato"}</p><p className="mt-1 text-xs text-muted">Usuarios con alguna acción significativa</p></div>
+        <div className="card p-5"><ShieldCheck className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Marketing activo</p><p className="mt-1 text-3xl font-black text-ink">{profilesAvailable ? marketingActive : "Sin dato"}</p><p className="mt-1 text-xs text-muted">{profilesAvailable ? `${percentage(marketingActive, filteredProfiles.length)} del segmento` : "Fuente no disponible"}</p></div>
+        <div className="card p-5"><UsersRound className="text-primary" size={22} aria-hidden /><p className="mt-3 text-sm font-semibold text-muted">Cuentas proveedoras</p><p className="mt-1 text-3xl font-black text-ink">{profilesAvailable ? providerProfiles : "Sin dato"}</p><p className="mt-1 text-xs text-muted">Excluye familias y administración</p></div>
       </section>
 
       <section className="card mt-5 p-5 md:p-6">
         <h2 className="subsection-title text-ink">Cambios de consentimiento en {period} días</h2>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2"><div className="rounded-2xl border border-line bg-soft p-4"><p className="text-sm text-muted">Concesiones registradas</p><p className="mt-1 text-2xl font-black text-ink">{recentGranted}</p></div><div className="rounded-2xl border border-line bg-soft p-4"><p className="text-sm text-muted">Retiradas registradas</p><p className="mt-1 text-2xl font-black text-ink">{recentWithdrawn}</p></div></div>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2"><div className="rounded-2xl border border-line bg-soft p-4"><p className="text-sm text-muted">Concesiones registradas</p><p className="mt-1 text-2xl font-black text-ink">{consentAvailable ? recentGranted : "Sin dato"}</p></div><div className="rounded-2xl border border-line bg-soft p-4"><p className="text-sm text-muted">Retiradas registradas</p><p className="mt-1 text-2xl font-black text-ink">{consentAvailable ? recentWithdrawn : "Sin dato"}</p></div></div>
         <p className="mt-4 text-xs leading-5 text-muted">Son eventos, no usuarios únicos. Nunca deben sumarse para calcular la base activable; esa base es el estado actual mostrado arriba.</p>
       </section>
 
