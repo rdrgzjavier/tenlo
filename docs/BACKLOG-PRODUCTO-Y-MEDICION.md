@@ -626,7 +626,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 
 - [ ] Mostrar demanda real del segmento sin exagerarla.
 - [x] Crear informe periódico de presencia, interés, solicitudes, respuesta y resultado. `/rendimiento-profesional` ofrece al titular un resumen agregado, imprimible o guardable como PDF, con apariciones, aperturas, guardados, intenciones de contacto, solicitudes, respuesta, relevancia, conexiones útiles y resultados confirmados, comparando 30 días con los 30 anteriores sin exponer feedback individual.
-- [ ] Recomendar un máximo de tres mejoras conectadas con datos observados.
+- [x] Recomendar un máximo de tres mejoras conectadas con datos observados. El informe privado prioriza acciones sobre visibilidad, apertura de ficha, contacto, respuesta y relevancia, y enlaza directamente con la ficha o la bandeja profesional.
 - [ ] Recordar actualizar disponibilidad y servicios.
 - [ ] Reactivar proveedores solo cuando exista una oportunidad o razón útil.
 - [ ] Medir cada paso del loop y detectar dónde se rompe.

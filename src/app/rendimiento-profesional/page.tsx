@@ -72,6 +72,13 @@ export default async function ProviderPerformancePage() {
     { label: "Guardados", value: current.saves, previous: previous.saves, Icon: Bookmark },
     { label: "Intenciones de contacto", value: current.contact_intents, previous: previous.contact_intents, Icon: Target }
   ];
+  const recommendations = [
+    ...(performanceAvailable && current.impressions === 0 ? [{ title: "Revisa que tu ficha esté lista", detail: "No se han registrado apariciones consentidas. Confirma servicios, municipios y disponibilidad para facilitar que la ficha encaje en las búsquedas.", href: "/mi-ficha-profesional", action: "Revisar mi ficha" }] : []),
+    ...(performanceAvailable && current.impressions > 0 && current.profile_views / current.impressions < 0.1 ? [{ title: "Haz más clara tu propuesta", detail: "La ficha aparece en búsquedas, pero recibe pocas aperturas. Revisa el resumen, la imagen y la información principal que ayuda a comparar.", href: "/mi-ficha-profesional", action: "Mejorar la ficha" }] : []),
+    ...(requestsAvailable && requests.length > responses.length ? [{ title: "Responde las solicitudes pendientes", detail: "Una respuesta rápida, incluso si no hay disponibilidad, ayuda a las familias y mejora la calidad del servicio.", href: "/solicitudes-profesionales", action: "Ver solicitudes" }] : []),
+    ...(requestsAvailable && requests.length > 0 && rated.length < requests.length ? [{ title: "Valora la relevancia de las solicitudes", detail: "Indicar si una solicitud encaja ayuda a Tenlo a mejorar el reparto de oportunidades sin revelar información familiar.", href: "/solicitudes-profesionales", action: "Valorar solicitudes" }] : []),
+    ...(performanceAvailable && current.impressions > 0 && current.contact_intents === 0 ? [{ title: "Comprueba tus vías de contacto", detail: "Hay visibilidad, pero todavía no hay intención de contacto registrada. Confirma que la información y disponibilidad estén actualizadas.", href: "/mi-ficha-profesional", action: "Comprobar la ficha" }] : [])
+  ].slice(0, 3);
 
   return (
     <main className="section-shell print:bg-white print:py-0">
@@ -105,6 +112,14 @@ export default async function ProviderPerformancePage() {
           <div className="rounded-2xl bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><CheckCircle2 size={16} aria-hidden />Resultados confirmados</dt><dd className="mt-2 text-3xl font-black">{outcomesAvailable ? currentOutcomes.confirmed_outcomes : "Sin dato"}</dd><p className="text-xs text-muted">{outcomesAvailable ? comparison(currentOutcomes.confirmed_outcomes, previousOutcomes.confirmed_outcomes) : "Fuente no disponible"}</p></div>
         </dl>
       </section>
+
+      {recommendations.length ? <section className="card mt-6 p-5" aria-labelledby="recommendations-title">
+        <h2 id="recommendations-title" className="subsection-title">Siguientes mejoras recomendadas</h2>
+        <p className="mt-2 text-sm leading-6 text-muted">Hasta tres acciones sugeridas a partir de las señales observadas en este periodo.</p>
+        <ul className="mt-5 grid gap-3 lg:grid-cols-3">
+          {recommendations.map((item) => <li key={item.title} className="flex flex-col rounded-2xl border border-line bg-soft p-4"><h3 className="font-bold text-ink">{item.title}</h3><p className="mt-2 flex-1 text-sm leading-6 text-muted">{item.detail}</p><Link href={item.href} className="mt-4 font-bold text-brand underline underline-offset-4 print:hidden">{item.action}</Link></li>)}
+        </ul>
+      </section> : null}
 
       <div className="mt-6 rounded-2xl border border-line bg-soft p-4 text-sm leading-6 text-muted"><strong className="text-ink">Cómo interpretar este informe.</strong> Las señales de visibilidad se registran solo cuando existe consentimiento estadístico. Una visita o una intención de contacto no equivale a una contratación. Los valores cero significan que no se registró actividad consentida en el periodo.</div>
       <Link href="/solicitudes-profesionales" className="btn-secondary mt-6 print:hidden">Volver a solicitudes</Link>
