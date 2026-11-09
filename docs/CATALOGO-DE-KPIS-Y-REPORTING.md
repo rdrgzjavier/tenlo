@@ -1,6 +1,6 @@
 # Catálogo de KPIs y reporting de Tenlo
 
-Versión: `1.1`
+Versión: `1.2`
 
 Ámbito inicial: piloto de Madrid noroeste.
 
@@ -17,6 +17,17 @@ Este documento fija una definición única para producto, GA4, Supabase y Looker
 - `0` significa que se midió y no ocurrió; `Sin dato`, que todavía no existe medición suficiente; `No aplicable`, que la métrica no corresponde.
 - Una visita, clic o contacto iniciado no se presenta como cliente, reserva ni conexión útil.
 - Los benchmarks de terceros solo se mostrarán agregados cuando haya al menos 10 proveedores y 30 eventos en el segmento y periodo.
+
+### Unidades de los informes operativos
+
+| Informe | Unidad principal | Denominadores permitidos | No comparar directamente con |
+| --- | --- | --- | --- |
+| Usuarios y consentimiento | Cuentas no marcadas como prueba | Cuentas del segmento; los cambios de consentimiento se muestran aparte como eventos | Eventos de consentimiento, sesiones o personas identificadas |
+| Demanda | Búsquedas únicas con `search_id` | Búsquedas que alcanzan el paso anterior del embudo | Clics, vistas de página o solicitudes no enlazadas a una búsqueda |
+| Proveedores | Fichas y cuentas proveedoras, identificadas en cada tarjeta | Fichas del segmento o solicitudes entregadas, según la métrica | Fichas aprobadas, disponibles y activas como si fueran el mismo estado |
+| Rendimiento | Impresiones, aperturas, solicitudes o fichas, indicadas en cada bloque | La etapa inmediatamente anterior y solo con la muestra mínima definida | Tráfico consentido de GA4 con resultados operativos del backend como si fueran una sola población |
+
+Una tarjeta puede combinar fuentes para explicar un recorrido, pero debe mantener visible su unidad. Ningún total de una unidad se suma a otra ni se usa como denominador sin una relación enlazable y documentada.
 
 ## North Star y liquidez
 
@@ -108,6 +119,7 @@ El informe se divide en cuatro bloques para que el proveedor entienda dónde se 
 
 | Versión | Fecha | Cambio | Impacto |
 | --- | --- | --- | --- |
+| `1.2` | 09/11/2026 | Se explicitan la unidad principal, los denominadores válidos y las poblaciones incompatibles de cada informe administrativo. | No cambia cálculos; hace auditable qué puede compararse o combinarse en una misma lectura. |
 | `1.1` | 09/11/2026 | Se separan las ventanas de reporting administrativo (30/90/180), rendimiento privado del proveedor (30 días frente a los 30 anteriores) y adquisición en GA4/Looker (7/28/90). Se formalizan los estados `0`, `Sin dato` y `No aplica`. | No altera eventos ni datos almacenados; evita comparar ventanas o disponibilidades distintas como si fueran equivalentes. Los cuatro informes administrativos ya aplican esta semántica. |
 | `1.0` | 18/10/2026 | Primera definición común de KPIs, fuentes, responsables y limitaciones. | Base inicial para producto, Supabase, GA4 y Looker Studio. |
 
