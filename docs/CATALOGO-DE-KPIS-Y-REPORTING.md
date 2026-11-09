@@ -1,6 +1,7 @@
 # Catálogo de KPIs y reporting de Tenlo
 
-Versión: `1.0`  
+Versión: `1.1`
+
 Ámbito inicial: piloto de Madrid noroeste.
 
 Este documento fija una definición única para producto, GA4, Supabase y Looker Studio. Los dashboards no deben redefinir una métrica: solo representarla.
@@ -8,7 +9,9 @@ Este documento fija una definición única para producto, GA4, Supabase y Looker
 ## Reglas comunes
 
 - Zona horaria: `Europe/Madrid`.
-- Periodos estándar: últimos 7, 28 y 90 días y comparación con el periodo anterior equivalente.
+- Informes administrativos operativos: ventanas comunes de 30, 90 y 180 días.
+- Informe privado del proveedor: últimos 30 días comparados con los 30 días anteriores. Los cortes de actividad de oferta pueden mostrar además 7/30/90 días cuando se identifiquen explícitamente como tales.
+- Looker Studio y GA4 pueden usar 7, 28 y 90 días para adquisición y producto, siempre que el periodo aparezca visible y no se compare directamente con una ventana operativa distinta.
 - Cada persona, sesión, búsqueda, ficha, proveedor o solicitud se cuenta por su identificador estable; nunca por nombre o email.
 - GA4 no recibe nombres, emails, teléfonos, direcciones precisas, texto libre ni información de menores.
 - `0` significa que se midió y no ocurrió; `Sin dato`, que todavía no existe medición suficiente; `No aplicable`, que la métrica no corresponde.
@@ -100,6 +103,15 @@ El informe se divide en cuatro bloques para que el proveedor entienda dónde se 
 - El dashboard interno puede filtrar por proveedor, pero la versión compartida debe aplicar control de acceso o generarse como informe individual.
 - Los datos operativos llegan a Looker mediante vistas agregadas o una exportación controlada, no conectando tablas con información personal.
 - Cualquier cambio de fórmula incrementa la versión del catálogo y se anota con fecha en el dashboard.
+
+## Historial de definiciones
+
+| Versión | Fecha | Cambio | Impacto |
+| --- | --- | --- | --- |
+| `1.1` | 09/11/2026 | Se separan las ventanas de reporting administrativo (30/90/180), rendimiento privado del proveedor (30 días frente a los 30 anteriores) y adquisición en GA4/Looker (7/28/90). Se formalizan los estados `0`, `Sin dato` y `No aplica`. | No altera eventos ni datos almacenados; evita comparar ventanas o disponibilidades distintas como si fueran equivalentes. Los cuatro informes administrativos ya aplican esta semántica. |
+| `1.0` | 18/10/2026 | Primera definición común de KPIs, fuentes, responsables y limitaciones. | Base inicial para producto, Supabase, GA4 y Looker Studio. |
+
+Todo dashboard o informe exportado debe indicar la versión del catálogo que aplica cuando una fórmula, denominador, ventana o criterio de disponibilidad pueda cambiar la interpretación.
 
 ## Dependencias para activar el primer informe real
 
