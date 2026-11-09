@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Bookmark, CheckCircle2, Clock3, Eye, Inbox, MousePointerClick, Target } from "lucide-react";
+import { Bookmark, CheckCircle2, Clock3, Eye, Inbox, MessageCircle, MousePointerClick, Sparkles, Target } from "lucide-react";
 import PrintProviderReportButton from "@/components/PrintProviderReportButton";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
@@ -11,9 +11,11 @@ export const metadata: Metadata = { title: "Informe de rendimiento | Tenlo", des
 
 type Performance = { impressions: number; profile_views: number; saves: number; contact_intents: number; requests: number };
 type RequestRow = { status: string; relevance: "relevant" | "irrelevant" | null; first_response_at: string | null; created_at: string };
+type Outcomes = { feedback_count: number; useful_connections: number; confirmed_outcomes: number };
 const emptyPerformance: Performance = { impressions: 0, profile_views: 0, saves: 0, contact_intents: 0, requests: 0 };
+const emptyOutcomes: Outcomes = { feedback_count: 0, useful_connections: 0, confirmed_outcomes: 0 };
 
-function percentage(part: number, total: number) { return total ? `${Math.round((part / total) * 100)} %` : "Sin datos"; }
+function percentage(part: number, total: number) { return total ? `${Math.round((part / total) * 100)} %` : "No aplica"; }
 function comparison(current: number, previous: number) {
   if (!previous) return current ? "Nueva actividad" : "Sin actividad todavía";
   const change = Math.round(((current - previous) / previous) * 100);
@@ -26,7 +28,7 @@ function median(values: number[]) {
   return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
 }
 function duration(milliseconds: number | null) {
-  if (milliseconds === null) return "Sin datos";
+  if (milliseconds === null) return "No aplica";
   const hours = milliseconds / 3_600_000;
   return hours < 48 ? `${hours.toFixed(hours < 10 ? 1 : 0)} h` : `${(hours / 24).toFixed(1)} días`;
 }
@@ -39,16 +41,25 @@ export default async function ProviderPerformancePage() {
   const { data: profile } = await supabase.from("profiles").select("role,display_name").eq("id", authData.user.id).maybeSingle();
   if (!profile || profile.role === "family" || profile.role === "tenlo_admin") redirect("/area-personal");
 
-  const [businessResult, currentResult, previousResult, requestsResult] = await Promise.all([
+  const [businessResult, currentResult, previousResult, requestsResult, currentOutcomesResult, previousOutcomesResult] = await Promise.all([
     supabase.from("business_profiles").select("business_name").eq("owner_id", authData.user.id).eq("status", "approved").order("business_name"),
     supabase.rpc("get_provider_private_performance", { window_days: 30, offset_days: 0 }),
     supabase.rpc("get_provider_private_performance", { window_days: 30, offset_days: 30 }),
-    supabase.rpc("get_provider_connection_requests_v2")
+    supabase.rpc("get_provider_connection_requests_v2"),
+    supabase.rpc("get_provider_private_outcomes", { window_days: 30, offset_days: 0 }),
+    supabase.rpc("get_provider_private_outcomes", { window_days: 30, offset_days: 30 })
   ]);
-  const queryError = businessResult.error || currentResult.error || previousResult.error || requestsResult.error;
+  const queryError = businessResult.error || currentResult.error || previousResult.error || requestsResult.error || currentOutcomesResult.error || previousOutcomesResult.error;
+  const performanceAvailable = !currentResult.error && !previousResult.error;
+  const requestsAvailable = !requestsResult.error;
+  const outcomesAvailable = !currentOutcomesResult.error && !previousOutcomesResult.error;
   const current = (currentResult.data?.[0] as Performance | undefined) ?? emptyPerformance;
   const previous = (previousResult.data?.[0] as Performance | undefined) ?? emptyPerformance;
-  const requests = (requestsResult.data ?? []) as RequestRow[];
+  const currentOutcomes = (currentOutcomesResult.data?.[0] as Outcomes | undefined) ?? emptyOutcomes;
+  const previousOutcomes = (previousOutcomesResult.data?.[0] as Outcomes | undefined) ?? emptyOutcomes;
+  const currentWindowStart = new Date();
+  currentWindowStart.setDate(currentWindowStart.getDate() - 30);
+  const requests = ((requestsResult.data ?? []) as RequestRow[]).filter((item) => new Date(item.created_at) >= currentWindowStart);
   const responses = requests.filter((item) => item.first_response_at || ["responded", "declined", "closed"].includes(item.status));
   const rated = requests.filter((item) => item.relevance);
   const relevant = rated.filter((item) => item.relevance === "relevant").length;
@@ -72,16 +83,26 @@ export default async function ProviderPerformancePage() {
       {queryError ? <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">No se ha podido preparar el informe completo.</p> : null}
 
       <section className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Visibilidad e interés">
-        {cards.map(({ label, value, previous: previousValue, Icon }) => <div key={label} className="rounded-2xl border border-line bg-panel p-5"><p className="flex items-center gap-2 text-sm font-semibold text-muted"><Icon size={17} aria-hidden />{label}</p><p className="mt-3 text-3xl font-black text-ink">{value}</p><p className="mt-1 text-xs text-muted">{comparison(value, previousValue)}</p></div>)}
+        {cards.map(({ label, value, previous: previousValue, Icon }) => <div key={label} className="rounded-2xl border border-line bg-panel p-5"><p className="flex items-center gap-2 text-sm font-semibold text-muted"><Icon size={17} aria-hidden />{label}</p><p className="mt-3 text-3xl font-black text-ink">{performanceAvailable ? value : "Sin dato"}</p><p className="mt-1 text-xs text-muted">{performanceAvailable ? comparison(value, previousValue) : "Fuente no disponible"}</p></div>)}
       </section>
 
       <section className="card mt-6 p-5" aria-labelledby="opportunity-title">
         <h2 id="opportunity-title" className="subsection-title">Oportunidades recibidas</h2>
         <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <div className="rounded-2xl bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Inbox size={16} aria-hidden />Solicitudes</dt><dd className="mt-2 text-3xl font-black">{requests.length}</dd></div>
-          <div className="rounded-2xl bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><CheckCircle2 size={16} aria-hidden />Respondidas</dt><dd className="mt-2 text-3xl font-black">{responses.length}</dd><p className="text-xs text-muted">{percentage(responses.length, requests.length)}</p></div>
-          <div className="rounded-2xl bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Clock3 size={16} aria-hidden />Tiempo mediano</dt><dd className="mt-2 text-3xl font-black">{duration(median(responseTimes))}</dd></div>
-          <div className="rounded-2xl bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Target size={16} aria-hidden />Relevantes</dt><dd className="mt-2 text-3xl font-black">{relevant}</dd><p className="text-xs text-muted">{percentage(relevant, rated.length)} de {rated.length} valoradas</p></div>
+          <div className="rounded-2xl bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Inbox size={16} aria-hidden />Solicitudes</dt><dd className="mt-2 text-3xl font-black">{requestsAvailable ? requests.length : "Sin dato"}</dd></div>
+          <div className="rounded-2xl bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><CheckCircle2 size={16} aria-hidden />Respondidas</dt><dd className="mt-2 text-3xl font-black">{requestsAvailable ? responses.length : "Sin dato"}</dd><p className="text-xs text-muted">{requestsAvailable ? percentage(responses.length, requests.length) : "Fuente no disponible"}</p></div>
+          <div className="rounded-2xl bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Clock3 size={16} aria-hidden />Tiempo mediano</dt><dd className="mt-2 text-3xl font-black">{requestsAvailable ? duration(median(responseTimes)) : "Sin dato"}</dd></div>
+          <div className="rounded-2xl bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Target size={16} aria-hidden />Relevantes</dt><dd className="mt-2 text-3xl font-black">{requestsAvailable ? relevant : "Sin dato"}</dd><p className="text-xs text-muted">{requestsAvailable ? `${percentage(relevant, rated.length)} de ${rated.length} valoradas` : "Fuente no disponible"}</p></div>
+        </dl>
+      </section>
+
+      <section className="card mt-6 p-5" aria-labelledby="outcomes-title">
+        <h2 id="outcomes-title" className="subsection-title">Resultados declarados por las familias</h2>
+        <p className="mt-2 text-sm leading-6 text-muted">Datos agregados de las solicitudes recibidas en los últimos 30 días. No se muestran identidades, mensajes ni valoraciones individuales.</p>
+        <dl className="mt-5 grid gap-3 sm:grid-cols-3">
+          <div className="rounded-2xl bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><MessageCircle size={16} aria-hidden />Valoraciones recibidas</dt><dd className="mt-2 text-3xl font-black">{outcomesAvailable ? currentOutcomes.feedback_count : "Sin dato"}</dd><p className="text-xs text-muted">{outcomesAvailable ? comparison(currentOutcomes.feedback_count, previousOutcomes.feedback_count) : "Fuente no disponible"}</p></div>
+          <div className="rounded-2xl bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><Sparkles size={16} aria-hidden />Conexiones útiles</dt><dd className="mt-2 text-3xl font-black">{outcomesAvailable ? currentOutcomes.useful_connections : "Sin dato"}</dd><p className="text-xs text-muted">{outcomesAvailable ? comparison(currentOutcomes.useful_connections, previousOutcomes.useful_connections) : "Fuente no disponible"}</p></div>
+          <div className="rounded-2xl bg-soft p-4"><dt className="flex items-center gap-2 text-sm font-semibold text-muted"><CheckCircle2 size={16} aria-hidden />Resultados confirmados</dt><dd className="mt-2 text-3xl font-black">{outcomesAvailable ? currentOutcomes.confirmed_outcomes : "Sin dato"}</dd><p className="text-xs text-muted">{outcomesAvailable ? comparison(currentOutcomes.confirmed_outcomes, previousOutcomes.confirmed_outcomes) : "Fuente no disponible"}</p></div>
         </dl>
       </section>
 

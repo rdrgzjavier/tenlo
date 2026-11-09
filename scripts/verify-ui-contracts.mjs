@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-const [loginRegistration, passwordRecovery, passwordReset, accountSettings, internalAnalyticsControl, consentBanner, consentSettings, consentMode, consentLibrary, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerPrivateReport, printableProviderReport, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage, validatedSearchForm, usersReport, demandReport] = await Promise.all([
+const [loginRegistration, passwordRecovery, passwordReset, accountSettings, internalAnalyticsControl, consentBanner, consentSettings, consentMode, consentLibrary, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerRequestsPage, providerPrivateReport, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage, validatedSearchForm, usersReport, demandReport] = await Promise.all([
   read("src/components/LoginRegistration.tsx"),
   read("src/components/PasswordRecoveryRequest.tsx"),
   read("src/components/PasswordResetForm.tsx"),
@@ -67,8 +67,9 @@ const checks = [
   [providerReport.includes("Activas 30 d") && providerReport.includes("active30OwnerIds"), "El informe de proveedores debe separar oferta publicada, disponible y activa por segmento."],
   [providerReport.includes('name: "status"') && providerReport.includes("profile.status === activeStatus"), "El informe de proveedores debe filtrar todas sus métricas por estado de ficha."],
   [providerReport.includes('businessAvailable ? businesses.length : "Sin dato"') && providerReport.includes('connectionsAvailable ? requests.length : "Sin dato"') && providerReport.includes('return "No aplica"'), "El informe de proveedores debe separar cero, fuente sin dato y tasa no aplicable."],
-  [providerPrivateReport.includes('rpc("get_provider_private_performance"') && providerPrivateReport.includes("30 días anteriores"), "El proveedor debe ver rendimiento privado y una comparación temporal sin datos familiares."],
-  [printableProviderReport.includes("<PrintProviderReportButton") && printableProviderReport.includes("Cómo interpretar este informe"), "El informe compartible del proveedor debe ser agregado, imprimible y explicar los límites de las métricas."],
+  [providerPrivateReport.includes('rpc("get_provider_private_performance"') && providerPrivateReport.includes("Últimos 30 días comparados con los 30 anteriores"), "El proveedor debe ver rendimiento privado y una comparación temporal sin datos familiares."],
+  [providerPrivateReport.includes('rpc("get_provider_private_outcomes"') && providerPrivateReport.includes("Resultados declarados por las familias") && providerPrivateReport.includes("currentWindowStart"), "El informe privado debe limitar solicitudes a 30 días y mostrar resultados familiares solo de forma agregada."],
+  [providerPrivateReport.includes("<PrintProviderReportButton") && providerPrivateReport.includes("Cómo interpretar este informe") && providerRequestsPage.includes('href="/rendimiento-profesional"'), "El informe compartible del proveedor debe ser agregado, imprimible, accesible desde su bandeja y explicar los límites de las métricas."],
   [connectionWorkflow.includes('fetch("/api/admin/connection-remind"') && connectionWorkflow.includes("providerRemindedAt"), "El backoffice debe ofrecer un único recordatorio auditable sin sustituir el seguimiento de alternativas."],
   [searchPage.includes("<SaveSearchButton") && savedSearchButton.includes('.from("saved_searches").upsert'), "El buscador debe permitir guardar criterios persistentes tras autenticar al usuario."],
   [savedSearchPage.includes('.from("saved_searches")') && savedSearchPage.includes("<SavedSearchActions"), "El área privada debe permitir recuperar y gestionar búsquedas guardadas."],

@@ -86,6 +86,10 @@ const [m24, m25, m26, m27, m28, m29, m30, m31, m32, m33, m34, m35, repository, r
   text("supabase/verification/0034_provider_connection_flow.sql"),
   text("supabase/verification/0035_provider_lead_relevance.sql")
 ]);
+const [m42, providerOutcomesVerification] = await Promise.all([
+  text("supabase/migrations/0042_provider_private_outcomes.sql"),
+  text("supabase/verification/0042_provider_private_outcomes.sql")
+]);
 
 assert(/revoke all on public\.directory_events from anon, authenticated/i.test(m24), "directory_events debe retirar privilegios heredados.");
 assert(/grant insert on public\.directory_events to anon, authenticated/i.test(m24), "directory_events debe permitir únicamente la ingesta prevista.");
@@ -187,6 +191,12 @@ assert(/respond_to_connection_request_v2[\s\S]*lead_relevance not in \('relevant
 assert(/get_provider_connection_requests_v2\(\)[\s\S]*profile\.owner_id = \(select auth\.uid\(\)\)/i.test(m35), "La bandeja v2 debe limitarse al titular autenticado.");
 assert(/revoke all on function public\.get_provider_connection_requests_v2\(\) from public, anon, authenticated/i.test(m35), "El RPC v2 debe retirar la ejecución heredada.");
 assert(/security definer[\s\S]*set search_path = ''/i.test(m35), "0035 debe aislar las funciones privilegiadas con search_path vacío.");
+
+assert(m42.includes("function public.get_provider_private_outcomes"), "0042 debe definir el resumen privado de resultados.");
+assert(/profile\.owner_id = \(select auth\.uid\(\)\)/i.test(m42), "0042 debe limitar el resumen al titular autenticado.");
+assert(/feedback\.outcome <> 'not_progressed'/i.test(m42), "0042 debe mantener la definición de resultado confirmado.");
+assert(/revoke all on function public\.get_provider_private_outcomes\(integer, integer\) from public, anon, authenticated/i.test(m42), "0042 debe retirar la ejecución heredada.");
+assert(providerOutcomesVerification.includes("public.get_provider_private_outcomes(integer,integer)"), "Falta la verificación post-despliegue de 0042.");
 
 console.log(`Migraciones verificadas: ${migrationFiles.length} archivos, secuencia 0001-${String(numbers.at(-1)).padStart(4, "0")}.`);
 console.log(`RLS comprobado en ${publicTables.size} tablas públicas y EXECUTE revocado en ${privilegedFunctions.size} funciones privilegiadas.`);
