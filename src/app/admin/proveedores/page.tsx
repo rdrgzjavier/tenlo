@@ -76,6 +76,14 @@ const providerRoles = new Set([
   "camp_provider", "community_org"
 ]);
 
+const statusLabels: Record<string, string> = {
+  draft: "Borrador",
+  pending_review: "Pendiente de revisión",
+  approved: "Aprobada",
+  rejected: "Rechazada",
+  archived: "Archivada"
+};
+
 function dateLabel(value: Date) {
   return new Intl.DateTimeFormat("es-ES", { dateStyle: "medium" }).format(value);
 }
@@ -122,10 +130,10 @@ function SegmentTable({ title, description, rows }: { title: string; description
   );
 }
 
-export default async function AdminProvidersPage({ searchParams }: { searchParams: Promise<{ period?: string; category?: string; municipality?: string }> }) {
+export default async function AdminProvidersPage({ searchParams }: { searchParams: Promise<{ period?: string; category?: string; municipality?: string; status?: string }> }) {
   if (!hasSupabaseServerConfig()) return <PrivateAreaUnavailable />;
 
-  const { period: rawPeriod, category: rawCategory, municipality: rawMunicipality } = await searchParams;
+  const { period: rawPeriod, category: rawCategory, municipality: rawMunicipality, status: rawStatus } = await searchParams;
   const period = resolveReportPeriod(rawPeriod);
   const supabase = await createSupabaseServerClient();
   const { data: authData } = await supabase.auth.getUser();
@@ -153,11 +161,14 @@ export default async function AdminProvidersPage({ searchParams }: { searchParam
   const approvalsAvailable = businessAvailable && !approvalsResult.error;
   const categoryOptions = [...new Set(allBusinesses.map((profile) => profile.category).filter(Boolean))].sort((a, b) => a.localeCompare(b, "es"));
   const municipalityOptions = [...new Set(allBusinesses.flatMap((profile) => profile.municipality ? [profile.municipality] : []))].sort((a, b) => a.localeCompare(b, "es"));
+  const statusOptions = [...new Set(allBusinesses.map((profile) => profile.status).filter(Boolean))].sort((a, b) => (statusLabels[a] || a).localeCompare(statusLabels[b] || b, "es"));
   const activeCategory = rawCategory && categoryOptions.includes(rawCategory) ? rawCategory : "";
   const activeMunicipality = rawMunicipality && municipalityOptions.includes(rawMunicipality) ? rawMunicipality : "";
+  const activeStatus = rawStatus && statusOptions.includes(rawStatus) ? rawStatus : "";
   const businesses = allBusinesses.filter((profile) => (
     (!activeCategory || profile.category === activeCategory)
     && (!activeMunicipality || profile.municipality === activeMunicipality)
+    && (!activeStatus || profile.status === activeStatus)
   ));
   const businessIds = new Set(businesses.map((profile) => profile.id));
   const businessPublicIds = new Map(allBusinesses.flatMap((profile) => [profile.id, profile.external_key].filter(Boolean).map((value) => [value as string, profile.id] as const)));
@@ -226,8 +237,22 @@ export default async function AdminProvidersPage({ searchParams }: { searchParam
       <p className="label mt-6">Informe interno</p>
       <h1 className="page-title">Proveedores del piloto</h1>
       <p className="lead max-w-4xl">Oferta disponible y avance desde el registro hasta la primera respuesta. Periodo del {dateLabel(periodStart)} al {dateLabel(new Date())}.</p>
-      <ReportPeriodSelector activePeriod={period} pathname="/admin/proveedores" preservedParams={{ category: activeCategory, municipality: activeMunicipality }} />
-      <ReportSegmentFilters activeCategory={activeCategory} activeMunicipality={activeMunicipality} activePeriod={period} categoryOptions={categoryOptions} municipalityOptions={municipalityOptions} pathname="/admin/proveedores" />
+      <ReportPeriodSelector activePeriod={period} pathname="/admin/proveedores" preservedParams={{ category: activeCategory, municipality: activeMunicipality, status: activeStatus }} />
+      <ReportSegmentFilters
+        activeCategory={activeCategory}
+        activeMunicipality={activeMunicipality}
+        activePeriod={period}
+        categoryOptions={categoryOptions}
+        municipalityOptions={municipalityOptions}
+        pathname="/admin/proveedores"
+        extraFilters={[{
+          name: "status",
+          label: "Estado de ficha",
+          activeValue: activeStatus,
+          allLabel: "Todos los estados",
+          options: statusOptions.map((value) => ({ value, label: statusLabels[value] || value }))
+        }]}
+      />
 
       {queryError ? <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">No se ha podido cargar una parte del informe. Comprueba las políticas administrativas y vuelve a intentarlo.</p> : null}
 
