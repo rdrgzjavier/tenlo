@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-const [loginRegistration, passwordRecovery, passwordReset, accountSettings, internalAnalyticsControl, consentBanner, consentSettings, consentMode, consentLibrary, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerRequestsPage, providerPrivateReport, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage, validatedSearchForm, usersReport, demandReport] = await Promise.all([
+const [loginRegistration, passwordRecovery, passwordReset, accountSettings, internalAnalyticsControl, consentBanner, consentSettings, consentMode, consentLibrary, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerRequestsPage, providerPrivateReport, providerProfilePage, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage, validatedSearchForm, usersReport, demandReport] = await Promise.all([
   read("src/components/LoginRegistration.tsx"),
   read("src/components/PasswordRecoveryRequest.tsx"),
   read("src/components/PasswordResetForm.tsx"),
@@ -24,6 +24,7 @@ const [loginRegistration, passwordRecovery, passwordReset, accountSettings, inte
   read("src/app/admin/proveedores/page.tsx"),
   read("src/app/solicitudes-profesionales/page.tsx"),
   read("src/app/rendimiento-profesional/page.tsx"),
+  read("src/app/mi-ficha-profesional/page.tsx"),
   read("src/components/ConnectionWorkflow.tsx"),
   read("src/app/buscar/page.tsx"),
   read("src/app/busquedas-guardadas/page.tsx"),
@@ -70,6 +71,7 @@ const checks = [
   [providerPrivateReport.includes('rpc("get_provider_private_performance"') && providerPrivateReport.includes("Últimos 30 días comparados con los 30 anteriores"), "El proveedor debe ver rendimiento privado y una comparación temporal sin datos familiares."],
   [providerPrivateReport.includes('rpc("get_provider_private_outcomes"') && providerPrivateReport.includes("Resultados declarados por las familias") && providerPrivateReport.includes("currentWindowStart"), "El informe privado debe limitar solicitudes a 30 días y mostrar resultados familiares solo de forma agregada."],
   [providerPrivateReport.includes("recommendations") && providerPrivateReport.includes(".slice(0, 3)") && providerPrivateReport.includes("Siguientes mejoras recomendadas"), "El informe privado debe limitar a tres las mejoras vinculadas con señales observadas."],
+  [providerProfilePage.includes("profileFreshness.stale") && providerProfilePage.includes("90") && providerPrivateReport.includes("hasStaleProfile"), "El proveedor debe recibir un recordatorio no intrusivo cuando su información lleve 90 días sin actualizarse."],
   [providerPrivateReport.includes("<PrintProviderReportButton") && providerPrivateReport.includes("Cómo interpretar este informe") && providerRequestsPage.includes('href="/rendimiento-profesional"'), "El informe compartible del proveedor debe ser agregado, imprimible, accesible desde su bandeja y explicar los límites de las métricas."],
   [connectionWorkflow.includes('fetch("/api/admin/connection-remind"') && connectionWorkflow.includes("providerRemindedAt"), "El backoffice debe ofrecer un único recordatorio auditable sin sustituir el seguimiento de alternativas."],
   [searchPage.includes("<SaveSearchButton") && savedSearchButton.includes('.from("saved_searches").upsert'), "El buscador debe permitir guardar criterios persistentes tras autenticar al usuario."],

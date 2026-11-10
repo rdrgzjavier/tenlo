@@ -42,7 +42,7 @@ export default async function ProviderPerformancePage() {
   if (!profile || profile.role === "family" || profile.role === "tenlo_admin") redirect("/area-personal");
 
   const [businessResult, currentResult, previousResult, requestsResult, currentOutcomesResult, previousOutcomesResult] = await Promise.all([
-    supabase.from("business_profiles").select("business_name").eq("owner_id", authData.user.id).eq("status", "approved").order("business_name"),
+    supabase.from("business_profiles").select("business_name,updated_at").eq("owner_id", authData.user.id).eq("status", "approved").order("business_name"),
     supabase.rpc("get_provider_private_performance", { window_days: 30, offset_days: 0 }),
     supabase.rpc("get_provider_private_performance", { window_days: 30, offset_days: 30 }),
     supabase.rpc("get_provider_connection_requests_v2"),
@@ -65,7 +65,9 @@ export default async function ProviderPerformancePage() {
   const relevant = rated.filter((item) => item.relevance === "relevant").length;
   const responseTimes = requests.flatMap((item) => item.first_response_at ? [new Date(item.first_response_at).getTime() - new Date(item.created_at).getTime()] : []).filter((value) => value >= 0);
   const names = (businessResult.data ?? []).map((item) => item.business_name).join(", ") || profile.display_name || "Proveedor Tenlo";
-  const generatedAt = new Intl.DateTimeFormat("es-ES", { dateStyle: "long" }).format(new Date());
+  const reportDate = new Date();
+  const hasStaleProfile = (businessResult.data ?? []).some((item) => reportDate.getTime() - new Date(item.updated_at).getTime() >= 90 * 86_400_000);
+  const generatedAt = new Intl.DateTimeFormat("es-ES", { dateStyle: "long" }).format(reportDate);
   const cards = [
     { label: "Apariciones", value: current.impressions, previous: previous.impressions, Icon: Eye },
     { label: "Aperturas de ficha", value: current.profile_views, previous: previous.profile_views, Icon: MousePointerClick },
@@ -73,6 +75,7 @@ export default async function ProviderPerformancePage() {
     { label: "Intenciones de contacto", value: current.contact_intents, previous: previous.contact_intents, Icon: Target }
   ];
   const recommendations = [
+    ...(hasStaleProfile ? [{ title: "Actualiza servicios y disponibilidad", detail: "Han pasado al menos 90 días desde la última actualización. Confirma que la cobertura y la información publicada siguen vigentes.", href: "/mi-ficha-profesional", action: "Revisar información" }] : []),
     ...(performanceAvailable && current.impressions === 0 ? [{ title: "Revisa que tu ficha esté lista", detail: "No se han registrado apariciones consentidas. Confirma servicios, municipios y disponibilidad para facilitar que la ficha encaje en las búsquedas.", href: "/mi-ficha-profesional", action: "Revisar mi ficha" }] : []),
     ...(performanceAvailable && current.impressions > 0 && current.profile_views / current.impressions < 0.1 ? [{ title: "Haz más clara tu propuesta", detail: "La ficha aparece en búsquedas, pero recibe pocas aperturas. Revisa el resumen, la imagen y la información principal que ayuda a comparar.", href: "/mi-ficha-profesional", action: "Mejorar la ficha" }] : []),
     ...(requestsAvailable && requests.length > responses.length ? [{ title: "Responde las solicitudes pendientes", detail: "Una respuesta rápida, incluso si no hay disponibilidad, ayuda a las familias y mejora la calidad del servicio.", href: "/solicitudes-profesionales", action: "Ver solicitudes" }] : []),

@@ -17,6 +17,11 @@ function recordValue(value: unknown) {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
 }
 
+function freshness(updatedAt: string) {
+  const days = Math.max(0, Math.floor((Date.now() - new Date(updatedAt).getTime()) / 86_400_000));
+  return { days, stale: days >= 90 };
+}
+
 export default async function ProviderProfilePage() {
   if (!hasSupabaseServerConfig()) return <PrivateAreaUnavailable />;
 
@@ -26,7 +31,7 @@ export default async function ProviderProfilePage() {
 
   const { data: profiles, error } = await supabase
     .from("business_profiles")
-    .select("id,business_name,website,address,municipality,service_area,category,subtype,description,phone,contact_email,details,status,latitude,longitude,location_visibility,service_municipalities,accepts_requests,contact_preferences,completeness_percent")
+    .select("id,business_name,website,address,municipality,service_area,category,subtype,description,phone,contact_email,details,status,latitude,longitude,location_visibility,service_municipalities,accepts_requests,contact_preferences,completeness_percent,updated_at")
     .eq("owner_id", authData.user.id)
     .order("created_at", { ascending: false });
 
@@ -42,13 +47,18 @@ export default async function ProviderProfilePage() {
       {error ? <p className="mt-6 rounded-2xl border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral">No hemos podido cargar tu ficha profesional.</p> : null}
       <div className="mt-8 grid gap-5">
         {editableProfiles.map((profile) => <ProviderProfileEditor key={profile.id} profile={{ ...profile, details: recordValue(profile.details) }} />)}
-        {publishedProfiles.map((profile) => (
-          <section key={profile.id} className="card p-5 md:p-6">
+        {publishedProfiles.map((profile) => {
+          const profileFreshness = freshness(profile.updated_at);
+          return <section key={profile.id} className="card p-5 md:p-6">
             <div className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="text-xl font-bold text-ink">{profile.business_name}</h2><p className="mt-1 text-sm text-muted">Ficha aprobada</p></div><span className="chip">Publicada</span></div>
+            <div className={`mt-4 rounded-2xl border p-4 text-sm leading-6 ${profileFreshness.stale ? "border-amber-300 bg-amber-50 text-amber-950" : "border-line bg-soft text-muted"}`}>
+              <strong className="text-ink">{profileFreshness.stale ? "Conviene revisar la información" : "Información actualizada recientemente"}.</strong>{" "}
+              Última actualización hace {profileFreshness.days === 0 ? "menos de un día" : `${profileFreshness.days} ${profileFreshness.days === 1 ? "día" : "días"}`}. Confirma que servicios, municipios y disponibilidad siguen vigentes.
+            </div>
             <p className="mt-4 text-sm leading-6 text-slatecopy">Para proteger la calidad del directorio, los cambios de una ficha aprobada pasan por una nueva revisión.</p>
-            <Link href="/feedback" className="btn-secondary mt-5 w-fit">Solicitar una corrección</Link>
-          </section>
-        ))}
+            <Link href="/feedback" className="btn-secondary mt-5 w-fit">{profileFreshness.stale ? "Actualizar información" : "Solicitar una corrección"}</Link>
+          </section>;
+        })}
         {!error && !profiles?.length ? (
           <section className="card p-6 text-center"><h2 className="text-xl font-bold text-ink">Todavía no tienes una ficha vinculada</h2><p className="mt-2 text-sm leading-6 text-muted">Busca la ficha existente de tu entidad o crea una cuenta profesional desde el registro para iniciar la revisión.</p><Link href="/servicios" className="btn-primary mt-5 w-fit">Buscar mi ficha</Link></section>
         ) : null}
