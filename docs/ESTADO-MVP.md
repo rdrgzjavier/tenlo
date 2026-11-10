@@ -1,6 +1,6 @@
 # Estado del MVP de Tenlo
 
-Fecha de corte: 7 de noviembre de 2026.
+Fecha de corte: 10 de noviembre de 2026.
 
 ## Progreso global
 
@@ -17,12 +17,12 @@ Una tarea solo puntúa como terminada cuando existe implementación o procedimie
 | Bloque del MVP | Peso | Avance | Puntos | Evidencia actual | Principal brecha |
 |---|---:|---:|---:|---|---|
 | Segmento, valor y reglas del piloto | 10 % | 100 % | 10,0 | Ámbito, oferta, confianza, conexión útil, SLA y gratuidad inicial decididos | Validar los mensajes con la primera cohorte |
-| Infraestructura, dominio y seguridad | 15 % | 99 % | 14,9 | Dominio, DNS, Vercel, CI sobre Node 24, Auth, SMTP, migraciones `0024`–`0041` y Turnstile verificados; Next.js 16, React 19 y Tailwind 4 validados en build y preview; auditoría sin avisos altos | Resolver el riesgo de contraseñas filtradas y definir la política de previews |
+| Infraestructura, dominio y seguridad | 15 % | 99 % | 14,9 | Dominio, DNS, Vercel, CI sobre Node 24, Auth, SMTP, migraciones `0024`–`0042` y Turnstile verificados; Next.js 16, React 19 y Tailwind 4 validados en build y preview; auditoría sin avisos altos | Resolver el riesgo de contraseñas filtradas y definir la política de previews |
 | Directorio real y calidad de oferta | 15 % | 89 % | 13,4 | Lote real auditado, Supabase activo, 21 centros, 14 proveedores y 16 servicios servidos mediante RPC públicos acotados; las nuevas propuestas quedan estructuradas y solo se publican tras revisión administrativa explícita | Normalizar cobertura/taxonomía y completar la revisión individual de fichas |
-| Reclamación y activación de proveedores | 15 % | 84 % | 12,6 | Reclamación, onboarding progresivo, ficha privada persistente, cola, moderación, petición de información y reenvío disponibles; cuenta proveedora controlada invitada y aislada; activación de invitaciones con contraseña y feedback implementada | Revalidar un enlace de invitación nuevo y probar publicación, aviso y respuesta de extremo a extremo |
+| Reclamación y activación de proveedores | 15 % | 84 % | 12,6 | Reclamación, onboarding progresivo, ficha privada persistente, cola, moderación, petición de información y reenvío disponibles; cuenta proveedora controlada invitada y aislada; activación de invitaciones con contraseña, feedback y recordatorio de frescura a 90 días implementados | Revalidar un enlace de invitación nuevo y probar publicación, aviso y respuesta de extremo a extremo |
 | Búsqueda, comparación y conexión familiar | 15 % | 84 % | 12,6 | Buscar, filtrar, proponer, ver ficha, mapa, guardar favoritos y búsquedas, recuperar criterios, comparar, solicitar, responder de forma protegida y valorar resultado | Probar la respuesta segura con cuentas reales y automatizar recordatorio y alternativa |
 | Cuentas, consentimiento y privacidad | 15 % | 74 % | 11,1 | Registro, confirmación, perfil persistente, recuperación, atribución saneada, historial de consentimiento, actividad significativa, exportación y solicitud de baja; acceso erróneo localizado y medido sin exponer credenciales | Política legal completa, prueba de supresión y preferencias de comunicación |
-| Medición e informes | 10 % | 97 % | 9,7 | Consentimiento propio sin coste, GTM v6 y GA4 verificados en producción; rechazo sin Google y flujo completo `search_started` → resultados recibido con parámetros; búsquedas y eventos persistentes, embudos privados, North Star e informe privado del proveedor | Validar los informes con actividad real del piloto y construir sus vistas definitivas en Looker Studio |
+| Medición e informes | 10 % | 97 % | 9,7 | Consentimiento propio sin coste, GTM v6 y GA4 verificados en producción; rechazo sin Google y flujo completo `search_started` → resultados recibido con parámetros; búsquedas y eventos persistentes, embudos privados, North Star e informe privado del proveedor con resultados familiares agregados y recomendaciones acotadas | Validar los informes con actividad real del piloto y construir sus vistas definitivas en Looker Studio |
 | Operación y recuperación del piloto | 5 % | 65 % | 3,3 | Responsable, SLA, playbook, backoffice, exportación, incidencias accionables y runbook de copias; panel privado y filtros comprobados con cuenta administradora | Ejecutar restauración, preparar CRM/contactos y probar recorridos completos |
 | **Total** | **100 %** |  | **87,5** |  |  |
 
