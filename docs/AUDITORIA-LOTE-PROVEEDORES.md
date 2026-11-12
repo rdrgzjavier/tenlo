@@ -4,7 +4,7 @@
 >
 > Objetivo: preparar un primer bloque seguro mientras se amplía la migración al mayor número posible de entidades reales del piloto, sin convertir datos didácticos o ficticios en datos reales.
 
-La base de datos de producción contiene veintiún centros, catorce proveedores y dieciséis servicios con fuente revisada. El seed reproducible ya prepara veintidós centros: incorpora Engage International School con su fuente oficial vigente y elimina dos centros infantiles que no se pudieron sostener en los municipios indicados. Los registros personales ficticios siguen excluidos.
+La base de datos de producción y el seed reproducible contienen veintidós centros, catorce proveedores y dieciséis servicios con fuente revisada. Engage International School se incorporó con su fuente oficial vigente y se eliminaron dos centros infantiles que no se pudieron sostener en los municipios indicados. Los registros personales ficticios siguen excluidos.
 
 ## Criterio aplicado
 
@@ -96,7 +96,7 @@ La presencia de una web no equivale a verificación ni autoriza a usar imágenes
 
 - Inventario editorial depurado: 22 centros, 20 registros de proveedores y 42 fichas generadas; los proveedores organizativos se normalizan en 18 entidades únicas.
 - Lote reproducible preparado: 22 centros, 14 proveedores y 16 servicios. Las tres salas de Hanky Planet quedan asociadas a un único proveedor.
-- Directorio actualmente importado en Supabase: 21 centros, 14 proveedores y 16 servicios; falta aplicar y verificar la incorporación de Engage International School.
+- Directorio importado y verificado en Supabase el 12-11-2026: 22 centros, 14 proveedores y 16 servicios; 0 servicios huérfanos y 0 centros con confianza elevada indebidamente.
 - Verificación posterior del 13-10-2026: 0 servicios huérfanos, 0 proveedores con propietario, 0 fichas reclamadas y 0 niveles de confianza elevados.
 - El lote completo se ejecutó dos veces el 13-10-2026 y mantuvo los mismos recuentos, confirmando su idempotencia.
 - Pendiente de fuente o normalización en el inventario editorial: 0 centros y 0 proveedores organizativos; los registros excluidos o retenidos permanecen fuera hasta que cambie su situación.
