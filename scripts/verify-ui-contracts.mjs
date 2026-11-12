@@ -41,6 +41,7 @@ const checks = [
   [(loginRegistration.match(/autoComplete="new-password"/g) || []).length >= 2, "El registro debe identificar ambos campos de contraseña nueva."],
   [loginRegistration.includes('name="registration_middle_name"') && loginRegistration.includes('failure_reason: "honeypot_filled"'), "El registro debe conservar la primera barrera antiabuso medible."],
   [loginRegistration.includes("captchaToken: loginCaptchaToken") && loginRegistration.includes("captchaToken: registerCaptchaToken"), "Acceso y registro deben enviar el token CAPTCHA cuando esté configurado."],
+  [loginRegistration.includes('NEXT_PUBLIC_GOOGLE_AUTH_ENABLED !== "false"') && loginRegistration.includes("process.env.NEXT_PUBLIC_SITE_URL ?? window.location.origin"), "Google OAuth debe mostrarse salvo desactivación explícita y volver al dominio oficial configurado."],
   [passwordRecovery.includes("captchaToken: captchaToken"), "La recuperación debe enviar el token CAPTCHA cuando esté configurado."],
   [turnstileChallenge.includes("NEXT_PUBLIC_TURNSTILE_SITE_KEY") && turnstileChallenge.includes("challenges.cloudflare.com/turnstile"), "Turnstile debe permanecer opcional y usar el servicio oficial."],
   [(passwordReset.match(/autoComplete="new-password"/g) || []).length >= 2, "El restablecimiento debe identificar ambos campos de contraseña nueva."],

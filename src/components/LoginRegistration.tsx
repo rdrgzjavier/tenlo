@@ -510,7 +510,7 @@ export default function LoginRegistration() {
     const { error: googleError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`
+        redirectTo: `${(process.env.NEXT_PUBLIC_SITE_URL ?? window.location.origin).replace(/\/$/, "")}/auth/callback?next=${encodeURIComponent(redirectTo)}`
       }
     });
 
@@ -577,9 +577,9 @@ export default function LoginRegistration() {
               <button className="btn-secondary justify-center sm:col-span-2 sm:w-fit" type="submit" disabled={loading === "login"}>{loading === "login" ? "Entrando..." : "Entrar"}</button>
             </form>
             <Link href="/recuperar-contrasena" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-ink underline decoration-ink/35 underline-offset-4">¿Has olvidado la contraseña?</Link>
-            <button className="btn-primary mt-3 w-full justify-center" type="button" onClick={handleGoogleLogin} disabled={loading === "google"}>
+            {process.env.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED !== "false" ? <button className="btn-primary mt-3 w-full justify-center" type="button" onClick={handleGoogleLogin} disabled={loading === "google"}>
               {loading === "google" ? "Conectando..." : "Continuar con Google"}
-            </button>
+            </button> : null}
           </div>
 
           {error ? <p className="mt-4 rounded-xl border border-coral/30 bg-coral/10 p-3 text-sm font-semibold text-coral" role="alert">{error}</p> : null}
