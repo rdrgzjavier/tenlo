@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { BarChart3, Bookmark, BookmarkPlus, BriefcaseBusiness, ClipboardCheck, ClipboardList, FilePlus2, Inbox, LayoutDashboard, Settings, ShieldCheck } from "lucide-react";
+import LogoutButton from "@/components/LogoutButton";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import { ensurePendingBusinessProfile } from "@/lib/provider-registration";
 import { acquisitionProfileFields } from "@/lib/profile-acquisition";
@@ -245,6 +246,8 @@ export default async function PersonalAreaPage() {
           <p className="text-sm leading-6 text-muted">Sesión iniciada como <strong>{displayName}</strong>.</p>
         </div>
       </div>
+
+      <LogoutButton />
     </div>
   );
 }

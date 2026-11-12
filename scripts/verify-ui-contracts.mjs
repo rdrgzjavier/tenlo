@@ -3,11 +3,12 @@ import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-const [loginRegistration, passwordRecovery, passwordReset, accountSettings, internalAnalyticsControl, consentBanner, consentSettings, consentMode, consentLibrary, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerRequestsPage, providerPrivateReport, providerProfilePage, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage, validatedSearchForm, usersReport, demandReport] = await Promise.all([
+const [loginRegistration, passwordRecovery, passwordReset, accountSettings, logoutButton, internalAnalyticsControl, consentBanner, consentSettings, consentMode, consentLibrary, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerRequestsPage, providerPrivateReport, providerProfilePage, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage, validatedSearchForm, usersReport, demandReport] = await Promise.all([
   read("src/components/LoginRegistration.tsx"),
   read("src/components/PasswordRecoveryRequest.tsx"),
   read("src/components/PasswordResetForm.tsx"),
   read("src/components/AccountSettings.tsx"),
+  read("src/components/LogoutButton.tsx"),
   read("src/components/InternalAnalyticsControl.tsx"),
   read("src/components/ConsentBanner.tsx"),
   read("src/components/CookieSettingsButton.tsx"),
@@ -47,6 +48,7 @@ const checks = [
   [(passwordReset.match(/autoComplete="new-password"/g) || []).length >= 2, "El restablecimiento debe identificar ambos campos de contraseña nueva."],
   [accountSettings.includes('autoComplete="current-password"'), "El área personal debe identificar la contraseña actual."],
   [(accountSettings.match(/autoComplete="new-password"/g) || []).length >= 2, "El área personal debe identificar ambos campos de contraseña nueva."],
+  [logoutButton.includes("supabase.auth.signOut()") && logoutButton.includes('router.replace("/")') && logoutButton.includes("Cerrar sesión"), "El área personal debe ofrecer un cierre de sesión visible y completo."],
   [internalAnalyticsControl.includes("tenlo_internal_traffic") && analyticsLibrary.includes("!isInternalAnalyticsTraffic()") && directoryEventRoute.includes("excluded: true"), "La exclusión de tráfico interno debe bloquear analítica en cliente y servidor."],
   [directoryEventRoute.includes('tenlo_analytics_consent=accepted') && directoryEventRoute.includes('.from("directory_events").insert(events)'), "La persistencia propia debe exigir consentimiento y limitarse a INSERT bajo RLS."],
   [consentBanner.includes('choose("rejected")') && consentBanner.includes('choose("accepted")'), "El consentimiento debe permitir rechazar o aceptar la analítica sin publicidad."],
