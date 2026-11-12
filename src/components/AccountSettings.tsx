@@ -12,6 +12,7 @@ type AccountSettingsProps = {
   role: string;
   status: string;
   passwordAccessEnabled: boolean;
+  googleAccessEnabled: boolean;
   municipality?: string | null;
   marketingConsent: boolean;
   marketingConsentAt?: string | null;
@@ -52,7 +53,7 @@ function isValidPublicName(value: string) {
   return normalized.length >= 3 && normalized.length <= 40 && /^[\p{L}\p{N} ._-]+$/u.test(normalized);
 }
 
-export default function AccountSettings({ email, displayName, role, status, passwordAccessEnabled, municipality, marketingConsent, marketingConsentAt, marketingConsentWithdrawnAt, deletionRequest }: AccountSettingsProps) {
+export default function AccountSettings({ email, displayName, role, status, passwordAccessEnabled, googleAccessEnabled, municipality, marketingConsent, marketingConsentAt, marketingConsentWithdrawnAt, deletionRequest }: AccountSettingsProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
   const [currentPassword, setCurrentPassword] = useState("");
@@ -294,7 +295,9 @@ export default function AccountSettings({ email, displayName, role, status, pass
           </div>
           <div className="rounded-2xl bg-soft p-4">
             <dt className="text-sm font-semibold text-muted">Método de acceso</dt>
-            <dd className="mt-1 text-base font-bold text-slatecopy">{passwordAccessEnabled ? "Email y contraseña" : "Google"}</dd>
+            <dd className="mt-1 text-base font-bold text-slatecopy">
+              {passwordAccessEnabled && googleAccessEnabled ? "Google y contraseña" : passwordAccessEnabled ? "Email y contraseña" : googleAccessEnabled ? "Google" : "Email"}
+            </dd>
           </div>
         </dl>
         <form className="mt-5 grid gap-3 rounded-2xl bg-soft p-4 md:grid-cols-[1fr_auto]" onSubmit={handlePublicNameUpdate}>

@@ -49,6 +49,7 @@ const checks = [
   [accountSettings.includes('autoComplete="current-password"'), "El área personal debe identificar la contraseña actual."],
   [(accountSettings.match(/autoComplete="new-password"/g) || []).length >= 2, "El área personal debe identificar ambos campos de contraseña nueva."],
   [accountSettings.includes("passwordAccessEnabled ?") && accountSettings.includes("Esta cuenta no utiliza una contraseña de Tenlo") && accountSettings.includes("Continuar con Google"), "Las cuentas OAuth no deben mostrar un cambio de contraseña imposible."],
+  [accountSettings.includes("Google y contraseña") && accountSettings.includes("googleAccessEnabled"), "Las cuentas con identidades vinculadas deben mostrar todos sus métodos de acceso."],
   [logoutButton.includes("supabase.auth.signOut()") && logoutButton.includes('router.replace("/")') && logoutButton.includes("Cerrar sesión"), "El área personal debe ofrecer un cierre de sesión visible y completo."],
   [internalAnalyticsControl.includes("tenlo_internal_traffic") && analyticsLibrary.includes("!isInternalAnalyticsTraffic()") && directoryEventRoute.includes("excluded: true"), "La exclusión de tráfico interno debe bloquear analítica en cliente y servidor."],
   [directoryEventRoute.includes('tenlo_analytics_consent=accepted') && directoryEventRoute.includes('.from("directory_events").insert(events)'), "La persistencia propia debe exigir consentimiento y limitarse a INSERT bajo RLS."],
