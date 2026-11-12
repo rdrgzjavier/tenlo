@@ -2,7 +2,7 @@
 
 > Documento vivo para decidir, construir y comprobar el MVP de Tenlo.
 >
-> Última revisión: 7 de noviembre de 2026. El avance ponderado y sus criterios están en [`ESTADO-MVP.md`](./ESTADO-MVP.md).
+> Última revisión: 12 de noviembre de 2026. El avance ponderado y sus criterios están en [`ESTADO-MVP.md`](./ESTADO-MVP.md).
 
 ## Cómo utilizar este documento
 
@@ -51,7 +51,7 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - Repositorio: `rdrgzjavier/tenlo`.
 - Rama de producción: `main`.
 - Commit funcional previo de referencia: `793398b` (`Add protected provider request workflow`), validado y desplegado correctamente; cada cambio posterior debe volver a superar las mismas comprobaciones.
-- Aplicación en Next.js 15, React 18, TypeScript y Tailwind 3.
+- Aplicación en Next.js 16, React 19, TypeScript y Tailwind 4.
 - `typecheck` y `lint` pasan correctamente.
 - Home, buscadores, listados, fichas, reclamaciones, solicitudes, favoritos, comparación, categorías, zonas y sitemap ya consumen una capa de acceso capaz de usar Supabase con retorno seguro a `mock-data.ts`. El cambio de fuente no se activará hasta validar paridad y reversibilidad en producción.
 - Existen cuarenta y dos migraciones de Supabase. Las migraciones `0024`–`0042` están aplicadas y verificadas: medición propia del directorio, RPC públicos explícitos, privilegios mínimos de perfil y contenido, moderación profesional, historial de consentimiento, funciones administrativas endurecidas, atribución de registro, propuestas inmutables, actividad significativa, bandeja protegida para proveedores, relevancia declarada de cada solicitud, aislamiento de cuentas/datos de prueba y resultados privados agregados para proveedores. La comprobación de catálogo devolvió 21 centros, 14 proveedores y 16 servicios públicos.
@@ -59,6 +59,7 @@ La prioridad no es completar todas las funcionalidades de un marketplace. Es dem
 - La reclamación de ficha ya puede iniciarse sin cuenta; la aprobación y los cambios siguen sujetos a verificación posterior.
 - El formulario de registro ya solicita tipo de usuario, nombre público, email, teléfono, contraseña, municipio y centro opcional. Para proveedores también muestra tipología, web, descripción, zona, modalidad, edades, disponibilidad, credenciales y otros campos.
 - El registro conserva teléfono, municipio, centro relacionado y consentimiento específico de marketing al crear o materializar el perfil después de confirmar el email. Los intereses siguen pendientes hasta definir una finalidad y una taxonomía útiles.
+- Google OAuth está publicado y devuelve al dominio canónico mediante `/auth/callback`; el selector de cuenta se verificó en producción el 11/11/2026. El área personal ofrece cierre de sesión visible. Queda ejecutar el alta completa con una cuenta Google nueva y comprobar el perfil resultante antes de dar el recorrido por cerrado.
 - Existe una bandeja administrativa restringida para reclamaciones, solicitudes, publicaciones, bajas, incidencias, notas, estados, alternativas, vencimientos y exportación; incluye un informe agregado de demanda de 90 días.
 - Los CTAs distinguen llamada, email, web y solicitud protegida; todavía falta que el proveedor responda desde un enlace o área propia y automatizar recordatorios y alternativas.
 - Favoritos se guarda por cuenta en Supabase y permite comparar entre dos y tres fichas compatibles.
