@@ -621,6 +621,40 @@ insert into public.centers (
   stages, languages, services, description, address, phone, email, website,
   source_name, source_url, last_reviewed, trust_level, tags, image_url, status, record_origin
 ) values (
+  'majadahonda-engage', 'colegio-engage-majadahonda', 'Engage International School', 'Majadahonda',
+  'privado', 'laico', array['Infantil', 'Primaria', 'ESO', 'Bachillerato']::text[],
+  array['Inglés']::text[], array['Comedor', 'Extraescolares', 'Orientación']::text[], 'Colegio privado internacional con oferta educativa de 1 a 18 años en Majadahonda.',
+  'Consultar dirección pública', '916 38 01 96', null, 'https://www.engageinternationalschool.com/',
+  'Web oficial del centro', 'https://www.engageinternationalschool.com/', '2026-10-11',
+  'collected', array['Privado', 'Internacional']::text[], 'https://images.unsplash.com/photo-1577891729319-f4871c6ec217?auto=format&fit=crop&w=1200&q=80', 'approved', 'tenlo_curated'
+) on conflict (slug) do update set
+  external_key = excluded.external_key,
+  name = excluded.name,
+  municipality = excluded.municipality,
+  center_type = excluded.center_type,
+  religious_character = excluded.religious_character,
+  stages = excluded.stages,
+  languages = excluded.languages,
+  services = excluded.services,
+  description = excluded.description,
+  address = excluded.address,
+  phone = excluded.phone,
+  email = excluded.email,
+  website = excluded.website,
+  source_name = excluded.source_name,
+  source_url = excluded.source_url,
+  last_reviewed = excluded.last_reviewed,
+  trust_level = 'collected',
+  tags = excluded.tags,
+  image_url = excluded.image_url,
+  status = 'approved',
+  record_origin = 'tenlo_curated';
+
+insert into public.centers (
+  external_key, slug, name, municipality, center_type, religious_character,
+  stages, languages, services, description, address, phone, email, website,
+  source_name, source_url, last_reviewed, trust_level, tags, image_url, status, record_origin
+) values (
   'majadahonda-galdos', 'ceip-benito-perez-galdos-majadahonda', 'CEIP Benito Pérez Galdós', 'Majadahonda',
   'publico', 'laico', array['Infantil', 'Primaria']::text[],
   array['Inglés']::text[], array['Comedor', 'Extraescolares', 'Orientación']::text[], 'Colegio público con etapas de segundo ciclo de Infantil y Primaria en Majadahonda.',
@@ -732,7 +766,7 @@ insert into public.business_profiles (
   'collected', 'approved', 'Web oficial del proveedor', 'https://beone.es/centros-deportivos/madrid/boadilla',
   '2026-10-11', 'unclaimed', 'free', 'Centro deportivo con piscina, escuela de natación, actividades infantiles y ludoteca.',
   '916 32 73 61', null, array['Deporte', 'Natación', 'Fitness']::text[],
-  'https://images.unsplash.com/photo-1526676037777-05a232554f77?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
+  'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
 ) on conflict (external_key) where external_key is not null do update set
   business_name = excluded.business_name,
   website = excluded.website,
@@ -860,7 +894,7 @@ insert into public.business_profiles (
   'collected', 'approved', 'Web oficial del proveedor', 'https://www.hankyplanet.com/celebracion-de-cumpleanos-en-las-rozas/',
   '2026-10-11', 'unclaimed', 'free', 'Sala equipada para cumpleaños, comuniones y fiestas familiares, con servicios opcionales de monitores, decoración y catering.',
   '666 222 269', 'lasrozas@hankyplanet.com', array['Cumpleaños', 'Salas multiusos']::text[],
-  'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
+  'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
 ) on conflict (external_key) where external_key is not null do update set
   business_name = excluded.business_name,
   website = excluded.website,
@@ -892,7 +926,7 @@ insert into public.business_profiles (
   'collected', 'approved', 'Web oficial del proveedor', 'https://ilusiona.com/equinoccio/',
   '2026-10-11', 'unclaimed', 'free', 'Centro de ocio familiar en C.C. Equinoccio con actividades y reserva de cumpleaños.',
   '916 39 73 62', 'info@ilusiona.com', array['Cumpleaños', 'Actividades']::text[],
-  'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
+  'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
 ) on conflict (external_key) where external_key is not null do update set
   business_name = excluded.business_name,
   website = excluded.website,
@@ -924,7 +958,7 @@ insert into public.business_profiles (
   'collected', 'approved', 'Web oficial del proveedor', 'https://www.piccoli.es/',
   '2026-10-11', 'unclaimed', 'free', 'Centro que ofrece cumpleaños a medida con temática y taller, además de campamentos y días sin cole.',
   '693 74 15 10', null, array['Cumpleaños', 'Talleres', 'Campamentos']::text[],
-  'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
+  'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
 ) on conflict (external_key) where external_key is not null do update set
   business_name = excluded.business_name,
   website = excluded.website,
@@ -956,7 +990,7 @@ insert into public.business_profiles (
   'collected', 'approved', 'Web oficial del proveedor', 'https://juventud.majadahonda.org/información-general-horario-y-localización',
   '2026-10-11', 'unclaimed', 'free', 'Recurso municipal con cesión de espacios, salas multiusos y actividades culturales, útil para familias que buscan espacios comunitarios sujetos a normativa municipal.',
   '916 34 91 20', 'centrojuvenil@majadahonda.org', array['Sala multiusos', 'Cesión de espacios', 'Juventud', 'Majadahonda']::text[],
-  'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
+  'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
 ) on conflict (external_key) where external_key is not null do update set
   business_name = excluded.business_name,
   website = excluded.website,
@@ -988,7 +1022,7 @@ insert into public.business_profiles (
   'collected', 'approved', 'Web oficial del proveedor', 'https://magicforest.kinepolis.es/info-practica',
   '2026-10-11', 'unclaimed', 'free', 'Parque infantil de Kinépolis Ciudad de la Imagen para niños de 4 a 12 años, con visitas y celebraciones de cumpleaños.',
   '915 12 70 70', 'info@magicforest.es', array['Cumpleaños', 'Parque infantil']::text[],
-  'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
+  'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
 ) on conflict (external_key) where external_key is not null do update set
   business_name = excluded.business_name,
   website = excluded.website,
@@ -1020,7 +1054,7 @@ insert into public.business_profiles (
   'collected', 'approved', 'Web oficial del proveedor', 'https://www.pozuelodealarcon.org/node/26355',
   '2026-10-11', 'unclaimed', 'free', 'Centro cultural municipal con instalaciones amplias y programación familiar; las cesiones o usos de sala dependen de normativa y disponibilidad municipal.',
   '917 62 83 00', 'pmc@pozuelo.madrid', array['Centro cultural', 'Sala multiusos', 'Actividades familiares', 'Pozuelo']::text[],
-  'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
+  'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
 ) on conflict (external_key) where external_key is not null do update set
   business_name = excluded.business_name,
   website = excluded.website,
@@ -1052,7 +1086,7 @@ insert into public.business_profiles (
   'collected', 'approved', 'Web oficial del proveedor', 'https://www.pozuelodealarcon.org/node/26362',
   '2026-10-11', 'unclaimed', 'free', 'Centro cultural municipal con talleres infantiles, juveniles y para adultos en Pozuelo de Alarcón.',
   '915 12 03 40', 'pmc@pozuelo.madrid', array['Centro cultural', 'Talleres', 'Actividades familiares', 'Pozuelo']::text[],
-  'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
+  'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
 ) on conflict (external_key) where external_key is not null do update set
   business_name = excluded.business_name,
   website = excluded.website,
@@ -1084,7 +1118,7 @@ insert into public.business_profiles (
   'collected', 'approved', 'Web oficial del proveedor', 'https://www.hopgalaxy.com/boadilla',
   '2026-10-11', 'unclaimed', 'free', 'Centro de ocio infantil con atracciones y opción de fiesta privada.',
   '630 69 06 19', 'info@hopgalaxy.com', array['Cumpleaños', 'Parque infantil']::text[],
-  'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
+  'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
 ) on conflict (external_key) where external_key is not null do update set
   business_name = excluded.business_name,
   website = excluded.website,
@@ -1116,7 +1150,7 @@ insert into public.business_profiles (
   'collected', 'approved', 'Web oficial del proveedor', 'https://elminiclub.com/',
   '2026-10-11', 'unclaimed', 'free', 'Parque de ocio infantil en Boadilla con cumpleaños, monitores, cafetería para familias y actividades.',
   '916 33 68 80', 'info@elminiclub.com', array['Cumpleaños', 'Parque infantil']::text[],
-  'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
+  'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
 ) on conflict (external_key) where external_key is not null do update set
   business_name = excluded.business_name,
   website = excluded.website,
@@ -1148,7 +1182,7 @@ insert into public.business_profiles (
   'collected', 'approved', 'Web oficial del proveedor', 'https://www.clublasencinas.es/Pages/108-cumpleanyos_y_celebraciones_infantiles_i_club_las_encinas_de_boadilla',
   '2026-10-11', 'unclaimed', 'free', 'Club con instalaciones sociales, infantiles y deportivas en entorno natural para cumpleaños y celebraciones familiares.',
   '916 33 03 64', null, array['Cumpleaños', 'Celebraciones familiares']::text[],
-  'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
+  'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated', '{}'::jsonb
 ) on conflict (external_key) where external_key is not null do update set
   business_name = excluded.business_name,
   website = excluded.website,
@@ -1188,7 +1222,7 @@ insert into public.services (
   'Consultar', 'Consultar programación infantil y disponibilidad con el centro.', null,
   '916 32 73 61', 'https://beone.es/centros-deportivos/madrid/boadilla',
   'Web oficial del proveedor', 'https://beone.es/centros-deportivos/madrid/boadilla', '2026-10-11',
-  'collected', 'approved', array['Deporte', 'Natación', 'Fitness']::text[], 'https://images.unsplash.com/photo-1526676037777-05a232554f77?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
+  'collected', 'approved', array['Deporte', 'Natación', 'Fitness']::text[], 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
 ) on conflict (slug) do update set
   external_key = excluded.external_key,
   business_profile_id = excluded.business_profile_id,
@@ -1352,7 +1386,7 @@ insert into public.services (
   'Consultar', 'Turnos publicados: mañana 10:00-14:30, comida 12:00-18:00, tarde 16:30-21:00, cena 20:00-01:00 y noche 22:00-02:00.', 'lasrozas@hankyplanet.com',
   '666 222 269', 'https://www.hankyplanet.com/celebracion-de-cumpleanos-en-las-rozas/',
   'Web oficial del proveedor', 'https://www.hankyplanet.com/celebracion-de-cumpleanos-en-las-rozas/', '2026-10-11',
-  'collected', 'approved', array['Cumpleaños', 'Salas multiusos']::text[], 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
+  'collected', 'approved', array['Cumpleaños', 'Salas multiusos']::text[], 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
 ) on conflict (slug) do update set
   external_key = excluded.external_key,
   business_profile_id = excluded.business_profile_id,
@@ -1393,7 +1427,7 @@ insert into public.services (
   'Consultar', 'Turnos publicados: mañana 10:00-14:30, comida 12:00-18:00, tarde 16:30-21:00, cena 19:30-01:00 y noche 22:00-00:00.', 'lasrozas@hankyplanet.com',
   '666 222 269', 'https://fiestalasrozas.com/',
   'Web oficial del proveedor', 'https://www.hankyplanet.com/celebracion-de-cumpleanos-en-las-rozas/', '2026-10-11',
-  'collected', 'approved', array['Cumpleaños', 'Salas multiusos']::text[], 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
+  'collected', 'approved', array['Cumpleaños', 'Salas multiusos']::text[], 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
 ) on conflict (slug) do update set
   external_key = excluded.external_key,
   business_profile_id = excluded.business_profile_id,
@@ -1434,7 +1468,7 @@ insert into public.services (
   'Consultar', 'Turnos publicados: mañana 10:00-15:00, tarde 16:00-21:00 y noche 22:00-02:00.', 'lasrozas@hankyplanet.com',
   '666 222 269', 'https://www.salasdeocio.com/salas/1244-hanky-planet-las-rozas-i',
   'Web oficial del proveedor', 'https://www.hankyplanet.com/celebracion-de-cumpleanos-en-las-rozas/', '2026-10-11',
-  'collected', 'approved', array['Cumpleaños', 'Salas multiusos']::text[], 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
+  'collected', 'approved', array['Cumpleaños', 'Salas multiusos']::text[], 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
 ) on conflict (slug) do update set
   external_key = excluded.external_key,
   business_profile_id = excluded.business_profile_id,
@@ -1475,7 +1509,7 @@ insert into public.services (
   'Consultar', 'Centro de ocio: lun-jue 16:00-00:00, vie 16:00-01:00, sáb 11:00-01:00, dom 11:00-00:00.', 'info@ilusiona.com',
   '916 39 73 62', 'https://ilusiona.com/equinoccio/',
   'Web oficial del proveedor', 'https://ilusiona.com/equinoccio/', '2026-10-11',
-  'collected', 'approved', array['Cumpleaños', 'Actividades']::text[], 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
+  'collected', 'approved', array['Cumpleaños', 'Actividades']::text[], 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
 ) on conflict (slug) do update set
   external_key = excluded.external_key,
   business_profile_id = excluded.business_profile_id,
@@ -1516,7 +1550,7 @@ insert into public.services (
   'Consultar', 'Horario no publicado de forma estable en la web; conviene confirmar disponibilidad al reservar.', null,
   '693 74 15 10', 'https://www.piccoli.es/',
   'Web oficial del proveedor', 'https://www.piccoli.es/', '2026-10-11',
-  'collected', 'approved', array['Cumpleaños', 'Talleres', 'Campamentos']::text[], 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
+  'collected', 'approved', array['Cumpleaños', 'Talleres', 'Campamentos']::text[], 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
 ) on conflict (slug) do update set
   external_key = excluded.external_key,
   business_profile_id = excluded.business_profile_id,
@@ -1557,7 +1591,7 @@ insert into public.services (
   'Consultar', 'Lun-vie 8:15-21:15, sáb 9:45-14:15 y 16:45-21:15, dom 9:45-14:15.', 'centrojuvenil@majadahonda.org',
   '916 34 91 20', 'https://juventud.majadahonda.org/información-general-horario-y-localización',
   'Web oficial del proveedor', 'https://juventud.majadahonda.org/información-general-horario-y-localización', '2026-10-11',
-  'collected', 'approved', array['Sala multiusos', 'Cesión de espacios', 'Juventud', 'Majadahonda']::text[], 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
+  'collected', 'approved', array['Sala multiusos', 'Cesión de espacios', 'Juventud', 'Majadahonda']::text[], 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
 ) on conflict (slug) do update set
   external_key = excluded.external_key,
   business_profile_id = excluded.business_profile_id,
@@ -1598,7 +1632,7 @@ insert into public.services (
   'Consultar', 'Mié-jue 17:00-20:30, vie 17:00-21:30, sáb 11:00-21:30 y dom 11:00-20:30; consultar cambios y días especiales.', 'info@magicforest.es',
   '915 12 70 70', 'https://magicforest.kinepolis.es/info-practica',
   'Web oficial del proveedor', 'https://magicforest.kinepolis.es/info-practica', '2026-10-11',
-  'collected', 'approved', array['Cumpleaños', 'Parque infantil']::text[], 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
+  'collected', 'approved', array['Cumpleaños', 'Parque infantil']::text[], 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
 ) on conflict (slug) do update set
   external_key = excluded.external_key,
   business_profile_id = excluded.business_profile_id,
@@ -1639,7 +1673,7 @@ insert into public.services (
   'Consultar', 'Instalaciones: 8:00-22:00. Secretaría: lun-vie 10:00-12:00 y mar-jue 14:30-18:00.', 'pmc@pozuelo.madrid',
   '917 62 83 00', 'https://www.pozuelodealarcon.org/node/26355',
   'Web oficial del proveedor', 'https://www.pozuelodealarcon.org/node/26355', '2026-10-11',
-  'collected', 'approved', array['Centro cultural', 'Sala multiusos', 'Actividades familiares', 'Pozuelo']::text[], 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
+  'collected', 'approved', array['Centro cultural', 'Sala multiusos', 'Actividades familiares', 'Pozuelo']::text[], 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
 ) on conflict (slug) do update set
   external_key = excluded.external_key,
   business_profile_id = excluded.business_profile_id,
@@ -1680,7 +1714,7 @@ insert into public.services (
   'Consultar', 'Instalaciones de lunes a viernes de 8:00 a 22:00; secretaría cerrada temporalmente según la ficha municipal.', 'pmc@pozuelo.madrid',
   '915 12 03 40', 'https://www.pozuelodealarcon.org/node/26362',
   'Web oficial del proveedor', 'https://www.pozuelodealarcon.org/node/26362', '2026-10-11',
-  'collected', 'approved', array['Centro cultural', 'Talleres', 'Actividades familiares', 'Pozuelo']::text[], 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
+  'collected', 'approved', array['Centro cultural', 'Talleres', 'Actividades familiares', 'Pozuelo']::text[], 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
 ) on conflict (slug) do update set
   external_key = excluded.external_key,
   business_profile_id = excluded.business_profile_id,
@@ -1721,7 +1755,7 @@ insert into public.services (
   'Consultar', 'Lun-jue 17:00-21:00, vie 11:00-15:00 y 17:00-22:00, sáb 11:00-22:00, dom 11:00-21:00.', 'info@hopgalaxy.com',
   '630 69 06 19', 'https://www.hopgalaxy.com/boadilla',
   'Web oficial del proveedor', 'https://www.hopgalaxy.com/boadilla', '2026-10-11',
-  'collected', 'approved', array['Cumpleaños', 'Parque infantil']::text[], 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
+  'collected', 'approved', array['Cumpleaños', 'Parque infantil']::text[], 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
 ) on conflict (slug) do update set
   external_key = excluded.external_key,
   business_profile_id = excluded.business_profile_id,
@@ -1762,7 +1796,7 @@ insert into public.services (
   'Consultar', 'Mié-vie 17:00-20:30; sáb-dom 11:00-14:00 y 17:00-20:30; lunes y martes cerrado salvo cumpleaños.', 'info@elminiclub.com',
   '916 33 68 80', 'https://elminiclub.com/',
   'Web oficial del proveedor', 'https://elminiclub.com/', '2026-10-11',
-  'collected', 'approved', array['Cumpleaños', 'Parque infantil']::text[], 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
+  'collected', 'approved', array['Cumpleaños', 'Parque infantil']::text[], 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
 ) on conflict (slug) do update set
   external_key = excluded.external_key,
   business_profile_id = excluded.business_profile_id,
@@ -1803,7 +1837,7 @@ insert into public.services (
   'Consultar', 'Horario y disponibilidad de cumpleaños sujetos a reserva y calendario del club; confirmar con el centro.', null,
   '916 33 03 64', 'https://www.clublasencinas.es/Pages/108-cumpleanyos_y_celebraciones_infantiles_i_club_las_encinas_de_boadilla',
   'Web oficial del proveedor', 'https://www.clublasencinas.es/Pages/108-cumpleanyos_y_celebraciones_infantiles_i_club_las_encinas_de_boadilla', '2026-10-11',
-  'collected', 'approved', array['Cumpleaños', 'Celebraciones familiares']::text[], 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
+  'collected', 'approved', array['Cumpleaños', 'Celebraciones familiares']::text[], 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80', 'tenlo_curated'
 ) on conflict (slug) do update set
   external_key = excluded.external_key,
   business_profile_id = excluded.business_profile_id,
@@ -1832,7 +1866,7 @@ where public.services.owner_id is null
 
 
 
--- Comprobaciones esperadas para este lote: 21 centros, 14 proveedores y 16 servicios.
+-- Comprobaciones esperadas para este lote: 22 centros, 14 proveedores y 16 servicios.
 
 select record_origin, count(*) from public.centers group by record_origin order by record_origin;
 

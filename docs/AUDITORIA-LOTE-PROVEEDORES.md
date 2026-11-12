@@ -1,10 +1,10 @@
 # Auditoría de la migración progresiva del directorio
 
-> Revisión: 13 de octubre de 2026.
+> Revisión: 12 de noviembre de 2026.
 >
 > Objetivo: preparar un primer bloque seguro mientras se amplía la migración al mayor número posible de entidades reales del piloto, sin convertir datos didácticos o ficticios en datos reales.
 
-La base de datos y el seed reproducible contienen veintiún centros, catorce proveedores y dieciséis servicios con fuente revisada. El inventario total contiene 24 centros y 22 proveedores organizativos únicos; los tres perfiles personales ficticios quedan excluidos. Cada entidad pendiente se incorporará en cuanto exista una fuente pública suficiente y sus campos hayan sido contrastados.
+La base de datos de producción contiene veintiún centros, catorce proveedores y dieciséis servicios con fuente revisada. El seed reproducible ya prepara veintidós centros: incorpora Engage International School con su fuente oficial vigente y elimina dos centros infantiles que no se pudieron sostener en los municipios indicados. Los registros personales ficticios siguen excluidos.
 
 ## Criterio aplicado
 
@@ -63,14 +63,14 @@ La presencia de una web no equivale a verificación ni autoriza a usar imágenes
 | E.I. Los Álamos | Pozuelo | https://www.comunidad.madrid/centros/escuela-educacion-infantil-alamos | Ficha oficial; teléfono corregido respecto al dato inicial. |
 | CEIP Francisco de Quevedo | Majadahonda | https://www.comunidad.madrid/centros/centro-francisco-quevedo-majadahonda | Ficha oficial; etapas, bilingüismo y teléfono contrastados. |
 | E.I. Talín | Majadahonda | https://www.comunidad.madrid/centros/escuela-educacion-infantil-talin | Ficha oficial; titularidad municipal y teléfono corregidos. |
+| Engage International School | Majadahonda | https://www.engageinternationalschool.com/ | Web oficial vigente; nombre, etapas y teléfono corregidos el 12-11-2026. |
 
 ## Centros retenidos o descartados
 
 | Registro actual | Motivo | Siguiente acción |
 |---|---|---|
-| E.I. Juan de Austria (Boadilla) | No aparece entre las escuelas infantiles oficiales del municipio y el teléfono no se ha podido sostener con una fuente pública. | Mantener fuera de Supabase; retirar o sustituir el mock cuando se cierre la depuración del inventario. |
-| E.I. El Principito (Pozuelo) | Las fuentes oficiales localizadas corresponden a centros homónimos de otros municipios, no a Pozuelo. | Mantener fuera de Supabase y no trasladar datos de homónimos. |
-| Colegio Engage (Majadahonda) | No se ha localizado una fuente oficial vigente que confirme la oferta y los datos actuales. | Mantener fuera de Supabase hasta localizar al titular o una fuente registral vigente. |
+| E.I. Juan de Austria (Boadilla) | No aparece entre las escuelas infantiles oficiales del municipio y el teléfono no se ha podido sostener con una fuente pública. | Retirada del inventario editorial el 12-11-2026. |
+| E.I. El Principito (Pozuelo) | Las fuentes oficiales localizadas corresponden a centros homónimos de otros municipios, no a Pozuelo. | Retirada del inventario editorial el 12-11-2026; no trasladar datos de homónimos. |
 
 ## Candidatos retenidos
 
@@ -94,13 +94,13 @@ La presencia de una web no equivale a verificación ni autoriza a usar imágenes
 
 ## Resultado del control
 
-- Inventario actual: 24 centros, 27 proveedores y 51 fichas generadas desde datos mock.
-- Inventario útil para el piloto: 24 centros y 22 proveedores organizativos únicos, antes de contrastar fuentes. Los tres perfiles personales ficticios no se migrarán.
-- Directorio importado en Supabase: 21 centros, 14 proveedores y 16 servicios. Las tres salas de Hanky Planet quedan asociadas a un único proveedor.
+- Inventario editorial depurado: 22 centros, 20 registros de proveedores y 42 fichas generadas; los proveedores organizativos se normalizan en 18 entidades únicas.
+- Lote reproducible preparado: 22 centros, 14 proveedores y 16 servicios. Las tres salas de Hanky Planet quedan asociadas a un único proveedor.
+- Directorio actualmente importado en Supabase: 21 centros, 14 proveedores y 16 servicios; falta aplicar y verificar la incorporación de Engage International School.
 - Verificación posterior del 13-10-2026: 0 servicios huérfanos, 0 proveedores con propietario, 0 fichas reclamadas y 0 niveles de confianza elevados.
 - El lote completo se ejecutó dos veces el 13-10-2026 y mantuvo los mismos recuentos, confirmando su idempotencia.
-- Pendiente de fuente o normalización: 3 centros; los 8 proveedores organizativos restantes ya están clasificados como excluidos o retenidos hasta que cambie su situación. Los campos dudosos se dejarán vacíos.
-- No se activa todavía `DIRECTORY_DATA_SOURCE=supabase` ni se modifica la web pública.
+- Pendiente de fuente o normalización en el inventario editorial: 0 centros y 0 proveedores organizativos; los registros excluidos o retenidos permanecen fuera hasta que cambie su situación.
+- `DIRECTORY_DATA_SOURCE=supabase` continúa activo; el fallback editorial reproduce solo entidades con fuente contrastada.
 
 ## Comprobaciones antes de ejecutar el lote
 

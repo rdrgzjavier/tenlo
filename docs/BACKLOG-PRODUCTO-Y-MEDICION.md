@@ -139,7 +139,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Eliminar cifras por defecto que puedan parecer reales, como las `100` familias registradas.
 - [x] Revisar el mensaje `100% moderado y seguro`; sustituirlo por una afirmación demostrable.
 - [x] Retirar del directorio público los perfiles personales y proveedores de ejemplo sin identidad ni fuente verificable; las futuras fichas de particulares solo se publicarán tras un alta real y revisión.
-- [ ] Revisar cada ficha mock antes de hacerla pública como ficha real.
+- [x] Revisar cada ficha mock antes de hacerla pública como ficha real. El control reproducible del 12/11/2026 deja 22 centros y 18 proveedores organizativos únicos, con 0 entidades pendientes de fuente o normalización; dos centros infantiles insostenibles se retiraron y Engage International School se corrigió con su web oficial.
 - [ ] No considerar una web oficial como verificación suficiente por sí sola.
 - [x] Definir los niveles visibles de confianza: `No verificada`, `Gestionada`, `Verificada` y `Oficial`, independientes del plan comercial y de la titularidad del centro.
 - [x] Mostrar en cada ficha la fuente, fecha de última revisión y estado de control por el proveedor cuando corresponda. Los campos pendientes se muestran de forma explícita y las fuentes oficiales enlazan a su origen.
@@ -161,7 +161,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   - [x] Contrastar y preparar siete centros adicionales con fuentes oficiales; corregir nombre y teléfono cuando el dato inicial estaba desactualizado.
   - [x] Importar y verificar en Supabase los siete centros adicionales: 18 centros totales; cero servicios huérfanos, propietarios ficticios, fichas reclamadas o niveles de confianza elevados el 13-10-2026.
   - [x] Contrastar e importar tres centros adicionales con fuente oficial: E.I. Los Álamos, CEIP Francisco de Quevedo y E.I. Talín. Resultado: 21 centros; 0 servicios huérfanos, propietarios asignados o fichas reclamadas el 13-10-2026.
-  - [x] Retener fuera de Supabase tres centros sin correspondencia oficial suficiente en el municipio indicado: E.I. Juan de Austria, E.I. El Principito y Colegio Engage.
+  - [x] Resolver los tres centros retenidos: E.I. Juan de Austria y E.I. El Principito se retiraron por no poder sostener su existencia en los municipios indicados; Engage International School se contrastó y quedó preparado para importar con nombre, teléfono y web oficial vigentes.
   - [x] Contrastar y preparar Pulso Música, The Magic Forest y Centro Cultural Volturno con fuentes oficiales específicas.
   - [x] Importar y verificar el lote de Pulso Música, The Magic Forest y Centro Cultural Volturno: 14 proveedores y 16 servicios; segunda ejecución sin duplicados y contadores de integridad a cero el 13-10-2026.
   - [x] Contrastar los 8 proveedores organizativos restantes: seis registros didácticos o no sostenibles excluidos y dos polideportivos retenidos mientras continúan en obras.
