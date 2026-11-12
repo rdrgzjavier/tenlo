@@ -625,7 +625,7 @@ insert into public.centers (
   'privado', 'laico', array['Infantil', 'Primaria', 'ESO', 'Bachillerato']::text[],
   array['Inglés']::text[], array['Comedor', 'Extraescolares', 'Orientación']::text[], 'Colegio privado internacional con oferta educativa de 1 a 18 años en Majadahonda.',
   'Consultar dirección pública', '916 38 01 96', null, 'https://www.engageinternationalschool.com/',
-  'Web oficial del centro', 'https://www.engageinternationalschool.com/', '2026-10-11',
+  'Web oficial del centro', 'https://www.engageinternationalschool.com/', '2026-11-12',
   'collected', array['Privado', 'Internacional']::text[], 'https://images.unsplash.com/photo-1577891729319-f4871c6ec217?auto=format&fit=crop&w=1200&q=80', 'approved', 'tenlo_curated'
 ) on conflict (slug) do update set
   external_key = excluded.external_key,

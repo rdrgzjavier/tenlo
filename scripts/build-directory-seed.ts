@@ -108,8 +108,8 @@ function contactValue(value?: string) {
   return value;
 }
 
-function reviewedDate(value?: string) {
-  return value ? literal("2026-10-11") : "null";
+function reviewedDate(value?: string, date = "2026-10-11") {
+  return value ? literal(date) : "null";
 }
 
 const statements: string[] = [
@@ -128,7 +128,7 @@ for (const center of importableCenters) {
   ${literal(center.type)}, ${literal(center.religiousCharacter)}, ${textArray(center.stages)},
   ${textArray(center.languages)}, ${textArray(center.services)}, ${literal(center.description)},
   ${literal(center.address)}, ${literal(center.phone)}, ${literal(center.email)}, ${literal(center.website)},
-  ${literal(center.source)}, ${literal(center.sourceUrl)}, ${reviewedDate(center.lastReviewed)},
+  ${literal(center.source)}, ${literal(center.sourceUrl)}, ${reviewedDate(center.lastReviewed, center.id === "majadahonda-engage" ? "2026-11-12" : undefined)},
   'collected', ${textArray(center.tags)}, ${literal(center.image)}, 'approved', 'tenlo_curated'
 ) on conflict (slug) do update set
   external_key = excluded.external_key,
