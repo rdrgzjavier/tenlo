@@ -61,6 +61,8 @@ export default async function AccountDataPage() {
   }
 
   const displayName = profile?.public_name ?? profile?.display_name ?? user.email?.split("@")[0] ?? "Usuario Tenlo";
+  const passwordAccessEnabled = user.identities?.some((identity) => identity.provider === "email")
+    ?? user.app_metadata?.provider === "email";
   const { data: deletionRequest } = await supabase
     .from("submissions")
     .select("status,created_at")
@@ -82,6 +84,7 @@ export default async function AccountDataPage() {
           displayName={displayName}
           role={profile?.role ?? "family"}
           status={profile?.status ?? "approved"}
+          passwordAccessEnabled={passwordAccessEnabled}
           municipality={profile?.municipality}
           marketingConsent={profile?.marketing_consent ?? false}
           marketingConsentAt={profile?.marketing_consent_at}

@@ -11,6 +11,7 @@ type AccountSettingsProps = {
   displayName: string;
   role: string;
   status: string;
+  passwordAccessEnabled: boolean;
   municipality?: string | null;
   marketingConsent: boolean;
   marketingConsentAt?: string | null;
@@ -51,7 +52,7 @@ function isValidPublicName(value: string) {
   return normalized.length >= 3 && normalized.length <= 40 && /^[\p{L}\p{N} ._-]+$/u.test(normalized);
 }
 
-export default function AccountSettings({ email, displayName, role, status, municipality, marketingConsent, marketingConsentAt, marketingConsentWithdrawnAt, deletionRequest }: AccountSettingsProps) {
+export default function AccountSettings({ email, displayName, role, status, passwordAccessEnabled, municipality, marketingConsent, marketingConsentAt, marketingConsentWithdrawnAt, deletionRequest }: AccountSettingsProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
   const [currentPassword, setCurrentPassword] = useState("");
@@ -291,6 +292,10 @@ export default function AccountSettings({ email, displayName, role, status, muni
             <dt className="text-sm font-semibold text-muted">Estado</dt>
             <dd className="mt-1 text-base font-bold text-slatecopy">{statusLabel(status)}</dd>
           </div>
+          <div className="rounded-2xl bg-soft p-4">
+            <dt className="text-sm font-semibold text-muted">Método de acceso</dt>
+            <dd className="mt-1 text-base font-bold text-slatecopy">{passwordAccessEnabled ? "Email y contraseña" : "Google"}</dd>
+          </div>
         </dl>
         <form className="mt-5 grid gap-3 rounded-2xl bg-soft p-4 md:grid-cols-[1fr_auto]" onSubmit={handlePublicNameUpdate}>
           <label className="field-label">
@@ -326,7 +331,7 @@ export default function AccountSettings({ email, displayName, role, status, muni
         </form>
       </section>
 
-      <section className="card p-5 md:p-6">
+      {passwordAccessEnabled ? <section className="card p-5 md:p-6">
         <h2 className="text-xl font-bold text-slatecopy">Cambiar contraseña</h2>
         <form className="mt-5 grid gap-4 md:grid-cols-2" onSubmit={handlePasswordUpdate}>
           <div className="field-label md:col-span-2">
@@ -358,7 +363,12 @@ export default function AccountSettings({ email, displayName, role, status, muni
           </div>
           <button className="btn-primary w-full md:w-fit" type="submit" disabled={loading === "password"}>{loading === "password" ? "Actualizando..." : "Actualizar contraseña"}</button>
         </form>
-      </section>
+      </section> : <section className="card p-5 md:p-6">
+        <h2 className="text-xl font-bold text-slatecopy">Acceso con Google</h2>
+        <p className="mt-2 text-sm leading-6 text-muted">
+          Esta cuenta no utiliza una contraseña de Tenlo. Para entrar, elige <strong>Continuar con Google</strong> en la pantalla de acceso.
+        </p>
+      </section>}
 
       <section className="card p-5 md:p-6">
         <h2 className="text-xl font-bold text-slatecopy">Seguridad y baja</h2>
