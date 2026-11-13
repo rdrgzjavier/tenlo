@@ -61,10 +61,13 @@ export default async function AccountDataPage() {
   }
 
   const displayName = profile?.public_name ?? profile?.display_name ?? user.email?.split("@")[0] ?? "Usuario Tenlo";
-  const passwordAccessEnabled = user.identities?.some((identity) => identity.provider === "email")
-    ?? user.app_metadata?.provider === "email";
-  const googleAccessEnabled = user.identities?.some((identity) => identity.provider === "google")
-    ?? user.app_metadata?.provider === "google";
+  const identityProviders = new Set([
+    ...(user.identities?.map((identity) => identity.provider) ?? []),
+    ...(Array.isArray(user.app_metadata?.providers) ? user.app_metadata.providers : []),
+    ...(typeof user.app_metadata?.provider === "string" ? [user.app_metadata.provider] : [])
+  ]);
+  const passwordAccessEnabled = identityProviders.has("email");
+  const googleAccessEnabled = identityProviders.has("google");
   const { data: deletionRequest } = await supabase
     .from("submissions")
     .select("status,created_at")
