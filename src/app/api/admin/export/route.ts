@@ -22,6 +22,8 @@ const columns = [
   "contact_name",
   "contact_email",
   "contact_phone",
+  "contact_use_scope",
+  "legal_basis_status",
   "website",
   "accepts_requests",
   "contact_preferences",
@@ -49,22 +51,22 @@ type CsvRow = Partial<Record<(typeof columns)[number], string | null | undefined
 const commonColumns = new Set<(typeof columns)[number]>(["queue", "id", "status", "created_at", "updated_at"]);
 
 const applicableColumnsByQueue: Record<string, Set<(typeof columns)[number]>> = {
-  claim: new Set(["target_type", "target_id", "entity_name", "contact_name", "contact_email", "contact_phone"]),
+  claim: new Set(["target_type", "target_id", "entity_name", "contact_name", "contact_email", "contact_phone", "contact_use_scope", "legal_basis_status"]),
   connection_request: new Set([
-    "target_type", "target_id", "category_id", "municipality", "account_id", "provider_id", "service_id",
+    "target_type", "target_id", "category_id", "municipality", "account_id", "provider_id", "service_id", "contact_use_scope", "legal_basis_status",
     "provider_notified_at", "first_response_at", "closed_at", "provider_response_summary", "alternative_summary",
     "family_useful", "family_outcome"
   ]),
-  submission: new Set(["target_type", "account_id"]),
+  submission: new Set(["target_type", "account_id", "contact_use_scope", "legal_basis_status"]),
   business_profile: new Set([
     "entity_name", "category_id", "municipality", "service_area", "service_municipalities", "account_id", "provider_id",
-    "contact_email", "contact_phone", "website", "accepts_requests", "contact_preferences", "completeness_percent",
+    "contact_email", "contact_phone", "contact_use_scope", "legal_basis_status", "website", "accepts_requests", "contact_preferences", "completeness_percent",
     "trust_level", "claim_status", "commercial_plan", "record_origin", "source_name", "source_url", "last_reviewed"
   ]),
   provider_suggestion: new Set([
-    "entity_name", "category_id", "municipality", "account_id", "provider_id", "contact_name", "contact_email", "website", "message"
+    "entity_name", "category_id", "municipality", "account_id", "provider_id", "contact_name", "contact_email", "contact_use_scope", "legal_basis_status", "website", "message"
   ]),
-  feedback: new Set(["target_id", "account_id", "contact_name", "contact_email", "context", "message"])
+  feedback: new Set(["target_id", "account_id", "contact_name", "contact_email", "contact_use_scope", "legal_basis_status", "context", "message"])
 };
 
 function csvCell(value: string | null | undefined) {
@@ -163,7 +165,9 @@ export async function GET() {
       entity_name: item.entity_name,
       contact_name: item.requester_name,
       contact_email: item.requester_email,
-      contact_phone: item.requester_phone
+      contact_phone: item.requester_phone,
+      contact_use_scope: "Gestión de reclamación",
+      legal_basis_status: "Uso operativo; no habilita marketing"
     })),
     ...(requestsResult.data ?? []).map((item) => ({
       queue: "connection_request",
@@ -178,6 +182,8 @@ export async function GET() {
       account_id: item.family_id,
       provider_id: item.provider_id,
       service_id: item.service_id,
+      contact_use_scope: "Gestión de solicitud familiar",
+      legal_basis_status: "Uso operativo; no habilita marketing",
       provider_notified_at: item.provider_notified_at,
       first_response_at: item.first_response_at,
       closed_at: item.closed_at,
@@ -193,7 +199,9 @@ export async function GET() {
       created_at: item.created_at,
       updated_at: item.updated_at,
       target_type: item.submission_type,
-      account_id: item.user_id
+      account_id: item.user_id,
+      contact_use_scope: "Gestión de cuenta o publicación",
+      legal_basis_status: "Uso operativo; no habilita marketing"
     })),
     ...(businessProfilesResult.data ?? []).map((item) => ({
       queue: "business_profile",
@@ -210,6 +218,8 @@ export async function GET() {
       provider_id: item.id,
       contact_email: item.contact_email,
       contact_phone: item.phone,
+      contact_use_scope: "Candidato a contacto profesional",
+      legal_basis_status: "Pendiente de validar antes de prospección",
       website: item.website,
       accepts_requests: String(item.accepts_requests),
       contact_preferences: item.contact_preferences.join(" | "),
@@ -235,6 +245,8 @@ export async function GET() {
       provider_id: item.converted_profile_id,
       contact_name: item.submitter_name,
       contact_email: item.submitter_email,
+      contact_use_scope: "Gestión de propuesta aportada",
+      legal_basis_status: "Uso operativo; no habilita marketing",
       website: item.website,
       message: item.notes
     })),
@@ -248,6 +260,8 @@ export async function GET() {
       account_id: item.user_id,
       contact_name: item.name,
       contact_email: item.email,
+      contact_use_scope: "Gestión de soporte o incidencia",
+      legal_basis_status: "Uso operativo; no habilita marketing",
       context: item.context,
       message: item.message
     }))

@@ -214,7 +214,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 
 ## P0. Operación manual del piloto
 
-- [ ] Preparar una hoja/CRM inicial de proveedores contactables, con base jurídica y origen del dato. La exportación administrativa ya incorpora fichas profesionales, contacto, estado, confianza, plan, origen y fuente; falta validar y registrar la base jurídica antes de utilizarla para prospección.
+- [ ] Preparar una hoja/CRM inicial de proveedores contactables, con base jurídica y origen del dato. La exportación administrativa incorpora fichas profesionales, contacto, estado, confianza, plan, origen, fuente y alcance de uso; desde el 16/11/2026 marca cada candidato profesional como `Pendiente de validar antes de prospección` y separa los contactos exclusivamente operativos, que nunca habilitan marketing. Falta validar y registrar la base jurídica antes de utilizar la lista para prospección.
 - [x] Definir estados de outreach: identificado, preparado, contactado, abierto, interesado, reclamado, publicado, activo, descartado.
 - [x] Preparar email inicial, recordatorio y cierre sin urgencia artificial.
 - [ ] Utilizar demanda real únicamente; no afirmar que hay familias esperando si no se ha observado.

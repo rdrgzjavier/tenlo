@@ -83,7 +83,8 @@ const checks = [
   [searchPage.includes("<SaveSearchButton") && savedSearchButton.includes('.from("saved_searches").upsert'), "El buscador debe permitir guardar criterios persistentes tras autenticar al usuario."],
   [savedSearchPage.includes('.from("saved_searches")') && savedSearchPage.includes("<SavedSearchActions"), "El área privada debe permitir recuperar y gestionar búsquedas guardadas."],
   [providerSuggestionForm.includes('fetch("/api/provider-suggestion"') && adminPage.includes("<AdminProviderSuggestionReview"), "Las propuestas de proveedor deben quedar estructuradas y exigir revisión administrativa antes de crear una ficha."],
-  [adminExport.includes('return "Sin dato"') && adminExport.includes('return "No aplica"') && adminExport.includes("applicableColumnsByQueue"), "La exportación administrativa debe distinguir datos ausentes de campos no aplicables."]
+  [adminExport.includes('return "Sin dato"') && adminExport.includes('return "No aplica"') && adminExport.includes("applicableColumnsByQueue"), "La exportación administrativa debe distinguir datos ausentes de campos no aplicables."],
+  [adminExport.includes('"contact_use_scope"') && adminExport.includes('"legal_basis_status"') && adminExport.includes("no habilita marketing") && adminExport.includes("Pendiente de validar antes de prospección"), "La exportación operativa no debe presentar un dato de contacto como autorización comercial."]
 ];
 
 for (const [condition, message] of checks) {
