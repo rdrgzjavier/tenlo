@@ -5,7 +5,7 @@ const fetchWithTimeout = (input, init = {}) => fetch(input, {
 });
 
 const publicChecks = [
-  ["/", ["Encuentra, compara y contacta", "+21", "+37"]],
+  ["/", ["Encuentra, compara y contacta", "Oferta local para decidir con confianza", "Zonas cubiertas"]],
   ["/centros", ["Centros educativos"]],
   ["/centros/ceip-agora-boadilla", ["CEIP Ágora"]],
   ["/servicios", ["Servicios para familias"]],
