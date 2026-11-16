@@ -46,16 +46,44 @@ const columns = [
 
 type CsvRow = Partial<Record<(typeof columns)[number], string | null | undefined>>;
 
+const commonColumns = new Set<(typeof columns)[number]>(["queue", "id", "status", "created_at", "updated_at"]);
+
+const applicableColumnsByQueue: Record<string, Set<(typeof columns)[number]>> = {
+  claim: new Set(["target_type", "target_id", "entity_name", "contact_name", "contact_email", "contact_phone"]),
+  connection_request: new Set([
+    "target_type", "target_id", "category_id", "municipality", "account_id", "provider_id", "service_id",
+    "provider_notified_at", "first_response_at", "closed_at", "provider_response_summary", "alternative_summary",
+    "family_useful", "family_outcome"
+  ]),
+  submission: new Set(["target_type", "account_id"]),
+  business_profile: new Set([
+    "entity_name", "category_id", "municipality", "service_area", "service_municipalities", "account_id", "provider_id",
+    "contact_email", "contact_phone", "website", "accepts_requests", "contact_preferences", "completeness_percent",
+    "trust_level", "claim_status", "commercial_plan", "record_origin", "source_name", "source_url", "last_reviewed"
+  ]),
+  provider_suggestion: new Set([
+    "entity_name", "category_id", "municipality", "account_id", "provider_id", "contact_name", "contact_email", "website", "message"
+  ]),
+  feedback: new Set(["target_id", "account_id", "contact_name", "contact_email", "context", "message"])
+};
+
 function csvCell(value: string | null | undefined) {
   const normalized = value ?? "";
   const formulaSafe = /^[=+\-@]/.test(normalized.trimStart()) ? `'${normalized}` : normalized;
   return `"${formulaSafe.replaceAll('"', '""')}"`;
 }
 
+function exportValue(row: CsvRow, column: (typeof columns)[number]) {
+  const value = row[column];
+  if (value !== null && value !== undefined && value !== "") return value;
+  if (commonColumns.has(column) || applicableColumnsByQueue[row.queue ?? ""]?.has(column)) return "Sin dato";
+  return "No aplica";
+}
+
 function toCsv(rows: CsvRow[]) {
   const lines = [
     columns.map(csvCell).join(","),
-    ...rows.map((row) => columns.map((column) => csvCell(row[column])).join(","))
+    ...rows.map((row) => columns.map((column) => csvCell(exportValue(row, column))).join(","))
   ];
   return `\uFEFF${lines.join("\r\n")}\r\n`;
 }
@@ -155,7 +183,7 @@ export async function GET() {
       closed_at: item.closed_at,
       provider_response_summary: item.provider_response_summary,
       alternative_summary: item.alternative_summary,
-      family_useful: connectionFeedback.has(item.id) ? String(connectionFeedback.get(item.id)?.useful) : "",
+      family_useful: connectionFeedback.has(item.id) ? String(connectionFeedback.get(item.id)?.useful) : null,
       family_outcome: connectionFeedback.get(item.id)?.outcome
     })),
     ...(submissionsResult.data ?? []).map((item) => ({

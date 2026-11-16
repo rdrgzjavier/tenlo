@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-const [loginRegistration, passwordRecovery, passwordReset, accountSettings, logoutButton, internalAnalyticsControl, consentBanner, consentSettings, consentMode, consentLibrary, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerRequestsPage, providerPrivateReport, providerProfilePage, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage, validatedSearchForm, usersReport, demandReport] = await Promise.all([
+const [loginRegistration, passwordRecovery, passwordReset, accountSettings, logoutButton, internalAnalyticsControl, consentBanner, consentSettings, consentMode, consentLibrary, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerRequestsPage, providerPrivateReport, providerProfilePage, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage, validatedSearchForm, usersReport, demandReport, adminExport] = await Promise.all([
   read("src/components/LoginRegistration.tsx"),
   read("src/components/PasswordRecoveryRequest.tsx"),
   read("src/components/PasswordResetForm.tsx"),
@@ -34,7 +34,8 @@ const [loginRegistration, passwordRecovery, passwordReset, accountSettings, logo
   read("src/app/admin/page.tsx"),
   read("src/components/ValidatedSearchForm.tsx"),
   read("src/app/admin/usuarios/page.tsx"),
-  read("src/app/admin/demanda/page.tsx")
+  read("src/app/admin/demanda/page.tsx"),
+  read("src/app/api/admin/export/route.ts")
 ]);
 
 const checks = [
@@ -81,7 +82,8 @@ const checks = [
   [connectionWorkflow.includes('fetch("/api/admin/connection-remind"') && connectionWorkflow.includes("providerRemindedAt"), "El backoffice debe ofrecer un único recordatorio auditable sin sustituir el seguimiento de alternativas."],
   [searchPage.includes("<SaveSearchButton") && savedSearchButton.includes('.from("saved_searches").upsert'), "El buscador debe permitir guardar criterios persistentes tras autenticar al usuario."],
   [savedSearchPage.includes('.from("saved_searches")') && savedSearchPage.includes("<SavedSearchActions"), "El área privada debe permitir recuperar y gestionar búsquedas guardadas."],
-  [providerSuggestionForm.includes('fetch("/api/provider-suggestion"') && adminPage.includes("<AdminProviderSuggestionReview"), "Las propuestas de proveedor deben quedar estructuradas y exigir revisión administrativa antes de crear una ficha."]
+  [providerSuggestionForm.includes('fetch("/api/provider-suggestion"') && adminPage.includes("<AdminProviderSuggestionReview"), "Las propuestas de proveedor deben quedar estructuradas y exigir revisión administrativa antes de crear una ficha."],
+  [adminExport.includes('return "Sin dato"') && adminExport.includes('return "No aplica"') && adminExport.includes("applicableColumnsByQueue"), "La exportación administrativa debe distinguir datos ausentes de campos no aplicables."]
 ];
 
 for (const [condition, message] of checks) {

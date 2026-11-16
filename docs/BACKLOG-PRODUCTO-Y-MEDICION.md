@@ -2,7 +2,7 @@
 
 > Documento vivo para decidir, construir y comprobar el MVP de Tenlo.
 >
-> Última revisión: 12 de noviembre de 2026. El avance ponderado y sus criterios están en [`ESTADO-MVP.md`](./ESTADO-MVP.md).
+> Última revisión: 16 de noviembre de 2026. El avance ponderado y sus criterios están en [`ESTADO-MVP.md`](./ESTADO-MVP.md).
 
 ## Cómo utilizar este documento
 
@@ -611,7 +611,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 - [x] Documentar para cada KPI: definición, fórmula, fuente, frecuencia, propietario y limitaciones en `CATALOGO-DE-KPIS-Y-REPORTING.md`.
 - [x] Mostrar intervalos comparables y filtros por categoría, municipio, estado de ficha, plan y canal. Demanda y rendimiento permiten categoría y municipio; rendimiento añade confianza, plan y estado de reclamación; proveedores añade estado de moderación; usuarios y consentimiento permiten canal de entrada y campaña. Los cuatro informes comparan ventanas comunes de 30, 90 y 180 días y preservan el segmento al cambiar de periodo.
 - [x] No comparar poblaciones distintas sin explicar la unidad. El catálogo identifica para usuarios, demanda, proveedores y rendimiento la unidad principal, los denominadores permitidos y las poblaciones que no deben mezclarse; las pantallas explican además búsquedas únicas, eventos, fichas, solicitudes y estados cuando conviven en un mismo informe.
-- [ ] Diferenciar `0`, `sin dato` y `no aplicable`. El detalle de rendimiento separa una reclamación inexistente (`Sin dato`) de un centro al que ese estado no corresponde (`No aplica`); todos los informes administrativos —rendimiento, usuarios, demanda y proveedores— ya muestran `0` cuando la consulta funciona sin actividad, `Sin dato` solo si falla la fuente y `No aplica` cuando una tasa carece de denominador. Falta extender la misma regla a las exportaciones.
+- [x] Diferenciar `0`, `sin dato` y `no aplicable`. El detalle de rendimiento separa una reclamación inexistente (`Sin dato`) de un centro al que ese estado no corresponde (`No aplica`); todos los informes administrativos —rendimiento, usuarios, demanda y proveedores— muestran `0` cuando la consulta funciona sin actividad, `Sin dato` solo si falla la fuente y `No aplica` cuando una tasa carece de denominador. Desde el 16/11/2026 la exportación operativa aplica la misma semántica por tipo de registro, sin convertir campos ajenos a una cola en datos ausentes.
 - [x] Añadir notas cuando cambie una definición o implementación. El catálogo de KPIs está versionado, incluye un historial fechado y separa las ventanas de reporting administrativo, rendimiento privado y GA4/Looker para impedir comparaciones incompatibles.
 - [x] Evitar rankings con muestras pequeñas: consultas y oportunidades exigen tres búsquedas; las tasas de rendimiento por ficha exigen 20 impresiones.
 - [ ] Establecer umbrales mínimos de privacidad antes de mostrar segmentos. Ya se aplican tres búsquedas para texto libre y 20 impresiones para tasas por ficha; falta validar jurídicamente y extender la regla a futuros informes exportables.
