@@ -82,6 +82,19 @@ for (const path of protectedPaths) {
   failed ||= !ok;
 }
 
+const protectedApiPaths = [
+  "/api/account/export",
+  "/api/admin/export"
+];
+
+for (const path of protectedApiPaths) {
+  const response = await fetchWithTimeout(`${baseUrl}${path}`, { redirect: "manual" });
+  const body = await response.json().catch(() => null);
+  const ok = response.status === 401 && typeof body?.error === "string";
+  console.log(`${ok ? "OK" : "FAIL"} ${response.status} ${path} · exportación privada`);
+  failed ||= !ok;
+}
+
 const invalidAnalyticsResponse = await fetchWithTimeout(`${baseUrl}/api/analytics/directory-event`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
