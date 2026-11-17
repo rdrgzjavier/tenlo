@@ -13,6 +13,7 @@ export async function POST(request: Request) {
   const notes = text("notes", 2000);
   const submitterName = text("name", 120);
   const submitterEmail = text("email", 180);
+  if (text("middleName", 200)) return NextResponse.json({ ok: true });
   if (providerName.length < 2 || location.length < 2) return NextResponse.json({ error: "Indica el nombre y la ubicación." }, { status: 400 });
   if (website && !/^https?:\/\/[^\s]+$/i.test(website)) return NextResponse.json({ error: "La web debe empezar por http:// o https://." }, { status: 400 });
   if (submitterEmail && !/^\S+@\S+\.\S+$/.test(submitterEmail)) return NextResponse.json({ error: "Introduce un email válido." }, { status: 400 });

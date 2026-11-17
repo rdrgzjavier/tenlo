@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-const [loginRegistration, passwordRecovery, passwordReset, accountSettings, logoutButton, internalAnalyticsControl, consentBanner, consentSettings, consentMode, consentLibrary, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerRequestsPage, providerPrivateReport, providerProfilePage, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage, validatedSearchForm, usersReport, demandReport, adminExport, accountExport] = await Promise.all([
+const [loginRegistration, passwordRecovery, passwordReset, accountSettings, logoutButton, internalAnalyticsControl, consentBanner, consentSettings, consentMode, consentLibrary, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerRequestsPage, providerPrivateReport, providerProfilePage, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage, validatedSearchForm, usersReport, demandReport, adminExport, accountExport, providerSuggestionRoute, feedbackRoute] = await Promise.all([
   read("src/components/LoginRegistration.tsx"),
   read("src/components/PasswordRecoveryRequest.tsx"),
   read("src/components/PasswordResetForm.tsx"),
@@ -36,7 +36,9 @@ const [loginRegistration, passwordRecovery, passwordReset, accountSettings, logo
   read("src/app/admin/usuarios/page.tsx"),
   read("src/app/admin/demanda/page.tsx"),
   read("src/app/api/admin/export/route.ts"),
-  read("src/app/api/account/export/route.ts")
+  read("src/app/api/account/export/route.ts"),
+  read("src/app/api/provider-suggestion/route.ts"),
+  read("src/app/api/feedback/route.ts")
 ]);
 
 const checks = [
@@ -84,6 +86,8 @@ const checks = [
   [searchPage.includes("<SaveSearchButton") && savedSearchButton.includes('.from("saved_searches").upsert'), "El buscador debe permitir guardar criterios persistentes tras autenticar al usuario."],
   [savedSearchPage.includes('.from("saved_searches")') && savedSearchPage.includes("<SavedSearchActions"), "El área privada debe permitir recuperar y gestionar búsquedas guardadas."],
   [providerSuggestionForm.includes('fetch("/api/provider-suggestion"') && adminPage.includes("<AdminProviderSuggestionReview"), "Las propuestas de proveedor deben quedar estructuradas y exigir revisión administrativa antes de crear una ficha."],
+  [providerSuggestionForm.includes('name="middleName"') && providerSuggestionForm.includes('data.get("middleName")') && providerSuggestionRoute.includes('text("middleName", 200)') && providerSuggestionRoute.includes("{ ok: true }"), "Las propuestas públicas de proveedor deben incluir una barrera antispam no visible y validada en servidor."],
+  [providerSuggestionRoute.includes('includes("application/json")') && feedbackRoute.includes('includes("application/json")') && feedbackRoute.includes("status: 415"), "Las entradas públicas estructuradas deben rechazar formatos de contenido inesperados."],
   [adminExport.includes('return "Sin dato"') && adminExport.includes('return "No aplica"') && adminExport.includes("applicableColumnsByQueue"), "La exportación administrativa debe distinguir datos ausentes de campos no aplicables."],
   [adminExport.includes('"contact_use_scope"') && adminExport.includes('"legal_basis_status"') && adminExport.includes("no habilita marketing") && adminExport.includes("Pendiente de validar antes de prospección"), "La exportación operativa no debe presentar un dato de contacto como autorización comercial."],
   [accountExport.includes("supabase.auth.getUser()") && accountExport.includes('status: 401'), "La portabilidad de cuenta debe exigir una sesión válida."],

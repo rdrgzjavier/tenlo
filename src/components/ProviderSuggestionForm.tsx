@@ -36,7 +36,8 @@ export default function ProviderSuggestionForm({ initialLocation = "", initialSe
           service,
           notes,
           name: data.get("name"),
-          email: data.get("email")
+          email: data.get("email"),
+          middleName: data.get("middleName")
         })
       });
       const result = await response.json();
@@ -52,16 +53,20 @@ export default function ProviderSuggestionForm({ initialLocation = "", initialSe
 
   return (
     <form onSubmit={handleSubmit} className="grid gap-5">
+      <label className="sr-only" aria-hidden="true">
+        No rellenes este campo
+        <input name="middleName" type="text" tabIndex={-1} autoComplete="off" />
+      </label>
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="field-label">Nombre del proveedor o centro<input required name="providerName" className="field font-normal placeholder:text-muted" placeholder="Ej. Academia Norte" /></label>
-        <label className="field-label">Web pública<input name="website" type="url" className="field font-normal placeholder:text-muted" placeholder="https://..." /></label>
-        <label className="field-label">Ubicación<input required name="location" defaultValue={initialLocation} className="field font-normal placeholder:text-muted" placeholder="Municipio o zona" /></label>
-        <label className="field-label">Servicio o categoría<input name="service" defaultValue={initialService} className="field font-normal placeholder:text-muted" placeholder="Ej. Robótica, inglés, psicología" /></label>
+        <label className="field-label">Nombre del proveedor o centro<input required name="providerName" maxLength={160} className="field font-normal placeholder:text-muted" placeholder="Ej. Academia Norte" /></label>
+        <label className="field-label">Web pública<input name="website" type="url" maxLength={500} className="field font-normal placeholder:text-muted" placeholder="https://..." /></label>
+        <label className="field-label">Ubicación<input required name="location" maxLength={160} defaultValue={initialLocation} className="field font-normal placeholder:text-muted" placeholder="Municipio o zona" /></label>
+        <label className="field-label">Servicio o categoría<input name="service" maxLength={160} defaultValue={initialService} className="field font-normal placeholder:text-muted" placeholder="Ej. Robótica, inglés, psicología" /></label>
       </div>
-      <label className="field-label">Información adicional<textarea name="notes" rows={4} className="field min-h-28 resize-y py-3 font-normal placeholder:text-muted" placeholder="Cuéntanos qué ofrece o por qué sería útil para las familias." /></label>
+      <label className="field-label">Información adicional<textarea name="notes" rows={4} maxLength={2000} className="field min-h-28 resize-y py-3 font-normal placeholder:text-muted" placeholder="Cuéntanos qué ofrece o por qué sería útil para las familias." /></label>
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="field-label">Tu nombre, opcional<input name="name" autoComplete="name" className="field font-normal placeholder:text-muted" placeholder="Ej. Marta G." /></label>
-        <label className="field-label">Tu email, opcional<input name="email" type="email" autoComplete="email" className="field font-normal placeholder:text-muted" placeholder="Para aclarar la propuesta" /></label>
+        <label className="field-label">Tu nombre, opcional<input name="name" maxLength={120} autoComplete="name" className="field font-normal placeholder:text-muted" placeholder="Ej. Marta G." /></label>
+        <label className="field-label">Tu email, opcional<input name="email" type="email" maxLength={180} autoComplete="email" className="field font-normal placeholder:text-muted" placeholder="Para aclarar la propuesta" /></label>
       </div>
       <p className="text-sm leading-6 text-muted">La propuesta quedará pendiente de revisión. Tenlo solo creará una ficha <strong>No verificada</strong> cuando pueda contrastar información profesional pública suficiente.</p>
       {error ? <p className="rounded-xl border border-coral/30 bg-coral/10 p-3 text-sm font-semibold text-coral" role="alert">{error}</p> : null}

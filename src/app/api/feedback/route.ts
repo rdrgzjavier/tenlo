@@ -3,6 +3,7 @@ import { ADMIN_EMAIL, rows, sendMail, tenloEmailShell } from "@/lib/mail";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
+  if (!request.headers.get("content-type")?.includes("application/json")) return NextResponse.json({ ok: false, error: "Formato no válido." }, { status: 415 });
   const data = await request.json().catch(() => null) as Record<string, unknown> | null;
   if (!data) return NextResponse.json({ ok: false, error: "Solicitud no válida." }, { status: 400 });
   if (String(data.website || "").trim()) {
