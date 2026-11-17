@@ -638,7 +638,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 
 - [x] Guardar búsqueda y shortlist. Las búsquedas se persisten por cuenta con RLS y los favoritos permiten construir y comparar una shortlist de dos o tres opciones.
 - [ ] Facilitar retomar el contexto cuando reaparezca una necesidad.
-- [ ] Solicitar feedback en el momento adecuado.
+- [x] Solicitar feedback en el momento adecuado. La familia solo ve la valoración cuando la solicitud fue respondida, rechazada, recibió una alternativa o se cerró; el endpoint comprueba la propiedad y distingue información, conversación, propuesta, reserva, contratación y no avance.
 - [ ] Utilizar señales de calidad para mejorar la recomendación.
 - [ ] No forzar recurrencia semanal en una necesidad episódica.
 
