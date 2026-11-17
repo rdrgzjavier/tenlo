@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-const [loginRegistration, passwordRecovery, passwordReset, accountSettings, logoutButton, internalAnalyticsControl, consentBanner, consentSettings, consentMode, consentLibrary, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerRequestsPage, providerPrivateReport, providerProfilePage, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage, validatedSearchForm, usersReport, demandReport, adminExport, accountExport, providerSuggestionRoute, feedbackRoute, adminStatusControl, adminStatusRoute] = await Promise.all([
+const [loginRegistration, passwordRecovery, passwordReset, accountSettings, logoutButton, internalAnalyticsControl, consentBanner, consentSettings, consentMode, consentLibrary, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerRequestsPage, providerPrivateReport, providerProfilePage, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, claimForm, adminPage, validatedSearchForm, usersReport, demandReport, adminExport, accountExport, providerSuggestionRoute, feedbackRoute, adminStatusControl, adminStatusRoute] = await Promise.all([
   read("src/components/LoginRegistration.tsx"),
   read("src/components/PasswordRecoveryRequest.tsx"),
   read("src/components/PasswordResetForm.tsx"),
@@ -31,6 +31,7 @@ const [loginRegistration, passwordRecovery, passwordReset, accountSettings, logo
   read("src/app/busquedas-guardadas/page.tsx"),
   read("src/components/SaveSearchButton.tsx"),
   read("src/components/ProviderSuggestionForm.tsx"),
+  read("src/components/ClaimProfileForm.tsx"),
   read("src/app/admin/page.tsx"),
   read("src/components/ValidatedSearchForm.tsx"),
   read("src/app/admin/usuarios/page.tsx"),
@@ -88,6 +89,7 @@ const checks = [
   [searchPage.includes("<SaveSearchButton") && savedSearchButton.includes('.from("saved_searches").upsert'), "El buscador debe permitir guardar criterios persistentes tras autenticar al usuario."],
   [savedSearchPage.includes('.from("saved_searches")') && savedSearchPage.includes("<SavedSearchActions"), "El área privada debe permitir recuperar y gestionar búsquedas guardadas."],
   [providerSuggestionForm.includes('fetch("/api/provider-suggestion"') && adminPage.includes("<AdminProviderSuggestionReview"), "Las propuestas de proveedor deben quedar estructuradas y exigir revisión administrativa antes de crear una ficha."],
+  [claimForm.includes('pushTrackingEvent("claim_started"') && claimForm.includes('pushTrackingEvent("claim_submitted"'), "El embudo de reclamación debe medir por separado inicio y envío sin datos personales."],
   [providerSuggestionForm.includes('name="middleName"') && providerSuggestionForm.includes('data.get("middleName")') && providerSuggestionRoute.includes('text("middleName", 200)') && providerSuggestionRoute.includes("{ ok: true }"), "Las propuestas públicas de proveedor deben incluir una barrera antispam no visible y validada en servidor."],
   [providerSuggestionRoute.includes('includes("application/json")') && feedbackRoute.includes('includes("application/json")') && feedbackRoute.includes("status: 415"), "Las entradas públicas estructuradas deben rechazar formatos de contenido inesperados."],
   [adminExport.includes('return "Sin dato"') && adminExport.includes('return "No aplica"') && adminExport.includes("applicableColumnsByQueue"), "La exportación administrativa debe distinguir datos ausentes de campos no aplicables."],

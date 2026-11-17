@@ -67,7 +67,7 @@ export default function ClaimProfileForm({ entityType, entityId, entityName, ent
           <a href={entityHref} target="_blank" rel="noreferrer" className="mt-3 inline-flex min-h-11 items-center font-semibold text-ink underline underline-offset-4">Ver la ficha publicada</a>
         </div>
         <p className="mt-5 text-sm leading-6 text-slatecopy">En el siguiente paso confirmarás tu relación con la entidad y podrás indicar las correcciones prioritarias. Tenlo revisará la solicitud antes de cambiar información visible.</p>
-        <button type="button" className="btn-primary mt-6" onClick={() => { pushTrackingEvent("profile_edit_started", { entity_type: entityType }); setStep("form"); }}>Sí, quiero gestionar esta ficha</button>
+        <button type="button" className="btn-primary mt-6" onClick={() => { pushTrackingEvent("claim_started", { entity_type: entityType }); pushTrackingEvent("profile_edit_started", { entity_type: entityType }); setStep("form"); }}>Sí, quiero gestionar esta ficha</button>
       </section>
     );
   }

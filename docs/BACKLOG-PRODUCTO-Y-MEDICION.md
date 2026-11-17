@@ -548,7 +548,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 ### Funnel de proveedores
 
 - [ ] Proveedores identificados, contactados y que visitan la landing.
-- [ ] Tasa de inicio y envío de reclamación.
+- [x] Tasa de inicio y envío de reclamación. El paso de entrada emite `claim_started` y el envío aceptado emite `claim_submitted`; ambos usan solo tipo e identificador técnico de ficha, sin datos de la persona solicitante.
 - [x] Tiempo hasta aprobación, calculado como mediana desde la creación de la ficha hasta el cambio administrativo a `approved` dentro del periodo seleccionado.
 - [x] Tasa de perfil suficientemente completo, con umbral operativo del 75 % y desglose por categoría y municipio en `/admin/proveedores`.
 - [x] Tiempo hasta publicación, equivalente en el piloto a la aprobación que incorpora la ficha al directorio público; se muestra sin inventar valor cuando no hay muestra.
