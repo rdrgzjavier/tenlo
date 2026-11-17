@@ -118,6 +118,17 @@ for (const path of structuredPostPaths) {
   failed ||= !ok;
 }
 
+const unconfirmedClaimResponse = await fetchWithTimeout(`${baseUrl}/api/claim`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({})
+});
+const unconfirmedClaimBody = await unconfirmedClaimResponse.json().catch(() => null);
+const unconfirmedClaimOk = unconfirmedClaimResponse.status === 400
+  && String(unconfirmedClaimBody?.error || "").includes("persona adulta");
+console.log(`${unconfirmedClaimOk ? "OK" : "FAIL"} ${unconfirmedClaimResponse.status} /api/claim · declaración adulta exigida antes de escribir`);
+failed ||= !unconfirmedClaimOk;
+
 const invalidAnalyticsResponse = await fetchWithTimeout(`${baseUrl}/api/analytics/directory-event`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
