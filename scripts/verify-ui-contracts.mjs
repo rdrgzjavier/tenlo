@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-const [loginRegistration, passwordRecovery, passwordReset, accountSettings, logoutButton, internalAnalyticsControl, consentBanner, consentSettings, consentMode, consentLibrary, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerRequestsPage, providerPrivateReport, providerProfilePage, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage, validatedSearchForm, usersReport, demandReport, adminExport, accountExport, providerSuggestionRoute, feedbackRoute] = await Promise.all([
+const [loginRegistration, passwordRecovery, passwordReset, accountSettings, logoutButton, internalAnalyticsControl, consentBanner, consentSettings, consentMode, consentLibrary, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerRequestsPage, providerPrivateReport, providerProfilePage, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage, validatedSearchForm, usersReport, demandReport, adminExport, accountExport, providerSuggestionRoute, feedbackRoute, adminStatusControl, adminStatusRoute] = await Promise.all([
   read("src/components/LoginRegistration.tsx"),
   read("src/components/PasswordRecoveryRequest.tsx"),
   read("src/components/PasswordResetForm.tsx"),
@@ -38,7 +38,9 @@ const [loginRegistration, passwordRecovery, passwordReset, accountSettings, logo
   read("src/app/api/admin/export/route.ts"),
   read("src/app/api/account/export/route.ts"),
   read("src/app/api/provider-suggestion/route.ts"),
-  read("src/app/api/feedback/route.ts")
+  read("src/app/api/feedback/route.ts"),
+  read("src/components/AdminStatusControl.tsx"),
+  read("src/app/api/admin/status/route.ts")
 ]);
 
 const checks = [
@@ -93,7 +95,8 @@ const checks = [
   [accountExport.includes("supabase.auth.getUser()") && accountExport.includes('status: 401'), "La portabilidad de cuenta debe exigir una sesión válida."],
   [accountExport.includes('.eq("id", user.id)') && accountExport.includes('.eq("owner_id", user.id)') && accountExport.includes('.eq("family_id", user.id)') && accountExport.includes('.eq("user_id", user.id)'), "La portabilidad debe limitar todas las colecciones privadas al propietario autenticado."],
   [accountExport.includes('"Cache-Control": "private, no-store, max-age=0"') && accountExport.includes('"X-Content-Type-Options": "nosniff"'), "La descarga de datos personales debe impedir caché compartida y detección insegura del tipo de contenido."],
-  [accountExport.includes('.from("data_export_audit").insert') && accountExport.includes('export_scope: "account_portability"'), "Cada exportación de cuenta debe dejar una traza de auditoría sin copiar su contenido."]
+  [accountExport.includes('.from("data_export_audit").insert') && accountExport.includes('export_scope: "account_portability"'), "Cada exportación de cuenta debe dejar una traza de auditoría sin copiar su contenido."],
+  [adminStatusControl.includes("completionConfirmed") && adminStatusRoute.includes("body.completionConfirmed !== true") && adminStatusRoute.includes("eliminación o anonimización ya se ha ejecutado"), "El cierre de una baja debe exigir en cliente y servidor que la supresión efectiva ya se ejecutó."]
 ];
 
 for (const [condition, message] of checks) {

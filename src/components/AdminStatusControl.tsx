@@ -61,14 +61,18 @@ export default function AdminStatusControl({ queue, recordId, currentStatus, con
 
   async function updateStatus() {
     if (status === currentStatus) return;
-    if (context === "account_deletion" && status === "approved" && !window.confirm("Confirma que la eliminación o anonimización ya se ha completado. Esta acción enviará el email de cierre a la cuenta.")) return;
+    let completionConfirmed = false;
+    if (context === "account_deletion" && status === "approved") {
+      completionConfirmed = window.confirm("Confirma que la eliminación o anonimización ya se ha completado. Esta acción enviará el email de cierre a la cuenta.");
+      if (!completionConfirmed) return;
+    }
     setPending(true);
     setFeedback("");
     try {
       const response = await fetch("/api/admin/status", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ queue, recordId, status })
+        body: JSON.stringify({ queue, recordId, status, completionConfirmed })
       });
       const result = (await response.json()) as { error?: string; notificationSent?: boolean | null };
       if (!response.ok) throw new Error(result.error || "No se pudo actualizar el estado.");

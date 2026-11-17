@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Formato no válido." }, { status: 415 });
   }
 
-  const body = (await request.json().catch(() => null)) as { queue?: QueueType; recordId?: string; status?: string } | null;
+  const body = (await request.json().catch(() => null)) as { queue?: QueueType; recordId?: string; status?: string; completionConfirmed?: boolean } | null;
   if (!body?.queue || !["claim", "connection", "submission", "feedback", "business_profile"].includes(body.queue) || !body.recordId || !body.status || !validStatus(body.queue, body.status)) {
     return NextResponse.json({ error: "Datos de actualización no válidos." }, { status: 400 });
   }
@@ -87,6 +87,15 @@ export async function POST(request: Request) {
         .maybeSingle();
       submissionBeforeUpdate.contact_email = ownerProfile?.contact_email ?? null;
     }
+  }
+
+  if (
+    body.queue === "submission" &&
+    body.status === "approved" &&
+    submissionBeforeUpdate?.submission_type === "account_deletion" &&
+    body.completionConfirmed !== true
+  ) {
+    return NextResponse.json({ error: "Confirma que la eliminación o anonimización ya se ha ejecutado antes de cerrar la baja." }, { status: 400 });
   }
 
   let result;
