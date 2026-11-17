@@ -189,7 +189,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   - [x] preparar en el esquema motivo de inactividad o rechazo.
 - [x] Añadir historial de cambios y responsable de cada modificación. La migración `0017_admin_queue_status_history.sql` registra automáticamente cada cambio; el 16/10/2026 se validaron dos transiciones reversibles con responsable y fecha en `/admin`.
 - [x] Definir y probar reglas RLS y permisos para anónimo, familia, proveedor y `tenlo_admin`. La prueba cruzada de producción del 28/10/2026 confirmó superficie pública acotada, aislamiento por propietario, campos de confianza y moderación protegidos, colas administrativas ocultas y acceso administrativo aprobado. Evidencia y clasificación de Security Advisor en `MATRIZ-RLS-Y-PERMISOS.md`.
-- [ ] Crear copias de seguridad y procedimiento de recuperación. El procedimiento, frecuencia, retención, prueba y criterios de escalado están definidos en `COPIAS-Y-RECUPERACION.md`; falta ejecutar la primera copia y una restauración aislada.
+- [ ] Crear copias de seguridad y procedimiento de recuperación. El procedimiento, frecuencia, retención, prueba y criterios de escalado están definidos en `COPIAS-Y-RECUPERACION.md`; el preflight seguro y el verificador de paquete/hash ya están implementados y probados con datos sintéticos fuera del repositorio. El 17/11/2026 se comprobó que este equipo todavía no dispone de Supabase CLI, Docker ni `psql`; falta instalarlos, ejecutar la primera copia y restaurarla en un destino aislado.
 
 ## P0. Flujo para reclamar y enriquecer una ficha
 
@@ -437,7 +437,7 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
 - [x] Unificar el envío de publicaciones en una ruta autenticada con validación en servidor, alta en la cola, aviso operativo y confirmación a la cuenta; retirar el endpoint de email público que no estaba conectado al formulario.
 - [ ] Definir política de retención para cuentas inactivas, solicitudes, búsquedas y consentimientos. Existe una propuesta concreta en `RETENCION-Y-SUPRESION.md`, pendiente de validación jurídica y de implementar las fechas y automatizaciones necesarias.
 - [ ] Completar el procedimiento administrativo de acceso, rectificación y eliminación. La portabilidad básica ya está disponible mediante una exportación JSON privada; la baja se registra una sola vez como solicitud revisable y genera aviso operativo y confirmación. Falta ejecutar y documentar el cierre efectivo de una baja real.
-- [ ] Preparar copias de seguridad y restauración antes de almacenar información real. El runbook está documentado en `COPIAS-Y-RECUPERACION.md`; falta generar la primera copia cifrada y demostrar su restauración en un destino aislado.
+- [ ] Preparar copias de seguridad y restauración antes de almacenar información real. El runbook, el preflight que impide escribir dentro del repositorio y la validación de integridad SHA-256 están implementados en `COPIAS-Y-RECUPERACION.md`; falta instalar Supabase CLI, Docker y `psql`, generar la primera copia cifrada y demostrar su restauración en un destino aislado.
 - [ ] Revisar privacidad y seguridad antes de incorporar un CRM, plataforma de emailing o nuevo conector.
 
 ### CRM y campañas futuras

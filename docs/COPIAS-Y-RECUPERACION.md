@@ -55,15 +55,21 @@ tenlo-supabase-AAAA-MM-DD-HHMM/
 
 ## Crear una copia lógica
 
-Requisitos: Docker Desktop, Supabase CLI y la cadena **Session pooler** obtenida desde `Connect` en Supabase. La contraseña no se escribe en documentación ni se guarda en el repositorio.
+Requisitos: Docker Desktop, Supabase CLI, `psql` y la cadena **Session pooler** obtenida desde `Connect` en Supabase. La contraseña no se escribe en documentación ni se guarda en el repositorio. Desde Supabase CLI v3 los comandos apuntan al entorno local por defecto, por lo que la conexión remota debe indicarse de forma explícita y confirmarse con `supabase db dump --help` en la versión instalada.
+
+Antes de conectar con producción, ejecutar el preflight. Debe fallar si falta una herramienta, la variable temporal o una ubicación externa al repositorio:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\backup-preflight.ps1 -OutputRoot "D:\Copias cifradas\Tenlo"
+```
 
 En una consola PowerShell fuera del historial compartido:
 
 ```powershell
 $env:TENLO_DB_URL = "postgresql://postgres.PROJECT_REF:PASSWORD@POOLER:5432/postgres"
-supabase db dump --db-url "$env:TENLO_DB_URL" -f roles.sql --role-only
-supabase db dump --db-url "$env:TENLO_DB_URL" -f schema.sql
-supabase db dump --db-url "$env:TENLO_DB_URL" -f data.sql --use-copy --data-only -x "storage.buckets_vectors" -x "storage.vector_indexes"
+supabase db dump --remote="$env:TENLO_DB_URL" -f roles.sql --role-only
+supabase db dump --remote="$env:TENLO_DB_URL" -f schema.sql
+supabase db dump --remote="$env:TENLO_DB_URL" -f data.sql --use-copy --data-only -x "storage.buckets_vectors" -x "storage.vector_indexes"
 Get-FileHash roles.sql, schema.sql, data.sql -Algorithm SHA256 | Format-Table -AutoSize
 Remove-Item Env:TENLO_DB_URL
 ```
@@ -75,6 +81,14 @@ Comprobaciones obligatorias:
 - Se guardan los hashes SHA-256 en `SHA256SUMS.txt`.
 - La carpeta se cifra y se copia a la segunda ubicación.
 - La variable temporal se elimina al terminar.
+
+Antes de cifrar o restaurar, verificar el paquete completo y sus hashes:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify-backup-bundle.ps1 -BundlePath "D:\Copias cifradas\Tenlo\tenlo-supabase-AAAA-MM-DD-HHMM"
+```
+
+El verificador rechaza paquetes dentro del repositorio, archivos ausentes o vacíos, hashes alterados y credenciales visibles en `control.txt`.
 
 ## Restaurar sin poner en riesgo producción
 
