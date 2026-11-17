@@ -270,7 +270,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Enviar además una notificación al correo operativo configurable mediante `ADMIN_EMAIL`, junto con confirmación operativa a la familia cuando haya email de cuenta. Dirección prevista: `solicitudes@tenlo.es`.
 - [x] Preguntar a la familia si la conexión fue útil cuando ya existe respuesta, alternativa o cierre. Falta habilitar la valoración equivalente del proveedor.
 - [x] Preguntar a la familia si avanzó a información, conversación, propuesta, reserva o contratación.
-- [ ] Evitar que email, teléfono y web externos sean la única fuente de contacto si se necesita medir resultados.
+- [x] Evitar que email, teléfono y web externos sean la única fuente de contacto si se necesita medir resultados. Las fichas mantienen teléfono, email y web útiles e instrumentados cuando hay consentimiento, y ofrecen además una solicitud protegida autenticada que persiste `request_created`, estado, respuesta y resultado sin exponer la identidad familiar al proveedor.
 
 ## P1. Backoffice mínimo
 

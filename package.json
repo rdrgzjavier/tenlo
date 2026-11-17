@@ -15,6 +15,7 @@
     "verify:account-export": "node scripts/verify-account-export.mjs",
     "verify:api": "node scripts/verify-api-contracts.mjs",
     "verify:content-claims": "node scripts/verify-content-claims.mjs",
+    "verify:contact-measurement": "node scripts/verify-contact-measurement.mjs",
     "verify:directory-trust": "node scripts/verify-directory-trust.mjs",
     "verify:ui": "node scripts/verify-ui-contracts.mjs",
     "verify:production": "node --use-system-ca scripts/smoke-production.mjs"
