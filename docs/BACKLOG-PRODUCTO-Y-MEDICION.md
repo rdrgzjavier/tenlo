@@ -204,7 +204,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
   5. aportar evidencias de verificación;
   6. revisar y enviar.
 - [x] Permitir que una cuenta profesional complete y reenvíe su ficha pendiente o rechazada desde `/mi-ficha-profesional`. Los cambios de una ficha ya aprobada quedan bloqueados y vuelven al flujo de corrección revisada para evitar publicaciones sin moderación.
-- [x] Evitar pedir todos los datos antes de mostrar la ficha actual y el beneficio de actualizarla mediante un primer paso de confirmación y contexto.
+- [x] Evitar pedir todos los datos antes de mostrar la ficha actual y el beneficio de actualizarla mediante un primer paso de confirmación y contexto. La reclamación exige en servidor la declaración de persona adulta responsable, un tipo de ficha y relación profesional válidos, y limita longitudes y URL antes de guardar o enviar avisos.
 - [x] Confirmar por email la recepción y explicar el siguiente paso y plazo.
 - [x] Conservar los datos profesionales introducidos durante el alta. Tras confirmar el email se crea, una sola vez, una ficha privada `pending_review` y `No verificada`; web, descripción, zona, modalidad, disponibilidad y evidencias declaradas dejan de ser campos de formulario sin persistencia.
 - [x] Completar acciones para aprobar, pedir información o rechazar reclamaciones. La petición de información se envía por email y queda registrada como nota interna; las decisiones evitan envíos duplicados y muestran si el aviso falló.
