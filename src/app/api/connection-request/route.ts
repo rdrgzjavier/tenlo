@@ -6,6 +6,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 const contactPreferences = new Set(["tenlo", "email", "phone"]);
 
 export async function POST(request: Request) {
+  if (!request.headers.get("content-type")?.includes("application/json")) return NextResponse.json({ error: "Formato no válido." }, { status: 415 });
   const body = (await request.json().catch(() => null)) as { targetId?: unknown; message?: unknown; contactPreference?: unknown; adultConfirmation?: unknown } | null;
   const targetId = String(body?.targetId || "").trim();
   const message = String(body?.message || "").trim();

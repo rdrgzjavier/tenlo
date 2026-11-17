@@ -4,6 +4,7 @@ import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supab
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request: Request) {
+  if (!request.headers.get("content-type")?.includes("application/json")) return NextResponse.json({ ok: false, error: "Formato no válido." }, { status: 415 });
   const data = await request.json().catch(() => null) as { email?: unknown; consent?: unknown; website?: unknown } | null;
   const email = String(data?.email || "").trim().toLowerCase().slice(0, 180);
 

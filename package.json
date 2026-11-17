@@ -13,6 +13,7 @@
     "verify:migrations": "node scripts/verify-migrations.mjs",
     "verify:gtm": "node --use-system-ca scripts/verify-gtm-contract.mjs",
     "verify:account-export": "node scripts/verify-account-export.mjs",
+    "verify:api": "node scripts/verify-api-contracts.mjs",
     "verify:ui": "node scripts/verify-ui-contracts.mjs",
     "verify:production": "node --use-system-ca scripts/smoke-production.mjs"
   },

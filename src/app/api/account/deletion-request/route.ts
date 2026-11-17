@@ -3,6 +3,7 @@ import { ADMIN_EMAIL, rows, sendMail, tenloEmailShell } from "@/lib/mail";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
+  if (!request.headers.get("content-type")?.includes("application/json")) return NextResponse.json({ error: "Formato no válido." }, { status: 415 });
   const body = (await request.json().catch(() => null)) as { confirmation?: unknown } | null;
   if (String(body?.confirmation || "").trim().toUpperCase() !== "BORRAR") return NextResponse.json({ error: "Escribe BORRAR para solicitar la baja." }, { status: 400 });
 

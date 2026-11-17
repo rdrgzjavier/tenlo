@@ -6,6 +6,7 @@ export const dynamic = "force-dynamic";
 const statuses = new Set(["submitted", "delivered", "viewed", "responded", "declined", "alternative_requested", "alternative_offered", "closed"]);
 
 export async function POST(request: Request) {
+  if (!request.headers.get("content-type")?.includes("application/json")) return NextResponse.json({ error: "Formato no válido." }, { status: 415 });
   const body = (await request.json().catch(() => null)) as { recordId?: string; status?: string; responseSummary?: string; alternativeSummary?: string } | null;
   const recordId = String(body?.recordId || "");
   const status = String(body?.status || "");

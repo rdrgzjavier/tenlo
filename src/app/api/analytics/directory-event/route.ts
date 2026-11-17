@@ -59,6 +59,7 @@ function validEvent(value: IncomingEvent) {
 
 export async function POST(request: Request) {
   if (!hasSupabaseServerConfig()) return NextResponse.json({ ok: false }, { status: 503 });
+  if (!request.headers.get("content-type")?.includes("application/json")) return NextResponse.json({ ok: false }, { status: 415 });
   const requestCookies = request.headers.get("cookie")?.split(";").map((part) => part.trim()) ?? [];
   if (requestCookies.includes("tenlo_internal_traffic=1")) {
     return NextResponse.json({ ok: true, excluded: true }, { headers: { "Cache-Control": "no-store" } });

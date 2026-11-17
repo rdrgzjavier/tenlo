@@ -3,6 +3,7 @@ import { ADMIN_EMAIL, escapeHtml, rows, sendMail, tenloEmailShell } from "@/lib/
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
+  if (!request.headers.get("content-type")?.includes("application/json")) return NextResponse.json({ ok: false, error: "Formato no válido." }, { status: 415 });
   const data = await request.json().catch(() => null) as Record<string, unknown> | null;
   if (!data) return NextResponse.json({ ok: false, error: "Solicitud no válida." }, { status: 400 });
   const eventId = crypto.randomUUID();
@@ -15,20 +16,21 @@ export async function POST(request: Request) {
   const { data: authData } = await supabase.auth.getUser();
   const user = authData.user;
 
+  const value = (key: string, max: number) => String(data[key] || "").trim().slice(0, max);
   const payload = {
     event_id: eventId,
     schema_version: "1.0",
     user_id: user?.id ?? null,
-    entity_type: String(data.entityType || "provider"),
-    entity_id: String(data.entityId || ""),
-    entity_name: String(data.entityName || ""),
-    requester_name: String(data.requesterName || ""),
-    requester_email: String(data.requesterEmail || ""),
-    requester_phone: String(data.requesterPhone || ""),
-    role_description: String(data.roleDescription || ""),
-    corrections: String(data.corrections || ""),
-    official_website: String(data.officialWebsite || ""),
-    image_url: String(data.imageUrl || "")
+    entity_type: value("entityType", 40),
+    entity_id: value("entityId", 160),
+    entity_name: value("entityName", 200),
+    requester_name: value("requesterName", 120),
+    requester_email: value("requesterEmail", 254).toLowerCase(),
+    requester_phone: value("requesterPhone", 40),
+    role_description: value("roleDescription", 120),
+    corrections: value("corrections", 5000),
+    official_website: value("officialWebsite", 500),
+    image_url: value("imageUrl", 500)
   };
 
   if (!payload.entity_id || !payload.entity_name || !payload.requester_name || !payload.requester_email || !payload.role_description) {
@@ -39,9 +41,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "Indica un email profesional válido." }, { status: 400 });
   }
 
-  if (payload.entity_name.length > 200 || payload.requester_name.length > 120 || payload.corrections.length > 5000) {
-    return NextResponse.json({ ok: false, error: "Alguno de los campos supera la longitud permitida." }, { status: 400 });
-  }
+  if (!new Set(["center", "provider", "community"]).has(payload.entity_type)) return NextResponse.json({ ok: false, error: "Tipo de ficha no válido." }, { status: 400 });
+  if (payload.official_website && !/^https?:\/\/[^\s]+$/i.test(payload.official_website)) return NextResponse.json({ ok: false, error: "La web oficial no es válida." }, { status: 400 });
+  if (payload.image_url && !/^https?:\/\/[^\s]+$/i.test(payload.image_url)) return NextResponse.json({ ok: false, error: "La referencia de imagen no es válida." }, { status: 400 });
 
   const { error } = await supabase.from("claim_requests").insert(payload);
   if (error) {

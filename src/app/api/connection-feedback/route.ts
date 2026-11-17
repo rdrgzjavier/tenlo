@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 const outcomes = new Set(["information", "conversation", "proposal", "booking", "hired", "not_progressed"]);
 
 export async function POST(request: Request) {
+  if (!request.headers.get("content-type")?.includes("application/json")) return NextResponse.json({ error: "Formato no válido." }, { status: 415 });
   const body = (await request.json().catch(() => null)) as { requestId?: string; useful?: boolean; outcome?: string } | null;
   const requestId = String(body?.requestId || "");
   const outcome = String(body?.outcome || "");

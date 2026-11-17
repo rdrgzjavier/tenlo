@@ -82,15 +82,15 @@ export default function ClaimProfileForm({ entityType, entityId, entityName, ent
       <div className="grid gap-4 md:grid-cols-2">
         <label className="field-label">
           Nombre y apellidos
-          <input required name="requesterName" className="field" placeholder="Nombre de la persona responsable" />
+          <input required name="requesterName" maxLength={120} className="field" placeholder="Nombre de la persona responsable" />
         </label>
         <label className="field-label">
           Email profesional
-          <input required name="requesterEmail" type="email" className="field" placeholder="tu@email.com" />
+          <input required name="requesterEmail" type="email" maxLength={254} className="field" placeholder="tu@email.com" />
         </label>
         <label className="field-label">
           Teléfono de contacto
-          <input name="requesterPhone" className="field" placeholder="Opcional" />
+          <input name="requesterPhone" type="tel" maxLength={40} className="field" placeholder="Opcional" />
         </label>
         <label className="field-label">
           Relación con la ficha
@@ -105,15 +105,15 @@ export default function ClaimProfileForm({ entityType, entityId, entityName, ent
         </label>
         <label className="field-label md:col-span-2">
           Web oficial
-          <input name="officialWebsite" type="url" className="field" placeholder="https://..." />
+          <input name="officialWebsite" type="url" maxLength={500} className="field" placeholder="https://..." />
         </label>
         <label className="field-label md:col-span-2">
           Imagen sugerida
-          <input name="imageUrl" type="url" className="field" placeholder="URL de una imagen oficial o página donde revisarla" />
+          <input name="imageUrl" type="url" maxLength={500} className="field" placeholder="URL de una imagen oficial o página donde revisarla" />
         </label>
         <label className="field-label md:col-span-2">
           Correcciones o datos que quieres validar
-          <textarea required name="corrections" className="field min-h-36 py-3" placeholder="Horarios, teléfono, servicios, edades, fuente oficial, condiciones..." />
+          <textarea required name="corrections" maxLength={5000} className="field min-h-36 py-3" placeholder="Horarios, teléfono, servicios, edades, fuente oficial, condiciones..." />
         </label>
       </div>
       <label className="rounded-xl border border-line bg-soft p-4 text-sm font-semibold leading-6 text-slatecopy">

@@ -9,6 +9,7 @@ const categoryNames = new Set(categories.map((category) => category.name));
 const municipalityNames = new Set(municipalities.map((municipality) => municipality.name));
 
 export async function POST(request: Request) {
+  if (!request.headers.get("content-type")?.includes("application/json")) return NextResponse.json({ error: "Formato no válido." }, { status: 415 });
   const body = (await request.json().catch(() => null)) as Record<string, unknown> | null;
   const value = (key: string, max: number) => String(body?.[key] || "").trim().slice(0, max);
   const submissionType = value("publicationType", 60);
