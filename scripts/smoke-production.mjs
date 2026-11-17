@@ -95,6 +95,29 @@ for (const path of protectedApiPaths) {
   failed ||= !ok;
 }
 
+const structuredPostPaths = [
+  "/api/account/deletion-request",
+  "/api/analytics/directory-event",
+  "/api/claim",
+  "/api/connection-feedback",
+  "/api/connection-request",
+  "/api/feedback",
+  "/api/newsletter",
+  "/api/provider-suggestion",
+  "/api/submission"
+];
+
+for (const path of structuredPostPaths) {
+  const response = await fetchWithTimeout(`${baseUrl}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain" },
+    body: "not-json"
+  });
+  const ok = response.status === 415;
+  console.log(`${ok ? "OK" : "FAIL"} ${response.status} ${path} · formato inesperado rechazado sin escritura`);
+  failed ||= !ok;
+}
+
 const invalidAnalyticsResponse = await fetchWithTimeout(`${baseUrl}/api/analytics/directory-event`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
