@@ -32,7 +32,7 @@ export default function ClaimProfileForm({ entityType, entityId, entityName, ent
     const response = await fetch("/api/claim", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...body, entityType, entityId, entityName })
+      body: JSON.stringify({ ...body, entityType, entityId, entityName, adultConfirmation: accepted })
     });
     const result = await response.json();
     setLoading(false);

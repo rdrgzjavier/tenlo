@@ -2,6 +2,14 @@ import { NextResponse } from "next/server";
 import { ADMIN_EMAIL, escapeHtml, rows, sendMail, tenloEmailShell } from "@/lib/mail";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
+const allowedRoles = new Set([
+  "Titular o dirección",
+  "Equipo de administración",
+  "Responsable de comunicación",
+  "Profesional independiente",
+  "Otra relación verificable"
+]);
+
 export async function POST(request: Request) {
   if (!request.headers.get("content-type")?.includes("application/json")) return NextResponse.json({ ok: false, error: "Formato no válido." }, { status: 415 });
   const data = await request.json().catch(() => null) as Record<string, unknown> | null;
@@ -11,6 +19,7 @@ export async function POST(request: Request) {
   if (data.company) {
     return NextResponse.json({ ok: true });
   }
+  if (data.adultConfirmation !== true) return NextResponse.json({ ok: false, error: "Debes confirmar que actúas como persona adulta responsable." }, { status: 400 });
 
   const supabase = await createSupabaseServerClient();
   const { data: authData } = await supabase.auth.getUser();
@@ -42,6 +51,7 @@ export async function POST(request: Request) {
   }
 
   if (!new Set(["center", "provider", "community"]).has(payload.entity_type)) return NextResponse.json({ ok: false, error: "Tipo de ficha no válido." }, { status: 400 });
+  if (!allowedRoles.has(payload.role_description)) return NextResponse.json({ ok: false, error: "Relación con la ficha no válida." }, { status: 400 });
   if (payload.official_website && !/^https?:\/\/[^\s]+$/i.test(payload.official_website)) return NextResponse.json({ ok: false, error: "La web oficial no es válida." }, { status: 400 });
   if (payload.image_url && !/^https?:\/\/[^\s]+$/i.test(payload.image_url)) return NextResponse.json({ ok: false, error: "La referencia de imagen no es válida." }, { status: 400 });
 
