@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-const [loginRegistration, passwordRecovery, passwordReset, accountSettings, logoutButton, internalAnalyticsControl, consentBanner, consentSettings, consentMode, consentLibrary, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerRequestsPage, providerPrivateReport, providerProfilePage, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage, validatedSearchForm, usersReport, demandReport, adminExport] = await Promise.all([
+const [loginRegistration, passwordRecovery, passwordReset, accountSettings, logoutButton, internalAnalyticsControl, consentBanner, consentSettings, consentMode, consentLibrary, analyticsLibrary, directoryEventRoute, invitationSetup, turnstileChallenge, providerSections, servicePage, centerPage, performanceReport, providerReport, providerRequestsPage, providerPrivateReport, providerProfilePage, connectionWorkflow, searchPage, savedSearchPage, savedSearchButton, providerSuggestionForm, adminPage, validatedSearchForm, usersReport, demandReport, adminExport, accountExport] = await Promise.all([
   read("src/components/LoginRegistration.tsx"),
   read("src/components/PasswordRecoveryRequest.tsx"),
   read("src/components/PasswordResetForm.tsx"),
@@ -35,7 +35,8 @@ const [loginRegistration, passwordRecovery, passwordReset, accountSettings, logo
   read("src/components/ValidatedSearchForm.tsx"),
   read("src/app/admin/usuarios/page.tsx"),
   read("src/app/admin/demanda/page.tsx"),
-  read("src/app/api/admin/export/route.ts")
+  read("src/app/api/admin/export/route.ts"),
+  read("src/app/api/account/export/route.ts")
 ]);
 
 const checks = [
@@ -84,7 +85,11 @@ const checks = [
   [savedSearchPage.includes('.from("saved_searches")') && savedSearchPage.includes("<SavedSearchActions"), "El área privada debe permitir recuperar y gestionar búsquedas guardadas."],
   [providerSuggestionForm.includes('fetch("/api/provider-suggestion"') && adminPage.includes("<AdminProviderSuggestionReview"), "Las propuestas de proveedor deben quedar estructuradas y exigir revisión administrativa antes de crear una ficha."],
   [adminExport.includes('return "Sin dato"') && adminExport.includes('return "No aplica"') && adminExport.includes("applicableColumnsByQueue"), "La exportación administrativa debe distinguir datos ausentes de campos no aplicables."],
-  [adminExport.includes('"contact_use_scope"') && adminExport.includes('"legal_basis_status"') && adminExport.includes("no habilita marketing") && adminExport.includes("Pendiente de validar antes de prospección"), "La exportación operativa no debe presentar un dato de contacto como autorización comercial."]
+  [adminExport.includes('"contact_use_scope"') && adminExport.includes('"legal_basis_status"') && adminExport.includes("no habilita marketing") && adminExport.includes("Pendiente de validar antes de prospección"), "La exportación operativa no debe presentar un dato de contacto como autorización comercial."],
+  [accountExport.includes("supabase.auth.getUser()") && accountExport.includes('status: 401'), "La portabilidad de cuenta debe exigir una sesión válida."],
+  [accountExport.includes('.eq("id", user.id)') && accountExport.includes('.eq("owner_id", user.id)') && accountExport.includes('.eq("family_id", user.id)') && accountExport.includes('.eq("user_id", user.id)'), "La portabilidad debe limitar todas las colecciones privadas al propietario autenticado."],
+  [accountExport.includes('"Cache-Control": "private, no-store, max-age=0"') && accountExport.includes('"X-Content-Type-Options": "nosniff"'), "La descarga de datos personales debe impedir caché compartida y detección insegura del tipo de contenido."],
+  [accountExport.includes('.from("data_export_audit").insert') && accountExport.includes('export_scope: "account_portability"'), "Cada exportación de cuenta debe dejar una traza de auditoría sin copiar su contenido."]
 ];
 
 for (const [condition, message] of checks) {
