@@ -53,7 +53,7 @@ export default function PrivacyPolicyPage() {
         <section className="rounded-2xl bg-lavender/20 p-6 ring-1 ring-lavender">
           <h2 className="text-lg font-bold text-ink">Compromiso con la infancia</h2>
           <p className="mt-2 italic">
-            Tenlo prohíbe explícitamente el uso de imágenes de menores en los anuncios y perfiles. Cualquier contenido que vulnere esta norma será eliminado de inmediato para garantizar un entorno digital seguro.
+            Tenlo prohíbe explícitamente el uso de imágenes de menores en los anuncios y perfiles. Cualquier contenido que vulnere esta norma será retirado cuando se detecte para contribuir a un entorno digital más seguro.
           </p>
         </section>
       </div>

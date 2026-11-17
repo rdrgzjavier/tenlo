@@ -217,7 +217,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [ ] Preparar una hoja/CRM inicial de proveedores contactables, con base jurídica y origen del dato. La exportación administrativa incorpora fichas profesionales, contacto, estado, confianza, plan, origen, fuente y alcance de uso; desde el 16/11/2026 marca cada candidato profesional como `Pendiente de validar antes de prospección` y separa los contactos exclusivamente operativos, que nunca habilitan marketing. Falta validar y registrar la base jurídica antes de utilizar la lista para prospección.
 - [x] Definir estados de outreach: identificado, preparado, contactado, abierto, interesado, reclamado, publicado, activo, descartado.
 - [x] Preparar email inicial, recordatorio y cierre sin urgencia artificial.
-- [ ] Utilizar demanda real únicamente; no afirmar que hay familias esperando si no se ha observado.
+- [x] Utilizar demanda real únicamente; no afirmar que hay familias esperando si no se ha observado. Un contrato automatizado revisa las superficies públicas y bloquea mensajes de familias o clientes esperando, demanda asegurada, volumen ficticio, liderazgo o resultados/contactos/contrataciones garantizados.
 - [x] Preparar guion de entrevista de 20 minutos para proveedores.
 - [x] Preparar checklist manual de verificación y publicación.
 - [x] Definir responsable y tiempo máximo de moderación: Javier será el responsable operativo inicial; reclamaciones, correcciones y retiradas tendrán un plazo máximo de 4 días laborables.
