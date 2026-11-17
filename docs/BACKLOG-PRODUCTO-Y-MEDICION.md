@@ -140,7 +140,7 @@ Estas decisiones deben cerrarse antes de construir más superficie.
 - [x] Revisar el mensaje `100% moderado y seguro`; sustituirlo por una afirmación demostrable.
 - [x] Retirar del directorio público los perfiles personales y proveedores de ejemplo sin identidad ni fuente verificable; las futuras fichas de particulares solo se publicarán tras un alta real y revisión.
 - [x] Revisar cada ficha mock antes de hacerla pública como ficha real. El control reproducible del 12/11/2026 deja 22 centros y 18 proveedores organizativos únicos, con 0 entidades pendientes de fuente o normalización; dos centros infantiles insostenibles se retiraron y Engage International School se corrigió con su web oficial.
-- [ ] No considerar una web oficial como verificación suficiente por sí sola.
+- [x] No considerar una web oficial como verificación suficiente por sí sola. Las cargas editoriales conservan `trust_level = collected` aunque tengan `source_url`, los flujos ordinarios de la aplicación no actualizan `trust_level` y la verificación SQL comprueba que cuentas autenticadas normales no pueden elevar la confianza de fichas o servicios.
 - [x] Definir los niveles visibles de confianza: `No verificada`, `Gestionada`, `Verificada` y `Oficial`, independientes del plan comercial y de la titularidad del centro.
 - [x] Mostrar en cada ficha la fuente, fecha de última revisión y estado de control por el proveedor cuando corresponda. Los campos pendientes se muestran de forma explícita y las fuentes oficiales enlazan a su origen.
 - [x] Utilizar etiquetas breves y comprensibles para el estado de confianza: `No verificada`, `Gestionada`, `Verificada`, `Oficial`.
