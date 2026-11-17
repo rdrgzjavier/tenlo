@@ -681,7 +681,7 @@ No desarrollar el sistema completo de cobro antes de demostrar valor repetible.
   - [ ] pago por solicitud cualificada aceptada;
   - [ ] herramientas profesionales;
   - [ ] modelo híbrido.
-- [ ] No utilizar `Verified` como producto de pago.
+- [x] No utilizar `Verified` como producto de pago. `trust_level` y `commercial_plan` son dimensiones independientes, las actualizaciones del titular conservan confianza `collected` y plan `free`, y el orden del buscador declara y aplica que ni el pago ni la confianza compran posición orgánica.
 - [ ] Definir tratamiento de posiciones patrocinadas y etiquetado.
 - [ ] Definir reembolso o disputa si se cobra por lead.
 - [ ] Validar intención de pago con ofertas reales, no solo encuestas.

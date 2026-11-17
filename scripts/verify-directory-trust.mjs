@@ -30,5 +30,22 @@ assert(
   "La verificación SQL debe comprobar que las cuentas normales no pueden editar la confianza."
 );
 
+const ownerHardening = await readFile("supabase/migrations/0027_owner_moderation_hardening.sql", "utf8");
+const directoryRepository = await readFile("src/lib/directory-repository.ts", "utf8");
+const searchPage = await readFile("src/app/buscar/page.tsx", "utf8");
+assert(
+  ownerHardening.includes("trust_level = 'collected'") && ownerHardening.includes("commercial_plan = 'free'"),
+  "Las actualizaciones del titular deben mantener separados confianza y plan comercial."
+);
+assert(
+  directoryRepository.includes("trustLevel: row.trust_level") && directoryRepository.includes("plan: row.commercial_plan"),
+  "El directorio debe modelar confianza y plan como dimensiones independientes."
+);
+assert(
+  searchPage.includes("El plan comercial y el nivel de confianza no compran una mejor posición"),
+  "El buscador debe declarar que el pago no altera la posición orgánica."
+);
+
 console.log(`OK ${appFiles.length} archivos de aplicación no elevan automáticamente la confianza.`);
 console.log("OK Las cargas con fuente pública permanecen collected y los privilegios de confianza se verifican por SQL.");
+console.log("OK El plan comercial permanece separado de confianza y orden orgánico.");
