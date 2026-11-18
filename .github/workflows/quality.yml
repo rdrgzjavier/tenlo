@@ -33,6 +33,14 @@ jobs:
         run: npm run lint
       - name: Verify UI contracts
         run: npm run verify:ui
+      - name: Verify API contracts
+        run: npm run verify:api
+      - name: Verify directory trust
+        run: npm run verify:directory-trust
+      - name: Verify contact measurement
+        run: npm run verify:contact-measurement
+      - name: Verify public content claims
+        run: npm run verify:content-claims
       - name: Verify database migrations
         run: npm run verify:migrations
       - name: Build
