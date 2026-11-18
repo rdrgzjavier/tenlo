@@ -7,7 +7,11 @@ $ErrorActionPreference = "Stop"
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $checks = @()
 
-foreach ($command in @("supabase", "docker", "psql")) {
+$localSupabase = Join-Path $repoRoot "node_modules\.bin\supabase.cmd"
+$supabaseAvailable = ($null -ne (Get-Command "supabase" -ErrorAction SilentlyContinue)) -or (Test-Path -LiteralPath $localSupabase -PathType Leaf)
+$checks += [pscustomobject]@{ Check = "command:supabase"; Ready = $supabaseAvailable }
+
+foreach ($command in @("docker", "psql")) {
   $available = $null -ne (Get-Command $command -ErrorAction SilentlyContinue)
   $checks += [pscustomobject]@{ Check = "command:$command"; Ready = $available }
 }

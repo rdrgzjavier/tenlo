@@ -13,4 +13,5 @@ yarn-error.log*
 pnpm-debug.log*
 .npm-cache/
 .tmp/
+supabase/.temp/
 tsconfig.tsbuildinfo

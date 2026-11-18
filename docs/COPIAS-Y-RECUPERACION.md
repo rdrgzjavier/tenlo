@@ -55,7 +55,7 @@ tenlo-supabase-AAAA-MM-DD-HHMM/
 
 ## Crear una copia lógica
 
-Requisitos: Docker Desktop, Supabase CLI, `psql` y la cadena **Session pooler** obtenida desde `Connect` en Supabase. La contraseña no se escribe en documentación ni se guarda en el repositorio. Desde Supabase CLI v3 los comandos apuntan al entorno local por defecto, por lo que la conexión remota debe indicarse de forma explícita y confirmarse con `supabase db dump --help` en la versión instalada.
+Requisitos: Docker Desktop, Supabase CLI, `psql` y la cadena **Session pooler** obtenida desde `Connect` en Supabase. La contraseña no se escribe en documentación ni se guarda en el repositorio. Tenlo fija Supabase CLI 3.2.0 como dependencia de desarrollo y la ejecuta con `npx.cmd`; desde CLI v3 los comandos apuntan al entorno local por defecto, por lo que la conexión remota debe indicarse de forma explícita y confirmarse con `npx.cmd supabase db dump --help`.
 
 Antes de conectar con producción, ejecutar el preflight. Debe fallar si falta una herramienta, la variable temporal o una ubicación externa al repositorio:
 
@@ -67,9 +67,9 @@ En una consola PowerShell fuera del historial compartido:
 
 ```powershell
 $env:TENLO_DB_URL = "postgresql://postgres.PROJECT_REF:PASSWORD@POOLER:5432/postgres"
-supabase db dump --remote="$env:TENLO_DB_URL" -f roles.sql --role-only
-supabase db dump --remote="$env:TENLO_DB_URL" -f schema.sql
-supabase db dump --remote="$env:TENLO_DB_URL" -f data.sql --use-copy --data-only -x "storage.buckets_vectors" -x "storage.vector_indexes"
+npx.cmd supabase db dump --remote="$env:TENLO_DB_URL" -f roles.sql --role-only
+npx.cmd supabase db dump --remote="$env:TENLO_DB_URL" -f schema.sql
+npx.cmd supabase db dump --remote="$env:TENLO_DB_URL" -f data.sql --use-copy --data-only -x "storage.buckets_vectors" -x "storage.vector_indexes"
 Get-FileHash roles.sql, schema.sql, data.sql -Algorithm SHA256 | Format-Table -AutoSize
 Remove-Item Env:TENLO_DB_URL
 ```
