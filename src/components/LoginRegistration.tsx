@@ -22,6 +22,7 @@ import { type FormEvent, useCallback, useMemo, useState } from "react";
 import TurnstileChallenge, { turnstileEnabled } from "@/components/TurnstileChallenge";
 import { centers, municipalities } from "@/lib/mock-data";
 import { pushTrackingEvent } from "@/lib/analytics";
+import { profileInterestOptions, sanitizeProfileInterests } from "@/lib/profile-preferences";
 import { currentAcquisitionContext } from "@/lib/acquisition";
 import { acquisitionProfileFields } from "@/lib/profile-acquisition";
 import { ensurePendingBusinessProfile } from "@/lib/provider-registration";
@@ -206,6 +207,7 @@ export default function LoginRegistration() {
   const [insurance, setInsurance] = useState("");
   const [characteristics, setCharacteristics] = useState("");
   const [marketingConsent, setMarketingConsent] = useState(false);
+  const [interests, setInterests] = useState<string[]>([]);
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [showLoginPassword, setShowLoginPassword] = useState(false);
@@ -276,6 +278,7 @@ export default function LoginRegistration() {
         marketing_consent_at: marketingConsent ? new Date().toISOString() : null,
         marketing_consent_source: marketingConsent ? "registration" : null,
         marketing_consent_withdrawn_at: null,
+        interests,
         ...acquisitionProfileFields(user),
         status
       }
@@ -317,6 +320,7 @@ export default function LoginRegistration() {
     const metadataCenter = metadataText(user.user_metadata?.related_center_name, 180);
     const metadataMarketingConsent = user.user_metadata?.marketing_consent === true;
     const metadataMarketingConsentAt = metadataMarketingConsent ? metadataText(user.user_metadata?.marketing_consent_at, 40) || new Date().toISOString() : null;
+    const metadataInterests = sanitizeProfileInterests(user.user_metadata?.interests);
     if (!data) {
       const { error: profileError } = await supabase.from("profiles").insert({
         id: user.id,
@@ -331,6 +335,7 @@ export default function LoginRegistration() {
         marketing_consent_at: metadataMarketingConsentAt,
         marketing_consent_source: metadataMarketingConsent ? "registration" : null,
         marketing_consent_withdrawn_at: null,
+        interests: metadataInterests,
         ...acquisitionProfileFields(user),
         status: role === "family" ? "approved" : "pending_review"
       });
@@ -455,6 +460,7 @@ export default function LoginRegistration() {
             related_center_name: relatedCenter || null,
             marketing_consent: marketingConsent,
             marketing_consent_at: marketingConsent ? new Date().toISOString() : null,
+            interests,
             acquisition_context: acquisitionContext,
             provider_profile: showBusinessFields ? {
               category: current.label,
@@ -738,6 +744,25 @@ export default function LoginRegistration() {
               <input type="checkbox" checked={marketingConsent} onChange={(event) => setMarketingConsent(event.target.checked)} className="mr-2 h-4 w-4 rounded border-line" />
               Quiero recibir por email novedades, recursos y recomendaciones de Tenlo. Es opcional y podré retirar el consentimiento. Consulta la <Link href="/privacidad" className="font-semibold text-ink underline underline-offset-4">política de privacidad</Link>.
             </label>
+            <fieldset className="rounded-xl border border-line bg-white p-4">
+              <legend className="px-1 text-sm font-semibold text-slatecopy">¿Qué te interesa encontrar? <span className="font-normal text-muted">Opcional</span></legend>
+              <p className="mt-1 text-sm leading-6 text-muted">Puedes elegir varias opciones y modificarlas después en Datos de cuenta.</p>
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                {profileInterestOptions.map((option) => (
+                  <label key={option.id} className="flex items-start gap-2 rounded-lg bg-soft px-3 py-2 text-sm leading-5 text-slatecopy">
+                    <input
+                      type="checkbox"
+                      className="mt-0.5 h-4 w-4 rounded border-line"
+                      checked={interests.includes(option.id)}
+                      onChange={(event) => setInterests((currentInterests) => event.target.checked
+                        ? [...currentInterests, option.id]
+                        : currentInterests.filter((interest) => interest !== option.id))}
+                    />
+                    {option.label}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
             <TurnstileChallenge action="registration" onTokenChange={handleRegisterCaptcha} resetKey={registerCaptchaReset} />
             <button className="btn-primary w-full md:w-fit" type="submit" disabled={passwordMismatch || loading === "register"}>{loading === "register" ? "Creando cuenta..." : "Crear cuenta"}</button>
           </form>

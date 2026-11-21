@@ -31,7 +31,7 @@ export default async function AccountDataPage() {
 
   let { data: profile } = await supabase
     .from("profiles")
-    .select("display_name,public_name,contact_email,role,status,municipality,marketing_consent,marketing_consent_at,marketing_consent_withdrawn_at")
+    .select("display_name,public_name,contact_email,role,status,municipality,interests,marketing_consent,marketing_consent_at,marketing_consent_withdrawn_at")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -46,7 +46,7 @@ export default async function AccountDataPage() {
         public_name: metadataDisplayName
       })
       .eq("id", user.id)
-      .select("display_name,public_name,contact_email,role,status,municipality,marketing_consent,marketing_consent_at,marketing_consent_withdrawn_at")
+      .select("display_name,public_name,contact_email,role,status,municipality,interests,marketing_consent,marketing_consent_at,marketing_consent_withdrawn_at")
       .maybeSingle();
 
     profile = updatedProfile ?? profile;
@@ -92,6 +92,7 @@ export default async function AccountDataPage() {
           passwordAccessEnabled={passwordAccessEnabled}
           googleAccessEnabled={googleAccessEnabled}
           municipality={profile?.municipality}
+          interests={profile?.interests}
           marketingConsent={profile?.marketing_consent ?? false}
           marketingConsentAt={profile?.marketing_consent_at}
           marketingConsentWithdrawnAt={profile?.marketing_consent_withdrawn_at}

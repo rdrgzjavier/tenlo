@@ -4,6 +4,7 @@ import { type FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Download, Eye, EyeOff, LogOut, Trash2 } from "lucide-react";
 import { municipalities } from "@/lib/mock-data";
+import { profileInterestOptions, sanitizeProfileInterests } from "@/lib/profile-preferences";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 type AccountSettingsProps = {
@@ -14,6 +15,7 @@ type AccountSettingsProps = {
   passwordAccessEnabled: boolean;
   googleAccessEnabled: boolean;
   municipality?: string | null;
+  interests?: string[];
   marketingConsent: boolean;
   marketingConsentAt?: string | null;
   marketingConsentWithdrawnAt?: string | null;
@@ -53,7 +55,7 @@ function isValidPublicName(value: string) {
   return normalized.length >= 3 && normalized.length <= 40 && /^[\p{L}\p{N} ._-]+$/u.test(normalized);
 }
 
-export default function AccountSettings({ email, displayName, role, status, passwordAccessEnabled, googleAccessEnabled, municipality, marketingConsent, marketingConsentAt, marketingConsentWithdrawnAt, deletionRequest }: AccountSettingsProps) {
+export default function AccountSettings({ email, displayName, role, status, passwordAccessEnabled, googleAccessEnabled, municipality, interests, marketingConsent, marketingConsentAt, marketingConsentWithdrawnAt, deletionRequest }: AccountSettingsProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
   const [currentPassword, setCurrentPassword] = useState("");
@@ -61,12 +63,13 @@ export default function AccountSettings({ email, displayName, role, status, pass
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [displayNameValue, setDisplayNameValue] = useState(displayName);
   const [municipalityValue, setMunicipalityValue] = useState(municipality ?? "");
+  const [interestValues, setInterestValues] = useState(sanitizeProfileInterests(interests));
   const [marketingConsentValue, setMarketingConsentValue] = useState(marketingConsent);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState("");
-  const [loading, setLoading] = useState<"profile" | "password" | "municipality" | "marketing" | "delete" | "logout" | null>(null);
+  const [loading, setLoading] = useState<"profile" | "password" | "municipality" | "interests" | "marketing" | "delete" | "logout" | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -225,6 +228,33 @@ export default function AccountSettings({ email, displayName, role, status, pass
     router.refresh();
   }
 
+  async function handleInterestsUpdate(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError(null);
+    setMessage(null);
+
+    const { data: authData } = await supabase.auth.getUser();
+    if (!authData.user) {
+      setError("No hemos podido confirmar tu sesión.");
+      return;
+    }
+
+    setLoading("interests");
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({ interests: sanitizeProfileInterests(interestValues) })
+      .eq("id", authData.user.id);
+    setLoading(null);
+
+    if (updateError) {
+      setError("No hemos podido guardar tus intereses.");
+      return;
+    }
+
+    setMessage("Intereses actualizados.");
+    router.refresh();
+  }
+
   async function handleMarketingUpdate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
@@ -330,6 +360,30 @@ export default function AccountSettings({ email, displayName, role, status, pass
           </label>
           <button className="btn-secondary mt-4 justify-center" type="submit" disabled={loading === "marketing"}>
             {loading === "marketing" ? "Guardando..." : "Guardar preferencia"}
+          </button>
+        </form>
+        <form className="mt-4 rounded-2xl border border-line bg-white p-4" onSubmit={handleInterestsUpdate}>
+          <fieldset>
+            <legend className="text-sm font-semibold text-slatecopy">Intereses para personalizar Tenlo</legend>
+            <p className="mt-1 text-sm leading-6 text-muted">Son opcionales, permanecen privados y no sustituyen tu consentimiento de marketing.</p>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              {profileInterestOptions.map((option) => (
+                <label key={option.id} className="flex items-start gap-2 rounded-lg bg-soft px-3 py-2 text-sm leading-5 text-slatecopy">
+                  <input
+                    type="checkbox"
+                    className="mt-0.5 h-4 w-4 rounded border-line"
+                    checked={interestValues.includes(option.id)}
+                    onChange={(event) => setInterestValues((currentInterests) => event.target.checked
+                      ? [...currentInterests, option.id]
+                      : currentInterests.filter((interest) => interest !== option.id))}
+                  />
+                  {option.label}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          <button className="btn-secondary mt-4 justify-center" type="submit" disabled={loading === "interests"}>
+            {loading === "interests" ? "Guardando..." : "Guardar intereses"}
           </button>
         </form>
       </section>

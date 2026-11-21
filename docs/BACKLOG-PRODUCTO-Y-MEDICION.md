@@ -400,8 +400,8 @@ Para el MVP se puede comenzar con un nivel gratuito compatible con el volumen de
   - [x] tipo de usuario: familia, proveedor, centro u otro;
   - [x] municipio o zona general;
   - [x] centro relacionado opcional;
-  - [ ] categorías o necesidades de interés, opcionales;
-  - [ ] idioma y preferencias de comunicación;
+  - [x] categorías o necesidades de interés, opcionales; el registro y Datos de cuenta permiten seleccionar intereses canónicos privados, exportables y separados del consentimiento de marketing;
+  - [ ] idioma y preferencias de comunicación; se pospone hasta existir un idioma o canal alternativo real para no recoger datos sin finalidad;
   - [x] fecha y canal de registro; `created_at` conserva la fecha y `0031` añade canal de email, Google o desconocido;
   - [x] fuente, medio, campaña y landing de adquisición; `0031` los persiste desde valores saneados, sin query string, término buscado ni referrer completo;
   - [x] estado de onboarding; `0031` separa activación operativa de la moderación de la cuenta;
