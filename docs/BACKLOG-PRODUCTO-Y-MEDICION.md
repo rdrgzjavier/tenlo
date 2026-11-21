@@ -602,7 +602,7 @@ Propiedades recomendadas: plan, periodicidad, precio, moneda, promoción, estado
 - [ ] **Monetización:** pricing, activación del plan, ingresos y churn cuando exista producto de pago.
 - [x] **Demanda y buscador:** `/admin/demanda` integra términos, intenciones, verticales, municipios, cero resultados, reformulaciones y conversión hasta conexión útil.
 - [x] **Rendimiento de fichas y verticales:** `/admin/rendimiento` integra impresiones, visitas, CTR, contactos, cobertura, oferta disponible, respuestas y conexiones útiles por proveedor, categoría y vertical.
-- [ ] **Usuarios y consentimiento:** registros, activación, perfiles completos, centros/intereses declarados, origen de adquisición y base activable para marketing. `/admin/usuarios` ya presenta altas, roles, onboarding, canal, municipio, campaña y consentimiento de forma agregada, y permite filtrar todas esas métricas —incluido el historial de consentimiento— por canal de entrada y campaña; `0031` está aplicada y faltan datos reales de prueba e intereses cuando exista una finalidad definida.
+- [ ] **Usuarios y consentimiento:** registros, activación, perfiles completos, centros/intereses declarados, origen de adquisición y base activable para marketing. `/admin/usuarios` ya presenta altas, roles, onboarding, canal, municipio, campaña, consentimiento e intereses declarados de forma agregada; los intereses con menos de tres cuentas del segmento permanecen ocultos. Permite filtrar todas esas métricas —incluido el historial de consentimiento— por canal de entrada y campaña; faltan datos reales suficientes para validar el informe.
 
 ## Reglas para Looker Studio u otra herramienta
 

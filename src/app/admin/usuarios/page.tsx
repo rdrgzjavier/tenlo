@@ -5,6 +5,7 @@ import { ArrowLeft, ShieldCheck, UserCheck, UsersRound } from "lucide-react";
 import PrivateAreaUnavailable from "@/components/PrivateAreaUnavailable";
 import ReportPeriodSelector, { resolveReportPeriod } from "@/components/ReportPeriodSelector";
 import ReportSegmentFilters from "@/components/ReportSegmentFilters";
+import { profileInterestOptions, sanitizeProfileInterests } from "@/lib/profile-preferences";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -15,6 +16,8 @@ export const metadata: Metadata = {
 };
 
 type RankedItem = { label: string; count: number };
+const privateSegmentMinimum = 3;
+const interestLabels = new Map<string, string>(profileInterestOptions.map((option) => [option.id, option.label]));
 
 function rank(values: Array<string | null | undefined>, fallback: string) {
   const counts = new Map<string, number>();
@@ -26,6 +29,15 @@ function rank(values: Array<string | null | undefined>, fallback: string) {
     .map(([label, count]) => ({ label, count }))
     .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, "es"))
     .slice(0, 10);
+}
+
+function rankInterests(values: unknown[]) {
+  const counts = new Map<string, number>();
+  values.flatMap(sanitizeProfileInterests).forEach((interest) => counts.set(interest, (counts.get(interest) ?? 0) + 1));
+  return [...counts.entries()]
+    .filter(([, count]) => count >= privateSegmentMinimum)
+    .map(([interest, count]) => ({ label: interestLabels.get(interest) ?? interest, count }))
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, "es"));
 }
 
 function RankingTable({ title, description, items }: { title: string; description: string; items: RankedItem[] }) {
@@ -86,7 +98,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
   if (adminProfile?.role !== "tenlo_admin" || adminProfile.status !== "approved") redirect("/area-personal");
 
   const [profilesResult, consentResult] = await Promise.all([
-    supabase.from("profiles").select("id,role,municipality,marketing_consent,registration_channel,acquisition_entry_channel,acquisition_source,acquisition_medium,acquisition_campaign,onboarding_status,last_significant_activity_at,created_at").eq("is_test", false).order("created_at", { ascending: false }).limit(5000),
+    supabase.from("profiles").select("id,role,municipality,interests,marketing_consent,registration_channel,acquisition_entry_channel,acquisition_source,acquisition_medium,acquisition_campaign,onboarding_status,last_significant_activity_at,created_at").eq("is_test", false).order("created_at", { ascending: false }).limit(5000),
     supabase.from("consent_history").select("user_id,decision,recorded_at").eq("purpose", "marketing_email").order("recorded_at", { ascending: false }).limit(5000)
   ]);
 
@@ -113,6 +125,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
   const recentGranted = recentConsentEvents.filter((event) => event.decision === "granted").length;
   const recentWithdrawn = recentConsentEvents.filter((event) => event.decision === "withdrawn").length;
   const campaigns = rank(filteredProfiles.map((profile) => profile.acquisition_campaign ? `${profile.acquisition_source || "sin fuente"} · ${profile.acquisition_campaign}` : null), "Sin campaña identificada");
+  const interests = rankInterests(filteredProfiles.map((profile) => profile.interests));
 
   return (
     <main className="section-shell">
@@ -158,6 +171,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
         <RankingTable title="Canal de entrada" description="Atribución propia saneada al inicio de la sesión de registro." items={rank(filteredProfiles.map((profile) => profile.acquisition_entry_channel), "Sin atribución")} />
         <RankingTable title="Municipio declarado" description="Zona general indicada por la persona, nunca una dirección familiar." items={rank(filteredProfiles.map((profile) => profile.municipality), "No indicado")} />
         <RankingTable title="Campañas de adquisición" description="Fuente y campaña asociadas al alta. Sin campaña no significa necesariamente tráfico directo." items={campaigns} />
+        <RankingTable title="Intereses declarados" description={`Preferencias privadas agregadas. Solo aparecen intereses elegidos por al menos ${privateSegmentMinimum} cuentas del segmento.`} items={interests} />
       </div>
 
       <p className="mt-6 rounded-2xl border border-line bg-soft p-4 text-sm leading-6 text-slatecopy">No uses estos datos para enviar campañas hasta confirmar la base jurídica, excluir bajas, rebotes y quejas, y filtrar por consentimiento de marketing activo.</p>
